@@ -1,5 +1,6 @@
 ##fileformat=VCFv4.0
 ##reference=GRCh37/hg19
+#CHROM	POS	ID	REF	ALT
 12	69747417	.	C	A
 17	41231346	.	G	T
 2	122288533	.	C	A
