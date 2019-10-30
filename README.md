@@ -35,7 +35,7 @@ cd capice
 ### 2. Variant annotation and input file format
 CAPICE uses the same set of features used in [CADD](https://cadd.gs.washington.edu/). In this
 repository we also provide an example input variant list in *CAPICE_example/test_input.vcf* and 
-the annotated input file in *CAPICE_example/test_caddAnnotated.tsv* 
+the annotated input file in *CAPICE_example/test_caddAnnotated.tsv.gz* 
 
 ### 3. Perform prediction
 Once the annotated file is ready then the last step would be using the pre-trained model provided
