@@ -7,7 +7,7 @@ and real clinical data sets. It ourperforms the current best method in pathogeni
 for variants of different molecular consequences and allele frequency.
 
 ## Precomputed scores for all possible SNVs and InDels
-We precomputed the CAPICE score for all possible SNVs and InDels. It can be downloaded via #todo.
+We precomputed the CAPICE score for all possible SNVs and InDels. It can be downloaded via [zenodo](https://doi.org/10.5281/zenodo.3516248).
 
 The file contains the following columns:
 *#CHROM* chromosome name, as [1:22, X]
