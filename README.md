@@ -6,9 +6,6 @@ CADD score and trained on the clinical significance. CAPICE performs consistentl
 and real clinical data sets. It ourperforms the current best method in pathogenicity estimation
 for variants of different molecular consequences and allele frequency.
 
-## Requirements
-Python 3.6 (doesn't work with 3.7 or 3.8)
-
 ## Precomputed scores for all possible SNVs and InDels
 We precomputed the CAPICE score for all possible SNVs and InDels. It can be downloaded via [zenodo](https://doi.org/10.5281/zenodo.3516248).
 
@@ -35,6 +32,18 @@ git clone https://github.com/molgenis/capice.git
 cd capice
 ```
 
+### 1.5 Libraries
+For python version 3.6, please run:
+```
+pip install -r requirements.txt
+```
+
+For python version 3.7 or higher, please run:
+```
+pip install -r requirements37.txt
+```
+__Warning, python 3.7 model is experimental and has not been tested yet.__
+
 ### 2. Variant annotation and input file format
 CAPICE uses the same set of features used in [CADD](https://cadd.gs.washington.edu/). In this
 repository we also provide an example input variant list in *CAPICE_example/test_input.vcf* and 
@@ -52,3 +61,7 @@ bash predict.sh \
 ```
 The output file would contain the chromosome, position, reference and alternative allele
 information of the input list of variants.
+
+
+## TODO
+- Refactoring
