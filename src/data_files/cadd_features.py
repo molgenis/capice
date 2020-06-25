@@ -2,7 +2,7 @@ import warnings
 
 
 class CaddFeatures:
-    def __init__(self, version, genome_build):
+    def __init__(self):
         self.version = version
         self.build = genome_build
         self._check_version()
@@ -21,6 +21,22 @@ class CaddFeatures:
             warnings.warn('Genome build {} is not supported, '
                           'using build 37 for now.'.format(self.build))
             self.build = 37
+
+    @staticmethod
+    def supported_genome_builds():
+        """
+        Function to tell what genome builds are supported in CAPICE.
+        :return: list
+        """
+        return [37]
+
+    @staticmethod
+    def supported_cadd_builds():
+        """
+        Function to tell what cadd builds are supported
+        :return: list
+        """
+        return [1.4]
 
     @staticmethod
     def _cadd_feats(version):

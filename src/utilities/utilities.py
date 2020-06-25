@@ -33,3 +33,24 @@ def check_dir_exists(path):
 def prepare_dir(path):
     if not check_dir_exists(path):
         os.makedirs(path)
+
+
+def convert_cla_to_str(cla):
+    if isinstance(cla, list):
+        return str(cla[0])
+    else:
+        return cla
+
+
+def convert_cla_to_int(cla):
+    if isinstance(cla, list):
+        return int(cla[0])
+    else:
+        return cla
+
+
+def convert_cla_to_float(cla):
+    if isinstance(cla, list):
+        return float(cla[0])
+    else:
+        return cla
