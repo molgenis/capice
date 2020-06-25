@@ -1,6 +1,4 @@
-from CAPICE_scripts.src.command_line_supporter import ArgumentSupporter
-from CAPICE_scripts.src.utilities.utilities import get_project_root_dir
-
+from src import ArgumentSupporter
 
 __programm__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'

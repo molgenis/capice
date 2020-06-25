@@ -1,8 +1,5 @@
-from datetime import datetime
 import logging
-from CAPICE_scripts.src.utilities.utilities import get_project_root_dir,\
-    prepare_dir
-from CAPICE_scripts.src.global_manager import CapiceManager
+from src import CapiceManager
 
 
 class Logger:

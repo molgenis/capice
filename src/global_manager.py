@@ -1,6 +1,6 @@
 import sys
 import xgboost as xgb
-from CAPICE_scripts.src.errors.errors import VersionError
+from src import VersionError
 
 
 class CapiceManager:
