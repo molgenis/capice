@@ -211,21 +211,27 @@ def make_predictions(preprocessed_data, prediction_savepath, model_path):
     if int(xgb.__version__.split('.')[0]) < 1:
         model_features = model.feature_names
         input_matrix = xgb.DMatrix(preprocessed_data[model_features])
+        optimal_threshold = 0.02
     else:
         # Very much illegal to access a private class in python
         # (marked by _Class)
         model_features = model._Booster.feature_names
         input_matrix = preprocessed_data[model_features]
-    preprocessed_data['probabilities'] = model.predict(input_matrix)
+        optimal_threshold = 0.132
+    if int(xgb.__version__.split('.')[0]) < 1:
+        preprocessed_data['probabilities'] = model.predict(input_matrix)
+    else:
+        preprocessed_data['probabilities'] = model.predict_proba(
+            input_matrix
+        )[:, 1]  # This is the probability for class 2 (pathogenic)
     preprocessed_data['ID'] = '.'
     tellPathogenic_prediction = lambda \
-        x: "Pathogenic" if x > 0.02 else "Neutral"
+        x: "Pathogenic" if x > optimal_threshold else "Neutral"
     preprocessed_data['prediction'] = [tellPathogenic_prediction(probability)
                                        for probability
                                        in preprocessed_data['probabilities']]
-    tellPathogenic_combinedPrediction = lambda x: "Pathogenic" if x[0] > 0.02 or \
-                                                                  x[
-                                                                      1] > 30 else "Neutral"
+    tellPathogenic_combinedPrediction = lambda x:\
+        "Pathogenic" if x[0] > optimal_threshold or x[1] > 30 else "Neutral"
     preprocessed_data['combined_prediction'] = [
         tellPathogenic_combinedPrediction(probability) for probability
         in preprocessed_data[['probabilities', 'PHRED']].values]

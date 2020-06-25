@@ -59,6 +59,7 @@ class ArgumentSupporter:
                               help='The location to put the logfile in. '
                                    '(by default uses the directory of '
                                    '--output)')
+
         optional.add_argument('-gb',
                               '--genome_build',
                               nargs=1,
