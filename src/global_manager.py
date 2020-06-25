@@ -1,6 +1,3 @@
-import sys
-import xgboost as xgb
-from src import VersionError
 
 
 class CapiceManager:
@@ -9,44 +6,71 @@ class CapiceManager:
         Class to make a logfile on the progress being made.
         """
         def __init__(self):
-            self.version = self._get_python_version()
-            self.xgboost_version = self._get_xgboost_version()
-            self._threshold = 0.2
-            self._set_threshold()
-            self._verbose = False
+            self.threshold = None
+            self.verbose = False
+            self.log_loc = None
 
-        @staticmethod
-        def _get_python_version():
-            if sys.version_info[0] < 3:
-                raise VersionError('Python 2 is not supported.')
-            return sys.version_info[1]
+        def set_log_loc(self, log_loc: str):
+            self.log_loc = log_loc
 
-        @staticmethod
-        def _get_xgboost_version():
-            return xgb.__version__
+        def get_log_loc(self):
+            return self.log_loc
 
-        def _set_threshold(self):
-            if self.version > 6:
-                self._threshold = 0.132
+        def set_threshold(self, threshold: float):
+            self.threshold = threshold
 
         def get_threshold(self):
-            return self._threshold
+            return self.threshold
 
         def set_verbose(self, verbose: bool):
-            self._verbose = verbose
+            self.verbose = verbose
 
         def get_verbose(self):
-            return self._verbose
+            return self.verbose
 
     instance = None
 
+    def set_log_loc(self, log_loc: str):
+        """
+        Function to set the output of the logfile.
+        :param log_loc: str, path of or to logfile
+        """
+        pass
+
+    def get_log_loc(self):
+        """
+        Function to get the logfile location.
+        :return: str
+        """
+        pass
+
+    def set_threshold(self, threshold: float):
+        """
+        Function to globally set the threshold of CAPICE.
+        :param threshold: float
+        """
+        pass
+
     def get_threshold(self):
+        """
+        Get the threshold value.
+        :return: float
+        """
         pass
 
     def set_verbose(self, verbose: bool):
+        """
+        Set the verbose true (log everything to file) or
+        false (only log warnings and errors).
+        :param verbose: bool
+        """
         pass
 
     def get_verbose(self):
+        """
+        Get the verbose level.
+        :return: bool
+        """
         pass
 
     def __new__(cls):

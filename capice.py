@@ -4,7 +4,7 @@ from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
     convert_cla_to_float
 from src.main import Main
 
-__programm__ = 'CAPICE'
+__program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
 __license__ = 'unknown'
 __version__ = 2.0
