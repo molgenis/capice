@@ -30,23 +30,18 @@ class AppCommandLineOptions {
             .hasArg(true)
             .required()
             .longOpt(OPT_INPUT_LONG)
-            .desc("Input VCF file (.vcf or .vcf.gz).")
+            .desc("Input CAPICE predictions file (.tsv).")
             .build());
     appOptions.addOption(
         Option.builder(OPT_OUTPUT)
             .hasArg(true)
             .longOpt(OPT_OUTPUT_LONG)
-            .desc("Output report file (.html).")
+            .desc("Output VCF file (.vcf.gz).")
             .build());
     appOptions.addOption(
         Option.builder(OPT_FORCE)
             .longOpt(OPT_FORCE_LONG)
             .desc("Override the output file if it already exists.")
-            .build());
-    appOptions.addOption(
-        Option.builder(OPT_DEBUG)
-            .longOpt(OPT_DEBUG_LONG)
-            .desc("Enable debug mode (additional logging and pretty printed report.")
             .build());
     APP_OPTIONS = appOptions;
 
@@ -90,9 +85,9 @@ class AppCommandLineOptions {
           format("Input file '%s' is not readable.", inputPath.toString()));
     }
     String inputPathStr = inputPath.toString();
-    if (!inputPathStr.endsWith(".vcf") && !inputPathStr.endsWith(".vcf.gz")) {
+    if (!inputPathStr.endsWith(".tsv")) {
       throw new IllegalArgumentException(
-          format("Input file '%s' is not a .vcf or .vcf.gz file.", inputPathStr));
+          format("Input file '%s' is not a .tsv file.", inputPathStr));
     }
   }
 
@@ -104,9 +99,9 @@ class AppCommandLineOptions {
     Path outputPath = Path.of(commandLine.getOptionValue(OPT_OUTPUT));
 
     String outputPathStr = outputPath.toString();
-    if (!outputPathStr.endsWith(".html")) {
+    if (!outputPathStr.endsWith(".vcf.gz")) {
       throw new IllegalArgumentException(
-          format("Output file '%s' is not a .html file.", outputPathStr));
+          format("Output file '%s' is not a .vcf.gz file.", outputPathStr));
     }
 
     if (!commandLine.hasOption(OPT_FORCE) && Files.exists(outputPath)) {

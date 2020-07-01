@@ -8,9 +8,9 @@ import lombok.experimental.NonFinal;
 @Value
 @NonFinal
 public class Settings {
-  @NonNull Path inputVcfPath;
-  @NonNull Path outputReportPath;
-  boolean overwriteOutputReport;
+  @NonNull Path inputTsvPath;
+  @NonNull Path outputVcfPath;
+  boolean overwriteOutputVcf;
   @NonNull String appName;
   @NonNull String appVersion;
 }

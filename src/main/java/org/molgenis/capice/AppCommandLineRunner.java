@@ -73,8 +73,8 @@ public class AppCommandLineRunner implements CommandLineRunner {
     try {
       Settings settings = createSettings(args);
 
-      @NonNull Path outputReportPath = settings.getOutputReportPath();
-      if (settings.isOverwriteOutputReport()) {
+      @NonNull Path outputReportPath = settings.getOutputVcfPath();
+      if (settings.isOverwriteOutputVcf()) {
         Files.deleteIfExists(outputReportPath);
       } else if (Files.exists(outputReportPath)) {
         throw new IllegalArgumentException(
@@ -83,7 +83,7 @@ public class AppCommandLineRunner implements CommandLineRunner {
                 outputReportPath, OPT_FORCE, OPT_FORCE_LONG));
       }
 
-      LOGGER.info("mapping predictions from to '{}' to vcf...", settings.getInputVcfPath());
+      LOGGER.info("mapping tsv from to '{}' to vcf...", settings.getInputTsvPath());
       capiceService.mapPredictionsToVcf(settings);
       LOGGER.info("created vcf '{}'", outputReportPath);
     } catch (Exception e) {

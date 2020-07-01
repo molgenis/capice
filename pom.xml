@@ -42,6 +42,7 @@
     <commons.cli.version>1.4</commons.cli.version>
     <samtools.htsjdk.version>2.21.3</samtools.htsjdk.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+    <externalsortinginjava.version>0.4.5</externalsortinginjava.version>
   </properties>
 
   <profiles>
@@ -86,6 +87,11 @@
         <version>${samtools.htsjdk.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.google.code.externalsortinginjava</groupId>
+        <artifactId>externalsortinginjava</artifactId>
+        <version>${externalsortinginjava.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter-engine</artifactId>
         <version>${junit-jupiter.version}</version>
@@ -110,6 +116,10 @@
     <dependency>
       <groupId>com.github.samtools</groupId>
       <artifactId>htsjdk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.externalsortinginjava</groupId>
+      <artifactId>externalsortinginjava</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
