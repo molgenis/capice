@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class TsvToVcfMapperImpl implements TsvToVcfMapper {
 
   @Override
-  public void map(Path sortedTsvPath, @NonNull Path outputVcfPath) {
+  public void map(Path sortedTsvPath, Path outputVcfPath) {
 
   }
 }

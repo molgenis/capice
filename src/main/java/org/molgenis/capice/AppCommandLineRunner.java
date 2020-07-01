@@ -87,7 +87,7 @@ public class AppCommandLineRunner implements CommandLineRunner {
       capiceService.mapPredictionsToVcf(settings);
       LOGGER.info("created vcf '{}'", outputReportPath);
     } catch (Exception e) {
-      LOGGER.error(e.getLocalizedMessage());
+      LOGGER.error("", e);
       System.exit(STATUS_MISC_ERROR);
     }
   }
