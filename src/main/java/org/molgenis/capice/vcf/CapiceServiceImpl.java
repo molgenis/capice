@@ -33,7 +33,7 @@ public class CapiceServiceImpl implements CapiceService {
       LOGGER.info("done sorting tsv");
 
       LOGGER.info("mapping tsv to vcf...");
-      tsvToVcfMapper.map(sortedTsvPath, settings.getOutputVcfPath());
+      tsvToVcfMapper.map(sortedTsvPath, settings.getOutputVcfPath(), settings);
       LOGGER.info("done mapping tsv to vcf");
     } catch (IOException e) {
       throw new UncheckedIOException(e);

@@ -9,6 +9,7 @@ import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder.OutputType;
 import htsjdk.variant.vcf.VCFHeader;
+import htsjdk.variant.vcf.VCFHeaderLine;
 import htsjdk.variant.vcf.VCFHeaderLineCount;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
@@ -28,9 +29,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class TsvToVcfMapperImpl implements TsvToVcfMapper {
   private static final Logger LOGGER = LoggerFactory.getLogger(TsvToVcfMapperImpl.class);
+  private static final String INFO_ID_CAPICE = "CAP";
 
   @Override
-  public void map(Path sortedTsvPath, Path outputVcfPath) {
+  public void map(Path sortedTsvPath, Path outputVcfPath, Settings settings) {
 
     VariantContextWriter variantContextWriter =
         new VariantContextWriterBuilder()
@@ -38,14 +40,14 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
             .setOutputFileType(OutputType.BLOCK_COMPRESSED_VCF)
             .build();
     try {
-      String name = "CAPP";
       VCFHeaderLineCount vcfHeaderLineCount = VCFHeaderLineCount.A;
       VCFHeaderLineType vcfHeaderLineType = VCFHeaderLineType.Float;
       String description = "CAPICE pathogenicity prediction";
       VCFInfoHeaderLine capiceVcfHeaderLine =
-          new VCFInfoHeaderLine(name, vcfHeaderLineCount, vcfHeaderLineType, description);
-
+          new VCFInfoHeaderLine(INFO_ID_CAPICE, vcfHeaderLineCount, vcfHeaderLineType, description);
+      VCFHeaderLine appVcfHeaderLine = new VCFHeaderLine("CAP", settings.getAppVersion());
       VCFHeader vcfHeader = new VCFHeader();
+      vcfHeader.addMetaDataLine(appVcfHeaderLine);
       vcfHeader.addMetaDataLine(capiceVcfHeaderLine);
 
       variantContextWriter.writeHeader(vcfHeader);
@@ -64,7 +66,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           String pos = tokens[1];
           String ref = tokens[2];
           String alt = tokens[3];
-          String phred = record.get(3);
+          String phred = record.get(4);
 
           long start = Long.parseLong(pos);
           long stop = Long.parseLong(pos) + (ref.length() - 1); // correct ??
@@ -73,7 +75,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           variantContextBuilder.start(start);
           variantContextBuilder.stop(stop);
           variantContextBuilder.alleles(ref, alt);
-          variantContextBuilder.attribute("CAPP", singletonList(phred));
+          variantContextBuilder.attribute(INFO_ID_CAPICE, singletonList(phred));
           variantContextWriter.add(variantContextBuilder.make());
         }
       } catch (FileNotFoundException e) {
