@@ -66,7 +66,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           String pos = tokens[1];
           String ref = tokens[2];
           String alt = tokens[3];
-          String phred = record.get(4);
+          String prediction = record.get(4);
 
           long start = Long.parseLong(pos);
           long stop = Long.parseLong(pos) + (ref.length() - 1); // correct ??
@@ -75,7 +75,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           variantContextBuilder.start(start);
           variantContextBuilder.stop(stop);
           variantContextBuilder.alleles(ref, alt);
-          variantContextBuilder.attribute(INFO_ID_CAPICE, singletonList(phred));
+          variantContextBuilder.attribute(INFO_ID_CAPICE, singletonList(prediction));
           variantContextWriter.add(variantContextBuilder.make());
         }
       } catch (FileNotFoundException e) {
