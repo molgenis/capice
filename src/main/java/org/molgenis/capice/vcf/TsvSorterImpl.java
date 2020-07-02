@@ -1,5 +1,7 @@
 package org.molgenis.capice.vcf;
 
+import static org.molgenis.capice.vcf.TsvUtils.TSV_FORMAT;
+
 import com.google.code.externalsorting.csv.CsvExternalSort;
 import com.google.code.externalsorting.csv.CsvSortOptions;
 import java.io.File;
@@ -8,13 +10,10 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
-import org.apache.commons.csv.CSVFormat;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TsvSorterImpl implements TsvSorter {
-  private static final CSVFormat TSV_FORMAT =
-      CSVFormat.DEFAULT.withDelimiter('\t').withRecordSeparator('\n');
 
   @Override
   public void sortTsv(Path inputTsv, Path outputTsv) {
