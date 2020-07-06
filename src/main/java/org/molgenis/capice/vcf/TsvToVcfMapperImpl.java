@@ -14,7 +14,6 @@ import htsjdk.variant.vcf.VCFHeaderLineCount;
 import htsjdk.variant.vcf.VCFHeaderLineType;
 import htsjdk.variant.vcf.VCFInfoHeaderLine;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -52,10 +51,8 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
 
       variantContextWriter.writeHeader(vcfHeader);
 
-      CSVParser csvParser = null;
-      try {
-        Reader in = new InputStreamReader(new FileInputStream(sortedTsvPath.toFile()), UTF_8);
-        csvParser = TSV_FORMAT.parse(in);
+      try(Reader in = new InputStreamReader(new FileInputStream(sortedTsvPath.toFile()), UTF_8);
+          CSVParser csvParser = TSV_FORMAT.parse(in)) {
         Iterator<CSVRecord> iterator = csvParser.iterator();
         iterator.next(); // skip header line (TSV_FORMAT.withSkipHeaderLine doesn't seem to work)
         while (iterator.hasNext()) {
@@ -66,7 +63,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           String pos = tokens[1];
           String ref = tokens[2];
           String alt = tokens[3];
-          String prediction = record.get(4);
+          float prediction = getPrediction(record);
 
           long start = Long.parseLong(pos);
           long stop = Long.parseLong(pos) + (ref.length() - 1); // correct ??
@@ -78,19 +75,20 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           variantContextBuilder.attribute(INFO_ID_CAPICE, singletonList(prediction));
           variantContextWriter.add(variantContextBuilder.make());
         }
-      } catch (FileNotFoundException e) {
-        throw new RuntimeException(e);
       } catch (IOException e) {
         throw new RuntimeException(e);
-      } finally {
-        try {
-          csvParser.close();
-        } catch (IOException e) {
-          LOGGER.warn("can't close file"); // TODO better message
-        }
       }
     } finally {
       variantContextWriter.close();
+    }
+  }
+
+  private float getPrediction(CSVRecord record) {
+    try{
+    return Float.parseFloat(record.get(4));
+    }
+    catch(NumberFormatException e){
+      throw new RuntimeException(e);
     }
   }
 }

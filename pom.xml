@@ -140,7 +140,7 @@
   </dependencies>
 
   <build>
-    <finalName>capice</finalName>
+    <finalName>capice2vcf</finalName>
 
     <plugins>
       <plugin>

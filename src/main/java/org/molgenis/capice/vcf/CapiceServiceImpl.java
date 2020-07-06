@@ -1,5 +1,6 @@
 package org.molgenis.capice.vcf;
 
+import static java.util.Objects.deepEquals;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
@@ -25,11 +26,14 @@ public class CapiceServiceImpl implements CapiceService {
   @Override
   public void mapPredictionsToVcf(Settings settings) {
     Path inputTsvPath = settings.getInputTsvPath();
+    // TODO: discuss which temp dir to use, default causes permission issues on cluster, currently
+    // using parentdir of the outputfile.
+    Path outputDir = settings.getOutputVcfPath().getParent();
     Path sortedTsvPath = null;
     try {
       LOGGER.info("sorting tsv ...");
       sortedTsvPath = Files.createTempFile(null, null);
-      tsvSorter.sortTsv(inputTsvPath, sortedTsvPath);
+      tsvSorter.sortTsv(inputTsvPath, sortedTsvPath, outputDir.toFile());
       LOGGER.info("done sorting tsv");
 
       LOGGER.info("mapping tsv to vcf...");

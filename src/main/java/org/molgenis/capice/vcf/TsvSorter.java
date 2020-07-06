@@ -1,8 +1,8 @@
 package org.molgenis.capice.vcf;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Path;
 
 public interface TsvSorter {
-  void sortTsv(Path inputTsv, Path outputTsv);
+  void sortTsv(Path inputTsv, Path outputTsv, File tempDir);
 }
