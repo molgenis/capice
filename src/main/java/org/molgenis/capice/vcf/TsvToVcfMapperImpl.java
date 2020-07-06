@@ -17,17 +17,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Iterator;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TsvToVcfMapperImpl implements TsvToVcfMapper {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TsvToVcfMapperImpl.class);
   private static final String INFO_ID_CAPICE = "CAP";
 
   @Override
@@ -76,7 +74,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
           variantContextWriter.add(variantContextBuilder.make());
         }
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new UncheckedIOException(e);
       }
     } finally {
       variantContextWriter.close();
@@ -88,7 +86,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
     return Float.parseFloat(record.get(4));
     }
     catch(NumberFormatException e){
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
   }
 }

@@ -38,7 +38,7 @@ public class TsvSorterImpl implements TsvSorter {
     } catch (IOException e) {
       throw new UncheckedIOException(e);
     } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
+      throw new IllegalStateException(e);
     }
   }
 }
