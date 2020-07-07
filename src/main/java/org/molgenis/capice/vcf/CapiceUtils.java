@@ -7,6 +7,8 @@ import org.apache.commons.csv.CSVRecord;
 public class CapiceUtils {
   private static final Pattern POS_PATTERN = Pattern.compile("(.+?)_(.+?)_(.+?)_(.+?)");
 
+  private CapiceUtils(){}
+
   public static VcfPosition getVcfPosition(CSVRecord thatRecord) {
     String positionString = thatRecord.get(0) != null ? thatRecord.get(0) : "";
     Matcher thatMatcher = POS_PATTERN.matcher(positionString);

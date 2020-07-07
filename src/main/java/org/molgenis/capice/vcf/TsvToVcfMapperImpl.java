@@ -5,7 +5,6 @@ import static java.util.Collections.singletonList;
 import static org.molgenis.capice.vcf.CapiceUtils.getVcfPosition;
 import static org.molgenis.capice.vcf.TsvUtils.TSV_FORMAT;
 
-import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
 import htsjdk.variant.variantcontext.writer.VariantContextWriterBuilder;
