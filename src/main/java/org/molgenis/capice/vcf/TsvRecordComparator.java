@@ -1,13 +1,11 @@
 package org.molgenis.capice.vcf;
 
+import static org.molgenis.capice.vcf.CapiceUtils.getVcfPosition;
+
 import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.csv.CSVRecord;
 
 public class TsvRecordComparator implements Comparator<CSVRecord> {
-  private static final Pattern POS_PATTERN = Pattern.compile("(.+?)_(.+?)_.+?_.+?");
-
 
   @Override
   public int compare(CSVRecord thisRecord, CSVRecord thatRecord) {
@@ -23,17 +21,6 @@ public class TsvRecordComparator implements Comparator<CSVRecord> {
         return compareOtherChrom(thisPosition.getChromosome(), thisPosition.getPosition(), thatPosition.getChromosome(), thatPosition.getPosition());
       }
     }
-  }
-
-  private VcfPosition getVcfPosition(CSVRecord thatRecord) {
-    String positionString = thatRecord.get(0);
-    Matcher thatMatcher = POS_PATTERN.matcher(positionString);
-    if (!thatMatcher.matches()) {
-      throw new PositionParseException(positionString);
-    }
-    String thatChr = thatMatcher.group(1);
-    int thatPos = Integer.parseInt(thatMatcher.group(2));
-    return new VcfPosition(thatChr, thatPos);
   }
 
   private int compareOtherChrom(String thisChr, int thisPos, String thatChr, int thatPos) {
