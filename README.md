@@ -6,10 +6,13 @@ CADD score and trained on the clinical significance. CAPICE performs consistentl
 and real clinical data sets. It ourperforms the current best method in pathogenicity estimation
 for variants of different molecular consequences and allele frequency.
 
-## Requirements
-Python 3.6 (doesn't work with 3.7 or 3.8)
+The software can be used as web service, as pre-computed scores or by installing the software locally, all described below.
 
-## Precomputed scores for all possible SNVs and InDels
+## Use online web service
+
+CAPICE can be used as online service at http://molgenis.org/capice 
+
+## Download files of precomputed scores for all possible SNVs and InDels (based on GrCh37)
 We precomputed the CAPICE score for all possible SNVs and InDels. It can be downloaded via [zenodo](https://doi.org/10.5281/zenodo.3516248).
 
 The file contains the following columns:
@@ -19,15 +22,17 @@ The file contains the following columns:
 *ALT* alternative allele
 *score* CAPICE score. The score ranges from 0 to 1, the higher the more likely the variant is pathogenic
 
-
-## CAPICE software
+## Install CAPICE software locally
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. 
 The following sections will guide you through the steps needed for the variant annotation and the execution of
 making predictions using the CAPICE model.
 
+### Requirements
+Python 3.6 (doesn't work with 3.7 or 3.8)
 
-## Downloads, installation and processing of the input files
-### 1. Software and libraries
+### Downloads, installation and processing of the input files
+
+1. Software and libraries
 CAPICE scripts can be downloaded from the CAPICE github repository. The CAPICE model
 can be downloaded via #tbd
 ```angular2
@@ -35,12 +40,12 @@ git clone https://github.com/molgenis/capice.git
 cd capice
 ```
 
-### 2. Variant annotation and input file format
+2. Variant annotation and input file format
 CAPICE uses the same set of features used in [CADD](https://cadd.gs.washington.edu/). In this
 repository we also provide an example input variant list in *CAPICE_example/test_input.vcf* and 
 the annotated input file in *CAPICE_example/test_caddAnnotated.tsv.gz* 
 
-### 3. Perform prediction
+3. Perform prediction
 Once the annotated file is ready then the last step would be using the pre-trained model provided
 in the github repository.
 ```angular2
