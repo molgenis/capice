@@ -1,6 +1,5 @@
 package org.molgenis.capice.vcf;
 
-import static java.util.Objects.deepEquals;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
