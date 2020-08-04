@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.molgenis.capice.vcf.utils.GzippedVcfUtil.getVcfGzAsString;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
@@ -55,22 +56,11 @@ class TsvToVcfMapperImplTest {
     String expected =
         Files.readString(expectedPath, StandardCharsets.UTF_8)
             .replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
-    ;
 
     assertEquals(expected, actual);
   }
 
-  private String getVcfGzAsString(Path outputVcfPath) throws IOException {
-    String actual = null;
-    try (InputStream fileStream = new FileInputStream(outputVcfPath.toFile());
-        InputStream gzipStream = new GZIPInputStream(fileStream);
-        Reader decoder = new InputStreamReader(gzipStream, Charset.forName("UTF-8"));
-        BufferedReader buffered = new BufferedReader(decoder); )
-    {
-      actual = buffered.lines().collect(Collectors.joining(System.getProperty("line.separator")));
-    }
-    return actual;
-  }
+
 
   @Test
   void mapLine() {
