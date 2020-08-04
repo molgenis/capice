@@ -24,13 +24,7 @@ class AppIT {
     String inputFile = ResourceUtils.getFile("classpath:input.tsv").toString();
     String outputFile = sharedTempDir.resolve("example.vcf.gz").toString();
 
-    String[] args = {
-      "-i",
-      inputFile,
-      "-o",
-      outputFile,
-      "-f"
-    };
+    String[] args = {"-i", inputFile, "-o", outputFile, "-f", "-t", sharedTempDir.toString()};
     SpringApplication.run(App.class, args);
 
     String actual = getVcfGzAsString(Path.of(outputFile)).replaceAll("##CAP=.*", "##CAP=test");

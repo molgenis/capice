@@ -1,5 +1,6 @@
 package org.molgenis.capice.vcf;
 
+import java.io.File;
 import java.nio.file.Path;
 import lombok.NonNull;
 import lombok.Value;
@@ -13,4 +14,5 @@ public class Settings {
   boolean overwriteOutputVcf;
   @NonNull String appName;
   @NonNull String appVersion;
+  File tempDir;
 }
