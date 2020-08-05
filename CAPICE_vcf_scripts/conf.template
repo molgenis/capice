@@ -1,0 +1,6 @@
+[[annotation]]
+file="JOB_ID/tmp/capice.vcf.gz"
+fields = ["CAP"]
+ops=["self"]
+names=["CAP"]
+
