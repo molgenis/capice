@@ -25,10 +25,10 @@ class TsvSorterImplTest {
 
     tsvSorter.sortTsv(inputPath, outputPath, sharedTempDir.toFile());
 
-    String actual = Files.readString(outputPath, StandardCharsets.UTF_8);
+    String actual = Files.readString(outputPath, StandardCharsets.UTF_8).replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
 
     Path expectedPath = Paths.get("src", "test", "resources", "sorted.tsv");
-    String expected = Files.readString(expectedPath, StandardCharsets.UTF_8);
+    String expected = Files.readString(expectedPath, StandardCharsets.UTF_8).replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
 
     assertEquals(expected, actual);
   }
