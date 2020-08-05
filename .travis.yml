@@ -6,5 +6,10 @@ jdk: openjdk11
 cache:
   directories:
     - "$HOME/.m2"
+addons:
+  sonarcloud:
+    organization: molgenis
+    token:
+      secure: rodJbxT1wtwDbj0/FvOqAdJwDCiSjfKCZgFQD7Wt3YiyCiMg6ZMxnxXL3+eog1JRiz3W0bYnTjP2Apxa2ZVdNFxbJ1uPwHDEC3+P0qveyHgQZrpFa53b70lb6iPvST6/Fqv/b6uN7eFm0FVdT4RJYq1jArq+9mDba93t6uJTwPF3ski560YY5hOeP4mkL+piFSjqrzQWUvwPz5vAeCvSHonnlyS/VZtGsDL8P2SaOJ+A1Y1YEQD3g2OBQSWsdZUrF6Omks1h3RBn8x/wZyqC0GOoN9z7v+xiCXOpQtdLujgTEdOREhgeOYXiqkmnehr9I7Z216lEUZGb/bTGo/HHjg5GK/HwLg35yietzpqL9QNNkrPK4RH6vk8MXkqWsDNGmhOOz1cuKEBbPaw4owTNe3gLYlnCSVy8SyI51vQX1A+LjtBunkGfWnaX7auu3dQ4JCB+RYrscHrjHvJuSRUhWK1PBAxXMnMjW2OzzIZFK4dlorJFRioMcPQ9PKJZp1F2XUFfqeWeuE5x7zN7ocoDi5xop3TwVai/VJ9Eb56Jffk2S5d9icI45MbY2+FdGO7NREuA3Mp3JkD0w/+OQvo+lJQN9MThhLk+pgLplYNldzpw5dHQl2pCiFwL5bEVpxmyVBv4TsZEANVyRdr9/aymZswDCc/sCZQrTHoi79SyijM=
 script:
-  - mvn clean install -Pcoverage
+  - mvn clean install sonar:sonar -Pcoverage -Dsonar.projectKey=molgenis_capice
