@@ -3,7 +3,7 @@ from src.global_manager import CapiceManager
 
 
 class Main:
-    def __init__(self, input_loc, output_loc, model_loc, log_loc,
+    def __init__(self, input_loc, output_loc, log_loc,
                  genome_build, cadd_build, verbose):
         self.manager = CapiceManager()
         self.manager.set_verbose(verbose)
@@ -19,9 +19,6 @@ class Main:
         self.output = output_loc
         self.log.info('Output directory -o / --output confirmed: '
                       '{}'.format(self.output))
-        self.model_loc = model_loc
-        self.log.info('Model -m / --model confirmed: '
-                      '{}'.format(self.model_loc))
         self.genome_build = genome_build
         self.log.info('Genome build -gb / --genome_build confirmed: '
                       '{}'.format(self.genome_build))

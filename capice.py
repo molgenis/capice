@@ -27,14 +27,11 @@ def main():
 
     input_checker = InputChecker(output_loc=output_loc,
                                  log_loc=log_loc)
-    input_checker.check_input(input_loc)
-    input_checker.check_model(model_loc)
-    genome_build = input_checker.check_genome_build(genome_build)
-    cadd_build = input_checker.check_cadd_build(cadd_build)
+
+    input_checker.check_cadd_header(input_loc, cadd_build, genome_build)
 
     capice_main = Main(input_loc=input_loc,
                        output_loc=output_loc,
-                       model_loc=model_loc,
                        log_loc=log_loc,
                        genome_build=genome_build,
                        cadd_build=cadd_build,

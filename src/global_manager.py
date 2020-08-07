@@ -30,7 +30,7 @@ class CapiceManager:
 
     instance = None
 
-    def set_log_loc(self, log_loc: str):
+    def set_log_loc(self, log_loc):
         """
         Function to set the output of the logfile.
         :param log_loc: str, path of or to logfile

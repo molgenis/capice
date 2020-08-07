@@ -39,17 +39,6 @@ class ArgumentSupporter:
                                    'CAPICE_Predictions_HHMMSSMS_DDMMYYYY.'
                                    'tsv.gz')
 
-        optional.add_argument('-m',
-                              '--model',
-                              nargs=1,
-                              type=str,
-                              required=False,
-                              default=None,
-                              help='The location of the CAPICE'
-                                   ' model pickled file.'
-                                   ' (by default uses the'
-                                   ' model in CAPICE_model)')
-
         optional.add_argument('-l',
                               '--log_file',
                               nargs=1,
@@ -64,20 +53,19 @@ class ArgumentSupporter:
                               '--genome_build',
                               nargs=1,
                               type=int,
-                              default=37,
+                              default=False,
                               required=False,
-                              help='The genome build. '
-                                   '(by default build 37)')
+                              help='The used Genome Build to generate the '
+                                   'CADD file with.')
 
         optional.add_argument('-cb',
                               '--cadd_build',
                               nargs=1,
                               type=str,
-                              default='1.4',
+                              default=False,
                               required=False,
                               help='The CADD version that was used to annotate.'
-                                   ' (by default uses CADD 1.4 or what is '
-                                   'specified in the CADD file)')
+                                   ' (if not stated in the CADD file.)')
 
         optional.add_argument('-v',
                               '--verbose',
