@@ -55,3 +55,19 @@ class ModelSetup(metaclass=ABCMeta):
         :return: pickled model instance
         """
         pass
+
+    @abstractmethod
+    def impute_values(self):
+        """
+        Template method to tell CAPICE what the impute values are.
+        :return: dict
+        """
+        pass
+
+    @abstractmethod
+    def cadd_vars(self):
+        """
+        Template method to tell CAPICE what all the CADD variants are.
+        :return: list
+        """
+        pass

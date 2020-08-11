@@ -1,4 +1,5 @@
 from src.models.abstract_model import ModelSetup
+from src.data_files.cadd_features import Cadd_v14
 import xgboost as xgb
 import pickle
 
@@ -7,9 +8,11 @@ class ModelSetupXGBoost0721(ModelSetup):
     """
     Model setup for XGBoost version 0.72.1, CADD 1.4 and genome build 37.
     """
+
     def __init__(self):
         self.model = None
         self.model_feats = []
+        self.cadd_values = Cadd_v14()
 
     def get_name(self):
         return "XGBoost version 0.72.1, CADD 1.4 and Genome Build 37"
@@ -40,3 +43,9 @@ class ModelSetupXGBoost0721(ModelSetup):
             )
         )
         self.model_feats = self.model.feature_names
+
+    def impute_values(self):
+        return self.cadd_values.get_impute_values()
+
+    def cadd_vars(self):
+        return self.cadd_values.get_cadd_features()

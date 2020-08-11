@@ -1,10 +1,12 @@
 from src.logger import Logger
 from src.global_manager import CapiceManager
+from src.preprocess import PreProcess
 
 
 class Main:
     def __init__(self, input_loc, output_loc, log_loc,
                  genome_build, cadd_build, verbose):
+        # Order is important here
         self.manager = CapiceManager()
         self.manager.set_verbose(verbose)
         self.manager.set_log_loc(log_loc)
@@ -12,6 +14,7 @@ class Main:
         self.verbose = verbose
         self.log.info('Verbose -v / --verbose confirmed: '
                       '{}'.format(self.verbose))
+        # Order is less important here
         self.log.info('Arguments passed. Starting program.')
         self.infile = input_loc
         self.log.info('Input argument -i / --input confirmed: '
