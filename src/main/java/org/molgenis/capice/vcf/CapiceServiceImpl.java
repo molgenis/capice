@@ -2,7 +2,6 @@ package org.molgenis.capice.vcf;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -26,12 +25,11 @@ public class CapiceServiceImpl implements CapiceService {
   @Override
   public void mapPredictionsToVcf(Settings settings) {
     Path inputTsvPath = settings.getInputTsvPath();
-    File tempDir = settings.getTempDir();
     Path sortedTsvPath = null;
     try {
       LOGGER.info("sorting tsv ...");
       sortedTsvPath = Files.createTempFile(null, null);
-      tsvSorter.sortTsv(inputTsvPath, sortedTsvPath, tempDir);
+      tsvSorter.sortTsv(inputTsvPath, sortedTsvPath);
       LOGGER.info("done sorting tsv");
 
       LOGGER.info("mapping tsv to vcf...");

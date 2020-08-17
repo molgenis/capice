@@ -2,7 +2,6 @@ package org.molgenis.capice;
 
 import static java.lang.String.format;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
@@ -15,8 +14,6 @@ class AppCommandLineOptions {
   static final String OPT_INPUT_LONG = "input";
   static final String OPT_OUTPUT = "o";
   static final String OPT_OUTPUT_LONG = "output";
-  static final String OPT_TEMP = "t";
-  static final String OPT_TEMP_LONG = "temp";
   static final String OPT_FORCE = "f";
   static final String OPT_FORCE_LONG = "force";
   static final String OPT_DEBUG = "d";
@@ -40,12 +37,6 @@ class AppCommandLineOptions {
             .hasArg(true)
             .longOpt(OPT_OUTPUT_LONG)
             .desc("Output VCF file (.vcf.gz).")
-            .build());
-    appOptions.addOption(
-        Option.builder(OPT_TEMP)
-            .hasArg(true)
-            .longOpt(OPT_TEMP_LONG)
-            .desc("Temp dir, can be used if default system temp dir is unavailable")
             .build());
     appOptions.addOption(
         Option.builder(OPT_FORCE)
@@ -77,7 +68,6 @@ class AppCommandLineOptions {
   static void validateCommandLine(CommandLine commandLine) {
     validateInput(commandLine);
     validateOutput(commandLine);
-    validateTemp(commandLine);
   }
 
   private static void validateInput(CommandLine commandLine) {
@@ -117,24 +107,6 @@ class AppCommandLineOptions {
     if (!commandLine.hasOption(OPT_FORCE) && Files.exists(outputPath)) {
       throw new IllegalArgumentException(
           format("Output file '%s' already exists", outputPath.toString()));
-    }
-  }
-
-  private static void validateTemp(CommandLine commandLine) {
-    if (!commandLine.hasOption(OPT_TEMP)) {
-      return;
-    }
-
-    File tempDir = Path.of(commandLine.getOptionValue(OPT_TEMP)).toFile();
-
-    if (!tempDir.exists()) {
-      throw new IllegalArgumentException(
-          format("Temp directory '%s' does not exist", tempDir.toString()));
-    }
-
-    if (!tempDir.isDirectory()) {
-      throw new IllegalArgumentException(
-          format("Temp directory '%s' is not a directory", tempDir.toString()));
     }
   }
 }

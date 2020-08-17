@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class TsvSorterImpl implements TsvSorter {
 
   @Override
-  public void sortTsv(Path inputTsv, Path outputTsv, File tempDir) {
+  public void sortTsv(Path inputTsv, Path outputTsv) {
     CsvSortOptions sortOptions =
         new CsvSortOptions.Builder(
                 CsvExternalSort.DEFAULTMAXTEMPFILES,
@@ -33,7 +33,7 @@ public class TsvSorterImpl implements TsvSorter {
     try {
       List<File> sortInBatch =
           CsvExternalSort.sortInBatch(
-              inputTsv.toFile(), tempDir, sortOptions);
+              inputTsv.toFile(), null , sortOptions);
       CsvExternalSort.mergeSortedFiles(sortInBatch, outputTsv.toFile(), sortOptions, true);
     } catch (IOException e) {
       throw new UncheckedIOException(e);

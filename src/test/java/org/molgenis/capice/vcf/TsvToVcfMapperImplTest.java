@@ -46,7 +46,7 @@ class TsvToVcfMapperImplTest {
     Path inputPath = Paths.get("src", "test", "resources", "sorted.tsv");
     Path outputVcfPath = sharedTempDir.resolve("output.vcf.gz");
 
-    Settings settings = new Settings(inputPath, outputVcfPath, true, "capice2vcf", "test", null);
+    Settings settings = new Settings(inputPath, outputVcfPath, true, "capice2vcf", "test");
 
     tsvToVcfMapper.map(inputPath, outputVcfPath, settings);
 

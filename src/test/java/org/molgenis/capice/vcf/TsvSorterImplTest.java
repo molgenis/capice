@@ -23,7 +23,7 @@ class TsvSorterImplTest {
 
     TsvSorter tsvSorter = new TsvSorterImpl();
 
-    tsvSorter.sortTsv(inputPath, outputPath, sharedTempDir.toFile());
+    tsvSorter.sortTsv(inputPath, outputPath);
 
     String actual = Files.readString(outputPath, StandardCharsets.UTF_8).replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
 

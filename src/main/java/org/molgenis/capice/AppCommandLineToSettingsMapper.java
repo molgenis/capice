@@ -3,9 +3,7 @@ package org.molgenis.capice;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_FORCE;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_INPUT;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_OUTPUT;
-import static org.molgenis.capice.AppCommandLineOptions.OPT_TEMP;
 
-import java.io.File;
 import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
 import org.molgenis.capice.vcf.Settings;
@@ -35,13 +33,8 @@ public class AppCommandLineToSettingsMapper {
       outputPath = Path.of(commandLine.getOptionValue(OPT_INPUT) + ".vcf.gz");
     }
 
-    File tempDir = null;
-    if (commandLine.hasOption(OPT_TEMP)) {
-      tempDir = Path.of(commandLine.getOptionValue(OPT_TEMP)).toFile();
-    }
-
     boolean overwriteOutput = commandLine.hasOption(OPT_FORCE);
 
-    return new Settings(inputPath, outputPath, overwriteOutput, appName, appVersion, tempDir);
+    return new Settings(inputPath, outputPath, overwriteOutput, appName, appVersion);
   }
 }

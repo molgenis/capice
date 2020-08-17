@@ -34,10 +34,10 @@ class CapiceServiceTest {
     Path inputPath = Paths.get("src", "test", "resources", "input.tsv");
     Path outputVcfPath = sharedTempDir.resolve("output.vcf.gz");
 
-    Settings settings = new Settings(inputPath,outputVcfPath,true,"capice2vcf", "test", null);
+    Settings settings = new Settings(inputPath,outputVcfPath,true,"capice2vcf", "test");
     capiceService.mapPredictionsToVcf(settings);
 
-    verify(tsvSorter).sortTsv(eq(inputPath),any(),eq(null));
+    verify(tsvSorter).sortTsv(eq(inputPath),any());
     verify(tsvToVcfMapper).map(any(),eq(outputVcfPath),eq(settings));
   }
 }
