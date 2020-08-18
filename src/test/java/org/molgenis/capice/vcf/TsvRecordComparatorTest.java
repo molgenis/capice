@@ -50,12 +50,92 @@ class TsvRecordComparatorTest {
   }
 
   @Test
+  void compareChrom3b() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("Y_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("1_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
   void compareChrom4() {
     TsvRecordComparator comparator = new TsvRecordComparator();
     CSVRecord csvRecord1 = mock(CSVRecord.class);
     doReturn("MT_12345_A_T").when(csvRecord1).get(0);
     CSVRecord csvRecord2 = mock(CSVRecord.class);
     doReturn("Y_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4b() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("X_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("Y_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(-1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4c() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("Y_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("X_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4d() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("Y_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("MT_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(-1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4e() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("NC123_1234_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("NC123_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(-11111,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4f() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("NC123_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("NC234_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(-1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4g() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("NC234_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("NC123_12345_A_T").when(csvRecord2).get(0);
+    assertEquals(1,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void compareChrom4h() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("NC123_1234_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("X_12345_A_T").when(csvRecord2).get(0);
     assertEquals(1,comparator.compare(csvRecord1, csvRecord2));
   }
 
@@ -76,6 +156,16 @@ class TsvRecordComparatorTest {
     doReturn("1_12345_A_T").when(csvRecord1).get(0);
     CSVRecord csvRecord2 = mock(CSVRecord.class);
     doReturn("1_1234678_A_T").when(csvRecord2).get(0);
+    assertEquals(-1222333,comparator.compare(csvRecord1, csvRecord2));
+  }
+
+  @Test
+  void comparePos3() {
+    TsvRecordComparator comparator = new TsvRecordComparator();
+    CSVRecord csvRecord1 = mock(CSVRecord.class);
+    doReturn("X_12345_A_T").when(csvRecord1).get(0);
+    CSVRecord csvRecord2 = mock(CSVRecord.class);
+    doReturn("X_1234678_A_T").when(csvRecord2).get(0);
     assertEquals(-1222333,comparator.compare(csvRecord1, csvRecord2));
   }
 
