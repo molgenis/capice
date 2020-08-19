@@ -2,14 +2,22 @@ os: linux
 dist: bionic
 language: java
 jdk: openjdk11
-
 cache:
   directories:
-    - "$HOME/.m2"
+  - "$HOME/.m2"
 addons:
   sonarcloud:
     organization: molgenis
     token:
       secure: rodJbxT1wtwDbj0/FvOqAdJwDCiSjfKCZgFQD7Wt3YiyCiMg6ZMxnxXL3+eog1JRiz3W0bYnTjP2Apxa2ZVdNFxbJ1uPwHDEC3+P0qveyHgQZrpFa53b70lb6iPvST6/Fqv/b6uN7eFm0FVdT4RJYq1jArq+9mDba93t6uJTwPF3ski560YY5hOeP4mkL+piFSjqrzQWUvwPz5vAeCvSHonnlyS/VZtGsDL8P2SaOJ+A1Y1YEQD3g2OBQSWsdZUrF6Omks1h3RBn8x/wZyqC0GOoN9z7v+xiCXOpQtdLujgTEdOREhgeOYXiqkmnehr9I7Z216lEUZGb/bTGo/HHjg5GK/HwLg35yietzpqL9QNNkrPK4RH6vk8MXkqWsDNGmhOOz1cuKEBbPaw4owTNe3gLYlnCSVy8SyI51vQX1A+LjtBunkGfWnaX7auu3dQ4JCB+RYrscHrjHvJuSRUhWK1PBAxXMnMjW2OzzIZFK4dlorJFRioMcPQ9PKJZp1F2XUFfqeWeuE5x7zN7ocoDi5xop3TwVai/VJ9Eb56Jffk2S5d9icI45MbY2+FdGO7NREuA3Mp3JkD0w/+OQvo+lJQN9MThhLk+pgLplYNldzpw5dHQl2pCiFwL5bEVpxmyVBv4TsZEANVyRdr9/aymZswDCc/sCZQrTHoi79SyijM=
 script:
-  - mvn clean install sonar:sonar -Pcoverage -Dsonar.projectKey=molgenis_capice
+- mvn clean install sonar:sonar -Pcoverage -Dsonar.projectKey=molgenis_capice
+deploy:
+  provider: releases
+  api_key:
+    secure: pwL5deJJATLXinUdJZdIzk9dIt8kxrAYCI05d8vEinUe/CEGYnmUBIILK2VaUtjVnX8zSlPH12I6BekldhzwBty6VdyywWwDYUYuTwp4J1EFm93eaydPnLkE0ogSNTDNIgc6MPx7L6i2sYVCy+2CMknJZAg1+R218JXsofT/Gr1I2skKyEej5xQgNNtmjw1xRngpLtsA802smydx2sWeUIpEvBYpL334MgUUmHTwEPxEcJ9Yq7TvYABDOYPaMrCjK0/GVqmd60JF30NwNs3XOKOW9cZFN7JzR7kqjJz7YeLjB+zMFF3mWVZ1E+IF5sAfpXkJ/nTz+2hDqQjkaOwogf2uDu8jG48JidX3r0qSYmAZ3eei//6xvhGmEbK/ebv6A/ysKxe//b6weusvzgzw0v9DB+uQkoxm6O2et6Rx2pVtHqBda3YDx2e7OdPUyuhelVI68IYkHU8okJJDU8s1ueoPGHa3M1jt4ypTHSBuyiS00wHmi7qEaJG2+08cdSiEMSuyyuutZH2WsWls/e1BRPA6BpjG8ixTjZM5P52q0qal9YUEQfdftVCG7NtRING7ga4fQEGLGeDR5BsO2uLg5LuLenKsKtBKl3kQsaTu8B8w4uJ0J2+fjW2WxjIVznu2NpiN8p0WP4e01L2XbRQDOCjk+NOiezq+QZKgmqcY1r0=
+  file: target/capice2vcf.jar
+  prerelease: true
+  on:
+    tags: true
+  edge: true # opt in to dpl v2
