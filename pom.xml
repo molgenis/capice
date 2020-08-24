@@ -13,7 +13,7 @@
 
   <groupId>org.molgenis</groupId>
   <artifactId>capice</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.3.0</version>
 
   <name>capice</name>
   <description>Consequence-Agnostic Pathogenicity Interpretation of Clinical Exome variations</description>
