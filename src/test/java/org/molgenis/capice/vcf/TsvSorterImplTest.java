@@ -19,7 +19,7 @@ class TsvSorterImplTest {
   @Test
   void sortTsv() throws IOException {
 
-    Path inputPath = Paths.get("src", "test", "resources", "input.tsv");
+    Path inputPath = Paths.get("src", "test", "resources", "input_predictions.tsv");
     Path outputPath = sharedTempDir.resolve("output.tsv");
 
     TsvSorter tsvSorter = new TsvSorterImpl();

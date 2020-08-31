@@ -47,4 +47,13 @@ public class CapiceServiceImpl implements CapiceService {
       }
     }
   }
+
+  @Override
+  public void mapPrecomputedScores(Settings settings) {
+    Path inputTsvPath = settings.getInputTsvPath();
+
+    LOGGER.info("mapping tsv to vcf...");
+    tsvToVcfMapper.mapPrecomputedScores(inputTsvPath, settings.getOutputVcfPath(), settings);
+    LOGGER.info("done mapping tsv to vcf");
+  }
 }
