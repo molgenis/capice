@@ -16,6 +16,8 @@ class AppCommandLineOptions {
   static final String OPT_OUTPUT_LONG = "output";
   static final String OPT_FORCE = "f";
   static final String OPT_FORCE_LONG = "force";
+  static final String OPT_TYPE = "t";
+  static final String OPT_TYPE_LONG = "type";
   static final String OPT_DEBUG = "d";
   static final String OPT_DEBUG_LONG = "debug";
   static final String OPT_VERSION = "v";
@@ -30,7 +32,7 @@ class AppCommandLineOptions {
             .hasArg(true)
             .required()
             .longOpt(OPT_INPUT_LONG)
-            .desc("Input CAPICE predictions file (.tsv).")
+            .desc("Input CAPICE predictions file (.tsv) or precomputed scores file (.tsv.gz).")
             .build());
     appOptions.addOption(
         Option.builder(OPT_OUTPUT)
@@ -42,6 +44,12 @@ class AppCommandLineOptions {
         Option.builder(OPT_FORCE)
             .longOpt(OPT_FORCE_LONG)
             .desc("Override the output file if it already exists.")
+            .build());
+    appOptions.addOption(
+        Option.builder(OPT_TYPE)
+            .hasArg(true)
+            .longOpt(OPT_TYPE_LONG)
+            .desc("Input type (precomputed_scores or predictions). Default: predictions.")
             .build());
     APP_OPTIONS = appOptions;
 
@@ -68,6 +76,7 @@ class AppCommandLineOptions {
   static void validateCommandLine(CommandLine commandLine) {
     validateInput(commandLine);
     validateOutput(commandLine);
+    validateType(commandLine);
   }
 
   private static void validateInput(CommandLine commandLine) {
@@ -85,9 +94,9 @@ class AppCommandLineOptions {
           format("Input file '%s' is not readable.", inputPath.toString()));
     }
     String inputPathStr = inputPath.toString();
-    if (!inputPathStr.endsWith(".tsv")) {
+    if (!inputPathStr.endsWith(".tsv") && !inputPathStr.endsWith(".tsv.gz")) {
       throw new IllegalArgumentException(
-          format("Input file '%s' is not a .tsv file.", inputPathStr));
+          format("Input file '%s' is not a .tsv or .tsv.gz file.", inputPathStr));
     }
   }
 
@@ -107,6 +116,22 @@ class AppCommandLineOptions {
     if (!commandLine.hasOption(OPT_FORCE) && Files.exists(outputPath)) {
       throw new IllegalArgumentException(
           format("Output file '%s' already exists", outputPath.toString()));
+    }
+  }
+
+  private static void validateType(CommandLine commandLine) {
+    if (!commandLine.hasOption(OPT_TYPE)) {
+      return;
+    }
+
+    String typeStr = commandLine.getOptionValue(OPT_TYPE);
+    switch (typeStr) {
+      case "precomputed_scores":
+      case "predictions":
+        break;
+      default:
+        throw new IllegalArgumentException(
+            format("Type '%s' unknown. Valid types: precomputed_scores, predictions", typeStr));
     }
   }
 }

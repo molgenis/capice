@@ -84,7 +84,17 @@ public class AppCommandLineRunner implements CommandLineRunner {
       }
 
       LOGGER.info("mapping tsv from to '{}' to vcf...", settings.getInputTsvPath());
-      capiceService.mapPredictionsToVcf(settings);
+      FileType fileType = settings.getFileType();
+      switch (fileType) {
+        case PRECOMPUTED_SCORES:
+          capiceService.mapPrecomputedScores(settings);
+          break;
+        case PREDICTIONS:
+          capiceService.mapPredictionsToVcf(settings);
+          break;
+        default:
+          throw new IllegalArgumentException(String.format("unknown file type %s", fileType));
+      }
       LOGGER.info("created vcf '{}'", outputReportPath);
     } catch (Exception e) {
       LOGGER.error("", e);

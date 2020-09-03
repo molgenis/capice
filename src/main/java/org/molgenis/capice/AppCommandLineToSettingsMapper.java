@@ -3,6 +3,7 @@ package org.molgenis.capice;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_FORCE;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_INPUT;
 import static org.molgenis.capice.AppCommandLineOptions.OPT_OUTPUT;
+import static org.molgenis.capice.AppCommandLineOptions.OPT_TYPE;
 
 import java.nio.file.Path;
 import org.apache.commons.cli.CommandLine;
@@ -35,6 +36,22 @@ public class AppCommandLineToSettingsMapper {
 
     boolean overwriteOutput = commandLine.hasOption(OPT_FORCE);
 
-    return new Settings(inputPath, outputPath, overwriteOutput, appName, appVersion);
+    FileType fileType;
+    if (commandLine.hasOption(OPT_TYPE)) {
+      String optionStr = commandLine.getOptionValue(OPT_TYPE);
+      switch (optionStr) {
+        case "precomputed_scores":
+          fileType = FileType.PRECOMPUTED_SCORES;
+          break;
+        case "predictions":
+          fileType = FileType.PREDICTIONS;
+          break;
+        default:
+          throw new IllegalArgumentException(String.format("invalid file type '%s'", optionStr));
+      }
+    } else {
+      fileType = FileType.PREDICTIONS;
+    }
+    return new Settings(inputPath, outputPath, overwriteOutput, fileType, appName, appVersion);
   }
 }

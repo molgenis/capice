@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.molgenis.capice.FileType;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,10 +32,10 @@ class CapiceServiceTest {
   }
   @Test
   void mapPredictionsToVcf() throws IOException {
-    Path inputPath = Paths.get("src", "test", "resources", "input.tsv");
+    Path inputPath = Paths.get("src", "test", "resources", "input_predictions.tsv");
     Path outputVcfPath = sharedTempDir.resolve("output.vcf.gz");
 
-    Settings settings = new Settings(inputPath,outputVcfPath,true,"capice2vcf", "test");
+    Settings settings = new Settings(inputPath,outputVcfPath,true, FileType.PREDICTIONS, "capice2vcf", "test");
     capiceService.mapPredictionsToVcf(settings);
 
     verify(tsvSorter).sortTsv(eq(inputPath),any());
