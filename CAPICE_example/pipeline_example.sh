@@ -8,7 +8,7 @@ log_path=$5
 
 CADD.sh -a -g GRCh37 -o ${cadd_annotated_path}.gz $input_path
 
-python /groups/umcg-gcc/tmp04/umcg-sli/variant_prioritization/CLI/commands_scripts/model_inference.py \
+python ../CAPICE_scripts/model_inference.py \
 --input_path $cadd_annotated_path \
 --model_path $model_path \
 --prediction_savepath $prediction_savepath \
