@@ -51,4 +51,21 @@ class AppIT {
 
     assertEquals(expected, actual);
   }
+
+  @Test
+  void testPrecomputedScoresGzipped() throws IOException {
+    String inputFile = ResourceUtils.getFile("classpath:input_precomputed_scores.tsv.gz").toString();
+    String outputFile = sharedTempDir.resolve("capice_precomputed_scores_actual.vcf.gz").toString();
+
+    String[] args = {"-i", inputFile, "-o", outputFile, "-f", "-t", "precomputed_scores"};
+    SpringApplication.run(App.class, args);
+
+    String actual = getVcfGzAsString(Path.of(outputFile)).replaceAll("##CAP=.*", "##CAP=test");
+    Path expectedPath = Paths.get("src", "test", "resources", "capice_precomputed_scores.vcf");
+    String expected =
+        Files.readString(expectedPath, StandardCharsets.UTF_8)
+            .replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
+
+    assertEquals(expected, actual);
+  }
 }

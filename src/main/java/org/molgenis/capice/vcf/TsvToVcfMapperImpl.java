@@ -134,7 +134,7 @@ public class TsvToVcfMapperImpl implements TsvToVcfMapper {
   }
 
   private static Reader createInputReader(Path inputTsvPath) throws IOException {
-    if (inputTsvPath.endsWith(".gz")) {
+    if (inputTsvPath.toString().endsWith(".gz")) {
       return new InputStreamReader(
           new GZIPInputStream(new FileInputStream(inputTsvPath.toFile())), UTF_8);
     } else {
