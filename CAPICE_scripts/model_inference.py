@@ -211,12 +211,13 @@ def make_predictions(preprocessed_data, prediction_savepath, model_path):
     if int(xgb.__version__.split('.')[0]) < 1:
         model_features = model.feature_names
         input_matrix = xgb.DMatrix(preprocessed_data[model_features])
+        preprocessed_data['probabilities'] = model.predict(input_matrix)
     else:
         # Very much illegal to access a private class in python
         # (marked by _Class)
         model_features = model._Booster.feature_names
         input_matrix = preprocessed_data[model_features]
-    preprocessed_data['probabilities'] = model.predict(input_matrix)
+        preprocessed_data['probabilities'] = model.predict_proba(input_matrix)[:, 1]
     preprocessed_data['ID'] = '.'
     tellPathogenic_prediction = lambda \
         x: "Pathogenic" if x > 0.02 else "Neutral"
