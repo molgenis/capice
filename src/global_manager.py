@@ -9,6 +9,9 @@ class CapiceManager:
             self.threshold = None
             self.verbose = False
             self.log_loc = None
+            self.genome_build = None
+            self.cadd_version = None
+            self.force = False
 
         def set_log_loc(self, log_loc: str):
             self.log_loc = log_loc
@@ -21,6 +24,24 @@ class CapiceManager:
 
         def get_threshold(self):
             return self.threshold
+
+        def set_grch_build(self, grch_build: int):
+            self.genome_build = grch_build
+
+        def get_grch_build(self):
+            return self.genome_build
+
+        def set_cadd_version(self, cadd_version: float):
+            self.cadd_version = cadd_version
+
+        def get_cadd_version(self):
+            return self.cadd_version
+
+        def set_force(self, force: bool):
+            self.set_force(force)
+
+        def get_force(self):
+            return self.force
 
         def set_verbose(self, verbose: bool):
             self.verbose = verbose
@@ -55,6 +76,48 @@ class CapiceManager:
         """
         Get the threshold value.
         :return: float
+        """
+        pass
+
+    def set_grch_build(self, grch_build: int):
+        """
+        Function to set the Genome GRCh build globally
+        :param grch_build: integer
+        """
+        pass
+
+    def get_grch_build(self):
+        """
+        Function to get the global Genome GRCh build
+        :return: int
+        """
+        pass
+
+    def set_cadd_version(self, cadd_version: float):
+        """
+        Function to set the CADD annotation version globally
+        :param cadd_version: float
+        """
+        pass
+
+    def get_cadd_version(self):
+        """
+        Function to get the global CADD annotation version
+        :return: float
+        """
+        pass
+
+    def set_force(self, force: bool):
+        """
+        Function to set the force output, overwrites any result that is already there.
+        :param force: bool
+        """
+        pass
+
+    def get_force(self):
+        """
+        Function to get the global force output boolean
+        :return: bool
         """
         pass
 

@@ -5,7 +5,7 @@ from src.preprocess import PreProcess
 
 class Main:
     def __init__(self, input_loc, output_loc, log_loc,
-                 genome_build, cadd_build, verbose):
+                 genome_build, cadd_build, force, verbose):
         # Order is important here
         self.manager = CapiceManager()
         self.manager.set_verbose(verbose)
@@ -30,4 +30,7 @@ class Main:
                       '{}'.format(self.cadd_build))
 
     def run(self):
+        """
+        Function to make CAPICE run
+        """
         pass

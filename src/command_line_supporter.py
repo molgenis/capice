@@ -71,6 +71,11 @@ class ArgumentSupporter:
                               '--verbose',
                               action='store_true',
                               help='When called, will print verbose messages.')
+
+        optional.add_argument('-f',
+                              '--force',
+                              action='store_true',
+                              help='Overwrites output if it already exists.')
         return parser
 
     def get_argument(self, argument_key):
