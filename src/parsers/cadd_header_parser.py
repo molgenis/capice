@@ -8,17 +8,20 @@ class CaddHeaderParser:
     Class to parse just the header of the CADD file
     """
     def __init__(self, is_gzipped: bool, cadd_file_loc: str):
+        self.log = Logger().get_logger()
+        self.log.info('Starting to parse CADD file header.')
         self.is_gzipped = is_gzipped
         self.cadd_file_loc = cadd_file_loc
         self.header = None
         self.header_build = None
         self.header_build = None
         self.header_present = False
-        self.log = Logger().get_logger()
         self._parse_header()
         if self.header_present:
-            self.log.info("CADD file header identified: {}".format(self.header))
+            self.log.info("CADD file header successfully identified: {}".format(self.header))
             self._get_header_version_and_grch_build()
+        else:
+            self.log.warning('Unable to parse CADD file header, header not located. Does the header start with "##"?')
 
     def _parse_header(self):
         if self.is_gzipped:

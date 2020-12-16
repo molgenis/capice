@@ -1,118 +1,75 @@
+from src.utilities.utilities import check_file_exists
+from src.logger import Logger
+import os
+
+
 class Exporter:
     """
     Singleton class used to export the files produced by CAPICE.
     """
     class __Exporter:
         def __init__(self):
-            # Prepare output folder
-            self.out_dir = os.path.join(get_project_root_dir(),
-                                        'model_export')
-
-            # Setup init variables
-            self.today = datetime.datetime.now()
-            self.export = False
-
-            # Output json
-            self.output_file = self._create_output_filename()
-
-            # Initialize logger
+            self.force = False
             self.log = Logger().get_logger()
 
-        def set_export_command(self, export_command):
-            """
-            Method to set the export command to -export command line argument.
-            :param export_command: bool
-            """
-            if not isinstance(export_command, bool):
-                raise ValueError("Given argument must be boolean")
-            self.export = export_command
+        def set_force(self, force):
+            self.force = force
 
-            # Prepare output directory
-            if self.export:
-                prepare_output_dir(self.out_dir)
+        def get_force(self):
+            return self.force
 
-            self.log.debug("Export, command set to: {}".format(
-                self.export))
-
-        def export_prototypes(self, export_prototypes):
-            """
-            Exports prototypes to project root/model_export/
-            :param export_prototypes: numpy.array([n_prototypes, n_features+1])
-            """
-            if self.export:
-                export = pd.DataFrame(export_prototypes)
-                export.to_csv(os.path.join(self.out_dir,
-                                           'prototypes_{}.csv'.format(
-                                               self.today.strftime(
-                                                   "%d_%B_%Y_%H%M%S"))),
-                              index=True, header=True)
-                self.log.info("Exported prototypes matrix to: {}".format(
-                    self.out_dir))
-
-        def export_omega(self, omega_matrix):
-            """
-            Exports omega matrix to project root/model_export/
-            :param omega_matrix: numpy.array([n_features, n_dim])
-            """
-            if self.export:
-                export = pd.DataFrame(omega_matrix)
-                export.to_csv(os.path.join(self.out_dir,
-                                           'relevance_matrix_{}.csv'.format(
-                                               self.today.strftime(
-                                                   "%d_%B_%Y_%H%M%S"))),
-                              index=True, header=True)
-                self.log.info("Exported omega matrix to: {}".format(
-                    self.out_dir))
-
-        def export_result_metrics(self, results):
-            """
-            Exports the result metrics put in results
-            :param results: array-like
-            """
-            if self.export:
-                export = pd.DataFrame(results)
-                export.to_csv(os.path.join(self.out_dir,
-                                           'export_metrics_{}.csv'.format(
-                                               self.today.strftime(
-                                                   "%d_%B_%Y_%H%M%S"))),
-                              index=False, header=True)
-                self.log.info("Exported result metrics to: {}".format(
-                    self.out_dir))
-
-        def add_setting(self, key, value):
-            """
-            Adds imputation/split/model setting to application_settings.json
-            :param key: object.get_name()
-            :param value: object.settings
-            """
-            if self.export:
-                output = {key: value}
-                if not check_file_exists(self.output_file):
-                    with open(self.output_file, 'wt') as f:
-                        json.dump(output, f)
-                else:
-                    with open(self.output_file, 'r') as f:
-                        data = json.load(f)
-                    data[key] = value
-                    with open(self.output_file, 'wt') as f:
-                        json.dump(data, f)
-                self.log.info("Added setting for {} to {}".format(
-                    key, self.output_file
+        def export_filename_ready(self, file_path, file_name: str, extension: str):
+            overwrite = self.force
+            path_and_filename = os.path.join(file_path, file_name)
+            full_path = os.path.join(file_path, file_name + extension)
+            export_path = None
+            if not check_file_exists(full_path):
+                self.log.info('No file found at {}, save to create.'.format(full_path))
+                export_path = full_path
+            elif overwrite and check_file_exists(full_path):
+                self.log.info('Found existing file at {}, removing file for overwriting.'.format(full_path))
+                os.remove(full_path)
+                export_path = full_path
+            else:
+                self.log.info('Found existing file at {}, not able to overwrite. Creating new filename.'.format(
+                    full_path
                 ))
-
-        def _create_output_filename(self):
-            return os.path.join(self.out_dir,
-                                'application_settings_{}.json'.format(
-                                    self.today.strftime("%d_%B_%Y_%H%M%S")))
-
-        def is_export(self):
-            """
-            Returns the export boolean.
-            :return: boolean
-            """
-            return self.export
+                export_exists = True
+                extension_counter = 1
+                while export_exists:
+                    attempted_file = path_and_filename + "_{}".format(extension_counter) + extension
+                    if not check_file_exists(attempted_file):
+                        self.log.info('Able to create {}'.format(attempted_file))
+                        export_exists = False
+                        export_path = attempted_file
+                    extension_counter += 1
+            return export_path
 
     instance = None
+
+    def set_force(self, force):
+        """
+        Function to set the global output Force command
+        :param force: bool
+        """
+        pass
+
+    def get_force(self):
+        """
+        Function to get the global output Force command
+        :return: bool
+        """
+        pass
+
+    def export_filename_ready(self, file_path, file_name, extension: str):
+        """
+        Function to prepare a file to be exported utilizing the Force command
+        :param file_path: path-like, path to where the file should be put
+        :param file_name: str: name of the file without the extension
+        :param extension: str: extension of the file (for example .tsv.gz for a gzipped tab separated file)
+        :return: path-like, full path of the new file
+        """
+        pass
 
     def __new__(cls):
         """
@@ -138,6 +95,26 @@ class Exporter:
         """
         return getattr(self.instance, name)
 
-    def is_file_duplicated(self, file_loc, file_name, file_extension):
 
-        pass
+def create_log_export_name(file_path, file_name):
+    """
+    Function to create the log file name
+    :param file_path: path-like, path to put the log file in
+    :param file_name: str, name of the logfile
+    :return: path-like, full path of the exporting log file
+    """
+    full_export = os.path.join(file_path, file_name + '.log')
+    partial_export = os.path.join(file_path, file_name)
+    export_path = None
+    if check_file_exists(full_export):
+        log_file_exist = True
+        counter = 1
+        while log_file_exist:
+            attempted_filename = partial_export + '_{}.log'.format(counter)
+            if not check_file_exists(attempted_filename):
+                log_file_exist = False
+                export_path = attempted_filename
+            counter += 1
+    else:
+        export_path = full_export
+    return export_path

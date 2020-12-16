@@ -1,4 +1,3 @@
-from src.errors.errors import ParserError
 from src.logger import Logger
 import pandas as pd
 
@@ -30,5 +29,10 @@ class CaddParser:
             header = 1
         else:
             header = 0
-        cadd_file = pd.read_csv(cadd_file_loc, sep=self.sep, header=header)
+        cadd_file = pd.read_csv(cadd_file_loc, sep=self.sep, header=header, na_values='.')
+        cadd_file.dropna(how='all')
+        self.log.info('CADD file at {} loaded with {} samples.'.format(
+            cadd_file_loc,
+            cadd_file.shape[0]
+        ))
         return cadd_file

@@ -21,14 +21,15 @@
 
 import logging
 from datetime import datetime
-import os
 from src.global_manager import CapiceManager
+from src.exporter import create_log_export_name
 
 
 class Logger:
     
     class __Logger:
         def __init__(self):
+            self.final_log_loc = None
             self.global_settings = CapiceManager()
             self.log_level = self.set_loglevel()
             self.output_loc = self.global_settings.get_log_loc()
@@ -42,17 +43,10 @@ class Logger:
 
         def load_logger(self):
             handlers = [logging.StreamHandler()]
-            if not os.path.isfile(self.output_loc):
-                now = datetime.now()
-                out_file = os.path.join(self.output_loc,
-                                        'capice_{}.log'.format(
-                                            now.strftime(
-                                                "%H%M%S%f_%d%m%Y"
-                                            )
-                                        )
-                                        )
-            else:
-                out_file = self.output_loc
+            now = datetime.now()
+            out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
+            out_file = create_log_export_name(self.output_loc, out_file_name)
+            self.final_log_loc = out_file
             handlers.append(logging.FileHandler(out_file))
             logging.basicConfig(
                 level=self.log_level,
@@ -65,11 +59,21 @@ class Logger:
 
         def get_logger(self):
             return self.logger
+
+        def get_log_loc(self):
+            return self.final_log_loc
         
     def get_logger(self):
         """
         Function to get the logger instance.
         :return: logger instance
+        """
+        pass
+
+    def get_log_loc(self):
+        """
+        Function to get the real location where the logfile is stored for this instance of CAPICE.
+        :return: path-like
         """
         pass
 

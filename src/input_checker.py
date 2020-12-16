@@ -47,7 +47,6 @@ class LogChecker:
         self.log_loc = log_loc
         self.output_loc = output_loc
         self.verbose = verbose
-        self._check_log_loc()
 
     @staticmethod
     def _check_python_version():
@@ -56,15 +55,23 @@ class LogChecker:
         if sys.version_info[1] < 6:
             raise VersionError('Python3.6 must at least be installed.')
 
-    def _check_log_loc(self):
+    def check_log_loc(self):
+        """
+        Check both the log_loc and output_loc if they are valid
+        :return: path-like, the directory to put the log file in
+        """
+        log_loc = None
         if self.log_loc:
             if not check_dir_exists(self.log_loc):
                 warnings.warn("Output location {} not found, creating.".format(self.log_loc))
                 prepare_dir(self.log_loc)
+                log_loc = self.log_loc
         else:
             if not check_dir_exists(self.output_loc):
                 warnings.warn("Output location {} not found, creating.".format(self.output_loc))
                 prepare_dir(self.output_loc)
+                log_loc = self.output_loc
+        return log_loc
 
     def _check_verbose(self):
         if not isinstance(self.verbose, bool):

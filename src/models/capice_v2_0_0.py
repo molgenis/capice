@@ -1,29 +1,15 @@
 from src.models.abstract_model import ModelSetup
-from src.data_files.cadd_features import Cadd_v14
-import xgboost as xgb
-import pickle
+from src.utilities.utilities import get_project_root_dir
+import os
 
 
 class ModelSetupXGBoost111(ModelSetup):
     """
     Model setup for XGBoost version 1.1.1, CADD 1.4 and genome build 37.
     """
-    def __init__(self):
-        self.model = None
-        self.model_feats = []
-        self.cadd_values = Cadd_v14()
-
-    def get_name(self):
-        return "XGBoost version 1.1.1, CADD 1.4 and Genome Build 37"
-
     @staticmethod
-    def get_xgb_version():
-        """
-        Known that XGBoost 1.1.1 is supported, has to be investigated
-        if future and past versions work with this setup.
-        """
-        if xgb.__version__ == '1.1.1':
-            return True
+    def get_name():
+        return "CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37."
 
     @staticmethod
     def get_supported_cadd_version():
@@ -33,23 +19,7 @@ class ModelSetupXGBoost111(ModelSetup):
     def get_supported_genomebuild_version():
         return 37
 
-    def predict(self, data):
-        self._load_model()
-        data['probabilites'] = self.model.predict_proba(
-            data[self.model_feats]
-        )[:, 1]
-        return data
-
-    def _load_model(self):
-        self.model = pickle.load(
-            open(
-                '../../CAPICE_model/xgb_booster37.pickle.dat', 'rb'
-            )
-        )
-        self.model_feats = self.model._Booster.feature_names
-
-    def impute_values(self):
-        return self.cadd_values.get_impute_values()
-
-    def cadd_vars(self):
-        return self.cadd_values.get_cadd_features()
+    @staticmethod
+    def _get_model_loc():
+        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_model', 'xgb_booster37.pickle.dat')
+        return model_loc
