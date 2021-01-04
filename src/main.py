@@ -1,11 +1,12 @@
 from src.logger import Logger
 from src.global_manager import CapiceManager
 from src.exporter import Exporter
-from src.preprocess import PreProcess
 from src.parsers.cadd_parser import CaddParser
 from src.parsers.cadd_header_parser import CaddHeaderParser
 from src.imputers.cadd_imputing import CaddImputing
 from src.checkers.cadd_version_checker import CaddVersionChecker
+from src.models.model_abstract import ModelSetup
+
 from capice import __program__, __author__, __version__
 
 
@@ -107,6 +108,7 @@ class Main:
         self.cadd_data = cadd_imputing.impute(self.cadd_data)
 
     def _preprocess(self, train: bool = False):
+
         pass
 
     def _predict(self):

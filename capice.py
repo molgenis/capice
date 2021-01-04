@@ -32,9 +32,9 @@ def main():
     # Initializing the manager
 
     manager = CapiceManager()
-    manager.set_force(force=force)
+    manager.set_force(force=force)  # Discussable if keep
     manager.set_log_loc(log_loc=log_loc)
-    manager.set_verbose(verbose)
+    manager.set_verbose(verbose)  # Discussable if keep
 
     # Checking the input arguments.
 

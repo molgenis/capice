@@ -1,4 +1,4 @@
-from src.data_files.__template_impute_values__ import TemplateImputeValues
+from src.data_files.imputing.impute_values_abstract import TemplateImputeValues
 
 
 class Cadd14Grch37(TemplateImputeValues):

@@ -20,7 +20,6 @@
 """
 
 import logging
-from datetime import datetime
 from src.global_manager import CapiceManager
 from src.exporter import create_log_export_name
 
@@ -43,7 +42,7 @@ class Logger:
 
         def load_logger(self):
             handlers = [logging.StreamHandler()]
-            now = datetime.now()
+            now = self.global_settings.get_now()
             out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
             out_file = create_log_export_name(self.output_loc, out_file_name)
             self.final_log_loc = out_file

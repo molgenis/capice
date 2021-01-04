@@ -8,7 +8,6 @@ class TemplateImputeValues(metaclass=ABCMeta):
         self.optional_feats = ['#Chrom', 'Pos', 'FeatureID']
 
     @staticmethod
-    @abstractmethod
     def get_name():
         return 'Template'
 
@@ -35,12 +34,10 @@ class TemplateImputeValues(metaclass=ABCMeta):
             return False
 
     @staticmethod
-    @abstractmethod
     def _cadd_features():
         return []
 
     @staticmethod
-    @abstractmethod
     def _impute_values():
         return {}
 

@@ -1,6 +1,10 @@
-from src.data_files.cadd14_grch37 import Cadd14Grch37
 from src.logger import Logger
+from importlib import import_module
+from src.utilities.utilities import get_project_root_dir
 import pandas as pd
+import glob
+import os
+import sys
 
 
 class CaddImputing:
@@ -12,11 +16,35 @@ class CaddImputing:
         self.grch_build = grch_build
         self.log = Logger().get_logger()
         self.log.info('Starting imputing.')
-        self.modules = [Cadd14Grch37()]
+        self.modules = []
         self.module = None
+        self._load_modules()
         self._is_correct_datafile_present()
         self.columns = []
         self.impute_values = {}
+
+    def _load_modules(self):
+        self.log.info('Identifying imputing full_dir_files.')
+        directory = os.path.join(get_project_root_dir(), 'src', 'data_files', 'imputing')
+        sys.path.append(directory)
+        usable_modules = []
+        for module in os.listdir(directory):
+            if module.endswith('.py'):
+                if not module.endswith('__.py') and not module.endswith('abstract.py'):
+                    usable_modules.append(module)
+        if len(usable_modules) < 1:
+            self._raise_no_module_found_error()
+        for module in usable_modules:
+            mod = import_module(module)
+            if "get_name" in dir(mod) and "_cadd_features" in dir(mod) and "_impute_values" in dir(mod):
+                self.modules.append(mod)
+        if len(self.modules) < 1:
+            self._raise_no_module_found_error()
+
+    def _raise_no_module_found_error(self):
+        error_message = 'No usable python files are found within the imputing directory!'
+        self.log.critical(error_message)
+        raise FileNotFoundError(error_message)
 
     def _is_correct_datafile_present(self):
         for module in self.modules:

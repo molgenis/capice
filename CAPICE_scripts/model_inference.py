@@ -184,7 +184,7 @@ def preprocess(imputed_data, processed_savepath=None, isTrain=False,
         catFeatNames_dict = {}
         for feature in feat_cadd_object:
             for feature_expandedname in model_features:
-                if feature in feature_expandedname:
+                if feature_expandedname.startswith(feature): # Not original, but for my own understanding
                     expandedname = '_'.join(feature_expandedname.split('_')[1:])
                     if feature in catFeatNames_dict:
                         catFeatNames_dict[feature].append(expandedname)

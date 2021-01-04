@@ -1,4 +1,4 @@
-from src.models.abstract_model import ModelSetup
+from src.models.model_abstract import ModelSetup
 from src.utilities.utilities import get_project_root_dir
 import os
 from xgboost import DMatrix
