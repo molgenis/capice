@@ -5,7 +5,7 @@ from src.parsers.cadd_parser import CaddParser
 from src.parsers.cadd_header_parser import CaddHeaderParser
 from src.imputers.cadd_imputing import CaddImputing
 from src.checkers.cadd_version_checker import CaddVersionChecker
-from src.models.model_abstract import ModelSetup
+from src.preprocessors.preprocessor import PreProcessor
 
 from capice import __program__, __author__, __version__
 

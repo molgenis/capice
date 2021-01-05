@@ -21,6 +21,11 @@ class ModelSetup(metaclass=ABCMeta):
 
     # Preprocessing stuff
 
+    @staticmethod
+    @abstractmethod
+    def get_preprocessing_name():
+        return "Template"
+
     def preprocess(self, dataset: pd.DataFrame):
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
@@ -100,7 +105,7 @@ class ModelSetup(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def get_name():
+    def get_model_name():
         pass
 
     @staticmethod
@@ -111,7 +116,7 @@ class ModelSetup(metaclass=ABCMeta):
         what CADD version is supported.
         :return: float
         """
-        pass
+        return None
 
     @staticmethod
     @abstractmethod
@@ -121,7 +126,7 @@ class ModelSetup(metaclass=ABCMeta):
         supported.
         :return: int
         """
-        pass
+        return None
 
     def predict(self, data: pd.DataFrame):
         """

@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import sys
 
 
 class Printf:
@@ -99,3 +100,17 @@ def convert_cla_to_float(cla: any):
         return float(cla[0])
     else:
         return cla
+
+
+def load_modules(path):
+    """
+    Utilities function to dynamically load in modules in the given path
+    :param path: path to the modules
+    :return: list
+    """
+    modules = []
+    for module in os.listdir(path):
+        if module.endswith('.py'):
+            if not module.endswith('__.py') and not module.endswith('abstract.py'):
+                modules.append(module)
+    return modules

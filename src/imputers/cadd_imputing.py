@@ -1,8 +1,7 @@
 from src.logger import Logger
 from importlib import import_module
-from src.utilities.utilities import get_project_root_dir
+from src.utilities.utilities import get_project_root_dir, load_modules
 import pandas as pd
-import glob
 import os
 import sys
 
@@ -24,14 +23,10 @@ class CaddImputing:
         self.impute_values = {}
 
     def _load_modules(self):
-        self.log.info('Identifying imputing full_dir_files.')
+        self.log.info('Identifying imputing files.')
         directory = os.path.join(get_project_root_dir(), 'src', 'data_files', 'imputing')
         sys.path.append(directory)
-        usable_modules = []
-        for module in os.listdir(directory):
-            if module.endswith('.py'):
-                if not module.endswith('__.py') and not module.endswith('abstract.py'):
-                    usable_modules.append(module)
+        usable_modules = load_modules(directory)
         if len(usable_modules) < 1:
             self._raise_no_module_found_error()
         for module in usable_modules:
@@ -40,6 +35,7 @@ class CaddImputing:
                 self.modules.append(mod)
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
+        self.log.info('Identified {} files available for usage in imputing.'.format(len(self.modules)))
 
     def _raise_no_module_found_error(self):
         error_message = 'No usable python files are found within the imputing directory!'

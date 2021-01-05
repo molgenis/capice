@@ -30,7 +30,8 @@ class CaddParser:
         else:
             header = 0
         cadd_file = pd.read_csv(cadd_file_loc, sep=self.sep, header=header, na_values='.')
-        cadd_file.dropna(how='all')
+        cadd_file.dropna(how='all', inplace=True)
+        cadd_file.drop_duplicates(inplace=True)
         self.log.info('CADD file at {} loaded with {} samples.'.format(
             cadd_file_loc,
             cadd_file.shape[0]
