@@ -1,6 +1,6 @@
 package org.molgenis.capice.vcf;
 
-import static org.molgenis.capice.vcf.CapiceUtils.getVcfPosition;
+import static org.molgenis.capice.vcf.CapiceUtils.getVcfPositionFromPrediction;
 
 import java.util.Comparator;
 import org.apache.commons.csv.CSVRecord;
@@ -9,8 +9,8 @@ public class TsvRecordComparator implements Comparator<CSVRecord> {
 
   @Override
   public int compare(CSVRecord thisRecord, CSVRecord thatRecord) {
-    VcfPosition thisPosition = getVcfPosition(thisRecord);
-    VcfPosition thatPosition = getVcfPosition(thatRecord);
+    VcfPosition thisPosition = getVcfPositionFromPrediction(thisRecord);
+    VcfPosition thatPosition = getVcfPositionFromPrediction(thatRecord);
 
     if (thisPosition.isNumericChromosome()) {
       return compareNumericChrom(thisPosition.getChromosome(), thisPosition.getPosition(), thatPosition.getChromosome(), thatPosition.isNumericChromosome(), thatPosition.getPosition());

@@ -11,24 +11,17 @@ import static org.molgenis.capice.vcf.utils.GzippedVcfUtil.getVcfGzAsString;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import htsjdk.variant.variantcontext.writer.VariantContextWriter;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
 import org.apache.commons.csv.CSVRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
+import org.molgenis.capice.FileType;
 
 class TsvToVcfMapperImplTest {
 
@@ -46,21 +39,20 @@ class TsvToVcfMapperImplTest {
     Path inputPath = Paths.get("src", "test", "resources", "sorted.tsv");
     Path outputVcfPath = sharedTempDir.resolve("output.vcf.gz");
 
-    Settings settings = new Settings(inputPath, outputVcfPath, true, "capice2vcf", "test");
+    Settings settings =
+        new Settings(inputPath, outputVcfPath, true, FileType.PREDICTIONS, "capice2vcf", "test");
 
     tsvToVcfMapper.map(inputPath, outputVcfPath, settings);
 
     String actual = getVcfGzAsString(outputVcfPath);
 
-    Path expectedPath = Paths.get("src", "test", "resources", "capice.vcf");
+    Path expectedPath = Paths.get("src", "test", "resources", "capice_predictions.vcf");
     String expected =
         Files.readString(expectedPath, StandardCharsets.UTF_8)
             .replaceAll("\\n|\\r\\n", System.getProperty("line.separator"));
 
     assertEquals(expected, actual);
   }
-
-
 
   @Test
   void mapLine() {
@@ -69,7 +61,7 @@ class TsvToVcfMapperImplTest {
     doReturn("MT_12345_ATG_A").when(record).get(0);
     doReturn("0.123456").when(record).get(4);
 
-    tsvToVcfMapper.mapLine(variantContextWriter, record);
+    tsvToVcfMapper.mapPredictionsLine(variantContextWriter, record);
 
     VariantContextBuilder expectedBuilder = new VariantContextBuilder();
     expectedBuilder.chr("MT");
