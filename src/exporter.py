@@ -94,27 +94,3 @@ class Exporter:
         :return: str
         """
         return getattr(self.instance, name)
-
-
-def create_log_export_name(file_path, file_name):
-    """
-    Function to create the log file name
-    :param file_path: path-like, path to put the log file in
-    :param file_name: str, name of the logfile
-    :return: path-like, full path of the exporting log file
-    """
-    full_export = os.path.join(file_path, file_name + '.log')
-    partial_export = os.path.join(file_path, file_name)
-    export_path = None
-    if check_file_exists(full_export):
-        log_file_exist = True
-        counter = 1
-        while log_file_exist:
-            attempted_filename = partial_export + '_{}.log'.format(counter)
-            if not check_file_exists(attempted_filename):
-                log_file_exist = False
-                export_path = attempted_filename
-            counter += 1
-    else:
-        export_path = full_export
-    return export_path

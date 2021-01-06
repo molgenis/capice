@@ -1,6 +1,7 @@
 from src.utilities.utilities import get_project_root_dir, load_modules
 from importlib import import_module
 from src.logger import Logger
+from src.global_manager import CapiceManager
 import pandas as pd
 import sys
 import os
@@ -10,10 +11,14 @@ class PreProcessor:
     def __init__(self, cadd_features: list, is_train: bool = False):
         self.log = Logger().get_logger()
         self.log.info('Preprocessor started.')
+        self.overrule = CapiceManager().get_overwrite_model()
         self.cadd_features = cadd_features
         self.train = is_train
         self.preprocessors = []
         self._load_preprocessors()
+        self.preprocessor = None
+        self.cadd_version = None
+        self.grch_version = None
 
     def _load_preprocessors(self):
         self.log.info('Identifying preprocessing files.')
@@ -24,7 +29,7 @@ class PreProcessor:
             self._raise_no_module_found_error()
         for module in usable_modules:
             mod = import_module(module)
-            if "get_preprocessing_name" in dir(mod) and "get_supported_cadd_version" in dir(
+            if "get_name" in dir(mod) and "get_supported_cadd_version" in dir(
                     mod) and "get_supported_genomebuild_version" in dir(mod):
                 self.preprocessors.append(mod)
         if len(self.preprocessors) < 1:
@@ -36,5 +41,33 @@ class PreProcessor:
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
-    def preprocess(self, datafile: pd.DataFrame):
-        pass
+    def _load_correct_preprocessor(self):
+        for preprocessor in self.preprocessors:
+            if self.overrule:
+                if preprocessor.get_name() == self.overrule:
+                    self.log.info('Overrule successful for: {}'.format(self.overrule))
+                    self.preprocessor = preprocessor
+            else:
+                module_cadd = preprocessor.get_supported_cadd_version()
+                module_grch = preprocessor.get_supported_genomebuild_version()
+                if module_cadd == self.cadd_version and module_grch == self.grch_version:
+                    self.log.info('Preprocessing and model file successfully found: {}'.format(preprocessor))
+        if self.preprocessor is None:
+            if self.overrule:
+                error_message = 'No model data file found for overrule: {}'.format(
+                    self.overrule
+                )
+            else:
+                error_message = 'No model data file found for CADD version: {} and genome build: {}'.format(
+                     self.cadd_version,
+                     self.grch_version
+                )
+            self.log.critical(error_message)
+            raise FileNotFoundError(error_message)
+
+    def preprocess(self, datafile: pd.DataFrame, cadd_version, grch_build):
+        self.cadd_version = cadd_version
+        self.grch_version = grch_build
+        self._load_correct_preprocessor()
+        processed_data = self.preprocessor.preprocess(dataset=datafile)
+        return processed_data

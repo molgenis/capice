@@ -102,6 +102,19 @@ def convert_cla_to_float(cla: any):
         return cla
 
 
+def convert_cla_to_full_string(cla: any):
+    """
+    Function to convert large multiple words arguments to a single string.
+    Will return the given argument if not a list.
+    :param cla: any
+    :return: str or None
+    """
+    if isinstance(cla, list):
+        return " ".join(cla)
+    else:
+        return cla
+
+
 def load_modules(path):
     """
     Utilities function to dynamically load in modules in the given path

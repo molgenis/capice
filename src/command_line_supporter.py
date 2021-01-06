@@ -7,16 +7,15 @@ class ArgumentSupporter:
     Type python3 capice.py --help for more details.
     """
 
-    def __init__(self):
+    def __init__(self, description):
+        self.description = description
         parser = self._create_argument_parser()
         self.arguments = parser.parse_args()
 
-    @staticmethod
-    def _create_argument_parser():
+    def _create_argument_parser(self):
         parser = argparse.ArgumentParser(
             prog="capice.py",
-            description="The CAPICE pathogenic predictive model,"
-                        " by Shuang et al.")
+            description=self.description)
         required = parser.add_argument_group("Required arguments")
         optional = parser.add_argument_group("Optional arguments")
 
@@ -75,7 +74,23 @@ class ArgumentSupporter:
         optional.add_argument('-f',
                               '--force',
                               action='store_true',
-                              help='Overwrites output if it already exists.')
+                              help='Overwrites output if it already exists. (NOT AVAILABLE FOR LOGGING)')
+
+        optional.add_argument('--overwrite_impute_file',
+                              nargs='+',
+                              type=str,
+                              default=None,
+                              required=False,
+                              help='The exact name (with spaces and capital letters) of the output of the get_name() '
+                                   'function of an imputing datafile to be used in the CAPICE run.')
+
+        optional.add_argument('--overwrite_model_file',
+                              nargs='+',
+                              type=str,
+                              default=None,
+                              required=False,
+                              help='The exact name (with spaces and capital letters) of the output of the '
+                                   'get_name() output of the model file to be used in the CAPICE run.')
         return parser
 
     def get_argument(self, argument_key):

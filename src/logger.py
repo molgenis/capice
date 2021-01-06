@@ -21,7 +21,8 @@
 
 import logging
 from src.global_manager import CapiceManager
-from src.exporter import create_log_export_name
+from src.utilities.utilities import check_file_exists
+import os
 
 
 class Logger:
@@ -44,7 +45,7 @@ class Logger:
             handlers = [logging.StreamHandler()]
             now = self.global_settings.get_now()
             out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
-            out_file = create_log_export_name(self.output_loc, out_file_name)
+            out_file = self._create_log_export_name(self.output_loc, out_file_name)
             self.final_log_loc = out_file
             handlers.append(logging.FileHandler(out_file))
             logging.basicConfig(
@@ -61,6 +62,23 @@ class Logger:
 
         def get_log_loc(self):
             return self.final_log_loc
+
+        def _create_log_export_name(self, out_file_name):
+            full_export = os.path.join(self.output_loc, out_file_name + '.log')
+            partial_export = os.path.join(self.output_loc, out_file_name)
+            export_path = None
+            if check_file_exists(full_export):
+                log_file_exist = True
+                counter = 1
+                while log_file_exist:
+                    attempted_filename = partial_export + '_{}.log'.format(counter)
+                    if not check_file_exists(attempted_filename):
+                        log_file_exist = False
+                        export_path = attempted_filename
+                    counter += 1
+            else:
+                export_path = full_export
+            return export_path
         
     def get_logger(self):
         """

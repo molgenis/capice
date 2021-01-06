@@ -23,7 +23,7 @@ class ModelSetup(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
-    def get_preprocessing_name():
+    def get_name():
         return "Template"
 
     def preprocess(self, dataset: pd.DataFrame):
@@ -102,11 +102,6 @@ class ModelSetup(metaclass=ABCMeta):
         return value_counts
 
     # Model stuff
-
-    @staticmethod
-    @abstractmethod
-    def get_model_name():
-        pass
 
     @staticmethod
     @abstractmethod

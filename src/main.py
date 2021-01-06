@@ -7,12 +7,13 @@ from src.imputers.cadd_imputing import CaddImputing
 from src.checkers.cadd_version_checker import CaddVersionChecker
 from src.preprocessors.preprocessor import PreProcessor
 
-from capice import __program__, __author__, __version__
-
 
 class Main:
-    def __init__(self, input_loc, output_loc,
-                 genome_build, cadd_build, force, verbose):
+    def __init__(self,
+                 __program__, __author__, __version__,
+                 input_loc, output_loc,
+                 genome_build, cadd_build,
+                 force, verbose):
         # Order is important here
         self.manager = CapiceManager()
         self.log = Logger().get_logger()

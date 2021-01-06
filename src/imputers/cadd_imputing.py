@@ -1,6 +1,7 @@
 from src.logger import Logger
 from importlib import import_module
 from src.utilities.utilities import get_project_root_dir, load_modules
+from src.global_manager import CapiceManager
 import pandas as pd
 import os
 import sys
@@ -15,6 +16,7 @@ class CaddImputing:
         self.grch_build = grch_build
         self.log = Logger().get_logger()
         self.log.info('Starting imputing.')
+        self.overrule = CapiceManager().get_overwrite_impute()
         self.modules = []
         self.module = None
         self._load_modules()
@@ -44,16 +46,26 @@ class CaddImputing:
 
     def _is_correct_datafile_present(self):
         for module in self.modules:
-            if module.version_check(self.cadd_version) and module.build_check(self.grch_build):
-                self.log.info('Impute data file successfully found: {}'.format(module.get_name()))
-                self.module = module
+            if self.overrule:
+                if module.get_name() == self.overrule:
+                    self.log.info('Overrule successful for: {}'.format(self.overrule))
+                    self.module = module
+            else:
+                if module.version_check(self.cadd_version) and module.build_check(self.grch_build):
+                    self.log.info('Impute data file successfully found: {}'.format(module.get_name()))
+                    self.module = module
 
         # Checking if self.data_file is assigned
         if self.module is None:
-            error_message = 'No imputing data file found for CADD version: {} and genome build: {}'.format(
-                self.cadd_version,
-                self.grch_build
-            )
+            if self.overrule:
+                error_message = 'No imputing data file found for overrule: {}'.format(
+                    self.overrule
+                )
+            else:
+                error_message = 'No imputing data file found for CADD version: {} and genome build: {}'.format(
+                    self.cadd_version,
+                    self.grch_build
+                )
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
