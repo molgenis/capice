@@ -8,17 +8,18 @@ import os
 
 
 class PreProcessor:
-    def __init__(self, cadd_features: list, is_train: bool = False):
+    def __init__(self, is_train: bool = False):
+        self.manager = CapiceManager()
         self.log = Logger().get_logger()
         self.log.info('Preprocessor started.')
-        self.overrule = CapiceManager().get_overwrite_model()
-        self.cadd_features = cadd_features
+        self.overrule = self.manager.get_overwrite_model()
+        self.cadd_features = self.manager.get_cadd_features()
+        self.cadd_version = self.manager.get_cadd_version()
+        self.grch_version = self.manager.get_grch_build()
         self.train = is_train
         self.preprocessors = []
         self._load_preprocessors()
         self.preprocessor = None
-        self.cadd_version = None
-        self.grch_version = None
 
     def _load_preprocessors(self):
         self.log.info('Identifying preprocessing files.')
@@ -65,9 +66,7 @@ class PreProcessor:
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
-    def preprocess(self, datafile: pd.DataFrame, cadd_version, grch_build):
-        self.cadd_version = cadd_version
-        self.grch_version = grch_build
+    def preprocess(self, datafile: pd.DataFrame):
         self._load_correct_preprocessor()
-        processed_data = self.preprocessor.preprocess(dataset=datafile)
+        processed_data = self.preprocessor.preprocess(dataset=datafile, is_train=self.train)
         return processed_data

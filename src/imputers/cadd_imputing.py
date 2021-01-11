@@ -11,12 +11,13 @@ class CaddImputing:
     """
     What I need for this class is the CADD version and GRCh build
     """
-    def __init__(self, cadd_version, grch_build):
-        self.cadd_version = cadd_version
-        self.grch_build = grch_build
+    def __init__(self):
+        self.manager = CapiceManager()
+        self.cadd_version = self.manager.get_cadd_version()
+        self.grch_build = self.manager.get_grch_build()
         self.log = Logger().get_logger()
         self.log.info('Starting imputing.')
-        self.overrule = CapiceManager().get_overwrite_impute()
+        self.overrule = self.manager.get_overwrite_impute()
         self.modules = []
         self.module = None
         self._load_modules()
@@ -71,6 +72,7 @@ class CaddImputing:
 
     def _load_values(self):
         self.columns = self.module.get_cadd_features()
+        self.manager.set_cadd_features(self.columns)
         self.impute_values = self.module.get_impute_values()
 
     def impute(self, datafile: pd.DataFrame):

@@ -39,7 +39,7 @@ class Logger:
             if self.global_settings.get_verbose():
                 return logging.NOTSET
             else:
-                return logging.WARNING
+                return logging.INFO
 
         def load_logger(self):
             handlers = [logging.StreamHandler()]

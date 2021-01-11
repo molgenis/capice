@@ -11,6 +11,9 @@ class CapiceManager:
             self.now = None
             self.overwrite_impute = None
             self.overwrite_model = None
+            self.cadd_version = None
+            self.grch_build = None
+            self.cadd_features = []
 
         def set_log_loc(self, log_loc: str):
             self.log_loc = log_loc
@@ -35,6 +38,24 @@ class CapiceManager:
 
         def get_overwrite_model(self):
             return self.overwrite_model
+
+        def set_cadd_version(self, cadd_version):
+            self.cadd_version = cadd_version
+
+        def get_cadd_version(self):
+            return self.cadd_version
+
+        def set_grch_build(self, grch_build):
+            self.grch_build = grch_build
+
+        def get_grch_build(self):
+            return self.grch_build
+
+        def set_cadd_features(self, cadd_features):
+            self.cadd_features = cadd_features
+
+        def get_cadd_features(self):
+            return self.cadd_features
 
     instance = None
 
@@ -90,6 +111,48 @@ class CapiceManager:
         """
         Function to get the global variable of forcing a specific model file
         :return: Nopne or string
+        """
+        pass
+
+    def set_cadd_version(self, cadd_version):
+        """
+        Function to set the globally available CADD version
+        :param cadd_version: float
+        """
+        pass
+
+    def get_cadd_version(self):
+        """
+        Function to get the globally available CADD version
+        :return: float
+        """
+        pass
+
+    def set_grch_build(self, grch_build):
+        """
+        Function to set the globally available GRCh build
+        :param grch_build: int
+        """
+        pass
+
+    def get_grch_build(self):
+        """
+        Function to get the globally available GRCh build
+        :return: int
+        """
+        pass
+
+    def set_cadd_features(self, cadd_features):
+        """
+        Function to set the globally available cadd_features list required for both imputing and preprocessing
+        :param cadd_features: list
+        """
+        pass
+
+    def get_cadd_features(self):
+        """
+        Function to get the globally available cadd_features list required for both imputing and preprocessing
+        :return: list
         """
         pass
 

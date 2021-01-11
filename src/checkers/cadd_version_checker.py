@@ -1,5 +1,6 @@
 from src.logger import Logger
 from src.errors.errors import InputError
+from src.global_manager import CapiceManager
 import warnings
 
 
@@ -23,6 +24,7 @@ class CaddVersionChecker:
         self.cla_grch_build = cla_grch_build
         self.file_cadd_version = file_cadd_version
         self.file_grch_build = file_grch_build
+        self.manager = CapiceManager()
         self.export_cadd_version = None
         self.export_grch_build = None
         self.check_match_versions = True
@@ -32,7 +34,15 @@ class CaddVersionChecker:
         self._check_all_builds_present()
         self._check_version_match()
         self._check_grch_build_match()
+        self._set_global_cadd_version()
+        self._set_global_grch_build()
+
+    def _set_global_cadd_version(self):
+        self.manager.set_cadd_version(cadd_version=self.export_cadd_version)
         self.log.info('CADD version set to: {}'.format(self.export_cadd_version))
+
+    def _set_global_grch_build(self):
+        self.manager.set_grch_build(grch_build=self.export_grch_build)
         self.log.info('GRCh build set to: {}'.format(self.export_grch_build))
 
     def _check_all_version_present(self):
@@ -69,7 +79,7 @@ class CaddVersionChecker:
                 self.log.warning(warning_message)
             else:
                 self.log.info('CADD versions from the command line and file match.')
-            self.export_cadd_version = self.file_cadd_version
+            self.export_cadd_version = self.cla_cadd_version
 
     def _check_grch_build_match(self):
         if self.check_match_builds:
@@ -83,18 +93,4 @@ class CaddVersionChecker:
                 self.log.warning(warning_message)
             else:
                 self.log.info('GRCh builds from the command line and file match.')
-            self.export_grch_build = self.file_grch_build
-
-    def get_cadd_version(self):
-        """
-        Function to get the used CADD version
-        :return: float
-        """
-        return self.export_cadd_version
-
-    def get_grch_build(self):
-        """
-        Function to get the used GRCh build
-        :return: int
-        """
-        return self.export_grch_build
+            self.export_grch_build = self.cla_grch_build

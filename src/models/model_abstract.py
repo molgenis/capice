@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from src.logger import Logger
+from src.global_manager import CapiceManager
 import pandas as pd
 import numpy as np
 import pickle
@@ -11,11 +12,11 @@ class ModelSetup(metaclass=ABCMeta):
     Abstract class to act as template for new models that might be
     added in future patches of CAPICE.
     """
-    def __init__(self, cadd_features: list, is_train: bool = False):
+    def __init__(self):
         self.log = Logger().get_logger()
-        self.cadd_features = cadd_features
-        self.train = is_train
-        self.model = self._load_model()
+        self.cadd_features = CapiceManager().get_cadd_features()
+        self.train = False
+        self.model = None
         self.cadd_object = []
         self.model_features = []
 
@@ -26,7 +27,9 @@ class ModelSetup(metaclass=ABCMeta):
     def get_name():
         return "Template"
 
-    def preprocess(self, dataset: pd.DataFrame):
+    def preprocess(self, dataset: pd.DataFrame, is_train: bool):
+        self.train = is_train
+        self._load_model()
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
         return processed_dataset

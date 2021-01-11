@@ -54,19 +54,13 @@ class Main:
         self.exporter = Exporter()
         self.exporter.set_force(self.force)
 
-        # Global main variables
-
-        self.cadd_version = None
-        self.grch_build = None
-        self.cadd_data = None
-
     def run(self):
         """
         Function to make CAPICE run
         """
-        self._load_file()
-        self._impute()
-        self._preprocess()
+        cadd_data = self._load_file()
+        cadd_data = self._impute(loaded_cadd_data=cadd_data)
+        cadd_data = self._preprocess(loaded_cadd_data=cadd_data)
         pass
 
     def _load_file(self):
@@ -84,33 +78,37 @@ class Main:
         header_present = cadd_header_parser.get_header_present()
         header_version = cadd_header_parser.get_header_version()
         header_build = cadd_header_parser.get_header_build()
-        cvc = CaddVersionChecker(
+        CaddVersionChecker(
             cla_cadd_version=self.cla_cadd_version,
             cla_grch_build=self.cla_genome_build,
             file_cadd_version=header_version,
             file_grch_build=header_build
         )
-        self.cadd_version = cvc.get_cadd_version()
-        self.grch_build = cvc.get_grch_build()
         cadd_parser = CaddParser()
-        self.cadd_file = cadd_parser.parse(
+        cadd_file = cadd_parser.parse(
             cadd_file_loc=self.infile,
             header_present=header_present
         )
+        return cadd_file
 
-    def _impute(self):
+    @staticmethod
+    def _impute(loaded_cadd_data):
         """
         Function to perform imputing and converting of categorical features
         """
-        cadd_imputing = CaddImputing(
-            cadd_version=self.cadd_version,
-            grch_build=self.grch_build
-        )
-        self.cadd_data = cadd_imputing.impute(self.cadd_data)
+        cadd_imputing = CaddImputing()
+        cadd_data = cadd_imputing.impute(loaded_cadd_data)
+        return cadd_data
 
-    def _preprocess(self, train: bool = False):
-
-        pass
+    @staticmethod
+    def _preprocess(loaded_cadd_data, train: bool = False):
+        """
+        Function to perform the preprocessing of a datafile to be ready for CAPICE imputing.
+        :param train: bool
+        """
+        preprocessor = PreProcessor(is_train=train)
+        cadd_data = preprocessor.preprocess(datafile=loaded_cadd_data)
+        return cadd_data
 
     def _predict(self):
         """
