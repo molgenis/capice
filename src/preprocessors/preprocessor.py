@@ -70,3 +70,7 @@ class PreProcessor:
         self._load_correct_preprocessor()
         processed_data = self.preprocessor.preprocess(dataset=datafile, is_train=self.train)
         return processed_data
+
+    def predict(self, datafile: pd.DataFrame):
+        predicted_data = self.preprocessor.predict(data=datafile)
+        return predicted_data

@@ -60,7 +60,9 @@ class Main:
         """
         cadd_data = self._load_file()
         cadd_data = self._impute(loaded_cadd_data=cadd_data)
-        cadd_data = self._preprocess(loaded_cadd_data=cadd_data)
+        cadd_data, model_instance = self._preprocess(loaded_cadd_data=cadd_data)
+        cadd_data = self._predict(preprocessing_instance=model_instance,
+                                  loaded_cadd_data=cadd_data)
         pass
 
     def _load_file(self):
@@ -108,14 +110,19 @@ class Main:
         """
         preprocessor = PreProcessor(is_train=train)
         cadd_data = preprocessor.preprocess(datafile=loaded_cadd_data)
-        return cadd_data
+        if not train:
+            return cadd_data, preprocessor
+        else:
+            return cadd_data
 
-    def _predict(self):
+    @staticmethod
+    def _predict(preprocessing_instance, loaded_cadd_data):
         """
         Function to call the correct model to predict CAPICE scores
         :return: pandas DataFrame
         """
-        pass
+        cadd_data = preprocessing_instance.predict(datafile=loaded_cadd_data)
+        return cadd_data
 
     def _export(self):
         """

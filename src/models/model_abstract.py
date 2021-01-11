@@ -131,6 +131,7 @@ class ModelSetup(metaclass=ABCMeta):
         Template method for a model setup to predict and return scores.
         :return: pandas DataFrame
         """
+        self.log.info('Predicting for {} samples.'.format(data.shape[0]))
         data['probabilities'] = self._predict(self._create_input_matrix(data))
         data['ID'] = '.'
         return data
