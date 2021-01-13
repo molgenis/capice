@@ -49,11 +49,6 @@ class Main:
         self.log.info('Force flag confirmed: '
                       '{}'.format(self.force))
 
-        # Setting the exporter force
-
-        self.exporter = Exporter()
-        self.exporter.set_force(self.force)
-
     def run(self):
         """
         Function to make CAPICE run
@@ -98,8 +93,7 @@ class Main:
         """
         Function to perform imputing and converting of categorical features
         """
-        cadd_imputing = CaddImputing()
-        cadd_data = cadd_imputing.impute(loaded_cadd_data)
+        cadd_data = CaddImputing().impute(loaded_cadd_data)
         return cadd_data
 
     @staticmethod
@@ -124,8 +118,8 @@ class Main:
         cadd_data = preprocessing_instance.predict(datafile=loaded_cadd_data)
         return cadd_data
 
-    def _export(self):
+    def _export(self, datafile):
         """
         Function to prepare the data to be exported
         """
-        pass
+        Exporter(file_path=self.output).export(datafile=datafile)

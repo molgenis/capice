@@ -13,7 +13,9 @@ class CapiceManager:
             self.overwrite_model = None
             self.cadd_version = None
             self.grch_build = None
+            self.force = False
             self.cadd_features = []
+            self.full_cadd_features = []
 
         def set_log_loc(self, log_loc: str):
             self.log_loc = log_loc
@@ -56,6 +58,18 @@ class CapiceManager:
 
         def get_cadd_features(self):
             return self.cadd_features
+
+        def set_full_cadd_features(self, cadd_features):
+            self.full_cadd_features = cadd_features
+
+        def get_full_cadd_features(self):
+            return self.full_cadd_features
+
+        def set_force(self, force):
+            self.force = force
+
+        def get_force(self):
+            return self.force
 
     instance = None
 
@@ -153,6 +167,34 @@ class CapiceManager:
         """
         Function to get the globally available cadd_features list required for both imputing and preprocessing
         :return: list
+        """
+        pass
+
+    def set_full_cadd_features(self, cadd_features):
+        """
+        Function to set the globally available cadd features list, including #Chr, Pos and FeatureID
+        :param cadd_features: list
+        """
+        pass
+
+    def get_full_cadd_features(self):
+        """
+        Similar function to get_cadd_features(), but now includes additional columns to keep and save
+        :return: list
+        """
+        pass
+
+    def set_force(self, force):
+        """
+        Function to set the globally force argument to overwrite an existing CAPICE output file
+        :param force: bool
+        """
+        pass
+
+    def get_force(self):
+        """
+        Function to get the globally force argument whenever overwriting an existing CAPICE output file is allowed
+        :return: bool
         """
         pass
 

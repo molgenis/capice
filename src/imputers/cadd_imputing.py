@@ -81,7 +81,6 @@ class CaddImputing:
         :return: pandas DataFrame
         """
         self._load_values()
-        datafile = self._set_dataset(datafile)
         datafile = self._check_chrom_pos(datafile)
         self._get_nan_ratio_per_column(
             dataset=datafile
@@ -93,9 +92,6 @@ class CaddImputing:
         datafile.fillna(self.impute_values, inplace=True)
         self.log.info('Imputing successfully performed.')
         return datafile
-
-    def _set_dataset(self, dataset: pd.DataFrame):
-        return dataset[self.columns]
 
     def _check_chrom_pos(self, dataset: pd.DataFrame):
         if dataset['#Chrom'].isnull().values.any():
@@ -122,11 +118,12 @@ class CaddImputing:
     def _get_full_nan_row(self, dataset: pd.DataFrame):
         n_samples = dataset.shape[0]
         dataset.index = range(1, n_samples + 1)
-        dataset['CAPICE_drop_out'] = dataset.isnull().values.all(axis=1)
+        dataset['CAPICE_drop_out'] = dataset[self.columns].isnull().values.all(axis=1)
         samples_dropped_out = dataset[dataset['CAPICE_drop_out']]
         if samples_dropped_out.shape[0] > 0:
             self.log.warning('The following samples are filtered out due to missing values: (indexing is python based, '
-                             'so the index starts at 0). \n {}'.format(samples_dropped_out['#Chrom', 'Pos', 'Ref', 'Alt'])
+                             'so the index starts at 0). \n {}'.format(
+                                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
                              )
         else:
             self.log.info('No samples are filtered out due to too many NaN values.')

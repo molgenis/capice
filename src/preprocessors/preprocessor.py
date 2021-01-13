@@ -13,7 +13,6 @@ class PreProcessor:
         self.log = Logger().get_logger()
         self.log.info('Preprocessor started.')
         self.overrule = self.manager.get_overwrite_model()
-        self.cadd_features = self.manager.get_cadd_features()
         self.cadd_version = self.manager.get_cadd_version()
         self.grch_version = self.manager.get_grch_build()
         self.train = is_train
