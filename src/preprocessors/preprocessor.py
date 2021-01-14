@@ -1,9 +1,8 @@
-from src.utilities.utilities import get_project_root_dir, load_modules
+from src.utilities.utilities import get_project_root_dir, load_modules, importer
 from importlib import import_module
 from src.logger import Logger
 from src.global_manager import CapiceManager
 import pandas as pd
-import sys
 import os
 
 
@@ -23,15 +22,14 @@ class PreProcessor:
     def _load_preprocessors(self):
         self.log.info('Identifying preprocessing files.')
         directory = os.path.join(get_project_root_dir(), 'src', 'models')
-        sys.path.append(directory)
         usable_modules = load_modules(directory)
         if len(usable_modules) < 1:
             self._raise_no_module_found_error()
-        for module in usable_modules:
-            mod = import_module(module)
-            if "get_name" in dir(mod) and "get_supported_cadd_version" in dir(
-                    mod) and "get_supported_genomebuild_version" in dir(mod):
-                self.preprocessors.append(mod)
+        imported_modules = importer(usable_modules=usable_modules, path=directory)
+        for module in imported_modules:
+            if "get_name" in dir(module) and "get_supported_cadd_version" in dir(
+                    module) and "get_supported_genomebuild_version" in dir(module):
+                self.preprocessors.append(module)
         if len(self.preprocessors) < 1:
             self._raise_no_module_found_error()
         self.log.info('Succesfully loaded {} preprocessors.'.format(len(self.preprocessors)))

@@ -58,7 +58,7 @@ class Main:
         cadd_data, model_instance = self._preprocess(loaded_cadd_data=cadd_data)
         cadd_data = self._predict(preprocessing_instance=model_instance,
                                   loaded_cadd_data=cadd_data)
-        pass
+        self._export(datafile=cadd_data)
 
     def _load_file(self):
         """

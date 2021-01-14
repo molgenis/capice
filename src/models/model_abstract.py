@@ -7,7 +7,7 @@ import pickle
 import xgboost as xgb
 
 
-class ModelSetup(metaclass=ABCMeta):
+class TemplateSetup(metaclass=ABCMeta):
     """
     Abstract class to act as template for new models that might be
     added in future patches of CAPICE.
@@ -20,12 +20,15 @@ class ModelSetup(metaclass=ABCMeta):
         self.cadd_object = []
         self.model_features = []
 
-    # Preprocessing stuff
-
     @staticmethod
     @abstractmethod
     def get_name():
-        return "Template"
+        return 'Template'
+
+    @staticmethod
+    @abstractmethod
+    def is_usable():
+        return False
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
         self.train = is_train
@@ -114,7 +117,7 @@ class ModelSetup(metaclass=ABCMeta):
         what CADD version is supported.
         :return: float
         """
-        return None
+        pass
 
     @staticmethod
     @abstractmethod
@@ -124,7 +127,7 @@ class ModelSetup(metaclass=ABCMeta):
         supported.
         :return: int
         """
-        return None
+        pass
 
     def predict(self, data: pd.DataFrame):
         """
@@ -152,12 +155,11 @@ class ModelSetup(metaclass=ABCMeta):
         Template method to load in the model once supported values are correct.
         :return: pickled model instance
         """
+        model = None
         if not self.train:
             model = pickle.load(open(self._get_model_loc(), 'rb'))
             self.log.info('Successfully loaded model at: {}'.format(self._get_model_loc()))
-            return model
-        else:
-            return None
+        self.model = model
 
     @staticmethod
     @abstractmethod
@@ -168,4 +170,4 @@ class ModelSetup(metaclass=ABCMeta):
         within this project directory.
         :return: path-like or None if no model has been created yet.
         """
-        return ""
+        pass

@@ -40,6 +40,7 @@ def main():
     manager = CapiceManager()
     manager.set_now()
     manager.set_log_loc(log_loc=log_loc)
+    manager.set_verbose(verbose=verbose)
     manager.set_overwrite_impute(overwrite_impute)
     manager.set_overwrite_model(overwrite_model)
 

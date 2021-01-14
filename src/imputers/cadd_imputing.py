@@ -1,6 +1,6 @@
 from src.logger import Logger
 from importlib import import_module
-from src.utilities.utilities import get_project_root_dir, load_modules
+from src.utilities.utilities import get_project_root_dir, load_modules, importer
 from src.global_manager import CapiceManager
 import pandas as pd
 import os
@@ -28,14 +28,13 @@ class CaddImputing:
     def _load_modules(self):
         self.log.info('Identifying imputing files.')
         directory = os.path.join(get_project_root_dir(), 'src', 'data_files', 'imputing')
-        sys.path.append(directory)
         usable_modules = load_modules(directory)
         if len(usable_modules) < 1:
             self._raise_no_module_found_error()
-        for module in usable_modules:
-            mod = import_module(module)
-            if "get_name" in dir(mod) and "_cadd_features" in dir(mod) and "_impute_values" in dir(mod):
-                self.modules.append(mod)
+        loaded_modules = importer(usable_modules=usable_modules, path=directory)
+        for module in loaded_modules:
+            if "get_name" in dir(module) and "_cadd_features" in dir(module) and "_impute_values" in dir(module):
+                self.modules.append(module)
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
         self.log.info('Identified {} files available for usage in imputing.'.format(len(self.modules)))
@@ -109,8 +108,8 @@ class CaddImputing:
         for column in dataset.columns:
             n_nan = dataset[column].isnull().sum()
             if n_nan > 0:
-                p_nan = (n_nan / n_samples) * 100
-                self.log.info('NaN detected in column {}, percentage: {}%.'.format(
+                p_nan = round((n_nan / n_samples) * 100, ndigits=2)
+                self.log.debug('NaN detected in column {}, percentage: {}%.'.format(
                     column,
                     p_nan
                 ))

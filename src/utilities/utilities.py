@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import sys
+from importlib import import_module
 
 
 class Printf:
@@ -33,7 +34,7 @@ def get_project_root_dir():
     :return: Path instance
     """
     #  This script is 4 directories deep into the project.
-    return Path(__file__).parent.parent.parent.parent
+    return Path(__file__).parent.parent.parent
 
 
 def check_file_exists(file_path: str):
@@ -127,3 +128,18 @@ def load_modules(path):
             if not module.endswith('__.py') and not module.endswith('abstract.py'):
                 modules.append(module)
     return modules
+
+
+def importer(usable_modules: list, path):
+    return_modules = []
+    sys.path.append(path)
+    for module in usable_modules:
+        module = module.split('.py')[0]
+        imported_module = import_module(module)
+        for attribute in dir(imported_module):
+            if not attribute.startswith('Template') and not attribute.startswith('__'):
+                get_attribute = getattr(imported_module, attribute)
+                if 'get_name' in dir(get_attribute) and 'is_usable' in dir(get_attribute):
+                    return_modules.append(get_attribute())
+    sys.path.remove(path)
+    return return_modules

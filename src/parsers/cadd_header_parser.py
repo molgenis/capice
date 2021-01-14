@@ -14,7 +14,7 @@ class CaddHeaderParser:
         self.cadd_file_loc = cadd_file_loc
         self.header = None
         self.header_build = None
-        self.header_build = None
+        self.header_version = None
         self.header_present = False
         self._parse_header()
         if self.header_present:
@@ -26,12 +26,12 @@ class CaddHeaderParser:
     def _parse_header(self):
         if self.is_gzipped:
             with gzip.open(self.cadd_file_loc, mode='rt') as file:
-                self.header = file.readline().strip()
-                self.header_present = True
+                first_line = file.readline().strip()
         else:
             with open(self.cadd_file_loc) as file:
-                self.header = file.readline().strip()
-                self.header_present = True
+                first_line = file.readline().strip()
+        if first_line.startswith("##"):
+            self.header_present = True
 
     def _get_header_version_and_grch_build(self):
         for word in self.header.split(" "):

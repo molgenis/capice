@@ -14,6 +14,7 @@ class CapiceManager:
             self.cadd_version = None
             self.grch_build = None
             self.force = False
+            self.verbose = False
             self.cadd_features = []
             self.full_cadd_features = []
 
@@ -65,11 +66,17 @@ class CapiceManager:
         def get_full_cadd_features(self):
             return self.full_cadd_features
 
-        def set_force(self, force):
+        def set_force(self, force: bool):
             self.force = force
 
         def get_force(self):
             return self.force
+
+        def set_verbose(self, verbose: bool):
+            self.verbose = verbose
+
+        def get_verbose(self):
+            return self.verbose
 
     instance = None
 
@@ -194,6 +201,20 @@ class CapiceManager:
     def get_force(self):
         """
         Function to get the globally force argument whenever overwriting an existing CAPICE output file is allowed
+        :return: bool
+        """
+        pass
+
+    def set_verbose(self, verbose: bool):
+        """
+        Function to set the logger verbose level before the logger is called
+        :param verbose: bool
+        """
+        pass
+
+    def get_verbose(self):
+        """
+        Function for the logger to get the verbose level when starting up
         :return: bool
         """
         pass

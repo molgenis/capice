@@ -20,16 +20,21 @@ class CaddParser:
         :param cadd_file_loc: str, direction to the cadd file
         :param header_present: bool, whenever the CADD header is present within the file or not
         """
+        used_sep = ""
+        if self.sep == '\t':
+            used_sep = 'Tab'
+        else:
+            used_sep = self.sep
         self.log.info(
             'Reading CADD file from: {} using separator: {}'.format(
                 cadd_file_loc,
-                self.sep
+                used_sep
             ))
         if header_present:
             header = 1
         else:
             header = 0
-        cadd_file = pd.read_csv(cadd_file_loc, sep=self.sep, header=header, na_values='.')
+        cadd_file = pd.read_csv(cadd_file_loc, sep=self.sep, header=header, na_values='.', low_memory=False)
         cadd_file.dropna(how='all', inplace=True)
         cadd_file.drop_duplicates(inplace=True)
         self.log.info('CADD file at {} loaded with {} samples.'.format(

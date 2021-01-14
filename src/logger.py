@@ -45,7 +45,7 @@ class Logger:
             handlers = [logging.StreamHandler()]
             now = self.global_settings.get_now()
             out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
-            out_file = self._create_log_export_name(self.output_loc, out_file_name)
+            out_file = self._create_log_export_name(out_file_name)
             self.final_log_loc = out_file
             handlers.append(logging.FileHandler(out_file))
             logging.basicConfig(

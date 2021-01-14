@@ -7,6 +7,10 @@ class Cadd14Grch37(TemplateImputeValues):
         return 'CADD 1.4, GRCh build 37'
 
     @staticmethod
+    def is_usable():
+        return True
+
+    @staticmethod
     def get_supported_cadd_version():
         return 1.4
 

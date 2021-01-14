@@ -1,15 +1,16 @@
-from src.models.model_abstract import ModelSetup
+from src.models.model_abstract import TemplateSetup
 from src.utilities.utilities import get_project_root_dir
 import os
 
 
-class ModelSetupXGBoost111(ModelSetup):
-    """
-    Model setup for XGBoost version 1.1.1, CADD 1.4 and genome build 37.
-    """
+class XGBoost111(TemplateSetup):
     @staticmethod
     def get_name():
-        return "CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37."
+        return "CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37."
+
+    @staticmethod
+    def is_usable():
+        return True
 
     @staticmethod
     def get_supported_cadd_version():

@@ -9,6 +9,11 @@ class TemplateImputeValues(metaclass=ABCMeta):
 
     @staticmethod
     @abstractmethod
+    def is_usable():
+        return False
+
+    @staticmethod
+    @abstractmethod
     def get_supported_cadd_version():
         pass
 
