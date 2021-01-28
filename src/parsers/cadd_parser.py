@@ -20,7 +20,6 @@ class CaddParser:
         :param cadd_file_loc: str, direction to the cadd file
         :param header_present: bool, whenever the CADD header is present within the file or not
         """
-        used_sep = ""
         if self.sep == '\t':
             used_sep = 'Tab'
         else:

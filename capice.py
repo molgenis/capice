@@ -29,6 +29,7 @@ def main():
     force = cla.get_argument('force')
     overwrite_impute = convert_cla_to_full_string(cla.get_argument('overwrite_impute_file'))
     overwrite_model = convert_cla_to_full_string(cla.get_argument('overwrite_model_file'))
+    disable_logfile = cla.get_argument('disable_logfile')
 
     # Checking the log arguments
 
@@ -39,6 +40,7 @@ def main():
 
     manager = CapiceManager()
     manager.set_now()
+    manager.disable_logfile(disable_logfile=disable_logfile)
     manager.set_log_loc(log_loc=log_loc)
     manager.set_verbose(verbose=verbose)
     manager.set_overwrite_impute(overwrite_impute)
@@ -59,7 +61,7 @@ def main():
                        cadd_build=cadd_build,
                        force=force,
                        verbose=verbose)
-    capice_main.run()
+    capice_main.run(train=False)
 
 
 if __name__ == '__main__':

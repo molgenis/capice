@@ -26,7 +26,7 @@ class ModelSetupXGBoost0721(TemplateSetup):
 
     @staticmethod
     def _get_model_loc():
-        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_Model', 'GRCh37', 'xgb_booster.pickle.dat')
+        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_model', 'GRCh37', 'xgb_booster.pickle.dat')
         return model_loc
 
     def _load_model_features(self):

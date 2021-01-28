@@ -16,7 +16,7 @@ class CaddImputing:
         self.cadd_version = self.manager.get_cadd_version()
         self.grch_build = self.manager.get_grch_build()
         self.log = Logger().get_logger()
-        self.log.info('Starting imputing.')
+        self.log.info('Imputer started.')
         self.overrule = self.manager.get_overwrite_impute()
         self.modules = []
         self.module = None

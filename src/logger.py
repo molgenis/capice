@@ -33,6 +33,7 @@ class Logger:
             self.global_settings = CapiceManager()
             self.log_level = self.set_loglevel()
             self.output_loc = self.global_settings.get_log_loc()
+            self.create_logfile = self.global_settings.get_disable_logfile()
             self.logger = self.load_logger()
 
         def set_loglevel(self):
@@ -43,11 +44,12 @@ class Logger:
 
         def load_logger(self):
             handlers = [logging.StreamHandler()]
-            now = self.global_settings.get_now()
-            out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
-            out_file = self._create_log_export_name(out_file_name)
-            self.final_log_loc = out_file
-            handlers.append(logging.FileHandler(out_file))
+            if not self.create_logfile:
+                now = self.global_settings.get_now()
+                out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
+                out_file = self._create_log_export_name(out_file_name)
+                self.final_log_loc = out_file
+                handlers.append(logging.FileHandler(out_file))
             logging.basicConfig(
                 level=self.log_level,
                 format="%(asctime)s [%(threadName)-10.10s] "

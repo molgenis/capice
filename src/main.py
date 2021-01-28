@@ -17,7 +17,10 @@ class Main:
         # Order is important here
         self.manager = CapiceManager()
         self.log = Logger().get_logger()
-        print('Log location confirmed: {}'.format(Logger().get_log_loc()))
+        if not self.manager.get_disable_logfile():
+            print('Log location confirmed: {}'.format(Logger().get_log_loc()))
+        else:
+            print('Log file disabled. Using Stdout and Stderr.')
         # Welcome message
 
         self.log.info('Thank you for using {}, version: {}, created by: {}.'.format(
@@ -27,40 +30,36 @@ class Main:
         ))
 
         self.verbose = verbose
-        self.log.info('Verbose -v / --verbose confirmed: '
-                      '{}'.format(self.verbose))
+        self.log.info('Verbose -v / --verbose confirmed: {}'.format(self.verbose))
 
         # Order is less important here
 
         self.log.info('Arguments passed. Starting program.')
         self.infile = input_loc
-        self.log.info('Input argument -i / --input confirmed: '
-                      '{}'.format(self.infile))
+        self.log.debug('Input argument -i / --input confirmed: {}'.format(self.infile))
         self.output = output_loc
-        self.log.info('Output directory -o / --output confirmed: '
-                      '{}'.format(self.output))
+        self.log.debug('Output directory -o / --output confirmed: {}'.format(self.output))
         self.cla_genome_build = genome_build
-        self.log.info('Genome build -gb / --genome_build confirmed: '
-                      '{}'.format(self.cla_genome_build))
+        self.log.debug('Genome build -gb / --genome_build confirmed: {}'.format(self.cla_genome_build))
         self.cla_cadd_version = cadd_build
-        self.log.info('CADD build -cb / --cadd_build confirmed: '
-                      '{}'.format(self.cla_cadd_version))
+        self.log.debug('CADD build -cb / --cadd_build confirmed: {}'.format(self.cla_cadd_version))
         self.force = force
-        self.log.info('Force flag confirmed: '
-                      '{}'.format(self.force))
+        self.log.debug('Force flag confirmed: {}'.format(self.force))
 
-    def run(self):
+    def run(self, train: bool):
         """
         Function to make CAPICE run
         """
-        cadd_data = self._load_file()
-        cadd_data = self._impute(loaded_cadd_data=cadd_data)
-        cadd_data, model_instance = self._preprocess(loaded_cadd_data=cadd_data)
-        cadd_data = self._predict(preprocessing_instance=model_instance,
-                                  loaded_cadd_data=cadd_data)
-        self._export(datafile=cadd_data)
+        cadd_data = self.load_file()
+        cadd_data = self.impute(loaded_cadd_data=cadd_data)
+        preprocessing_instance, cadd_data = self.preprocess(loaded_cadd_data=cadd_data, train=train)
+        if not train:
+            cadd_data = self.predict(loaded_cadd_data=cadd_data, preprocessing_instance=preprocessing_instance)
+            self._export(datafile=cadd_data)
+        else:
+            return cadd_data
 
-    def _load_file(self):
+    def load_file(self):
         """
         Function to load the CADD file into main
         :return: pandas DataFrame
@@ -89,7 +88,7 @@ class Main:
         return cadd_file
 
     @staticmethod
-    def _impute(loaded_cadd_data):
+    def impute(loaded_cadd_data):
         """
         Function to perform imputing and converting of categorical features
         """
@@ -97,20 +96,21 @@ class Main:
         return cadd_data
 
     @staticmethod
-    def _preprocess(loaded_cadd_data, train: bool = False):
+    def preprocess(loaded_cadd_data, train: bool):
         """
         Function to perform the preprocessing of a datafile to be ready for CAPICE imputing.
+        :param loaded_cadd_data: Pandas dataframe of the imputed CADD data
         :param train: bool
         """
         preprocessor = PreProcessor(is_train=train)
         cadd_data = preprocessor.preprocess(datafile=loaded_cadd_data)
         if not train:
-            return cadd_data, preprocessor
+            return preprocessor, cadd_data
         else:
-            return cadd_data
+            return None, cadd_data
 
     @staticmethod
-    def _predict(preprocessing_instance, loaded_cadd_data):
+    def predict(loaded_cadd_data, preprocessing_instance):
         """
         Function to call the correct model to predict CAPICE scores
         :return: pandas DataFrame

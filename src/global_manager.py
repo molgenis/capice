@@ -15,6 +15,7 @@ class CapiceManager:
             self.grch_build = None
             self.force = False
             self.verbose = False
+            self.disabled_logfile = False
             self.cadd_features = []
             self.full_cadd_features = []
 
@@ -77,6 +78,12 @@ class CapiceManager:
 
         def get_verbose(self):
             return self.verbose
+
+        def disable_logfile(self, disable_logfile):
+            self.disabled_logfile = disable_logfile
+
+        def get_disable_logfile(self):
+            return self.disabled_logfile
 
     instance = None
 
@@ -215,6 +222,20 @@ class CapiceManager:
     def get_verbose(self):
         """
         Function for the logger to get the verbose level when starting up
+        :return: bool
+        """
+        pass
+
+    def disable_logfile(self, disable_logfile):
+        """
+        Function to tell the logger to not create a logfile
+        :param disable_logfile: bool
+        """
+        pass
+
+    def get_disable_logfile(self):
+        """
+        Function to get the argument to disable the creation of the logfile
         :return: bool
         """
         pass

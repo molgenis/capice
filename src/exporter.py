@@ -11,19 +11,12 @@ class Exporter:
         self.force = CapiceManager().get_force()
         self.now = CapiceManager().get_now()
         self.file_path = file_path
-        self.file_name = 'capice_{}'.format(self.now)
-        self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'Consequence', 'probabilities']
+        self.file_name = 'capice_{}'.format(self.now.strftime("%H%M%S%f_%d%m%Y"))
+        self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
 
     def export(self, datafile: pd.DataFrame):
-        # Preparing the filename
         filename = self._export_filename_ready()
-
-        # Preparing the data structure.
-        # Legacy function, will be removed in future patches.
-        datafile['chr_pos_ref_alt'] = ['_'.join([str(ele) for ele in item]) for item in
-                                       datafile[['#Chrom', 'Pos', 'Ref', 'Alt']].values]
-
-        datafile.to_csv(filename, sep='\t', index=False)
+        datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
 
     def _export_filename_ready(self):

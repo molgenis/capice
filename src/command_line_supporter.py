@@ -91,6 +91,11 @@ class ArgumentSupporter:
                               required=False,
                               help='The exact name (with spaces and capital letters) of the output of the '
                                    'get_name() output of the model file to be used in the CAPICE run.')
+
+        optional.add_argument('--disable_logfile',
+                              action='store_true',
+                              help='Disable the creation of the logfile. Will still output all logging to stdout and'
+                                   'stderr.')
         return parser
 
     def get_argument(self, argument_key):

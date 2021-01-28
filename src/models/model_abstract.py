@@ -4,7 +4,6 @@ from src.global_manager import CapiceManager
 import pandas as pd
 import numpy as np
 import pickle
-import xgboost as xgb
 
 
 class TemplateSetup(metaclass=ABCMeta):
@@ -18,7 +17,7 @@ class TemplateSetup(metaclass=ABCMeta):
         self.train = False
         self.model = None
         self.cadd_object = []
-        self.model_features = []
+        self.model_features = None
 
     @staticmethod
     @abstractmethod
@@ -33,15 +32,24 @@ class TemplateSetup(metaclass=ABCMeta):
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
         self.train = is_train
         self._load_model()
+        if not self.train:
+            self.model_features = self._load_model_features()
+        dataset = self._duplicate_chr_pos_ref_alt(dataset=dataset)
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
+        self.log.info('Successfully preprocessed data.')
         return processed_dataset
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):
         for feature in dataset.select_dtypes(include=["O"]).columns:
             if feature in self.cadd_features:
                 self.cadd_object.append(feature)
-        self.log.info('Converting the categorical columns: {}.'.format(", ".join(self.cadd_object)))
+        self.log.debug('Converting the categorical columns: {}.'.format(", ".join(self.cadd_object)))
+
+    @staticmethod
+    def _duplicate_chr_pos_ref_alt(dataset):
+        dataset['chr_pos_ref_alt'] = dataset[['#Chrom', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
+        return dataset
 
     def _process_objects(self, dataset: pd.DataFrame):
         cadd_feats_names_dict = {}
@@ -52,9 +60,8 @@ class TemplateSetup(metaclass=ABCMeta):
                 if feat not in cadd_feats_levels_dict.keys():
                     cadd_feats_levels_dict[feat] = 5
         else:
-            model_features = self._load_model_features()
             for feature in self.cadd_object:
-                for feature_expanded_name in model_features:
+                for feature_expanded_name in self.model_features:
                     if feature_expanded_name.startswith(feature):
                         expanded_name = '_'.join(feature_expanded_name.split('_')[1:])
                         if feature in cadd_feats_names_dict.keys():
@@ -76,22 +83,24 @@ class TemplateSetup(metaclass=ABCMeta):
                                   dataset: pd.DataFrame,
                                   cadd_feats_names_dict,
                                   cadd_feats_levels_dict):
-        for cadd_feat in cadd_feats_levels_dict.keys():
-            if self.train:
+        if self.train:
+            for cadd_feat in cadd_feats_levels_dict.keys():
                 feature_names = self._get_top10_or_less_cats(
                     column=dataset[cadd_feat],
                     return_num=cadd_feats_levels_dict[cadd_feat]
                 )
-            else:
+                dataset[cadd_feat] = np.where(dataset[cadd_feat].isin(feature_names),
+                                              dataset[cadd_feat], 'other')
+        else:
+            for cadd_feat in cadd_feats_names_dict.keys():
                 feature_names = cadd_feats_names_dict[cadd_feat]
-                self.log.info('For feature: {} loaded {} levels.'.format(
+                self.log.debug('For feature: {} loaded {} levels.'.format(
                     cadd_feat,
                     len(feature_names)
                 ))
-            dataset[cadd_feat] = np.where(dataset[cadd_feat].isin(feature_names),
-                                          dataset[cadd_feat], 'other')
+                dataset[cadd_feat] = np.where(dataset[cadd_feat].isin(feature_names),
+                                              dataset[cadd_feat], 'other')
         dataset = pd.get_dummies(dataset, columns=self.cadd_object)
-        self.log.info('Successfully processed categorical values.')
         return dataset
 
     def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):
@@ -106,6 +115,9 @@ class TemplateSetup(metaclass=ABCMeta):
             ', '.join(printable_value_counts)
         ))
         return value_counts
+
+    def get_model_features(self):
+        return self.model_features
 
     # Model stuff
 
@@ -135,8 +147,11 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: pandas DataFrame
         """
         self.log.info('Predicting for {} samples.'.format(data.shape[0]))
-        data['probabilities'] = self._predict(self._create_input_matrix(data))
+        self._load_model()
+        self.model_features = self._load_model_features()
+        data['probabilities'] = self._predict(self._create_input_matrix(dataset=data))
         data['ID'] = '.'
+        self.log.info('Predicting successful.')
         return data
 
     def _predict(self, predict_data):
