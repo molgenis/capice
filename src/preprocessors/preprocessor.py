@@ -16,8 +16,16 @@ class PreProcessor:
         self.grch_version = self.manager.get_grch_build()
         self.train = is_train
         self.preprocessors = []
-        self._load_preprocessors()
+        self._prepare_preprocessor()
         self.preprocessor = None
+
+    def _prepare_preprocessor(self):
+        if self.train:
+            from src.models.training_preprocessor import TrainPreprocessor
+            self.preprocessor = TrainPreprocessor()
+        else:
+            self._load_preprocessors()
+            self._load_correct_preprocessor()
 
     def _load_preprocessors(self):
         self.log.info('Identifying preprocessing files.')
@@ -64,7 +72,6 @@ class PreProcessor:
             raise FileNotFoundError(error_message)
 
     def preprocess(self, datafile: pd.DataFrame):
-        self._load_correct_preprocessor()
         processed_data = self.preprocessor.preprocess(dataset=datafile, is_train=self.train)
         return processed_data
 

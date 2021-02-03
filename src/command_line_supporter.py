@@ -7,12 +7,15 @@ class ArgumentSupporter:
     Type python3 capice.py --help for more details.
     """
 
-    def __init__(self, description):
+    def __init__(self, description, type_cmd):
         self.description = description
-        parser = self._create_argument_parser()
+        if type_cmd == 'main':
+            parser = self._create_argument_parser_main()
+        else:
+            parser = self._create_argument_parser_train()
         self.arguments = parser.parse_args()
 
-    def _create_argument_parser(self):
+    def _create_argument_parser_main(self):
         parser = argparse.ArgumentParser(
             prog="capice.py",
             description=self.description)
@@ -91,6 +94,109 @@ class ArgumentSupporter:
                               required=False,
                               help='The exact name (with spaces and capital letters) of the output of the '
                                    'get_name() output of the model file to be used in the CAPICE run.')
+
+        optional.add_argument('--disable_logfile',
+                              action='store_true',
+                              help='Disable the creation of the logfile. Will still output all logging to stdout and'
+                                   'stderr.')
+        return parser
+
+    def _create_argument_parser_train(self):
+        parser = argparse.ArgumentParser(
+            prog="train_capice_model.py",
+            description=self.description)
+
+        required = parser.add_argument_group("Required arguments")
+        optional = parser.add_argument_group("Optional arguments")
+
+        optional.add_argument('-f',
+                              '--file',
+                              nargs=1,
+                              type=str,
+                              default=None,
+                              help='The location of the TSV training file. '
+                                   'Will be made balanced, '
+                                   'this balanced dataset will '
+                                   'be output to -o. '
+                                   'Will cause bias if training '
+                                   'file contains indexing numbers.')
+
+        optional.add_argument('-b',
+                              '--balanced_ds',
+                              nargs=1,
+                              type=str,
+                              default=None,
+                              help='Use this argument if you already have a '
+                                   'balanced dataset or dont\'t want to use '
+                                   'a balanced dataset.')
+
+        required.add_argument('-o',
+                              '--output',
+                              nargs=1,
+                              type=str,
+                              required=True,
+                              help='The output directory to put the models in.')
+
+        optional.add_argument('-l',
+                              '--log_file',
+                              nargs=1,
+                              type=str,
+                              default=None,
+                              required=False,
+                              help='The location to put the logfile in. '
+                                   '(by default uses the directory of '
+                                   '--output)')
+
+        optional.add_argument('-d',
+                              '--default',
+                              action='store_true',
+                              help='Use the python3.6 model hyperparameters.')
+
+        optional.add_argument('-v',
+                              '--verbose',
+                              action='store_true',
+                              help='Prints messages if called.')
+
+        optional.add_argument('-sd',
+                              '--specified_default',
+                              type=str,
+                              nargs=1,
+                              help='The location of a json containing "default" hyperparameters: learning_rate, '
+                                   'n_estimators and max_depth.')
+
+        optional.add_argument('-s',
+                              '--split',
+                              default=False,
+                              type=float,
+                              help='Split the data into a training and test set before any processing happens.'
+                                   ' Requires a float percentage (0-1).')
+
+        optional.add_argument('-ttsize',
+                              '--train_test_size',
+                              default=0.2,
+                              type=float,
+                              help='Argument to be passed to the train test split that will be used to determine '
+                                   'the size of the test dataset (in percentage) used within the training process. '
+                                   'Requires a float percentage (0-1).')
+
+        optional.add_argument('-e',
+                              '--exit',
+                              action='store_true',
+                              help="Activate early exit, right after creating the balanced dataset (if -f is used),"
+                                   " but before any preprocessing or training happens")
+
+        optional.add_argument('--overwrite_impute_file',
+                              nargs='+',
+                              type=str,
+                              default=None,
+                              required=False,
+                              help='The exact name (with spaces and capital letters) of the output of the get_name() '
+                                   'function of an imputing datafile to be used in the CAPICE run.')
+
+        optional.add_argument('-f',
+                              '--force',
+                              action='store_true',
+                              help='Overwrites output if it already exists. (NOT AVAILABLE FOR LOGGING)')
 
         optional.add_argument('--disable_logfile',
                               action='store_true',

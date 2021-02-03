@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from src.command_line_supporter import ArgumentSupporter
 from src.input_checker import InputChecker, LogChecker
 from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
@@ -16,7 +18,7 @@ __description__ = "{} (version: {}) is a program developed and maintained by {}.
 
 
 def main():
-    cla = ArgumentSupporter(description=__description__)
+    cla = ArgumentSupporter(description=__description__, type_cmd='main')
 
     # Getting all arguments.
 
@@ -33,7 +35,7 @@ def main():
 
     # Checking the log arguments
 
-    lc = LogChecker(log_loc=log_loc, output_loc=output_loc, verbose=verbose)
+    lc = LogChecker(log_loc=log_loc, output_loc=output_loc)
     log_loc = lc.check_log_loc()
 
     # Initializing the manager
@@ -50,7 +52,8 @@ def main():
 
     input_checker = InputChecker()
 
-    input_checker.check_arguments(input_loc=input_loc, output_loc=output_loc)
+    input_checker.check_input_loc(input_loc=input_loc)
+    input_checker.check_output_loc(output_loc=output_loc)
 
     capice_main = Main(__program__=__program__,
                        __author__=__author__,
@@ -58,9 +61,8 @@ def main():
                        input_loc=input_loc,
                        output_loc=output_loc,
                        genome_build=genome_build,
-                       cadd_build=cadd_build,
-                       force=force,
-                       verbose=verbose)
+                       cadd_build=cadd_build)
+
     capice_main.run(train=False)
 
 

@@ -8,45 +8,27 @@ class InputChecker:
     """
     Checker for the remaining supplied arguments
     """
-    def __init__(self):
-        self.input_loc = None
-        self.output_loc = None
-        self.cadd_build_input = None
-        self.genome_build_input = None
 
-    def check_arguments(self,
-                        input_loc: str,
-                        output_loc: str):
-        """
-        Function to check if the input is usable.
-        :param input_loc: str, path to CADD annotated file.
-        :param output_loc: str, path to export files to.
-        :returns input_loc, output_loc
-        """
-        self.input_loc = input_loc
-        self.output_loc = output_loc
-        self._check_input_loc()
-        self._check_output_loc()
-
-    def _check_input_loc(self):
-        if not check_file_exists(self.input_loc):
+    @staticmethod
+    def check_input_loc(input_loc):
+        if not check_file_exists(input_loc):
             raise InputError("Input file does not exist!")
 
-    def _check_output_loc(self):
-        if not check_dir_exists(self.output_loc):
+    @staticmethod
+    def check_output_loc(output_loc):
+        if not check_dir_exists(output_loc):
             warnings.warn("Output directory does not exist, creating.")
-            prepare_dir(self.output_loc)
+            prepare_dir(output_loc)
 
 
 class LogChecker:
     """
     Initial check of the arguments for the logger.
     """
-    def __init__(self, log_loc: str, output_loc: str, verbose: bool):
+    def __init__(self, log_loc: str, output_loc: str):
         self._check_python_version()
         self.log_loc = log_loc
         self.output_loc = output_loc
-        self.verbose = verbose
 
     @staticmethod
     def _check_python_version():
@@ -71,7 +53,3 @@ class LogChecker:
                 prepare_dir(self.output_loc)
             log_loc = self.output_loc
         return log_loc
-
-    def _check_verbose(self):
-        if not isinstance(self.verbose, bool):
-            raise InputError("Verbose level must a boolean.")

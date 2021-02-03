@@ -140,6 +140,7 @@ def importer(usable_modules: list, path):
             if not attribute.startswith('Template') and not attribute.startswith('__'):
                 get_attribute = getattr(imported_module, attribute)
                 if 'get_name' in dir(get_attribute) and 'is_usable' in dir(get_attribute):
-                    return_modules.append(get_attribute())
+                    if get_attribute.is_usable():
+                        return_modules.append(get_attribute())
     sys.path.remove(path)
     return return_modules

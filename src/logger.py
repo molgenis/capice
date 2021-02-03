@@ -50,6 +50,9 @@ class Logger:
                 out_file = self._create_log_export_name(out_file_name)
                 self.final_log_loc = out_file
                 handlers.append(logging.FileHandler(out_file))
+                print('Log location confirmed: {}'.format(out_file))
+            else:
+                print('Log file disabled. Using Stdout and Stderr.')
             logging.basicConfig(
                 level=self.log_level,
                 format="%(asctime)s [%(threadName)-10.10s] "

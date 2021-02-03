@@ -11,24 +11,32 @@ class Exporter:
         self.force = CapiceManager().get_force()
         self.now = CapiceManager().get_now()
         self.file_path = file_path
-        self.file_name = 'capice_{}'.format(self.now.strftime("%H%M%S%f_%d%m%Y"))
         self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
 
-    def export(self, datafile: pd.DataFrame):
-        filename = self._export_filename_ready()
+    def export_capice_prediction(self, datafile: pd.DataFrame):
+        file_name_capice = 'capice_{}'.format(self.now.strftime("%H%M%S%f_%d%m%Y"))
+        filename = self._export_filename_ready(file_name=file_name_capice)
         datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
 
-    def _export_filename_ready(self):
-        path_and_filename = os.path.join(self.file_path, self.file_name)
-        extension = '.tsv'
-        full_path = os.path.join(self.file_path, self.file_name + extension)
+    def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str, feature: str):
+        filename = self._export_filename_ready(file_name=name, type_export='dataset')
+        datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
+        self.log.info('Exported {} with shape {} to: {}'.format(feature, datafile.shape, filename))
+
+    def _export_filename_ready(self, file_name, type_export='prediction'):
+        path_and_filename = os.path.join(self.file_path, file_name)
+        types_export_and_extensions = {'prediction': '.tsv',
+                                       'dataset': '.tsv.gz',
+                                       'metadata': '.txt'}
+        extension = types_export_and_extensions[type_export]
+        full_path = os.path.join(self.file_path, file_name + extension)
         export_path = None
         if not check_file_exists(full_path):
             self.log.info('No file found at {}, save to create.'.format(full_path))
             export_path = full_path
         elif self.force and check_file_exists(full_path):
-            self.log.info('Found existing file at {}, removing file for overwriting.'.format(full_path))
+            self.log.warning('Found existing file at {}, removing file for overwriting.'.format(full_path))
             os.remove(full_path)
             export_path = full_path
         else:
