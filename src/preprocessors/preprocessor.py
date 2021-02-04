@@ -1,5 +1,5 @@
 from src.utilities.utilities import get_project_root_dir, load_modules, importer
-from importlib import import_module
+import inspect
 from src.logger import Logger
 from src.global_manager import CapiceManager
 import pandas as pd
@@ -16,8 +16,8 @@ class PreProcessor:
         self.grch_version = self.manager.get_grch_build()
         self.train = is_train
         self.preprocessors = []
-        self._prepare_preprocessor()
         self.preprocessor = None
+        self._prepare_preprocessor()
 
     def _prepare_preprocessor(self):
         if self.train:
@@ -51,13 +51,19 @@ class PreProcessor:
         for preprocessor in self.preprocessors:
             if self.overrule:
                 if preprocessor.get_name() == self.overrule:
-                    self.log.info('Overrule successful for: {}'.format(self.overrule))
+                    self.log.info('Overrule successful for: {} , located at: {}'.format(
+                        self.overrule, inspect.getfile(preprocessor.__class__)))
                     self.preprocessor = preprocessor
+                    break
             else:
                 module_cadd = preprocessor.get_supported_cadd_version()
                 module_grch = preprocessor.get_supported_genomebuild_version()
                 if module_cadd == self.cadd_version and module_grch == self.grch_version:
-                    self.log.info('Preprocessing and model file successfully found: {}'.format(preprocessor))
+                    self.log.info('Preprocessing and model file successfully found: {} , Located at: {}'.format(
+                        preprocessor.get_name(), inspect.getfile(preprocessor.__class__)))
+                    self.preprocessor = preprocessor
+                    break
+
         if self.preprocessor is None:
             if self.overrule:
                 error_message = 'No model data file found for overrule: {}'.format(

@@ -7,7 +7,7 @@ from src.errors.errors import InputError
 from src.input_checker import LogChecker, InputChecker
 from src.main_train import Train
 
-__program__ = 'CAPICE'
+__program__ = 'Training CAPICE models'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
 __license__ = 'LGPL-3.0'
 __version__ = 1.0
@@ -19,8 +19,8 @@ __description__ = "{} (version: {}) is a program developed and maintained by {}.
 
 def main():
     arguments = ArgumentSupporter(description=__description__, type_cmd='train')
-    input_loc = convert_cla_to_str(arguments.get_argument('file'))
-    balanced = convert_cla_to_str(arguments.get_argument('balanced_ds'))
+    input_loc = convert_cla_to_str(arguments.get_argument('input'))
+    balanced = convert_cla_to_str(arguments.get_argument('balanced_input'))
     output_loc = convert_cla_to_str(arguments.get_argument('output'))
     log_loc = convert_cla_to_str(arguments.get_argument('log_file'))
     overwrite_impute_file = convert_cla_to_full_string(arguments.get_argument('overwrite_impute_file'))

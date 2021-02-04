@@ -47,6 +47,7 @@ def main():
     manager.set_verbose(verbose=verbose)
     manager.set_overwrite_impute(overwrite_impute)
     manager.set_overwrite_model(overwrite_model)
+    manager.set_force(force=force)
 
     # Checking the input arguments.
 

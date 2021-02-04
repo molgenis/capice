@@ -1,10 +1,9 @@
 from src.logger import Logger
-from importlib import import_module
+import inspect
 from src.utilities.utilities import get_project_root_dir, load_modules, importer
 from src.global_manager import CapiceManager
 import pandas as pd
 import os
-import sys
 
 
 class CaddImputing:
@@ -48,12 +47,16 @@ class CaddImputing:
         for module in self.modules:
             if self.overrule:
                 if module.get_name() == self.overrule:
-                    self.log.info('Overrule successful for: {}'.format(self.overrule))
+                    self.log.info('Overrule successful for: {} , located at: {}'.format(
+                        self.overrule, inspect.getfile(module.__class__)))
                     self.module = module
+                    break
             else:
                 if module.version_check(self.cadd_version) and module.build_check(self.grch_build):
-                    self.log.info('Impute data file successfully found: {}'.format(module.get_name()))
+                    self.log.info('Impute data file successfully found: {} , located at: {}'.format(
+                        module.get_name(), inspect.getfile(module.__class__)))
                     self.module = module
+                    break
 
         # Checking if self.data_file is assigned
         if self.module is None:

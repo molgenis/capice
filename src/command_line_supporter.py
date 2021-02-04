@@ -109,20 +109,22 @@ class ArgumentSupporter:
         required = parser.add_argument_group("Required arguments")
         optional = parser.add_argument_group("Optional arguments")
 
-        optional.add_argument('-f',
-                              '--file',
+        required.add_argument('-i',
+                              '--input',
                               nargs=1,
                               type=str,
                               default=None,
+                              required=False,
                               help='The location of the TSV training file. '
                                    'Will be made balanced, '
                                    'this balanced dataset will '
                                    'be output to -o. '
                                    'Will cause bias if training '
-                                   'file contains indexing numbers.')
+                                   'file contains indexing numbers. If you do not want the dataset to be balanced, use'
+                                   ' the -bi / balanced_input flag.')
 
-        optional.add_argument('-b',
-                              '--balanced_ds',
+        optional.add_argument('-bi',
+                              '--balanced_input',
                               nargs=1,
                               type=str,
                               default=None,
@@ -182,14 +184,14 @@ class ArgumentSupporter:
         optional.add_argument('-e',
                               '--exit',
                               action='store_true',
-                              help="Activate early exit, right after creating the balanced dataset (if -f is used),"
+                              help="Activate early exit, right after creating the balanced dataset (if -i is used),"
                                    " but before any preprocessing or training happens")
 
-        optional.add_argument('--overwrite_impute_file',
+        required.add_argument('--overwrite_impute_file',
                               nargs='+',
                               type=str,
                               default=None,
-                              required=False,
+                              required=True,
                               help='The exact name (with spaces and capital letters) of the output of the get_name() '
                                    'function of an imputing datafile to be used in the CAPICE run.')
 

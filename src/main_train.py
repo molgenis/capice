@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 import scipy
-import pickle
 import json
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
@@ -51,7 +50,10 @@ class Train:
             self.train_test_size))
         self.defaults = {}
         self.cadd_features = []
+        self.processed_features = []
         self.verbose = self.manager.get_verbose()
+        self.model_type = None
+        self.exporter = Exporter(file_path=self.output_loc)
 
     def main(self):
         if self.input_loc:
@@ -73,37 +75,36 @@ class Train:
         if make_balanced:
             data = self._process_balance_in_the_force(dataset=data)
         if self.n_split:
-            data = self._split_data(dataset=data, test_size=self.n_split)
+            self.log.info('Splitting input dataset before any preprocessing happens.')
+            data, _ = self._split_data(dataset=data, test_size=self.n_split)
         if make_balanced:
-            Exporter(file_path=self.output_loc).export_capice_training_dataset(datafile=data,
-                                                                               feature='balanced dataset',
-                                                                               name='balanced_dataset')
+            self.exporter.export_capice_training_dataset(datafile=data,
+                                                         feature='balanced dataset',
+                                                         name='balanced_dataset')
         self._load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
         imputed_data = capice_processing.impute(loaded_cadd_data=data)
         self.cadd_features = self.manager.get_cadd_features()
-        train, test = self._split_data(dataset=imputed_data,
-                                       test_size=self.train_test_size,
-                                       export=False,
-                                       return_both=True)
-        processed_train = capice_processing.preprocess(loaded_cadd_data=train, train=True)
-        processed_test = capice_processing.preprocess(loaded_cadd_data=test, train=False)
+        processed_data = capice_processing.preprocess(loaded_cadd_data=imputed_data, train=True)[1]
+        self._get_processed_features(dataset=processed_data)
+        processed_train, processed_test = self._split_data(dataset=processed_data,
+                                                           test_size=self.train_test_size,
+                                                           export=False)
+        model = self._train(test_set=processed_test, train_set=processed_train)
+        self.exporter.export_capice_model(model=model, model_type=self.model_type)
 
-    def _split_data(self, dataset, test_size: float, export: bool = True, return_both: bool = False):
+    def _split_data(self, dataset, test_size: float, export: bool = True):
         train, test = train_test_split(dataset, test_size=test_size, random_state=4)
         if export:
-            exporter = Exporter(file_path=self.output_loc)
-            exporter.export_capice_training_dataset(datafile=train,
-                                                    name='splitted_train_dataset',
-                                                    feature='splitted train')
-            exporter.export_capice_training_dataset(datafile=test,
-                                                    name='splitted_test_dataset',
-                                                    feature='splitted test')
-        if return_both:
-            return train, test
-        else:
-            return train
+            self.exporter.export_capice_training_dataset(datafile=train,
+                                                         name='splitted_train_dataset',
+                                                         feature='splitted train')
+            self.exporter.export_capice_training_dataset(datafile=test,
+                                                         name='splitted_test_dataset',
+                                                         feature='splitted test')
+
+        return train, test
 
     def _load_defaults(self):
         if self.specified_default:
@@ -120,10 +121,10 @@ class Train:
         self.defaults = defaults
 
     def _process_balance_in_the_force(self, dataset: pd.DataFrame):
+        self.log.info('Balancing out the input dataset, please hold.')
         palpatine = dataset[dataset['binarized_label'] == 1]
         yoda = dataset[dataset['binarized_label'] == 0]
         anakin = pd.DataFrame(columns=dataset.columns)
-        # bins = [0, 0.1, 1]
         bins = [0, 0.01, 0.05, 0.1, 0.5, 1]
         for consequence in palpatine['Consequence'].unique():
             self.log.debug("Processsing: {}".format(consequence))
@@ -188,17 +189,25 @@ class Train:
                 anakin = anakin.append(
                     selected_pathogenic_currange
                 )
+        self.log.info('Balancing complete.')
         return anakin
 
     @staticmethod
-    def _get_vars_in_range(variants, upper, lower):
+    def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
         vars_in_range = variants.where(
             (variants['max_AF'] < upper) &
             (variants['max_AF'] >= lower)
         ).dropna(how='all')
         return vars_in_range
 
-    def _train(self, test_set, train_set):
+    def _get_processed_features(self, dataset: pd.DataFrame):
+        for column in dataset.columns:
+            for feature in self.cadd_features:
+                if column == feature or column.startswith(feature):
+                    if column not in self.processed_features:
+                        self.processed_features.append(column)
+
+    def _train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         param_dist = {
             'max_depth': scipy.stats.randint(1, 20),
             # (random integer from 1 to 20)
@@ -232,6 +241,7 @@ class Train:
                 max_depth=15
             )
             ransearch1 = model_estimator
+            self.model_type = 'XGBClassifier'
         else:
             model_estimator = xgb.XGBClassifier(verbosity=verbosity,
                                                 objective='binary:logistic',
@@ -251,18 +261,16 @@ class Train:
                                             cv=5,
                                             n_iter=20,
                                             verbose=verbosity)
-        eval_set = [(test_set[self.cadd_features],
+            self.model_type = 'RandomizedSearchCV'
+        eval_set = [(test_set[self.processed_features],
                      test_set['binarized_label'], 'test')]
         self.log.info('Random search starting, please hold.')
-        ransearch1.fit(train_set[self.cadd_features],
+        ransearch1.fit(train_set[self.processed_features],
                        train_set['binarized_label'],
                        early_stopping_rounds=15,
                        eval_metric=["auc"],
                        eval_set=eval_set,
                        verbose=True,
                        sample_weight=train_set['sample_weight'])
-        pickle.dump(ransearch1, open(self.ransearch_output, "wb"))
 
-        if not self.default:
-            pickle.dump(ransearch1.best_estimator_, open(self.optimal_model,
-                                                         'wb'))
+        return ransearch1

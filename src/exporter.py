@@ -3,6 +3,7 @@ from src.global_manager import CapiceManager
 from src.logger import Logger
 import os
 import pandas as pd
+import pickle
 
 
 class Exporter:
@@ -24,11 +25,21 @@ class Exporter:
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
         self.log.info('Exported {} with shape {} to: {}'.format(feature, datafile.shape, filename))
 
+    def export_capice_model(self, model, model_type):
+        export_name = ""
+        if model_type == "XGBClassifier":
+            export_name = 'xgb_classifier'
+        elif model_type == 'RandomizedSearchCV':
+            export_name = 'randomized_search_cv'
+        filename_model = '{}_{}'.format(export_name, self.now.strftime("%H%M%S%f_%d%m%Y"))
+        filename = self._export_filename_ready(file_name=filename_model, type_export='model')
+        pickle.dump(model, open(filename, 'wb'))
+
     def _export_filename_ready(self, file_name, type_export='prediction'):
         path_and_filename = os.path.join(self.file_path, file_name)
         types_export_and_extensions = {'prediction': '.tsv',
                                        'dataset': '.tsv.gz',
-                                       'metadata': '.txt'}
+                                       'model': '.pickle.dat'}
         extension = types_export_and_extensions[type_export]
         full_path = os.path.join(self.file_path, file_name + extension)
         export_path = None
