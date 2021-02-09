@@ -1,3 +1,8 @@
+"""
+File to contain all specific information for the updated XGBoost 1.1.1 model, created in the same way as the
+original model was.
+"""
+
 from src.models.model_abstract import TemplateSetup
 from src.utilities.utilities import get_project_root_dir
 import os

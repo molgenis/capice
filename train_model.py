@@ -18,6 +18,11 @@ __description__ = "{} (version: {}) is a program developed and maintained by {}.
 
 
 def main():
+    """
+    Gathering of all command line arguments and checking the input, output and log location. Setting global variables
+    and then calling the main_train.py which will perform the actual calling to the modules required to create a new
+    CAPICE like model.
+    """
     arguments = ArgumentSupporter(description=__description__, type_cmd='train')
     input_loc = convert_cla_to_str(arguments.get_argument('input'))
     balanced = convert_cla_to_str(arguments.get_argument('balanced_input'))
@@ -65,6 +70,11 @@ def main():
 
 
 def _check_input(data_loc, balanced_loc):
+    """
+    Function to check if either data_loc or balanced_loc is given
+    :param data_loc: path-like
+    :param balanced_loc: path-like
+    """
     if data_loc is None and balanced_loc is None:
         raise InputError('Data location must be specified.')
 

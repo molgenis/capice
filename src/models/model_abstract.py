@@ -9,7 +9,7 @@ import pickle
 class TemplateSetup(metaclass=ABCMeta):
     """
     Abstract class to act as template for new models that might be
-    added in future patches of CAPICE.
+    added in future patches of CAPICE. Contains the necessary steps for preprocessing as well.
     """
     def __init__(self):
         self.log = Logger().get_logger()
@@ -22,14 +22,30 @@ class TemplateSetup(metaclass=ABCMeta):
     @staticmethod
     @abstractmethod
     def get_name():
+        """
+        Function to define a name for the preprocessor / predictor that can be used in the --overwrite_model_file
+        command line argument.
+        :return: string
+        """
         return 'Template'
 
     @staticmethod
     @abstractmethod
     def is_usable():
+        """
+        Function to define if this class is usable or exists just as a template or for very specific goals where
+        the imputing file is hardcoded.
+        :return: boolean
+        """
         return False
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
+        """
+        Callable function to start the preprocessing of a dataset.
+        :param dataset: imputed pandas DataFrame
+        :param is_train: boolean
+        :return: processed pandas DataFrame
+        """
         self.train = is_train
         self._load_model()
         if not self.train:
@@ -41,6 +57,10 @@ class TemplateSetup(metaclass=ABCMeta):
         return processed_dataset
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):
+        """
+        Function to get the categorical columns that are within the supplied CADD features of the imputing file.
+        :param dataset: pandas DataFrame
+        """
         for feature in dataset.select_dtypes(include=["O"]).columns:
             if feature in self.cadd_features:
                 self.cadd_object.append(feature)
@@ -48,10 +68,23 @@ class TemplateSetup(metaclass=ABCMeta):
 
     @staticmethod
     def _duplicate_chr_pos_ref_alt(dataset):
+        """
+        Function to create the chr_pos_ref_alt column so that it doesn't get lost in preprocessing.
+        :param dataset: unprocessed pandas DataFrame
+        :return: unprocessed pandas DataFrame containing column 'chr_pos_ref_alt'
+        """
         dataset['chr_pos_ref_alt'] = dataset[['#Chrom', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
         return dataset
 
     def _process_objects(self, dataset: pd.DataFrame):
+        """
+        (If train) will create a dictionary telling the processor how many categories are within a certain column. If
+        not train: Will look up each CADD feature from the impute file within the columns of the datafile (either
+        in full name or the column starts with the feature from the impute file). This dictionary is then passed to the
+        actual processor.
+        :param dataset: unprocessed pandas DataFrame
+        :return: processed pandas DataFrame
+        """
         cadd_feats_names_dict = {}
         cadd_feats_levels_dict = {"Ref": 5, "Alt": 5, "Domain": 5}
         if self.train:
@@ -76,6 +109,11 @@ class TemplateSetup(metaclass=ABCMeta):
         return processed_data
 
     def _load_model_features(self):
+        """
+        Function to access the protected member of the XGBoost _Booster class to get the features that the model is
+        trained on.
+        :return: list
+        """
         self.log.info('Using features saved within the model.')
         return self.model._Booster.feature_names
 
@@ -83,6 +121,13 @@ class TemplateSetup(metaclass=ABCMeta):
                                   dataset: pd.DataFrame,
                                   cadd_feats_names_dict,
                                   cadd_feats_levels_dict):
+        """
+        Processor of categorical columns. Will create new columns based on the quantity of a value within a column.
+        :param dataset: unprocessed pandas DataFrame
+        :param cadd_feats_names_dict: dictionary that is used when it is not preprocessing a training file
+        :param cadd_feats_levels_dict: dictionary that is used when processing a training file
+        :return: processed pandas DataFrame
+        """
         if self.train:
             for cadd_feat in cadd_feats_levels_dict.keys():
                 feature_names = self._get_top10_or_less_cats(
@@ -104,6 +149,13 @@ class TemplateSetup(metaclass=ABCMeta):
         return dataset
 
     def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):
+        """
+        Function for when a training file is preprocessed to get the top return_num quantity values within a
+        categorical column. Some converting is done for the logger to be able to print them.
+        :param column: pandas Series
+        :param return_num: integer
+        :return: pandas Series
+        """
         value_counts = column.value_counts().index[:return_num].values
         printable_value_counts = []
         for value in value_counts:
@@ -117,6 +169,10 @@ class TemplateSetup(metaclass=ABCMeta):
         return value_counts
 
     def get_model_features(self):
+        """
+        Function to be called by external modules to export the CADD features used in the model.
+        :return: list
+        """
         return self.model_features
 
     # Model stuff
@@ -143,7 +199,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def predict(self, data: pd.DataFrame):
         """
-        Template method for a model setup to predict and return scores.
+        Function to load the model and predict the CAPICE scores. Can be overwritten in case of legacy support.
         :return: pandas DataFrame
         """
         self.log.info('Predicting for {} samples.'.format(data.shape[0]))
@@ -155,6 +211,11 @@ class TemplateSetup(metaclass=ABCMeta):
         return data
 
     def _predict(self, predict_data):
+        """
+        Further down defined prediction function, which is different for XGBoost 0.72.1 and 1.1.1.
+        :param predict_data: preprocessed pandas DataFrame
+        :return: numpy array
+        """
         return self.model.predict_proba(predict_data)[:, 1]
 
     def _create_input_matrix(self, dataset: pd.DataFrame):

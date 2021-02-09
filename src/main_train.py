@@ -12,6 +12,9 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
 class Train:
+    """
+    Train class of CAPICE to create new CAPICE like models for new or specific use cases.
+    """
     def __init__(self,
                  __program__,
                  __author__,
@@ -56,6 +59,9 @@ class Train:
         self.exporter = Exporter(file_path=self.output_loc)
 
     def main(self):
+        """
+        Main function. Will make a variety of calls to the required modules in order to create new CAPICE models.
+        """
         if self.input_loc:
             input_loc = self.input_loc
             make_balanced = True
@@ -95,6 +101,14 @@ class Train:
         self.exporter.export_capice_model(model=model, model_type=self.model_type)
 
     def _split_data(self, dataset, test_size: float, export: bool = True):
+        """
+        Function to split any given dataset into 2 datasets using the test_size argument. Can export both if export
+        flag is enabled.
+        :param dataset: pandas.DataFrame
+        :param test_size: float, ranging 0-1
+        :param export: boolean
+        :return: train, test (1-test_size, test_size)
+        """
         train, test = train_test_split(dataset, test_size=test_size, random_state=4)
         if export:
             self.exporter.export_capice_training_dataset(datafile=train,
@@ -107,11 +121,17 @@ class Train:
         return train, test
 
     def _load_defaults(self):
+        """
+        Function to load in specified default hyper parameters. If no specified default is supplied, but -d flag is
+        used, load in the original hyper parameters. Note: in any case the original hyper parameters will be loaded,
+        but due to the absence of the -d or -sd flag, the self.defaults will not be used.
+        """
         if self.specified_default:
             train_checker = TrainChecker()
             with open(self.specified_default) as json_file:
                 defaults = json.load(json_file)
             train_checker.specified_defaults_checker(loaded_defaults=defaults)
+            self.default = True
         else:
             defaults = {
                 'learning_rate': 0.10495845238185281,
@@ -121,6 +141,12 @@ class Train:
         self.defaults = defaults
 
     def _process_balance_in_the_force(self, dataset: pd.DataFrame):
+        """
+        Balancing function as first used by Li et al. in the original CAPICE paper. Balances baced on Consequence,
+        allele frequency and benign/pathogenic samples.
+        :param dataset: pandas.DataFrame
+        :return: balanced pandas.DataFrame
+        """
         self.log.info('Balancing out the input dataset, please hold.')
         palpatine = dataset[dataset['binarized_label'] == 1]
         yoda = dataset[dataset['binarized_label'] == 0]
@@ -194,6 +220,13 @@ class Train:
 
     @staticmethod
     def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
+        """
+        Sub-function of the balancing function to get variants within a certain allele frequency threshold.
+        :param variants: pandas.DataFrame
+        :param upper: float
+        :param lower: float
+        :return: pandas.DataFrame
+        """
         vars_in_range = variants.where(
             (variants['max_AF'] < upper) &
             (variants['max_AF'] >= lower)
@@ -201,6 +234,11 @@ class Train:
         return vars_in_range
 
     def _get_processed_features(self, dataset: pd.DataFrame):
+        """
+        Function to save the columns of a dataset that have been processed and thus are an output column of the CADD
+        annotation.
+        :param dataset: pandas.DataFrame
+        """
         for column in dataset.columns:
             for feature in self.cadd_features:
                 if column == feature or column.startswith(feature):
@@ -208,6 +246,12 @@ class Train:
                         self.processed_features.append(column)
 
     def _train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
+        """
+        The training part of main_train.py after all has been processed. This is the same as Li et al. originally used
+        to create CAPICE, but might be altered due to deprecation of certain libraries.
+        :param test_set: pandas.DataFrame, the testing dataset for determine performance during training
+        :param train_set: pandas.DataFrame, the training dataset on which the model will be created on
+        """
         param_dist = {
             'max_depth': scipy.stats.randint(1, 20),
             # (random integer from 1 to 20)
@@ -236,9 +280,9 @@ class Train:
                 scale_pos_weight=1,
                 base_score=0.5,
                 random_state=0,
-                learning_rate=0.10495845238185281,
-                n_estimators=422,
-                max_depth=15
+                learning_rate=self.defaults['learning_rate'],
+                n_estimators=self.defaults['n_estimators'],
+                max_depth=self.defaults['max_depth']
             )
             ransearch1 = model_estimator
             self.model_type = 'XGBClassifier'

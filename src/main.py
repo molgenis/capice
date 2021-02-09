@@ -9,6 +9,10 @@ from src.preprocessors.preprocessor import PreProcessor
 
 
 class Main:
+    """
+    Main class of CAPICE to call the different modules to impute, preprocess and eventually predict a score over a CADD
+    annotated file.
+    """
     def __init__(self,
                  __program__, __author__, __version__,
                  input_loc, output_loc,
@@ -43,7 +47,7 @@ class Main:
 
     def run(self, train: bool):
         """
-        Function to make CAPICE run
+        Function to make CAPICE run in a prediction matter.
         """
         cadd_data = self.load_file()
         cadd_data = self.impute(loaded_cadd_data=cadd_data)

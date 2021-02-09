@@ -11,11 +11,19 @@ class InputChecker:
 
     @staticmethod
     def check_input_loc(input_loc):
+        """
+        Function to check if there is a file at the input location
+        :param input_loc: full path to input file
+        """
         if not check_file_exists(input_loc):
             raise InputError("Input file does not exist!")
 
     @staticmethod
     def check_output_loc(output_loc):
+        """
+        Function to check if the output directory exists and, if not, make it.
+        :param output_loc: path to output folder
+        """
         if not check_dir_exists(output_loc):
             warnings.warn("Output directory does not exist, creating.")
             prepare_dir(output_loc)
@@ -32,6 +40,9 @@ class LogChecker:
 
     @staticmethod
     def _check_python_version():
+        """
+        Check if the python version is at least 3.0.0
+        """
         if sys.version_info[0] == 2:
             raise VersionError('Python 2 is not supported.')
         if sys.version_info[1] < 6:

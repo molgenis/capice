@@ -9,7 +9,9 @@ class CaddParser:
 
     def set_separator(self, sep: str):
         """
-        Function to overwrite the default separator 'tab'
+        Function to overwrite the default separator 'tab'. Currently has no real function, but might be implemented
+        in the future if the default separator in the CADD output changes and the separator has to be dynamically
+        changed.
         :param sep: str, to be used separator in the pandas.read_csv call
         """
         self.sep = sep

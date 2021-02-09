@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+CAPICE.py is a module of CAPICE that is supposed to be called when the user wants to make a prediction over a CADD
+annotated file. It's use is to gather all Command Line Arguments, check some, provide the global manager
+(./src/global_manager.py CapiceManager) with arguments that are used in multiple modules and provide ./src/main.py
+with it's wanted arguments.
+"""
+
 from src.command_line_supporter import ArgumentSupporter
 from src.input_checker import InputChecker, LogChecker
 from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
@@ -18,6 +25,11 @@ __description__ = "{} (version: {}) is a program developed and maintained by {}.
 
 
 def main():
+    """
+    Gathering of Command Line Arguments (CLAs), checking the log location,
+    setting global variables and providing Main.py with it's wanted arguments.
+    Converting the CLAs happens because often the CLA is returned as a list.
+    """
     cla = ArgumentSupporter(description=__description__, type_cmd='main')
 
     # Getting all arguments.
@@ -38,6 +50,13 @@ def main():
     lc = LogChecker(log_loc=log_loc, output_loc=output_loc)
     log_loc = lc.check_log_loc()
 
+    # Checking the input arguments.
+
+    input_checker = InputChecker()
+
+    input_checker.check_input_loc(input_loc=input_loc)
+    input_checker.check_output_loc(output_loc=output_loc)
+
     # Initializing the manager
 
     manager = CapiceManager()
@@ -48,13 +67,6 @@ def main():
     manager.set_overwrite_impute(overwrite_impute)
     manager.set_overwrite_model(overwrite_model)
     manager.set_force(force=force)
-
-    # Checking the input arguments.
-
-    input_checker = InputChecker()
-
-    input_checker.check_input_loc(input_loc=input_loc)
-    input_checker.check_output_loc(output_loc=output_loc)
 
     capice_main = Main(__program__=__program__,
                        __author__=__author__,

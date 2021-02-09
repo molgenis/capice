@@ -8,7 +8,7 @@ import os
 
 class CaddImputing:
     """
-    What I need for this class is the CADD version and GRCh build
+    Class to dynamically load in all imputing files and identify the file suitable for the run's use case.
     """
     def __init__(self):
         self.manager = CapiceManager()
@@ -25,6 +25,11 @@ class CaddImputing:
         self.impute_values = {}
 
     def _load_modules(self):
+        """
+        Method to dynamically load in all python files containing a class that contains the functions get_name(),
+        _cadd_features() and _impute_values(). If at the end of this function, the list of impute files is empty,
+        will throw the module not found error.
+        """
         self.log.info('Identifying imputing files.')
         directory = os.path.join(get_project_root_dir(), 'src', 'data_files', 'imputing')
         usable_modules = load_modules(directory)
@@ -39,11 +44,18 @@ class CaddImputing:
         self.log.info('Identified {} files available for usage in imputing.'.format(len(self.modules)))
 
     def _raise_no_module_found_error(self):
+        """
+        Function to raise when no suitable impute files are found.
+        Put into a function since 2 other functions within this module will use it.
+        """
         error_message = 'No usable python files are found within the imputing directory!'
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
     def _is_correct_datafile_present(self):
+        """
+        Function to check the CADD version and GRCh build (or --overwrite_impute_file) match the impute file.
+        """
         for module in self.modules:
             if self.overrule:
                 if module.get_name() == self.overrule:
@@ -73,13 +85,17 @@ class CaddImputing:
             raise FileNotFoundError(error_message)
 
     def _load_values(self):
+        """
+        Function to be called right when impute() is called, gets the cadd features and impute values from the
+        impute file and saves the cadd features to the manager.
+        """
         self.columns = self.module.get_cadd_features()
         self.manager.set_cadd_features(self.columns)
         self.impute_values = self.module.get_impute_values()
 
     def impute(self, datafile: pd.DataFrame):
         """
-        Function to call the CaddImputing to start imputing
+        Function to call the CaddImputing to start imputing.
         :return: pandas DataFrame
         """
         self._load_values()
@@ -96,6 +112,11 @@ class CaddImputing:
         return datafile
 
     def _check_chrom_pos(self, dataset: pd.DataFrame):
+        """
+        Function to check if all values of the columns #Chrom and Pos are present.
+        :param dataset: not imputed pandas DataFrame
+        :return: pandas DataFrame containing no NaN or gaps for #Chrom and Pos columns.
+        """
         if dataset['#Chrom'].isnull().values.any():
             n_delete = dataset['#Chrom'].isnull().values.sum()
             self.log.warning('Detected NaN in the Chromosome column! Deleting {} row(s).'.format(n_delete))
@@ -107,6 +128,10 @@ class CaddImputing:
         return dataset
 
     def _get_nan_ratio_per_column(self, dataset: pd.DataFrame):
+        """
+        Generic function to get the percentage of gaps per column
+        :param dataset: not imputed pandas DataFrame
+        """
         n_samples = dataset.shape[0]
         for column in dataset.columns:
             n_nan = dataset[column].isnull().sum()
@@ -118,6 +143,11 @@ class CaddImputing:
                 ))
 
     def _get_full_nan_row(self, dataset: pd.DataFrame):
+        """
+        Function to get the samples of which absolutely no prediction is possible due to all cadd feature rows being
+        gaps.
+        :param dataset: not imputed pandas DataFrame
+        """
         n_samples = dataset.shape[0]
         dataset.index = range(1, n_samples + 1)
         dataset['CAPICE_drop_out'] = dataset[self.columns].isnull().values.all(axis=1)

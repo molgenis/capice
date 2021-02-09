@@ -5,7 +5,7 @@ import gzip
 
 class CaddHeaderParser:
     """
-    Class to parse just the header of the CADD file
+    Autonomous class to parse just the header of the CADD file to get the CADD version and GRCh build.
     """
     def __init__(self, is_gzipped: bool, cadd_file_loc: str):
         self.log = Logger().get_logger()
@@ -24,6 +24,9 @@ class CaddHeaderParser:
             self.log.warning('Unable to parse CADD file header, header not located. Does the header start with "##"?')
 
     def _parse_header(self):
+        """
+        Class to see if the first line is present within the input file.
+        """
         if self.is_gzipped:
             with gzip.open(self.cadd_file_loc, mode='rt') as file:
                 first_line = file.readline().strip()
@@ -34,6 +37,9 @@ class CaddHeaderParser:
             self.header_present = True
 
     def _get_header_version_and_grch_build(self):
+        """
+        Class to parse the CADD version and GRCh build present in the header of the CADD output file
+        """
         for word in self.header.split(" "):
             if word.upper().startswith('GRCH'):
                 version_and_build = word.split("-v")

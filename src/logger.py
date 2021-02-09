@@ -26,6 +26,10 @@ import os
 
 
 class Logger:
+    """
+    Singleton logger class developed by both Martijn Vochteloo and Robert Jarik Sietsma.
+    Facilitates the python logging library.
+    """
     
     class __Logger:
         def __init__(self):
@@ -37,12 +41,21 @@ class Logger:
             self.logger = self.load_logger()
 
         def set_loglevel(self):
+            """
+            Function to set the log level at where messages are printed or logged. For more information, see:
+            https://docs.python.org/3/library/logging.html#logging-levels
+            :return: logging level
+            """
             if self.global_settings.get_verbose():
                 return logging.NOTSET
             else:
                 return logging.INFO
 
         def load_logger(self):
+            """
+            Function to set up the logger instance with the correct format and filename.
+            :return: logger instance
+            """
             handlers = [logging.StreamHandler()]
             if not self.create_logfile:
                 now = self.global_settings.get_now()
@@ -63,12 +76,25 @@ class Logger:
             return logging.getLogger(__name__)
 
         def get_logger(self):
+            """
+            Function for external modules to request the logger instance.
+            :return: logging instance
+            """
             return self.logger
 
         def get_log_loc(self):
+            """
+            Function for external modules to request where the log file is saved.
+            :return: path-like
+            """
             return self.final_log_loc
 
         def _create_log_export_name(self, out_file_name):
+            """
+            Function to create an unique logfile name
+            :param out_file_name: Filename of the logfile
+            :return: full export path
+            """
             full_export = os.path.join(self.output_loc, out_file_name + '.log')
             partial_export = os.path.join(self.output_loc, out_file_name)
             export_path = None

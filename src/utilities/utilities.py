@@ -131,6 +131,13 @@ def load_modules(path):
 
 
 def importer(usable_modules: list, path):
+    """
+    Utilitarian function for the imputer and preprocessor to dynamically load in the modules using the import_module
+    library.
+    :param usable_modules: list of modules present within a certain directory
+    :param path: path of said directory
+    :return: list of usable modules
+    """
     return_modules = []
     sys.path.append(path)
     for module in usable_modules:

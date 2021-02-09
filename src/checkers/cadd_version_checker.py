@@ -7,6 +7,8 @@ import warnings
 class CaddVersionChecker:
     """
     Class to check the given CADD command line arguments and the header of the CADD file
+
+    Class is self running thanks to the init, no function has to be called externally.
     """
     def __init__(self,
                  cla_cadd_version: float,
@@ -38,14 +40,25 @@ class CaddVersionChecker:
         self._set_global_grch_build()
 
     def _set_global_cadd_version(self):
+        """
+        Function to provide the CapiceManager with the cadd version to be used globally later on in CAPICE.
+        """
         self.manager.set_cadd_version(cadd_version=self.export_cadd_version)
         self.log.info('CADD version set to: {}'.format(self.export_cadd_version))
 
     def _set_global_grch_build(self):
+        """
+        Function to provide the CapiceManager with the Genome Build version to be used globally later on in CAPICE.
+        """
         self.manager.set_grch_build(grch_build=self.export_grch_build)
         self.log.info('GRCh build set to: {}'.format(self.export_grch_build))
 
     def _check_all_version_present(self):
+        """
+        Function to check if both the command line argument and the file CADD versions are present.
+        If only 1 is present, set the export CADD version to it.
+        If none is present, raise InputError.
+        """
         list_of_cadd_versions = [self.cla_cadd_version, self.file_cadd_version]
         if None in list_of_cadd_versions:
             if list_of_cadd_versions.count(None) == len(list_of_cadd_versions):
@@ -57,6 +70,11 @@ class CaddVersionChecker:
                     self.export_cadd_version = version
 
     def _check_all_builds_present(self):
+        """
+        Function to check if both the command line argument and the file GRCh build are present.
+        If only 1 is present, set the export GRCh build to it.
+        If none is present, raide InputError.
+        """
         list_of_cadd_grch_builds = [self.cla_grch_build, self.file_grch_build]
         if None in list_of_cadd_grch_builds:
             if list_of_cadd_grch_builds.count(None) == len(list_of_cadd_grch_builds):
@@ -68,6 +86,10 @@ class CaddVersionChecker:
                     self.export_grch_build = build
 
     def _check_version_match(self):
+        """
+        Function to check if the Command Line Argument and the file header specified CADD versions match.
+        If not: use the command line argument as form of "overwrite" and warn.
+        """
         if self.check_match_versions:
             if self.cla_cadd_version != self.file_cadd_version:
                 warning_message = "Version supplied on the command line:" \
@@ -82,6 +104,10 @@ class CaddVersionChecker:
             self.export_cadd_version = self.cla_cadd_version
 
     def _check_grch_build_match(self):
+        """
+        Function to check if the Command Line Argument and the file specified GRCh build match.
+        If not: use the CLA argument as form of "overwrite" and warn.
+        """
         if self.check_match_builds:
             if self.cla_grch_build != self.file_grch_build:
                 warning_message = "GRCh build supplied on the command line:" \

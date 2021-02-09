@@ -7,6 +7,10 @@ import os
 
 
 class PreProcessor:
+    """
+    Class to dynamically load in all model files for preprocessing and choosing the correct preprocessing file
+    according to the given command line arguments or parsed CADD file header. (or the --overwrite_model_file argument)
+    """
     def __init__(self, is_train: bool = False):
         self.manager = CapiceManager()
         self.log = Logger().get_logger()
@@ -20,6 +24,9 @@ class PreProcessor:
         self._prepare_preprocessor()
 
     def _prepare_preprocessor(self):
+        """
+        Function to see if the training protocol should be used or the preprocessors should be loaded in.
+        """
         if self.train:
             from src.models.training_preprocessor import TrainPreprocessor
             self.preprocessor = TrainPreprocessor()
@@ -28,6 +35,10 @@ class PreProcessor:
             self._load_correct_preprocessor()
 
     def _load_preprocessors(self):
+        """
+        Function to dynamically load in the preprocessors modules, but must have the following functions: get_name(),
+        get_supported_cadd_version() and get_supported_genomebuild_version().
+        """
         self.log.info('Identifying preprocessing files.')
         directory = os.path.join(get_project_root_dir(), 'src', 'models')
         usable_modules = load_modules(directory)
@@ -43,11 +54,19 @@ class PreProcessor:
         self.log.info('Succesfully loaded {} preprocessors.'.format(len(self.preprocessors)))
 
     def _raise_no_module_found_error(self):
+        """
+        Specialized function to be used into _load_preprocessors() and _load_correct_preprocessor() to be raised when
+        no preprocessing files can be found.
+        """
         error_message = 'No usable python files are found within the imputing directory!'
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
     def _load_correct_preprocessor(self):
+        """
+        Function to check the dynamically loaded preprocessors to match either the overrule argument or
+        the cadd version and genome build.
+        """
         for preprocessor in self.preprocessors:
             if self.overrule:
                 if preprocessor.get_name() == self.overrule:
@@ -78,9 +97,19 @@ class PreProcessor:
             raise FileNotFoundError(error_message)
 
     def preprocess(self, datafile: pd.DataFrame):
+        """
+        Callable function for external modules to start call the preprocessor of the correctly chosen module.
+        :param datafile: unprocessed pandas DataFrame
+        :return: processed pandas Dataframe
+        """
         processed_data = self.preprocessor.preprocess(dataset=datafile, is_train=self.train)
         return processed_data
 
     def predict(self, datafile: pd.DataFrame):
+        """
+        Callable function for external modules to start the call to the predict of the correctly chosen module.
+        :param datafile: preprocessed pandas DataFrame
+        :return: predicted pandas DataFrame
+        """
         predicted_data = self.preprocessor.predict(data=datafile)
         return predicted_data

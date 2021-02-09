@@ -16,6 +16,10 @@ class ArgumentSupporter:
         self.arguments = parser.parse_args()
 
     def _create_argument_parser_main(self):
+        """
+        Parser function for 'capice.py' and all it's command line arguments.
+        :return: parser
+        """
         parser = argparse.ArgumentParser(
             prog="capice.py",
             description=self.description)
@@ -102,6 +106,10 @@ class ArgumentSupporter:
         return parser
 
     def _create_argument_parser_train(self):
+        """
+        Parser function for 'train_model.py' and all it's command line arguments.
+        :return: parser
+        """
         parser = argparse.ArgumentParser(
             prog="train_capice_model.py",
             description=self.description)

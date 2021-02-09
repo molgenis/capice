@@ -1,3 +1,7 @@
+"""
+File that contains all information specific to the originally published CAPICE model using XGBoost 0.72.1.
+"""
+
 from src.models.model_abstract import TemplateSetup
 from src.utilities.utilities import get_project_root_dir
 import os
