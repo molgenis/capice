@@ -40,3 +40,15 @@ class TrainChecker:
                 error_message = 'Label {} not found within dataset! Please add it to your dataset.'.format(col_name)
                 self.log.critical(error_message)
                 raise KeyError(error_message)
+
+    def check_balancing_labels(self, dataset: pd.DataFrame):
+        """
+        Function to check the input dataframe if it has the columns "max_AF" and "Consequence" present.
+        :param dataset: to be balanced pandas DataFrame
+        """
+        required_columns = ['Consequence', 'max_AF']
+        for col_name in required_columns:
+            if col_name not in dataset.columns:
+                error_message = 'Label {} required for balancing not found within dataset!'.format(col_name)
+                self.log.critical(error_message)
+                raise KeyError(error_message)

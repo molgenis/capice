@@ -21,7 +21,7 @@ class Train:
                  __version__,
                  input_loc,
                  output_loc,
-                 balanced_loc,
+                 balance,
                  default,
                  specified_default,
                  split,
@@ -37,8 +37,8 @@ class Train:
         # Argument logging
         self.input_loc = input_loc
         self.output_loc = output_loc
-        self.balanced_loc = balanced_loc
-        self.log.debug('Balanced dataset location confirmed: {}'.format(self.balanced_loc))
+        self.balance = balance
+        self.log.debug('Make input dataset balanced confirmed: {}'.format(self.balance))
         self.default = default
         self.log.debug('The use of the default Python 3.6 hyperparameters set to: {}'.format(self.default))
         self.specified_default = specified_default
@@ -62,12 +62,7 @@ class Train:
         """
         Main function. Will make a variety of calls to the required modules in order to create new CAPICE models.
         """
-        if self.input_loc:
-            input_loc = self.input_loc
-            make_balanced = True
-        else:
-            input_loc = self.balanced_loc
-            make_balanced = False
+        input_loc = self.input_loc
         capice_processing = Main(__program__=self.__program__,
                                  __author__=self.__author__,
                                  __version__=self.__version__,
@@ -78,12 +73,13 @@ class Train:
         data = capice_processing.load_file(check_version_present=False)
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data)
-        if make_balanced:
+        if self.balance:
+            train_checker.check_balancing_labels(dataset=data)
             data = self._process_balance_in_the_force(dataset=data)
         if self.n_split:
             self.log.info('Splitting input dataset before any preprocessing happens.')
             data, _ = self._split_data(dataset=data, test_size=self.n_split)
-        if make_balanced:
+        if self.balance:
             self.exporter.export_capice_training_dataset(datafile=data,
                                                          feature='balanced dataset',
                                                          name='balanced_dataset')

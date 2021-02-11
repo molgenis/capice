@@ -122,23 +122,15 @@ class ArgumentSupporter:
                               nargs=1,
                               type=str,
                               default=None,
-                              required=False,
-                              help='The location of the TSV training file. '
-                                   'Will be made balanced, '
-                                   'this balanced dataset will '
-                                   'be output to -o. '
-                                   'Will cause bias if training '
-                                   'file contains indexing numbers. If you do not want the dataset to be balanced, use'
-                                   ' the -bi / balanced_input flag.')
+                              required=True,
+                              help='The location of the TSV training file.')
 
-        optional.add_argument('-bi',
-                              '--balanced_input',
-                              nargs=1,
-                              type=str,
-                              default=None,
-                              help='Use this argument if you already have a '
-                                   'balanced dataset or dont\'t want to use '
-                                   'a balanced dataset.')
+        optional.add_argument('-b',
+                              '--balance',
+                              action='store_true',
+                              help='Use this argument if you want to balance out the input dataset on allele '
+                                   'frequency, consequence and benign versus pathogenic sample distribution. Note: '
+                                   'balancing happens before the -s/--split command.')
 
         required.add_argument('-o',
                               '--output',
@@ -187,7 +179,7 @@ class ArgumentSupporter:
                               type=float,
                               help='Argument to be passed to the train test split that will be used to determine '
                                    'the size of the test dataset (in percentage) used within the training process. '
-                                   'Requires a float percentage (0-1).')
+                                   'Requires a float percentage (0-1). Default = 0.2')
 
         optional.add_argument('-e',
                               '--exit',

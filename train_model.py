@@ -25,7 +25,7 @@ def main():
     """
     arguments = ArgumentSupporter(description=__description__, type_cmd='train')
     input_loc = convert_cla_to_str(arguments.get_argument('input'))
-    balanced = convert_cla_to_str(arguments.get_argument('balanced_input'))
+    balance = arguments.get_argument('balance')
     output_loc = convert_cla_to_str(arguments.get_argument('output'))
     log_loc = convert_cla_to_str(arguments.get_argument('log_file'))
     overwrite_impute_file = convert_cla_to_full_string(arguments.get_argument('overwrite_impute_file'))
@@ -37,8 +37,6 @@ def main():
     split = convert_cla_to_float(arguments.get_argument('split'))
     early_exit = arguments.get_argument('exit')
     train_test_split = convert_cla_to_float(arguments.get_argument('train_test_size'))
-
-    _check_input(input_loc, balanced)
 
     log_checker = LogChecker(log_loc=log_loc, output_loc=output_loc)
     log_loc = log_checker.check_log_loc()
@@ -59,7 +57,7 @@ def main():
                   __version__=__version__,
                   input_loc=input_loc,
                   output_loc=output_loc,
-                  balanced_loc=balanced,
+                  balance=balance,
                   default=default,
                   specified_default=specified_default,
                   split=split,
@@ -67,16 +65,6 @@ def main():
                   train_test_size=train_test_split)
 
     train.main()
-
-
-def _check_input(data_loc, balanced_loc):
-    """
-    Function to check if either data_loc or balanced_loc is given
-    :param data_loc: path-like
-    :param balanced_loc: path-like
-    """
-    if data_loc is None and balanced_loc is None:
-        raise InputError('Data location must be specified.')
 
 
 if __name__ == '__main__':
