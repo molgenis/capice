@@ -66,7 +66,7 @@ class CaddImputing:
             else:
                 if module.version_check(self.cadd_version) and module.build_check(self.grch_build):
                     self.log.info('Impute data file successfully found: {} , located at: {}'.format(
-                        module.get_name(), inspect.getfile(module.__class__)))
+                        module.get_name, inspect.getfile(module.__class__)))
                     self.module = module
                     break
 

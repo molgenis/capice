@@ -16,6 +16,7 @@ class CapiceManager:
             self.force = False
             self.verbose = False
             self.disabled_logfile = False
+            self.critical_only_logging = False
             self.cadd_features = []
             self.full_cadd_features = []
 
@@ -84,6 +85,12 @@ class CapiceManager:
 
         def get_disable_logfile(self):
             return self.disabled_logfile
+
+        def set_critical_logs_only(self, critical_logs_only):
+            self.critical_only_logging = critical_logs_only
+
+        def get_critical_logs_only(self):
+            return self.critical_only_logging
 
     instance = None
 
@@ -237,6 +244,20 @@ class CapiceManager:
         """
         Function to get the argument to disable the creation of the logfile
         :return: bool
+        """
+        pass
+
+    def set_critical_logs_only(self, critical_logs_only):
+        """
+        Function for testing purposes to log only critical level log events.
+        :param critical_logs_only: boolean
+        """
+        pass
+
+    def get_critical_logs_only(self):
+        """
+        Function for logger to see if only critical level logs should be printed or written to file.
+        For testing purposes only.
         """
         pass
 

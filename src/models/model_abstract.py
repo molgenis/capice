@@ -11,33 +11,65 @@ class TemplateSetup(metaclass=ABCMeta):
     Abstract class to act as template for new models that might be
     added in future patches of CAPICE. Contains the necessary steps for preprocessing as well.
     """
-    def __init__(self):
+    def __init__(self, name, usable, cadd_version, grch_build):
         self.log = Logger().get_logger()
         self.cadd_features = CapiceManager().get_cadd_features()
         self.train = False
         self.model = None
         self.cadd_object = []
         self.model_features = None
+        self.get_name = name
+        self.is_usable = usable
+        self.get_supported_cadd_version = cadd_version
+        self.get_supported_grch_build = grch_build
 
-    @staticmethod
-    @abstractmethod
-    def get_name():
-        """
-        Function to define a name for the preprocessor / predictor that can be used in the --overwrite_model_file
-        command line argument.
-        :return: string
-        """
-        return 'Template'
+    @property
+    def get_name(self):
+        return self._name
 
-    @staticmethod
-    @abstractmethod
-    def is_usable():
-        """
-        Function to define if this class is usable or exists just as a template or for very specific goals where
-        the imputing file is hardcoded.
-        :return: boolean
-        """
-        return False
+    @get_name.setter
+    def get_name(self, value):
+        if not isinstance(value, str):
+            error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._name = value
+
+    @property
+    def is_usable(self):
+        return self._usable
+
+    @is_usable.setter
+    def is_usable(self, value):
+        if not isinstance(value, bool):
+            error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._usable = value
+
+    @property
+    def get_supported_cadd_version(self):
+        return self._cadd_version
+
+    @get_supported_cadd_version.setter
+    def get_supported_cadd_version(self, value):
+        if not isinstance(value, float):
+            error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._cadd_version = value
+
+    @property
+    def get_supported_grch_build(self):
+        return self._grch_build
+
+    @get_supported_grch_build.setter
+    def get_supported_grch_build(self, value):
+        if not isinstance(value, int):
+            error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._grch_build = value
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
         """
@@ -176,26 +208,6 @@ class TemplateSetup(metaclass=ABCMeta):
         return self.model_features
 
     # Model stuff
-
-    @staticmethod
-    @abstractmethod
-    def get_supported_cadd_version():
-        """
-        Template for the model setup to tell CAPICE
-        what CADD version is supported.
-        :return: float
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_supported_genomebuild_version():
-        """
-        Template for the model setup to tell CAPICE what genome build is
-        supported.
-        :return: int
-        """
-        pass
 
     def predict(self, data: pd.DataFrame):
         """

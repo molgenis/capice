@@ -7,21 +7,13 @@ from src.data_files.imputing.impute_values_abstract import TemplateImputeValues
 
 
 class Cadd14Grch37(TemplateImputeValues):
-    @staticmethod
-    def get_name():
-        return 'CADD 1.4, GRCh build 37'
-
-    @staticmethod
-    def is_usable():
-        return True
-
-    @staticmethod
-    def get_supported_cadd_version():
-        return 1.4
-
-    @staticmethod
-    def get_supported_grch_build():
-        return 37
+    def __init__(self):
+        super().__init__(
+                name='CADD 1.4, GRCh build 37',
+                usable=True,
+                cadd_version=1.4,
+                grch_build=37
+        )
 
     @staticmethod
     def _cadd_features():

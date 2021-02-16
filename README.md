@@ -12,7 +12,7 @@ The software can be used as web service, as pre-computed scores or by installing
 
 CAPICE can be used as online service at http://molgenis.org/capice 
 
-## Download files of precomputed scores for all possible SNVs and InDels (based on GrCh37)
+## Download files of precomputed scores for all possible SNVs and InDels (based on GrCh37 and CADD version 1.4)
 We precomputed the CAPICE score for all possible SNVs and InDels. It can be downloaded via [zenodo](https://doi.org/10.5281/zenodo.3516248).
 
 The file contains the following columns:
@@ -106,9 +106,10 @@ A file will be put out containing the following columns:
 Outside of Predictions, this repository also provides users the availability to create new CAPICE like models according to their specific use case.
 Unlike CAPICE Predictions, this input file is fully dependent on the imputing file used to impute the input dataset, but requires 2 columns at the very least: `sample_weight` and `binarized_label`.
 Sample weight can be 1 for all samples if no sample weight should be applied. Binarized label should be either 0 or 1, depending on your labels of classification. 
-__Only works for a 2 class problem.__
+_Note: when applying balancing to the input dataset, only a 2 class problem can be processed._
 
 To make new CAPICE like models, run the following command:
+
 `python3 train_model.py` _arguments_
 
 The following arguments are required:
@@ -161,6 +162,20 @@ import pickle
 model = pickle.load(open(path/to/model_file.pickle.dat, 'rb'))
 ```
 
+## FAQ:
+
+- Will CAPICE support CADD 1.6 and Genome Build 38?
+
+In a future patch CAPICE will add support for CADD 1.6 and Genome Build 38, for both CADD 1.4 and CADD 1.6.
+
+- These scores are nice and all, but what do they really mean for this particular variant?
+
+CAPICE bases it's scoring on the training that it was provided with. A score is assigned based on features the model learned to recognize during training.
+There are plans to make a "Capice Explain Tool" which will tell how a score came to be.
+
+- Training a new model failed with an error in `joblib.externals.loky.process_executor.RemoteTraceback` with `ValueError: unknown format is not supported`. Why?
+
+This could possibly originate from a low sample size during the cross validation in RandomSearchCV. Please [contact](https://github.com/molgenis/capice/issues) us for further help.
   
 
 

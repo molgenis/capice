@@ -35,6 +35,7 @@ class CaddHeaderParser:
                 first_line = file.readline().strip()
         if first_line.startswith("##"):
             self.header_present = True
+            self.header = first_line
 
     def _get_header_version_and_grch_build(self):
         """

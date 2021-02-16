@@ -1,70 +1,65 @@
 from abc import ABCMeta, abstractmethod
+from src.logger import Logger
 
 
 class TemplateImputeValues(metaclass=ABCMeta):
     """
     Abstract template class for new imputing files.
     """
+    def __init__(self, name, usable, cadd_version, grch_build):
+        self.get_name = name
+        self.is_usable = usable
+        self.get_supported_cadd_version = cadd_version
+        self.get_supported_grch_build = grch_build
+        self.log = Logger().get_logger()
 
-    @staticmethod
-    @abstractmethod
-    def get_name():
-        """
-        Function to define a name for an Imputing file. Can be used to match the --overwrite_impute_file command line
-        argument.
-        :return: string
-        """
-        return 'Template'
+    @property
+    def get_name(self):
+        return self._name
 
-    @staticmethod
-    @abstractmethod
-    def is_usable():
-        """
-        Function to define if this class is usable or exists just as a template or for very specific goals where
-        the imputing file is hardcoded.
-        :return: boolean
-        """
-        return False
+    @get_name.setter
+    def get_name(self, value='Template'):
+        if not isinstance(value, str):
+            error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._name = value
 
-    @staticmethod
-    @abstractmethod
-    def get_supported_cadd_version():
-        """
-        Function to define the CADD version that the imputing file is designed for.
-        :return: float
-        """
-        pass
+    @property
+    def is_usable(self):
+        return self._usable
 
-    @staticmethod
-    @abstractmethod
-    def get_supported_grch_build():
-        """
-        Function to define the GRCh build that the imputing file is designed for.
-        :return: integer
-        """
-        pass
+    @is_usable.setter
+    def is_usable(self, value=False):
+        if not isinstance(value, bool):
+            error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._usable = value
 
-    def version_check(self, argument_version: float):
-        """
-        Function to check if the version given corresponds with this class's required version
-        :param argument_version: float, the command line or file given CADD version
-        :return: bool, true if match
-        """
-        if argument_version == self.get_supported_cadd_version():
-            return True
-        else:
-            return False
+    @property
+    def get_supported_cadd_version(self):
+        return self._cadd_version
 
-    def build_check(self, argument_build: float):
-        """
-        Function to check if the GRCh build given corresponds with this class's required build
-        :param argument_build: int, the command line or file given GRCh build
-        :return: bool, true if match
-        """
-        if argument_build == self.get_supported_grch_build():
-            return True
-        else:
-            return False
+    @get_supported_cadd_version.setter
+    def get_supported_cadd_version(self, value):
+        if not isinstance(value, float):
+            error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._cadd_version = value
+
+    @property
+    def get_supported_grch_build(self):
+        return self._grch_build
+
+    @get_supported_grch_build.setter
+    def get_supported_grch_build(self, value):
+        if not isinstance(value, int):
+            error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
+            self.log.critical(error_message)
+            raise TypeError(error_message)
+        self._grch_build = value
 
     @staticmethod
     @abstractmethod

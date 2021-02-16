@@ -46,10 +46,13 @@ class Logger:
             https://docs.python.org/3/library/logging.html#logging-levels
             :return: logging level
             """
-            if self.global_settings.get_verbose():
-                return logging.NOTSET
+            if not self.global_settings.get_critical_logs_only():
+                if self.global_settings.get_verbose():
+                    return logging.NOTSET
+                else:
+                    return logging.INFO
             else:
-                return logging.INFO
+                return logging.CRITICAL
 
         def load_logger(self):
             """
