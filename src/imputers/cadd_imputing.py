@@ -10,6 +10,7 @@ class CaddImputing:
     """
     Class to dynamically load in all imputing files and identify the file suitable for the run's use case.
     """
+
     def __init__(self):
         self.manager = CapiceManager()
         self.cadd_version = self.manager.get_cadd_version()
@@ -58,13 +59,15 @@ class CaddImputing:
         """
         for module in self.modules:
             if self.overrule:
-                if module.get_name() == self.overrule:
+                if module.get_name == self.overrule:
                     self.log.info('Overrule successful for: {} , located at: {}'.format(
                         self.overrule, inspect.getfile(module.__class__)))
                     self.module = module
                     break
             else:
-                if module.version_check(self.cadd_version) and module.build_check(self.grch_build):
+                module_cadd_version = module.get_supported_cadd_version
+                module_grch_build = module.get_supported_grch_build
+                if module_cadd_version == self.cadd_version and module_grch_build == self.grch_build:
                     self.log.info('Impute data file successfully found: {} , located at: {}'.format(
                         module.get_name, inspect.getfile(module.__class__)))
                     self.module = module
@@ -155,7 +158,7 @@ class CaddImputing:
         if samples_dropped_out.shape[0] > 0:
             self.log.warning('The following samples are filtered out due to missing values: (indexing is python based, '
                              'so the index starts at 0). \n {}'.format(
-                                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
-                             )
+                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
+            )
         else:
             self.log.info('No samples are filtered out due to too many NaN values.')

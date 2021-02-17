@@ -13,22 +13,22 @@ class TemplateSetup(metaclass=ABCMeta):
     """
     def __init__(self, name, usable, cadd_version, grch_build):
         self.log = Logger().get_logger()
+        self.get_name = name
+        self.is_usable = usable
+        self.get_supported_cadd_version = cadd_version
+        self.get_supported_grch_build = grch_build
         self.cadd_features = CapiceManager().get_cadd_features()
         self.train = False
         self.model = None
         self.cadd_object = []
         self.model_features = None
-        self.get_name = name
-        self.is_usable = usable
-        self.get_supported_cadd_version = cadd_version
-        self.get_supported_grch_build = grch_build
 
     @property
     def get_name(self):
         return self._name
 
     @get_name.setter
-    def get_name(self, value):
+    def get_name(self, value='Template'):
         if not isinstance(value, str):
             error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)
@@ -40,7 +40,7 @@ class TemplateSetup(metaclass=ABCMeta):
         return self._usable
 
     @is_usable.setter
-    def is_usable(self, value):
+    def is_usable(self, value=False):
         if not isinstance(value, bool):
             error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)

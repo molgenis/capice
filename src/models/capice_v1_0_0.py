@@ -12,21 +12,13 @@ class ModelSetupXGBoost0721(TemplateSetup):
     """
     Model setup for XGBoost version 0.72.1, CADD 1.4 and genome build 37.
     """
-    @staticmethod
-    def get_name():
-        return "CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37."
-
-    @staticmethod
-    def is_usable():
-        return True
-
-    @staticmethod
-    def get_supported_cadd_version():
-        return 1.4
-
-    @staticmethod
-    def get_supported_genomebuild_version():
-        return 37
+    def __init__(self):
+        super().__init__(
+            name="CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.",
+            usable=True,
+            cadd_version=1.4,
+            grch_build=37
+        )
 
     @staticmethod
     def _get_model_loc():

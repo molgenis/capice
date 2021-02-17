@@ -47,7 +47,7 @@ class PreProcessor:
         imported_modules = importer(usable_modules=usable_modules, path=directory)
         for module in imported_modules:
             if "get_name" in dir(module) and "get_supported_cadd_version" in dir(
-                    module) and "get_supported_genomebuild_version" in dir(module):
+                    module) and "get_supported_grch_build" in dir(module):
                 self.preprocessors.append(module)
         if len(self.preprocessors) < 1:
             self._raise_no_module_found_error()
@@ -69,17 +69,17 @@ class PreProcessor:
         """
         for preprocessor in self.preprocessors:
             if self.overrule:
-                if preprocessor.get_name() == self.overrule:
+                if preprocessor.get_name == self.overrule:
                     self.log.info('Overrule successful for: {} , located at: {}'.format(
                         self.overrule, inspect.getfile(preprocessor.__class__)))
                     self.preprocessor = preprocessor
                     break
             else:
-                module_cadd = preprocessor.get_supported_cadd_version()
-                module_grch = preprocessor.get_supported_genomebuild_version()
+                module_cadd = preprocessor.get_supported_cadd_version
+                module_grch = preprocessor.get_supported_grch_build
                 if module_cadd == self.cadd_version and module_grch == self.grch_version:
                     self.log.info('Preprocessing and model file successfully found: {} , Located at: {}'.format(
-                        preprocessor.get_name(), inspect.getfile(preprocessor.__class__)))
+                        preprocessor.get_name, inspect.getfile(preprocessor.__class__)))
                     self.preprocessor = preprocessor
                     break
 

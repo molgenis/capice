@@ -7,11 +7,11 @@ class TemplateImputeValues(metaclass=ABCMeta):
     Abstract template class for new imputing files.
     """
     def __init__(self, name, usable, cadd_version, grch_build):
+        self.log = Logger().get_logger()
         self.get_name = name
         self.is_usable = usable
         self.get_supported_cadd_version = cadd_version
         self.get_supported_grch_build = grch_build
-        self.log = Logger().get_logger()
 
     @property
     def get_name(self):
