@@ -8,7 +8,7 @@ class CaddHeaderParser:
     Autonomous class to parse just the header of the CADD file to get the CADD version and GRCh build.
     """
     def __init__(self, is_gzipped: bool, cadd_file_loc: str):
-        self.log = Logger().get_logger()
+        self.log = Logger().logger
         self.log.info('Starting to parse CADD file header.')
         self.is_gzipped = is_gzipped
         self.cadd_file_loc = cadd_file_loc

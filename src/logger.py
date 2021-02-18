@@ -36,8 +36,8 @@ class Logger:
             self.final_log_loc = None
             self.global_settings = CapiceManager()
             self.log_level = self.set_loglevel()
-            self.output_loc = self.global_settings.get_log_loc()
-            self.create_logfile = self.global_settings.get_disable_logfile()
+            self.output_loc = self.global_settings.log_loc
+            self.create_logfile = self.global_settings.disable_logfile
             self.logger = self.load_logger()
 
         def set_loglevel(self):
@@ -46,8 +46,8 @@ class Logger:
             https://docs.python.org/3/library/logging.html#logging-levels
             :return: logging level
             """
-            if not self.global_settings.get_critical_logs_only():
-                if self.global_settings.get_verbose():
+            if not self.global_settings.critical_logging_only:
+                if self.global_settings.verbose:
                     return logging.NOTSET
                 else:
                     return logging.INFO
@@ -61,7 +61,7 @@ class Logger:
             """
             handlers = [logging.StreamHandler()]
             if not self.create_logfile:
-                now = self.global_settings.get_now()
+                now = self.global_settings.now
                 out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
                 out_file = self._create_log_export_name(out_file_name)
                 self.final_log_loc = out_file
@@ -78,12 +78,31 @@ class Logger:
             )
             return logging.getLogger(__name__)
 
-        def get_logger(self):
+        @property
+        def logger(self):
             """
-            Function for external modules to request the logger instance.
-            :return: logging instance
+            Property to get the logger instance.
+
+            :return: logging.Logger
             """
-            return self.logger
+            return self._logger
+
+        @logger.setter
+        def logger(self, value):
+            """
+            Setter for the logger instance.
+
+            :param value:
+            :return:
+            """
+            self._logger = value
+
+        # def get_logger(self):
+        #     """
+        #     Function for external modules to request the logger instance.
+        #     :return: logging instance
+        #     """
+        #     return self.logger
 
         def get_log_loc(self):
             """
@@ -114,12 +133,21 @@ class Logger:
                 export_path = full_export
             return export_path
         
-    def get_logger(self):
+    # def get_logger(self):
+    #     """
+    #     Function to get the logger instance.
+    #     :return: logger instance
+    #     """
+    #     pass
+
+    @property
+    def logger(self):
         """
-        Function to get the logger instance.
-        :return: logger instance
+        Property to get the logger instance.
+
+        :return: logging.Logger
         """
-        pass
+        return self._logger
 
     def get_log_loc(self):
         """

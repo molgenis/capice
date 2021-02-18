@@ -13,11 +13,11 @@ class CaddImputing:
 
     def __init__(self):
         self.manager = CapiceManager()
-        self.cadd_version = self.manager.get_cadd_version()
-        self.grch_build = self.manager.get_grch_build()
-        self.log = Logger().get_logger()
+        self.cadd_version = self.manager.cadd_version
+        self.grch_build = self.manager.grch_build
+        self.log = Logger().logger
         self.log.info('Imputer started.')
-        self.overrule = self.manager.get_overwrite_impute()
+        self.overrule = self.manager.overwrite_impute
         self.modules = []
         self.module = None
         self._load_modules()
@@ -38,7 +38,7 @@ class CaddImputing:
             self._raise_no_module_found_error()
         loaded_modules = importer(usable_modules=usable_modules, path=directory)
         for module in loaded_modules:
-            if "get_name" in dir(module) and "_cadd_features" in dir(module) and "_impute_values" in dir(module):
+            if "name" in dir(module) and "_cadd_features" in dir(module) and "_impute_values" in dir(module):
                 self.modules.append(module)
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
@@ -59,17 +59,17 @@ class CaddImputing:
         """
         for module in self.modules:
             if self.overrule:
-                if module.get_name == self.overrule:
+                if module.name == self.overrule:
                     self.log.info('Overrule successful for: {} , located at: {}'.format(
                         self.overrule, inspect.getfile(module.__class__)))
                     self.module = module
                     break
             else:
-                module_cadd_version = module.get_supported_cadd_version
-                module_grch_build = module.get_supported_grch_build
+                module_cadd_version = module.supported_cadd_version
+                module_grch_build = module.supported_grch_build
                 if module_cadd_version == self.cadd_version and module_grch_build == self.grch_build:
                     self.log.info('Impute data file successfully found: {} , located at: {}'.format(
-                        module.get_name, inspect.getfile(module.__class__)))
+                        module.name, inspect.getfile(module.__class__)))
                     self.module = module
                     break
 
@@ -92,9 +92,9 @@ class CaddImputing:
         Function to be called right when impute() is called, gets the cadd features and impute values from the
         impute file and saves the cadd features to the manager.
         """
-        self.columns = self.module.get_cadd_features()
-        self.manager.set_cadd_features(self.columns)
-        self.impute_values = self.module.get_impute_values()
+        self.columns = self.module.cadd_features
+        self.manager.cadd_features = self.columns
+        self.impute_values = self.module.impute_values
 
     def impute(self, datafile: pd.DataFrame):
         """

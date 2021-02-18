@@ -86,7 +86,7 @@ class ArgumentSupporter:
         optional.add_argument('--overwrite_impute_file',
                               nargs='+',
                               type=str,
-                              default=None,
+                              default=False,
                               required=False,
                               help='The exact name (with spaces and capital letters) of the output of the get_name() '
                                    'function of an imputing datafile to be used in the CAPICE run.')
@@ -94,7 +94,7 @@ class ArgumentSupporter:
         optional.add_argument('--overwrite_model_file',
                               nargs='+',
                               type=str,
-                              default=None,
+                              default=False,
                               required=False,
                               help='The exact name (with spaces and capital letters) of the output of the '
                                    'get_name() output of the model file to be used in the CAPICE run.')

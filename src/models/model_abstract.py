@@ -12,23 +12,23 @@ class TemplateSetup(metaclass=ABCMeta):
     added in future patches of CAPICE. Contains the necessary steps for preprocessing as well.
     """
     def __init__(self, name, usable, cadd_version, grch_build):
-        self.log = Logger().get_logger()
-        self.get_name = name
-        self.is_usable = usable
-        self.get_supported_cadd_version = cadd_version
-        self.get_supported_grch_build = grch_build
-        self.cadd_features = CapiceManager().get_cadd_features()
+        self.log = Logger().logger
+        self.name = name
+        self.usable = usable
+        self.supported_cadd_version = cadd_version
+        self.supported_grch_build = grch_build
+        self.cadd_features = CapiceManager().cadd_features
         self.train = False
         self.model = None
         self.cadd_object = []
         self.model_features = None
 
     @property
-    def get_name(self):
+    def name(self):
         return self._name
 
-    @get_name.setter
-    def get_name(self, value='Template'):
+    @name.setter
+    def name(self, value='Template'):
         if not isinstance(value, str):
             error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)
@@ -36,11 +36,11 @@ class TemplateSetup(metaclass=ABCMeta):
         self._name = value
 
     @property
-    def is_usable(self):
+    def usable(self):
         return self._usable
 
-    @is_usable.setter
-    def is_usable(self, value=False):
+    @usable.setter
+    def usable(self, value=False):
         if not isinstance(value, bool):
             error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)
@@ -48,11 +48,11 @@ class TemplateSetup(metaclass=ABCMeta):
         self._usable = value
 
     @property
-    def get_supported_cadd_version(self):
+    def supported_cadd_version(self):
         return self._cadd_version
 
-    @get_supported_cadd_version.setter
-    def get_supported_cadd_version(self, value):
+    @supported_cadd_version.setter
+    def supported_cadd_version(self, value):
         if not isinstance(value, float):
             error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
             self.log.critical(error_message)
@@ -60,11 +60,11 @@ class TemplateSetup(metaclass=ABCMeta):
         self._cadd_version = value
 
     @property
-    def get_supported_grch_build(self):
+    def supported_grch_build(self):
         return self._grch_build
 
-    @get_supported_grch_build.setter
-    def get_supported_grch_build(self, value):
+    @supported_grch_build.setter
+    def supported_grch_build(self, value):
         if not isinstance(value, int):
             error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)

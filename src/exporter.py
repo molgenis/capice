@@ -11,9 +11,9 @@ class Exporter:
     Class specifically export files and create unique filenames.
     """
     def __init__(self, file_path):
-        self.log = Logger().get_logger()
-        self.force = CapiceManager().get_force()
-        self.now = CapiceManager().get_now()
+        self.log = Logger().logger
+        self.force = CapiceManager().force
+        self.now = CapiceManager().now
         self.file_path = file_path
         self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
 

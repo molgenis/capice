@@ -5,7 +5,7 @@ import pandas as pd
 class CaddParser:
     def __init__(self):
         self.sep = '\t'
-        self.log = Logger().get_logger()
+        self.log = Logger().logger
 
     def set_separator(self, sep: str):
         """

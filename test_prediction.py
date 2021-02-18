@@ -27,8 +27,8 @@ class Test(unittest.TestCase):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         cls.manager = CapiceManager()
-        cls.manager.disable_logfile(disable_logfile=True)
-        cls.manager.set_critical_logs_only(critical_logs_only=True)
+        cls.manager.disable_logfile = True
+        cls.manager.critical_logging_only = True
         cls.main = Main(__program__=__program__,
                         __version__=__version__,
                         __author__=__author__,
@@ -100,13 +100,45 @@ class Test(unittest.TestCase):
             self.main.infile = os.path.join(self.input_examples, curr_test_file)
             file = self.main.load_file()
             self.assertEqual(file.shape, required_shape)
-            self.assertEqual(self.manager.get_cadd_version(), required_cadd_version)
-            self.assertEqual(self.manager.get_grch_build(), required_genome_build)
+            self.assertEqual(self.manager.cadd_version, required_cadd_version)
+            self.assertEqual(self.manager.grch_build, required_genome_build)
 
     def test_unit_imputation(self):
         print('Imputing (unit)')
-
-        pass
+        imputable_files = {
+            'test_cadd14_grch37_annotated.tsv.gz':
+                {
+                    'cadd': 1.4,
+                    'grch': 37,
+                    'overwrite': 'CADD 1.4, GRCh build 37'
+                }
+        }
+        types_input = ['CLA', 'file', 'overwrite']
+        for file, items in imputable_files.items():
+            print('Testing : {}'.format(file))
+            input_loc = os.path.join(self.input_examples, file)
+            for type_input in types_input:
+                print('For type input: {}'.format(type_input))
+                if type_input == 'CLA':
+                    capice_main = Main(__program__=__program__,
+                                       __version__=__version__,
+                                       __author__=__author__,
+                                       input_loc=input_loc,
+                                       output_loc=None,
+                                       cadd_build=imputable_files[file]['cadd'],
+                                       genome_build=imputable_files[file]['grch']
+                                       )
+                    loaded_file = capice_main.load_file()
+                    capice_main.impute(loaded_cadd_data=loaded_file)
+                elif type_input == 'file':
+                    self.main.infile = input_loc
+                    loaded_file = self.main.load_file()
+                    self.main.impute(loaded_cadd_data=loaded_file)
+                else:
+                    self.manager.overwrite_impute = imputable_files[file]['overwrite']
+                    self.main.infile = input_loc
+                    loaded_file = self.main.load_file()
+                    self.main.impute(loaded_cadd_data=loaded_file)
 
     def test_integration_imputation(self):
         print('Imputing (integration)')

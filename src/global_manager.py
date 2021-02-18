@@ -1,263 +1,343 @@
-from datetime import datetime
-
-
 class CapiceManager:
+    """
+    Test
+    """
     class __CapiceManager:
         """
         Class to make a logfile on the progress being made.
         """
         def __init__(self):
-            self.log_loc = None
+            self.log_loc = '.'
             self.now = None
-            self.overwrite_impute = None
-            self.overwrite_model = None
-            self.cadd_version = None
-            self.grch_build = None
+            self.overwrite_impute = False
+            self.overwrite_model = False
+            self.cadd_version = 0.0
+            self.grch_build = 0
             self.force = False
             self.verbose = False
-            self.disabled_logfile = False
-            self.critical_only_logging = False
+            self.disable_logfile = False
+            self.critical_logging_only = False
             self.cadd_features = []
-            self.full_cadd_features = []
 
-        def set_log_loc(self, log_loc: str):
-            self.log_loc = log_loc
+        @property
+        def log_loc(self):
+            return self._log_loc
 
-        def get_log_loc(self):
-            return self.log_loc
+        @log_loc.setter
+        def log_loc(self, value):
+            if not isinstance(value, str):
+                raise TypeError('Expected a string for log location, but got: {}'.format(type(value)))
+            self._log_loc = value
 
-        def set_now(self):
-            self.now = datetime.now()
+        @property
+        def now(self):
+            return self._now
 
-        def get_now(self):
-            return self.now
+        @now.setter
+        def now(self, value):
+            self._now = value
 
-        def set_overwrite_impute(self, overwrite_impute):
-            self.overwrite_impute = overwrite_impute
+        @property
+        def overwrite_impute(self):
+            return self._overwrite_impute
 
-        def get_overwrite_impute(self):
-            return self.overwrite_impute
+        @overwrite_impute.setter
+        def overwrite_impute(self, value=None):
+            if not isinstance(value, (str, bool)):
+                raise TypeError('Expected overwrite impute to be either boolean or string, but got: {}'.format(
+                    type(value)))
+            self._overwrite_impute = value
 
-        def set_overwrite_model(self, overwrite_model):
-            self.overwrite_model = overwrite_model
+        @property
+        def overwrite_model(self):
+            return self._overwrite_model
 
-        def get_overwrite_model(self):
-            return self.overwrite_model
+        @overwrite_model.setter
+        def overwrite_model(self, value):
+            if not isinstance(value, (str, bool)):
+                raise TypeError('Expected overwrite model to be either boolean or string, but got: {}'.format(
+                    type(value)
+                ))
+            self._overwrite_model = value
 
-        def set_cadd_version(self, cadd_version):
-            self.cadd_version = cadd_version
+        @property
+        def cadd_version(self):
+            return self._cadd_version
 
-        def get_cadd_version(self):
-            return self.cadd_version
+        @cadd_version.setter
+        def cadd_version(self, value):
+            if not isinstance(value, float):
+                if value is not None:
+                    raise TypeError('Expected CADD version in float or None, but got: {}'.format(type(value)))
+            self._cadd_version = value
 
-        def set_grch_build(self, grch_build):
-            self.grch_build = grch_build
+        @property
+        def grch_build(self):
+            return self._grch_build
 
-        def get_grch_build(self):
-            return self.grch_build
+        @grch_build.setter
+        def grch_build(self, value):
+            if not isinstance(value, int):
+                if value is not None:
+                    raise TypeError('Expected GRCh build in integer or None, but got: {}'.format(type(value)))
+            self._grch_build = value
 
-        def set_cadd_features(self, cadd_features):
-            self.cadd_features = cadd_features
+        @property
+        def cadd_features(self):
+            return self._cadd_features
 
-        def get_cadd_features(self):
-            return self.cadd_features
+        @cadd_features.setter
+        def cadd_features(self, value):
+            if not isinstance(value, list):
+                raise TypeError('Expected CADD features in list, but got: {}'.format(type(value)))
+            self._cadd_features = value
 
-        def set_full_cadd_features(self, cadd_features):
-            self.full_cadd_features = cadd_features
+        @property
+        def force(self):
+            return self._force
 
-        def get_full_cadd_features(self):
-            return self.full_cadd_features
+        @force.setter
+        def force(self, value):
+            if not isinstance(value, bool):
+                raise TypeError('Expected force in a boolean, but got: {}'.format(type(value)))
+            self._force = value
 
-        def set_force(self, force: bool):
-            self.force = force
+        @property
+        def verbose(self):
+            return self._verbose
 
-        def get_force(self):
-            return self.force
+        @verbose.setter
+        def verbose(self, value):
+            if not isinstance(value, bool):
+                raise TypeError('Expected verbose in a boolean, but got: {}'.format(type(value)))
+            self._verbose = value
 
-        def set_verbose(self, verbose: bool):
-            self.verbose = verbose
+        @property
+        def disable_logfile(self):
+            return self._disable_logfile
 
-        def get_verbose(self):
-            return self.verbose
+        @disable_logfile.setter
+        def disable_logfile(self, value):
+            if not isinstance(value, bool):
+                raise TypeError('Expected disable logfile boolean, but got: {}'.format(type(value)))
+            self._disable_logfile = value
 
-        def disable_logfile(self, disable_logfile):
-            self.disabled_logfile = disable_logfile
+        @property
+        def critical_logging_only(self):
+            return self._critical_logging_only
 
-        def get_disable_logfile(self):
-            return self.disabled_logfile
-
-        def set_critical_logs_only(self, critical_logs_only):
-            self.critical_only_logging = critical_logs_only
-
-        def get_critical_logs_only(self):
-            return self.critical_only_logging
+        @critical_logging_only.setter
+        def critical_logging_only(self, value):
+            if not isinstance(value, bool):
+                raise TypeError('Expected critical logging only in boolean, but got: {}'.format(type(value)))
+            self._critical_logging_only = value
 
     instance = None
 
-    def set_log_loc(self, log_loc):
+    @property
+    def log_loc(self):
         """
-        Function to set the output of the logfile.
-        :param log_loc: str, path of or to logfile
+        Getter for setter log_loc
+
+        :return: string
+        """
+        return self._log_loc
+
+    @log_loc.setter
+    def log_loc(self, value):
+        """
+        Singleton property log_loc, to set the location of the logfile.
+
+        :param value: string
         """
         pass
 
-    def get_log_loc(self):
+    @property
+    def now(self):
         """
-        Function to get the logfile location.
-        :return: str
+        Getter for setter now
+
+        :return: datetime instance
+        """
+        return self._now
+
+    @now.setter
+    def now(self, value):
+        """
+        Singleton property now, to set a datetime instance of when program instance started.
+
+        :param value: datetime instance
         """
         pass
 
-    def set_now(self):
+    @property
+    def overwrite_impute(self):
         """
-        Initial function of CAPICE manager to set a datetime instance consistent across the entire program.
+        Getter for setter overwrite_impute
+
+        :return: False or string
+        """
+        return self._overwrite_impute
+
+    @overwrite_impute.setter
+    def overwrite_impute(self, value=None):
+        """
+        Singleton property overwrite_impute, to set a string for the imputer to overwrite the CADD version and genome
+        build. Raises a TypeError if not supplied with a string or False.
+
+        :param value: False or string
         """
         pass
 
-    def get_now(self):
+    @property
+    def overwrite_model(self):
         """
-        Get the datetime now instance to keep log and output the same
-        :return: datetime
+        Getter for setter overwrite_model
+
+        :return: False or string
+        """
+        return self._overwrite_model
+
+    @overwrite_model.setter
+    def overwrite_model(self, value):
+        """
+        Singleton property overwrite_model, to set a string for the preprocessor and predictor to overwrite the
+        CADD version and genome build. Raises a TypeError if not supplied with a string or False.
+
+        :param value: False or string
         """
         pass
 
-    def set_overwrite_impute(self, overwrite_impute):
+    @property
+    def cadd_version(self):
         """
-        Function to set the global variable of forcing a specific imputing file
-        :param overwrite_impute: None or string
-        """
-        pass
+        Getter for setter cadd_version
 
-    def get_overwrite_impute(self):
-        """
-        Function to get the global variable of forcing a specific imputing file
-        :return: None or string
-        """
-        pass
-
-    def set_overwrite_model(self, overwrite_model):
-        """
-        Function to set the global variable of forcing a specific model file
-        :param overwrite_model: None or string
-        """
-        pass
-
-    def get_overwrite_model(self):
-        """
-        Function to get the global variable of forcing a specific model file
-        :return: Nopne or string
-        """
-        pass
-
-    def set_cadd_version(self, cadd_version):
-        """
-        Function to set the globally available CADD version
-        :param cadd_version: float
-        """
-        pass
-
-    def get_cadd_version(self):
-        """
-        Function to get the globally available CADD version
         :return: float
         """
-        pass
+        return self._cadd_version
 
-    def set_grch_build(self, grch_build):
+    @cadd_version.setter
+    def cadd_version(self, value):
         """
-        Function to set the globally available GRCh build
-        :param grch_build: int
-        """
-        pass
+        Singleton property cadd_version, to set the globally available CADD version parsed from either the CADD file or
+        from the command line arguments. Raises TypeError if not supplied with a float or None.
 
-    def get_grch_build(self):
-        """
-        Function to get the globally available GRCh build
-        :return: int
+        :param value: float
         """
         pass
 
-    def set_cadd_features(self, cadd_features):
+    @property
+    def grch_build(self):
         """
-        Function to set the globally available cadd_features list required for both imputing and preprocessing
-        :param cadd_features: list
+        Getter for setter grch_build
+
+        :return: integer
+        """
+        return self._grch_build
+
+    @grch_build.setter
+    def grch_build(self, value):
+        """
+        Singleton property grch_build, to set the globally available GRCh build parsed from either the CADD file or
+        from the command line arguments. Raises TypeError if not supplied with an integer or None.
+
+        :param value: integer
         """
         pass
 
-    def get_cadd_features(self):
+    @property
+    def cadd_features(self):
         """
-        Function to get the globally available cadd_features list required for both imputing and preprocessing
+        Getter for setter cadd_features
+
         :return: list
         """
-        pass
+        return self._cadd_features
 
-    def set_full_cadd_features(self, cadd_features):
+    @cadd_features.setter
+    def cadd_features(self, value):
         """
-        Function to set the globally available cadd features list, including #Chr, Pos and FeatureID
-        :param cadd_features: list
-        """
-        pass
+        Singleton property cadd_features, to set the globally available CADD features parsed in the imputer for the
+        preprocessor and predictor. Raises TypeError if not supplied with a list.
 
-    def get_full_cadd_features(self):
-        """
-        Similar function to get_cadd_features(), but now includes additional columns to keep and save
-        :return: list
+        :param value: list
         """
         pass
 
-    def set_force(self, force):
+    @property
+    def force(self):
         """
-        Function to set the globally force argument to overwrite an existing CAPICE output file
-        :param force: bool
+        Getter for setter force
+
+        :return: boolean
+        """
+        return self._force
+
+    @force.setter
+    def force(self, value):
+        """
+        Singleton property force, to tell the exporter to overwrite an already existing output file.
+        Raises TypeError if not supplied with a boolean.
+
+        :param value: boolean
         """
         pass
 
-    def get_force(self):
+    @property
+    def verbose(self):
         """
-        Function to get the globally force argument whenever overwriting an existing CAPICE output file is allowed
-        :return: bool
+        Getter for setter verbose
+
+        :return: boolean
+        """
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        """
+        Singleton property verbose, to print more (debug) messages during the process. Raises TypeError if not
+        supplied with a boolean.
+
+        :param value: boolean
         """
         pass
 
-    def set_verbose(self, verbose: bool):
+    @property
+    def disable_logfile(self):
         """
-        Function to set the logger verbose level before the logger is called
-        :param verbose: bool
+        Getter for setter disable_logfile
+
+        :return: boolean
+        """
+        return self._disable_logfile
+
+    @disable_logfile.setter
+    def disable_logfile(self, value):
+        """
+        Singleton property disable_logfile, to tell the logger whenever a logfile should be made or if everything
+        should be piped to STDout and STDerr. Raises TypeError if not supplied with a boolean.
+
+        :param value: boolean
         """
         pass
 
-    def get_verbose(self):
+    @property
+    def critical_logging_only(self):
         """
-        Function for the logger to get the verbose level when starting up
-        :return: bool
-        """
-        pass
+        Getter for setter critical_logging_only
 
-    def disable_logfile(self, disable_logfile):
+        :return: boolean
         """
-        Function to tell the logger to not create a logfile
-        :param disable_logfile: bool
-        """
-        pass
+        return self._critical_logging_only
 
-    def get_disable_logfile(self):
+    @critical_logging_only.setter
+    def critical_logging_only(self, value):
         """
-        Function to get the argument to disable the creation of the logfile
-        :return: bool
-        """
-        pass
+        Singleton property critical_logging_only, to tell the logger to only log CRITICAL loglevel events to file /
+        STDout and STDerr. Raises TypeError if not supplied with a boolean.
 
-    def set_critical_logs_only(self, critical_logs_only):
-        """
-        Function for testing purposes to log only critical level log events.
-        :param critical_logs_only: boolean
-        """
-        pass
-
-    def get_critical_logs_only(self):
-        """
-        Function for logger to see if only critical level logs should be printed or written to file.
-        For testing purposes only.
+        :param value: boolean
         """
         pass
 

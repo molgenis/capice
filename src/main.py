@@ -20,7 +20,7 @@ class Main:
 
         # Order is important here
         self.manager = CapiceManager()
-        self.log = Logger().get_logger()
+        self.log = Logger().logger
 
         # Welcome message
 
@@ -30,7 +30,7 @@ class Main:
             __author__
         ))
 
-        self.log.info('Verbose -v / --verbose confirmed: {}'.format(self.manager.get_verbose()))
+        self.log.info('Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose))
 
         # Order is less important here
 
@@ -43,7 +43,7 @@ class Main:
         self.log.debug('Genome build -gb / --genome_build confirmed: {}'.format(self.cla_genome_build))
         self.cla_cadd_version = cadd_build
         self.log.debug('CADD build -cb / --cadd_build confirmed: {}'.format(self.cla_cadd_version))
-        self.log.debug('Force flag confirmed: {}'.format(self.manager.get_force()))
+        self.log.debug('Force flag confirmed: {}'.format(self.manager.force))
 
     def run(self, train: bool):
         """
@@ -58,7 +58,7 @@ class Main:
         else:
             return cadd_data
 
-    def load_file(self, check_version_present: bool = True):
+    def load_file(self):
         """
         Function to load the CADD file into main
         :return: pandas DataFrame
@@ -71,15 +71,14 @@ class Main:
             cadd_file_loc=self.infile
         )
         header_present = cadd_header_parser.get_header_present()
-        if check_version_present:
-            header_version = cadd_header_parser.get_header_version()
-            header_build = cadd_header_parser.get_header_build()
-            CaddVersionChecker(
-                cla_cadd_version=self.cla_cadd_version,
-                cla_grch_build=self.cla_genome_build,
-                file_cadd_version=header_version,
-                file_grch_build=header_build
-            )
+        header_version = cadd_header_parser.get_header_version()
+        header_build = cadd_header_parser.get_header_build()
+        CaddVersionChecker(
+            cla_cadd_version=self.cla_cadd_version,
+            cla_grch_build=self.cla_genome_build,
+            file_cadd_version=header_version,
+            file_grch_build=header_build
+        )
         cadd_parser = CaddParser()
         cadd_file = cadd_parser.parse(
             cadd_file_loc=self.infile,

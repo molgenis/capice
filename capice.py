@@ -13,6 +13,7 @@ from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
     convert_cla_to_float, convert_cla_to_full_string
 from src.global_manager import CapiceManager
 from src.main import Main
+from datetime import datetime
 
 __program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
@@ -60,13 +61,13 @@ def main():
     # Initializing the manager
 
     manager = CapiceManager()
-    manager.set_now()
-    manager.disable_logfile(disable_logfile=disable_logfile)
-    manager.set_log_loc(log_loc=log_loc)
-    manager.set_verbose(verbose=verbose)
-    manager.set_overwrite_impute(overwrite_impute)
-    manager.set_overwrite_model(overwrite_model)
-    manager.set_force(force=force)
+    manager.now = datetime.now()
+    manager.disable_logfile = disable_logfile
+    manager.log_loc = log_loc
+    manager.verbose = verbose
+    manager.overwrite_impute = overwrite_impute
+    manager.overwrite_model = overwrite_model
+    manager.force = force
 
     capice_main = Main(__program__=__program__,
                        __author__=__author__,
