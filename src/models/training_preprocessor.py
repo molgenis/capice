@@ -10,8 +10,8 @@ class TrainPreprocessor(TemplateSetup):
         super().__init__(
             name='Preprocessor for training',
             usable=False,
-            cadd_version=0.0,
-            grch_build=0
+            cadd_version=None,
+            grch_build=None
         )
 
     @staticmethod

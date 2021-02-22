@@ -67,6 +67,7 @@ class TemplateImputeValues(metaclass=ABCMeta):
         """
         Abstract template function to define a list of all CADD features that are of interest of a particular
         CADD version and GRCh build.
+
         :return: list
         """
         return []
@@ -77,28 +78,25 @@ class TemplateImputeValues(metaclass=ABCMeta):
         """
         Abstract template function to define a dictionary of all CADD features defined in _cadd_features() and their
         default (/impute) values.
+
         :return: dictionary
         """
         return {}
 
     @property
     def cadd_features(self):
-        return self._cadd_features()
+        """
+        Property cadd_features getter. Get the CADD features as defined within an impute file.
 
-    # def get_cadd_features(self):
-    #     """
-    #     Function for the modules that use the impute files to get the actual CADD features.
-    #     :return: list
-    #     """
-    #     return self._cadd_features()
+        :return: list
+        """
+        return self._cadd_features()
 
     @property
     def impute_values(self):
-        return self._impute_values()
+        """
+        Property impute_values getter. Get the default / impute values as defined within an impute file.
 
-    # def get_impute_values(self):
-    #     """
-    #     Function for the modules that use the impute files to get the actual impute and default values.
-    #     :return: dictionary
-    #     """
-    #     return self._impute_values()
+        :return: dict
+        """
+        return self._impute_values()

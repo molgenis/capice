@@ -29,6 +29,7 @@ class Test(unittest.TestCase):
         cls.manager = CapiceManager()
         cls.manager.disable_logfile = True
         cls.manager.critical_logging_only = True
+        cls.manager.verbose = False
         cls.main = Main(__program__=__program__,
                         __version__=__version__,
                         __author__=__author__,
@@ -67,6 +68,25 @@ class Test(unittest.TestCase):
         """
         print('Testing case:')
 
+    def tearDown(self):
+        """
+        Class to reset variables to their original state after every test case.
+        """
+        print('Resetting arguments')
+        self.main = Main(
+            __program__=__program__,
+            __version__=__version__,
+            __author__=__author__,
+            input_loc=None,
+            output_loc=None,
+            cadd_build=None,
+            genome_build=None
+        )
+        self.manager.cadd_version = None
+        self.manager.grch_build = None
+        self.manager.overwrite_impute = False
+        self.manager.overwrite_model = False
+
     def test_unit_loadfile(self):
         """
         Testing class for loading in files.
@@ -104,6 +124,9 @@ class Test(unittest.TestCase):
             self.assertEqual(self.manager.grch_build, required_genome_build)
 
     def test_unit_imputation(self):
+        """
+        Unit test for imputation to be called with file CADD & GRCh arguments, CLA arguments and the overwrite argument.
+        """
         print('Imputing (unit)')
         imputable_files = {
             'test_cadd14_grch37_annotated.tsv.gz':
@@ -128,6 +151,7 @@ class Test(unittest.TestCase):
                                        cadd_build=imputable_files[file]['cadd'],
                                        genome_build=imputable_files[file]['grch']
                                        )
+                    print('this should still happen')
                     loaded_file = capice_main.load_file()
                     capice_main.impute(loaded_cadd_data=loaded_file)
                 elif type_input == 'file':
@@ -141,16 +165,92 @@ class Test(unittest.TestCase):
                     self.main.impute(loaded_cadd_data=loaded_file)
 
     def test_integration_imputation(self):
+        """
+        Integration test for the imputer to see if there are any gaps after the imputer has processed the data.
+        """
         print('Imputing (integration)')
-        pass
+        imputable_files = {'test_cadd14_grch37_annotated.tsv.gz': 'CADD 1.4, GRCh build 37'}
+        for file, overwrite in imputable_files.items():
+            print('For file: {}'.format(file))
+            curr_file = os.path.join(self.input_examples, file)
+            self.main.infile = curr_file
+            self.manager.overwrite_impute = overwrite
+            file = self.main.load_file()
+            imputed_file = self.main.impute(loaded_cadd_data=file)
+            imputed_columns = self.manager.cadd_features
+            self.assertFalse(imputed_file[imputed_columns].isnull().values.any())
 
     def test_unit_preprocessing(self):
+        """
+        Unit test for the preprocessor to see if the preprocessor works with the CLA and file CADD version and
+        GRCh build, as well as the overwrite argument.
+        """
         print('Preprocessing (unit)')
-        pass
+        preprocessable_files = {
+            'test_cadd14_grch37_annotated.tsv.gz':{
+                'cadd': 1.4,
+                'grch': 37,
+                'overwrite': 'CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.'
+            }
+        }
+        types_input = ['CLA', 'file', 'overwrite']
+        for file, items in preprocessable_files.items():
+            print('Testing: {}'.format(file))
+            input_loc = os.path.join(self.input_examples, file)
+            for type_input in types_input:
+                print('For type of input: {}'.format(type_input))
+                self.main.infile = input_loc
+                if type_input == 'file':
+                    file = self.main.load_file()
+                    imputed_file = self.main.impute(loaded_cadd_data=file)
+                    self.main.preprocess(loaded_cadd_data=imputed_file, train=False)
+                    self.tearDown()
+                elif type_input == 'CLA':
+                    self.main.cla_cadd_version = preprocessable_files[file]['cadd']
+                    self.main.cla_genome_build = preprocessable_files[file]['grch']
+                    file = self.main.load_file()
+                    imputed_file = self.main.impute(loaded_cadd_data=file)
+                    self.main.preprocess(loaded_cadd_data=imputed_file, train=False)
+                    self.tearDown()
+                else:
+                    self.manager.overwrite_model = items['overwrite']
+                    file = self.main.load_file()
+                    imputed_file = self.main.impute(loaded_cadd_data=file)
+                    self.main.preprocess(loaded_cadd_data=imputed_file, train=False)
+                    self.tearDown()
 
     def test_integration_preprocessing(self):
+        """
+        Integration test for preprocessing. All columns within the CADD features should be processed. Furthermore,
+        within all processed columns, there should not be 1 or more column that is still considered categorical.
+        """
         print('Preprocessing (integration)')
-        pass
+        testable_files = {
+            'test_cadd14_grch37_annotated.tsv.gz':
+                'CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.'
+        }
+        for file, overwrite in testable_files.items():
+            input_file = os.path.join(self.input_examples, file)
+            self.manager.overwrite_model = overwrite
+            self.main.infile = input_file
+            file = self.main.load_file()
+            imputed_file = self.main.impute(loaded_cadd_data=file)
+            processed_file = self.main.preprocess(loaded_cadd_data=imputed_file, train=False)[1]
+            features_should_be_present = self.manager.cadd_features
+            present_features = []
+            processed_features = []
+            for feature in features_should_be_present:
+                for column in processed_file.columns:
+                    if column.startswith(feature):
+                        if feature not in present_features:
+                            present_features.append(feature)
+                        if column not in processed_features:
+                            processed_features.append(column)
+            self.assertListEqual(features_should_be_present, present_features)
+            still_categorical = processed_file.select_dtypes(include=["O"])
+            if still_categorical.shape[1] > 0:
+                for column in still_categorical.columns:
+                    self.assertNotIn(column, features_should_be_present)
 
     def test_unit_prediction(self):
         print('Prediction (unit)')

@@ -25,10 +25,20 @@ class TemplateSetup(metaclass=ABCMeta):
 
     @property
     def name(self):
+        """
+        Property getter name, to get the init defined name of the model module.
+
+        :return: str
+        """
         return self._name
 
     @name.setter
     def name(self, value='Template'):
+        """
+        Property setter name, to set a name for a model module. Raises TypeError if not supplied with a string.
+
+        :param value: str
+        """
         if not isinstance(value, str):
             error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)
@@ -37,10 +47,22 @@ class TemplateSetup(metaclass=ABCMeta):
 
     @property
     def usable(self):
+        """
+        Property getter usable, to get the boolean value of a model module whenever it can be used for preprocessing
+        and prediction.
+
+        :return: bool
+        """
         return self._usable
 
     @usable.setter
     def usable(self, value=False):
+        """
+        Property setter usable, to set the boolean value of a model module whenever it should be used for
+        preprocessing and prediction. Raises TypeError if not supplied with a boolean.
+
+        :param value: bool
+        """
         if not isinstance(value, bool):
             error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
             self.log.critical(error_message)
@@ -49,26 +71,52 @@ class TemplateSetup(metaclass=ABCMeta):
 
     @property
     def supported_cadd_version(self):
+        """
+        Property getter supported_cadd_version, to get the float cadd_version value of a model/prediction file
+        that is supported within the module.
+
+        :return: float or None
+        """
         return self._cadd_version
 
     @supported_cadd_version.setter
     def supported_cadd_version(self, value):
+        """
+        Property setter supported_cadd_version, to set the float cadd_version value of a model/prediction file
+        that is supported within the module. Raises TypeError if not supplied with a float or None.
+
+        :param value: float or None
+        """
         if not isinstance(value, float):
-            error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
-            self.log.critical(error_message)
-            raise TypeError(error_message)
+            if value is not None:
+                error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
+                self.log.critical(error_message)
+                raise TypeError(error_message)
         self._cadd_version = value
 
     @property
     def supported_grch_build(self):
+        """
+        Property getter supported_grch_build, to get the integer grch_build value that defines what genome build
+        is supported by the model/prediction module.
+
+        :return: integer or None
+        """
         return self._grch_build
 
     @supported_grch_build.setter
     def supported_grch_build(self, value):
+        """
+        Property getter supported_grch_build, to set the integer value grch_build that defines what genome build
+        is supported by the model/prediction module. Raises TypeError if not supplied with an integer or None.
+
+        :param value: integer or None
+        """
         if not isinstance(value, int):
-            error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
-            self.log.critical(error_message)
-            raise TypeError(error_message)
+            if value is not None:
+                error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
+                self.log.critical(error_message)
+                raise TypeError(error_message)
         self._grch_build = value
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
@@ -107,6 +155,14 @@ class TemplateSetup(metaclass=ABCMeta):
         """
         dataset['chr_pos_ref_alt'] = dataset[['#Chrom', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
         return dataset
+
+    @property
+    def model_features(self):
+        return self._model_features
+
+    @model_features.setter
+    def model_features(self, value):
+        self._model_features = value
 
     def _process_objects(self, dataset: pd.DataFrame):
         """
@@ -147,6 +203,7 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: list
         """
         self.log.info('Using features saved within the model.')
+        self.model_features = self.model._Booster.feature_names
         return self.model._Booster.feature_names
 
     def _process_categorical_vars(self,
@@ -245,7 +302,8 @@ class TemplateSetup(metaclass=ABCMeta):
         """
         model = None
         if not self.train:
-            model = pickle.load(open(self._get_model_loc(), 'rb'))
+            with open(self._get_model_loc(), 'rb') as model_file:
+                model = pickle.load(model_file)
             self.log.info('Successfully loaded model at: {}'.format(self._get_model_loc()))
         self.model = model
 
