@@ -17,3 +17,10 @@ class ParserError(Exception):
     Raised when a Parser is unable to parse
     """
     pass
+
+
+class InitializationError(Exception):
+    """
+    Raised when a function is called before the class is initialized
+    """
+    pass

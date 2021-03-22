@@ -129,7 +129,7 @@ class TemplateSetup(metaclass=ABCMeta):
         self.train = is_train
         self._load_model()
         if not self.train:
-            self.model_features = self._load_model_features()
+            self._load_model_features()
         dataset = self._duplicate_chr_pos_ref_alt(dataset=dataset)
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
@@ -204,7 +204,6 @@ class TemplateSetup(metaclass=ABCMeta):
         """
         self.log.info('Using features saved within the model.')
         self.model_features = self.model._Booster.feature_names
-        return self.model._Booster.feature_names
 
     def _process_categorical_vars(self,
                                   dataset: pd.DataFrame,
@@ -218,23 +217,34 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: processed pandas DataFrame
         """
         if self.train:
-            for cadd_feat in cadd_feats_levels_dict.keys():
+            for cadd_feature in cadd_feats_levels_dict.keys():
                 feature_names = self._get_top10_or_less_cats(
-                    column=dataset[cadd_feat],
-                    return_num=cadd_feats_levels_dict[cadd_feat]
+                    column=dataset[cadd_feature],
+                    return_num=cadd_feats_levels_dict[cadd_feature]
                 )
-                dataset[cadd_feat] = np.where(dataset[cadd_feat].isin(feature_names),
-                                              dataset[cadd_feat], 'other')
+                dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
+                                                 dataset[cadd_feature], 'other')
         else:
-            for cadd_feat in cadd_feats_names_dict.keys():
-                feature_names = cadd_feats_names_dict[cadd_feat]
-                self.log.debug('For feature: {} loaded {} levels.'.format(
-                    cadd_feat,
-                    len(feature_names)
+            for cadd_feature in cadd_feats_names_dict.keys():
+                feature_names = cadd_feats_names_dict[cadd_feature]
+                self.log.debug('For feature: {} loaded {} levels: {}'.format(
+                    cadd_feature,
+                    len(feature_names),
+                    feature_names
                 ))
-                dataset[cadd_feat] = np.where(dataset[cadd_feat].isin(feature_names),
-                                              dataset[cadd_feat], 'other')
+                dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
+                                                 dataset[cadd_feature], 'other')
         dataset = pd.get_dummies(dataset, columns=self.cadd_object)
+
+        # Checking if all cadd features are processed. If not, add a column containing all "false" (0)
+        for cadd_feature in cadd_feats_names_dict.keys():
+            for processed_feature in cadd_feats_names_dict[cadd_feature]:
+                if processed_feature not in dataset.columns:
+                    self.log.warning('Of CADD feature {}, detected {} not present in columns.'.format(
+                        cadd_feature, processed_feature))
+                    col_to_add = str(cadd_feature) + "_" + str(processed_feature)
+                    dataset[col_to_add] = 0
+
         return dataset
 
     def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):
@@ -257,13 +267,6 @@ class TemplateSetup(metaclass=ABCMeta):
         ))
         return value_counts
 
-    def get_model_features(self):
-        """
-        Function to be called by external modules to export the CADD features used in the model.
-        :return: list
-        """
-        return self.model_features
-
     # Model stuff
 
     def predict(self, data: pd.DataFrame):
@@ -273,7 +276,7 @@ class TemplateSetup(metaclass=ABCMeta):
         """
         self.log.info('Predicting for {} samples.'.format(data.shape[0]))
         self._load_model()
-        self.model_features = self._load_model_features()
+        self._load_model_features()
         data['probabilities'] = self._predict(self._create_input_matrix(dataset=data))
         data['ID'] = '.'
         self.log.info('Predicting successful.')

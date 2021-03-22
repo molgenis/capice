@@ -1,4 +1,5 @@
 from src.utilities.utilities import get_project_root_dir, load_modules, importer
+from src.errors.errors import InitializationError
 import inspect
 from src.logger import Logger
 from src.global_manager import CapiceManager
@@ -113,3 +114,10 @@ class PreProcessor:
         """
         predicted_data = self.preprocessor.predict(data=datafile)
         return predicted_data
+
+    def get_model_features(self):
+        if self.preprocessor is None:
+            error_message = "Preprocessor has to be initialized before model features can be requested."
+            self.log.critical(error_message)
+            raise InitializationError(error_message)
+        return self.preprocessor.model_features
