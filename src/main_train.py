@@ -29,7 +29,7 @@ class Train:
                  train_test_size):
 
         self.manager = CapiceManager()
-        self.log = Logger().get_logger()
+        self.log = Logger().logger
         self.__program__ = __program__
         self.__author__ = __author__
         self.__version__ = __version__
@@ -54,9 +54,10 @@ class Train:
         self.defaults = {}
         self.cadd_features = []
         self.processed_features = []
-        self.verbose = self.manager.get_verbose()
+        self.verbose = self.manager.verbose
         self.model_type = None
         self.exporter = Exporter(file_path=self.output_loc)
+        self._integration_test = False
 
     def main(self):
         """
@@ -70,33 +71,34 @@ class Train:
                                  output_loc=self.output_loc,
                                  genome_build=None,
                                  cadd_build=None)
-        data = capice_processing.load_file(check_version_present=False)
+        data = capice_processing.load_file()
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data)
         if self.balance:
             train_checker.check_balancing_labels(dataset=data)
-            data = self._process_balance_in_the_force(dataset=data)
+            data = self.process_balance_in_the_force(dataset=data)
         if self.n_split:
             self.log.info('Splitting input dataset before any preprocessing happens.')
-            data, _ = self._split_data(dataset=data, test_size=self.n_split)
+            data, _ = self.split_data(dataset=data, test_size=self.n_split, export=True)
         if self.balance:
             self.exporter.export_capice_training_dataset(datafile=data,
                                                          feature='balanced dataset',
                                                          name='balanced_dataset')
-        self._load_defaults()
+        self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
         imputed_data = capice_processing.impute(loaded_cadd_data=data)
-        self.cadd_features = self.manager.get_cadd_features()
+        self.cadd_features = self.manager.cadd_features
         processed_data = capice_processing.preprocess(loaded_cadd_data=imputed_data, train=True)[1]
         self._get_processed_features(dataset=processed_data)
-        processed_train, processed_test = self._split_data(dataset=processed_data,
-                                                           test_size=self.train_test_size,
-                                                           export=False)
-        model = self._train(test_set=processed_test, train_set=processed_train)
+        processed_train, processed_test = self.split_data(dataset=processed_data,
+                                                          test_size=self.train_test_size)
+        model = self.train(test_set=processed_test, train_set=processed_train)
         self.exporter.export_capice_model(model=model, model_type=self.model_type)
 
-    def _split_data(self, dataset, test_size: float, export: bool = True):
+    # Test would be very very short and simple for split data
+
+    def split_data(self, dataset, test_size: float, export: bool = False):
         """
         Function to split any given dataset into 2 datasets using the test_size argument. Can export both if export
         flag is enabled.
@@ -113,10 +115,11 @@ class Train:
             self.exporter.export_capice_training_dataset(datafile=test,
                                                          name='splitted_test_dataset',
                                                          feature='splitted test')
-
         return train, test
 
-    def _load_defaults(self):
+    # Test would be short and simple
+
+    def load_defaults(self):
         """
         Function to load in specified default hyper parameters. If no specified default is supplied, but -d flag is
         used, load in the original hyper parameters. Note: in any case the original hyper parameters will be loaded,
@@ -136,7 +139,9 @@ class Train:
             }
         self.defaults = defaults
 
-    def _process_balance_in_the_force(self, dataset: pd.DataFrame):
+    # Test would be somewhat complex and long
+
+    def process_balance_in_the_force(self, dataset: pd.DataFrame):
         """
         Balancing function as first used by Li et al. in the original CAPICE paper. Balances baced on Consequence,
         allele frequency and benign/pathogenic samples.
@@ -214,6 +219,8 @@ class Train:
         self.log.info('Balancing complete.')
         return anakin
 
+    # Function used in process_balance_in_the_force
+
     @staticmethod
     def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
         """
@@ -241,7 +248,9 @@ class Train:
                     if column not in self.processed_features:
                         self.processed_features.append(column)
 
-    def _train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
+    # Test would require some rewriting here, I don't want to wait for a full model to train just for unittesting purposes
+
+    def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """
         The training part of main_train.py after all has been processed. This is the same as Li et al. originally used
         to create CAPICE, but might be altered due to deprecation of certain libraries.
@@ -261,11 +270,23 @@ class Train:
         else:
             verbosity = 0
         self.log.debug('Preparing the estimator model.')
+
+        if self._integration_test:
+            early_stopping_rounds = 1
+            n_jobs = 2
+            cv = 2
+            n_iter = 2
+        else:
+            early_stopping_rounds = 15
+            n_jobs = 8
+            cv = 5
+            n_iter = 20
+
         if self.default:
             model_estimator = xgb.XGBClassifier(
                 verbosity=verbosity,
                 objective='binary:logistic',
-                booster='gbtree', n_jobs=8,
+                booster='gbtree', n_jobs=n_jobs,
                 min_child_weight=1,
                 max_delta_step=0,
                 subsample=1,
@@ -285,7 +306,7 @@ class Train:
         else:
             model_estimator = xgb.XGBClassifier(verbosity=verbosity,
                                                 objective='binary:logistic',
-                                                booster='gbtree', n_jobs=8,
+                                                booster='gbtree', n_jobs=n_jobs,
                                                 min_child_weight=1,
                                                 max_delta_step=0,
                                                 subsample=1, colsample_bytree=1,
@@ -298,8 +319,8 @@ class Train:
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,
                                             scoring='roc_auc', n_jobs=8,
-                                            cv=5,
-                                            n_iter=20,
+                                            cv=cv,
+                                            n_iter=n_iter,
                                             verbose=verbosity)
             self.model_type = 'RandomizedSearchCV'
         eval_set = [(test_set[self.processed_features],
@@ -307,7 +328,7 @@ class Train:
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set['binarized_label'],
-                       early_stopping_rounds=15,
+                       early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
                        verbose=True,

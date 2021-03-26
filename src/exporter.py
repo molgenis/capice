@@ -51,7 +51,8 @@ class Exporter:
             export_name = 'randomized_search_cv'
         filename_model = '{}_{}'.format(export_name, self.now.strftime("%H%M%S%f_%d%m%Y"))
         filename = self._export_filename_ready(file_name=filename_model, type_export='model')
-        pickle.dump(model, open(filename, 'wb'))
+        with open(filename, 'wb') as model_dump:
+            pickle.dump(model, model_dump)
 
     def _export_filename_ready(self, file_name, type_export='prediction'):
         """

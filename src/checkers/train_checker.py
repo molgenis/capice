@@ -7,7 +7,7 @@ class TrainChecker:
     Class specific to the train_model.py to check certain parts within it's process.
     """
     def __init__(self):
-        self.log = Logger().get_logger()
+        self.log = Logger().logger
 
     def specified_defaults_checker(self, loaded_defaults: dict):
         """

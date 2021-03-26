@@ -104,10 +104,7 @@ class Main:
         """
         preprocessor = PreProcessor(is_train=train)
         cadd_data = preprocessor.preprocess(datafile=loaded_cadd_data)
-        if not train:
-            return preprocessor, cadd_data
-        else:
-            return None, cadd_data
+        return preprocessor, cadd_data
 
     @staticmethod
     def predict(loaded_cadd_data, preprocessing_instance):

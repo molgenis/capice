@@ -3,9 +3,9 @@
 from src.utilities.utilities import convert_cla_to_str, convert_cla_to_float, convert_cla_to_full_string
 from src.command_line_supporter import ArgumentSupporter
 from src.global_manager import CapiceManager
-from src.errors.errors import InputError
 from src.input_checker import LogChecker, InputChecker
 from src.main_train import Train
+from datetime import datetime
 
 __program__ = 'Training CAPICE models'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
@@ -45,12 +45,12 @@ def main():
     input_checker.check_output_loc(output_loc=output_loc)
 
     manager = CapiceManager()
-    manager.set_now()
-    manager.set_log_loc(log_loc=log_loc)
-    manager.set_verbose(verbose=verbose)
-    manager.set_force(force=force)
-    manager.disable_logfile(disable_logfile=disable_logfile)
-    manager.set_overwrite_impute(overwrite_impute=overwrite_impute_file)
+    manager.now = datetime.now()
+    manager.log_loc = log_loc
+    manager.verbose = verbose
+    manager.force = force
+    manager.disable_logfile = disable_logfile
+    manager.overwrite_impute = overwrite_impute_file
 
     train = Train(__program__=__program__,
                   __author__=__author__,

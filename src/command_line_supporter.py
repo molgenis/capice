@@ -67,7 +67,7 @@ class ArgumentSupporter:
         optional.add_argument('-cb',
                               '--cadd_build',
                               nargs=1,
-                              type=str,
+                              type=float,
                               default=False,
                               required=False,
                               help='The CADD version that was used to annotate.'
@@ -163,6 +163,7 @@ class ArgumentSupporter:
                               '--specified_default',
                               type=str,
                               nargs=1,
+                              default=False,
                               help='The location of a json containing "default" hyperparameters: learning_rate, '
                                    'n_estimators and max_depth.')
 
