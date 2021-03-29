@@ -30,7 +30,8 @@ class Test(unittest.TestCase):
         # Replace with the version that you want to use and is supported in the imputing files
         impute_overwrite = "CADD 1.4, GRCh build 37"
 
-        input_file = os.path.join(get_project_root_dir(), 'CAPICE_example', test_file)
+        cls.input_loc = os.path.join(get_project_root_dir(), 'CAPICE_example')
+        input_file = os.path.join(cls.input_loc, test_file)
 
         cls.manager.overwrite_impute = impute_overwrite
 
@@ -69,6 +70,9 @@ class Test(unittest.TestCase):
 
     def tearDown(self):
         print('Resetting arguments.')
+        self.main.defaults = {}
+        self.main.default = False
+        self.main.specified_default = False
         print('----------------------------------------------------------------------')
 
     def test_integration_training(self):
@@ -89,7 +93,80 @@ class Test(unittest.TestCase):
         loaded_file = self.processing_pipeline.load_file()
         imputed_file = self.processing_pipeline.impute(loaded_cadd_data=loaded_file)
         preprocessor, preprocessed_file = self.processing_pipeline.preprocess(loaded_cadd_data=imputed_file, train=True)
+
+        # Since the init states that the model features are None by default, test if it is still None.
         self.assertIsNone(preprocessor.get_model_features())
+
+        # Test if all columns matching, or starting with features within the imputing file are not classified objects.
+        impute_features = self.manager.cadd_features
+        processed_columns = preprocessed_file.columns
+        present_features = 1  # Should be one, since the for loop quits before it can finish the last add_one
+        test_features = []
+        add_one = False
+        for feature in impute_features:
+            if add_one:
+                present_features += 1
+            add_one = False
+            for processed_feature in processed_columns:
+                if processed_feature.startswith(feature):
+                    add_one = True
+                    test_features.append(processed_feature)
+        self.assertEqual(len(impute_features), present_features)  # Test if all impute features are present
+        # Test if no columns are still objects.
+        self.assertEqual(len(preprocessed_file[test_features].select_dtypes(include=["O"]).columns), 0)
+
+    def test_unit_split(self):
+        print('Split (unit)')
+        input_file = self.processing_pipeline.load_file()
+        self.main.split_data(dataset=input_file, test_size=0.2)
+
+    def test_component_split(self):
+        print('Split (component)')
+        input_file = self.processing_pipeline.load_file()
+        train, test = self.main.split_data(dataset=input_file, test_size=0.2)
+        total_size = input_file.shape[0]
+        self.assertAlmostEqual(train.shape[0], total_size*0.8)
+        self.assertAlmostEqual(test.shape[0], total_size*0.2)
+        self.assertEqual(train.shape[0] + test.shape[0], total_size)
+
+    def test_unit_load_defaults(self):
+        print('Load_defaults (unit)')
+        # Hardcoded hyper parameters
+        self.main.load_defaults()
+        # JSON encoded hyper parameters
+        self.main.specified_default = os.path.join(self.input_loc, 'specified_defaults.json')
+        self.main.load_defaults()
+
+    def test_component_load_defaults(self):
+        print('Load_defaults (component)')
+
+        # Check the default default hyper parameters
+        self.main.load_defaults()
+        defaults = self.main.defaults
+        self.assertEqual(defaults['learning_rate'], 0.10495845238185281)
+        self.assertEqual(defaults['max_depth'], 422)
+        self.assertEqual(defaults['n_estimators'], 15)
+
+        # Check the loaded default hyper parameters
+        self.main.specified_default = os.path.join(self.input_loc, 'specified_defaults.json')
+        self.main.load_defaults()
+        defaults = self.main.defaults
+        self.assertEqual(defaults['learning_rate'], 0.5)
+        self.assertEqual(defaults['max_depth'], 10)
+        self.assertEqual(defaults['n_estimators'], 10)
+
+    def test_unit_balancing(self):
+        print('Balancing (unit)')
+        file = self.processing_pipeline.load_file()
+        self.main.process_balance_in_the_force(dataset=file)
+
+    def test_component_balancing(self):
+        print('Balancing (component)')
+        file = self.processing_pipeline.load_file()
+        balanced_file = self.main.process_balance_in_the_force(dataset=file)
+        n_zero = balanced_file[balanced_file['binarized_label'] == 0].shape[0]
+        n_one = balanced_file[balanced_file['binarized_label'] == 1].shape[0]
+        self.assertEqual(n_zero, n_one)
 
 
 if __name__ == '__main__':

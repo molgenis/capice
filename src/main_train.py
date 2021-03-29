@@ -96,8 +96,6 @@ class Train:
         model = self.train(test_set=processed_test, train_set=processed_train)
         self.exporter.export_capice_model(model=model, model_type=self.model_type)
 
-    # Test would be very very short and simple for split data
-
     def split_data(self, dataset, test_size: float, export: bool = False):
         """
         Function to split any given dataset into 2 datasets using the test_size argument. Can export both if export
@@ -116,8 +114,6 @@ class Train:
                                                          name='splitted_test_dataset',
                                                          feature='splitted test')
         return train, test
-
-    # Test would be short and simple
 
     def load_defaults(self):
         """
@@ -138,8 +134,6 @@ class Train:
                 'n_estimators': 15
             }
         self.defaults = defaults
-
-    # Test would be somewhat complex and long
 
     def process_balance_in_the_force(self, dataset: pd.DataFrame):
         """
@@ -219,8 +213,6 @@ class Train:
         self.log.info('Balancing complete.')
         return anakin
 
-    # Function used in process_balance_in_the_force
-
     @staticmethod
     def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
         """
@@ -247,8 +239,6 @@ class Train:
                 if column == feature or column.startswith(feature):
                     if column not in self.processed_features:
                         self.processed_features.append(column)
-
-    # Test would require some rewriting here, I don't want to wait for a full model to train just for unittesting purposes
 
     def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """
