@@ -127,6 +127,7 @@ The following arguments are optional:
 - -s / --split: Float that defines a split of the input data before any processing happens, but after balancing happens (if called). Use this flag if you want to create a benchmarking / validating dataset out of the initial input dataset.
 - -ttsize / --train_test_size: Float that defines what percentage of the processed data will be used as test dataset once the model is actually training.
 - -e / --exit: Flag to be called if the program should exit right after balancing (if called), splitting (using -s, if called) and the loading of default hyper parameters (if called) for testing purposes or for data preparation purposes.
+- -v / --verbose: Flag to print more debugging messages.
 - -f / --force: Flag to be called if output files should be overwritten if they exist.
 - --disable_logfile: Flag to be called if the creation of a logfile is not wanted.
 
@@ -176,6 +177,11 @@ There are plans to make a "Capice Explain Tool" which will tell how a score came
 - Training a new model failed with an error in `joblib.externals.loky.process_executor.RemoteTraceback` with `ValueError: unknown format is not supported`. Why?
 
 This could possibly originate from a low sample size during the cross validation in RandomSearchCV. Please [contact](https://github.com/molgenis/capice/issues) us for further help.
+
+- I'm on Windows and installing XGBoost fails with the PIP error `“No files/directories in C:\path\to\xgboost\pip-egg-info (from PKG-INFO)”`. Am I doing something wrong?
+
+Unfortunatly, XGBoost does not cooperate well with Windows. You might want to try to install [Setuptools](https://pypi.org/project/setuptools/) before you attempt to install the dependencies. 
+If that does not work either, we suggest you use either a Unix style virtual machine or, if you are using Windows 10, the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) is also available in the Windows Store for free, which is guaranteed to work.
   
 
 

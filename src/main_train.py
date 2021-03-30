@@ -126,6 +126,7 @@ class Train:
             with open(self.specified_default) as json_file:
                 defaults = json.load(json_file)
             train_checker.specified_defaults_checker(loaded_defaults=defaults)
+            self.log.debug('Specified defaults located at {} successfully loaded.'.format(self.specified_default))
             self.default = True
         else:
             defaults = {
