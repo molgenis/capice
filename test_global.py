@@ -289,3 +289,7 @@ def teardown_class():
     except OSError:
         # Warn user if it can't be deleted manually
         warnings.warn('Could not remove {}, please remove manually.'.format(output_dir))
+
+
+if __name__ == '__main__':
+    unittest.main()
