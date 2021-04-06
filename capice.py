@@ -7,7 +7,7 @@ annotated file. It's use is to gather all Command Line Arguments, check some, pr
 with it's wanted arguments.
 """
 
-from src.command_line_supporter import ArgumentSupporter
+from src.command_line_supporter import ArgumentParser
 from src.input_checker import InputChecker, LogChecker
 from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
     convert_cla_to_float, convert_cla_to_full_string
@@ -31,7 +31,7 @@ def main():
     setting global variables and providing Main.py with it's wanted arguments.
     Converting the CLAs happens because often the CLA is returned as a list.
     """
-    cla = ArgumentSupporter(description=__description__, type_cmd='main')
+    cla = ArgumentParser(description=__description__, type_cmd='main')
 
     # Getting all arguments.
 

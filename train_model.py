@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from src.utilities.utilities import convert_cla_to_str, convert_cla_to_float, convert_cla_to_full_string
-from src.command_line_supporter import ArgumentSupporter
+from src.command_line_supporter import ArgumentParser
 from src.global_manager import CapiceManager
 from src.input_checker import LogChecker, InputChecker
 from src.main_train import Train
@@ -23,7 +23,7 @@ def main():
     and then calling the main_train.py which will perform the actual calling to the modules required to create a new
     CAPICE like model.
     """
-    arguments = ArgumentSupporter(description=__description__, type_cmd='train')
+    arguments = ArgumentParser(description=__description__, type_cmd='train')
     input_loc = convert_cla_to_str(arguments.get_argument('input'))
     balance = arguments.get_argument('balance')
     output_loc = convert_cla_to_str(arguments.get_argument('output'))

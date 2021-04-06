@@ -1,7 +1,7 @@
 import argparse
 
 
-class ArgumentSupporter:
+class ArgumentParser:
     """
     Class to handle the given command line input.
     Type python3 capice.py --help for more details.
