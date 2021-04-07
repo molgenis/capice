@@ -1,6 +1,6 @@
-from src.utilities.utilities import check_file_exists
-from src.global_manager import CapiceManager
-from src.logger import Logger
+from src.main.python.resources.utilities.utilities import check_file_exists
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
 import os
 import pandas as pd
 import pickle
@@ -45,7 +45,7 @@ class Exporter:
         :param model_type: either "XGBClassifier" or "RandomizedSearchCV"
         """
         export_name = ""
-        if model_type == "XGBClassifier":
+        if model_type == 'XGBClassifier':
             export_name = 'xgb_classifier'
         elif model_type == 'RandomizedSearchCV':
             export_name = 'randomized_search_cv'

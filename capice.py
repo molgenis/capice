@@ -3,16 +3,16 @@
 """
 CAPICE.py is a module of CAPICE that is supposed to be called when the user wants to make a prediction over a CADD
 annotated file. It's use is to gather all Command Line Arguments, check some, provide the global manager
-(./src/global_manager.py CapiceManager) with arguments that are used in multiple modules and provide ./src/main.py
-with it's wanted arguments.
+(./src/global_manager.py CapiceManager) with arguments that are used in multiple modules and provide
+./src/main_capice.py with it's wanted arguments.
 """
 
-from src.command_line_supporter import ArgumentParser
-from src.input_checker import InputChecker, LogChecker
-from src.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
+from src.main.python.core.command_line_supporter import ArgumentParser
+from src.main.python.core.input_checker import InputChecker, LogChecker
+from src.main.python.resources.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
     convert_cla_to_float, convert_cla_to_full_string
-from src.global_manager import CapiceManager
-from src.main import Main
+from src.main.python.core.global_manager import CapiceManager
+from src.main_capice import Main
 from datetime import datetime
 
 __program__ = 'CAPICE'

@@ -2,7 +2,7 @@
 File specific to preprocessing of training files used by train_model.py.
 """
 
-from src.models.model_abstract import TemplateSetup
+from src.main.python.resources.models.model_abstract import TemplateSetup
 
 
 class TrainPreprocessor(TemplateSetup):

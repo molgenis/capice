@@ -20,8 +20,8 @@
 """
 
 import logging
-from src.global_manager import CapiceManager
-from src.utilities.utilities import check_file_exists
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.utilities.utilities import check_file_exists
 import os
 
 

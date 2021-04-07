@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from src.logger import Logger
-from src.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
+from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
 import numpy as np
 import pickle

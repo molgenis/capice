@@ -1,8 +1,8 @@
-from src.main import Main
-from src.logger import Logger
-from src.global_manager import CapiceManager
-from src.checkers.train_checker import TrainChecker
-from src.exporter import Exporter
+from src.main_capice import Main
+from src.main.python.core.logger import Logger
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.checkers.train_checker import TrainChecker
+from src.main.python.core.exporter import Exporter
 import pandas as pd
 import numpy as np
 import xgboost as xgb
@@ -51,6 +51,9 @@ class Train:
         self.train_test_size = train_test_size
         self.log.debug('The percentage of data used for the testing dataset within training: {}'.format(
             self.train_test_size))
+        self.random_state = 45
+        self.split_random_state = 4
+        self.model_random_state = 0
         self.defaults = {}
         self.cadd_features = []
         self.processed_features = []
@@ -73,9 +76,8 @@ class Train:
                                  cadd_build=None)
         data = capice_processing.load_file()
         train_checker = TrainChecker()
-        train_checker.check_labels(dataset=data)
+        train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
-            train_checker.check_balancing_labels(dataset=data)
             data = self.process_balance_in_the_force(dataset=data)
         if self.n_split:
             self.log.info('Splitting input dataset before any preprocessing happens.')
@@ -105,7 +107,7 @@ class Train:
         :param export: boolean
         :return: train, test (1-test_size, test_size)
         """
-        train, test = train_test_split(dataset, test_size=test_size, random_state=4)
+        train, test = train_test_split(dataset, test_size=test_size, random_state=self.split_random_state)
         if export:
             self.exporter.export_capice_training_dataset(datafile=train,
                                                          name='splitted_train_dataset',
@@ -156,7 +158,7 @@ class Train:
             if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
                 selected_pathogenic = selected_pathogenic.sample(
                     selected_neutral.shape[0],
-                    random_state=45
+                    random_state=self.random_state
                 )
             selected_pathogenic_histogram, bins = np.histogram(
                 selected_pathogenic['max_AF'],
@@ -179,7 +181,7 @@ class Train:
                 if sample_num < selected_pnv_all.shape[0]:
                     selected_pnv_currange = selected_pnv_all.sample(
                         sample_num,
-                        random_state=45
+                        random_state=self.random_state
                     )
                     selected_pathogenic_currange = selected_pathogenic_all
                 else:
@@ -187,7 +189,7 @@ class Train:
                     selected_pathogenic_currange = \
                         selected_pathogenic_all.sample(
                             selected_pnv_all.shape[0],
-                            random_state=45
+                            random_state=self.random_state
                         )
                 self.log.debug(
                     "Sampled {} variants from Possibly Neutral Variants for:"
@@ -287,7 +289,7 @@ class Train:
                 reg_alpha=0, reg_lambda=1,
                 scale_pos_weight=1,
                 base_score=0.5,
-                random_state=0,
+                random_state=self.model_random_state,
                 learning_rate=self.defaults['learning_rate'],
                 n_estimators=self.defaults['n_estimators'],
                 max_depth=self.defaults['max_depth']
@@ -306,7 +308,7 @@ class Train:
                                                 reg_alpha=0, reg_lambda=1,
                                                 scale_pos_weight=1,
                                                 base_score=0.5,
-                                                random_state=0)
+                                                random_state=self.model_random_state)
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,
                                             scoring='roc_auc', n_jobs=8,

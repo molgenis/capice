@@ -1,5 +1,5 @@
-from src.errors.errors import ParserError
-from src.logger import Logger
+from src.main.python.resources.errors.errors import ParserError
+from src.main.python.core.logger import Logger
 import gzip
 
 

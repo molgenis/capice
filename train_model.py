@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from src.utilities.utilities import convert_cla_to_str, convert_cla_to_float, convert_cla_to_full_string
-from src.command_line_supporter import ArgumentParser
-from src.global_manager import CapiceManager
-from src.input_checker import LogChecker, InputChecker
+from src.main.python.resources.utilities.utilities import convert_cla_to_str, convert_cla_to_float, convert_cla_to_full_string
+from src.main.python.core.command_line_supporter import ArgumentParser
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.input_checker import LogChecker, InputChecker
 from src.main_train import Train
 from datetime import datetime
 

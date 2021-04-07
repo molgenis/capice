@@ -1,4 +1,4 @@
-from src.logger import Logger
+from src.main.python.core.logger import Logger
 import pandas as pd
 
 
@@ -29,26 +29,18 @@ class TrainChecker:
                 self.log.critical(error_message)
                 raise TypeError(error_message)
 
-    def check_labels(self, dataset: pd.DataFrame):
+    def check_labels(self, dataset: pd.DataFrame, include_balancing=False):
         """
         Function to check if "binarized_label" and "sample_weight" are present within the columns of a given dataset.
+        Set include_balancing to true if user wants to perform balancing algorithm.
         :param dataset: pandas DataFrame
+        :param include_balancing: bool
         """
         required_columns = ['binarized_label', 'sample_weight']
+        if include_balancing:
+            required_columns += ['Consequence', 'max_AF']
         for col_name in required_columns:
             if col_name not in dataset.columns:
-                error_message = 'Label {} not found within dataset! Please add it to your dataset.'.format(col_name)
-                self.log.critical(error_message)
-                raise KeyError(error_message)
-
-    def check_balancing_labels(self, dataset: pd.DataFrame):
-        """
-        Function to check the input dataframe if it has the columns "max_AF" and "Consequence" present.
-        :param dataset: to be balanced pandas DataFrame
-        """
-        required_columns = ['Consequence', 'max_AF']
-        for col_name in required_columns:
-            if col_name not in dataset.columns:
-                error_message = 'Label {} required for balancing not found within dataset!'.format(col_name)
+                error_message = 'Error locating label {} within dataset!'.format(col_name)
                 self.log.critical(error_message)
                 raise KeyError(error_message)

@@ -34,7 +34,7 @@ def get_project_root_dir():
     :return: Path instance
     """
     #  This script is 4 directories deep into the project.
-    return Path(__file__).parent.parent.parent
+    return Path(__file__).parent.parent.parent.parent.parent.parent
 
 
 def check_file_exists(file_path: str):

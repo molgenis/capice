@@ -4,9 +4,9 @@ from datetime import datetime
 import pickle
 
 from src.main_train import Train
-from src.main import Main
-from src.global_manager import CapiceManager
-from src.utilities.utilities import get_project_root_dir
+from src.main_capice import Main
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.utilities.utilities import get_project_root_dir
 from test_global import setup_class, teardown_class, __program__, __version__, __author__
 
 

@@ -1,7 +1,7 @@
-from src.logger import Logger
+from src.main.python.core.logger import Logger
 import inspect
-from src.utilities.utilities import get_project_root_dir, load_modules, importer
-from src.global_manager import CapiceManager
+from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
+from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
 import os
 
@@ -32,7 +32,13 @@ class CaddImputing:
         will throw the module not found error.
         """
         self.log.info('Identifying imputing files.')
-        directory = os.path.join(get_project_root_dir(), 'src', 'data_files', 'imputing')
+        directory = os.path.join(get_project_root_dir(),
+                                 'src',
+                                 'main',
+                                 'python',
+                                 'resources',
+                                 'data_files',
+                                 'imputing')
         usable_modules = load_modules(directory)
         if len(usable_modules) < 1:
             self._raise_no_module_found_error()

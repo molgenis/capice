@@ -1,5 +1,5 @@
-from src.errors.errors import VersionError, InputError
-from src.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists
+from src.main.python.resources.errors.errors import VersionError, InputError
+from src.main.python.resources.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists
 import warnings
 import sys
 

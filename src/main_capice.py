@@ -1,11 +1,11 @@
-from src.logger import Logger
-from src.global_manager import CapiceManager
-from src.exporter import Exporter
-from src.parsers.cadd_parser import CaddParser
-from src.parsers.cadd_header_parser import CaddHeaderParser
-from src.imputers.cadd_imputing import CaddImputing
-from src.checkers.cadd_version_checker import CaddVersionChecker
-from src.preprocessors.preprocessor import PreProcessor
+from src.main.python.core.logger import Logger
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.exporter import Exporter
+from src.main.python.resources.parsers.cadd_parser import CaddParser
+from src.main.python.resources.parsers.cadd_header_parser import CaddHeaderParser
+from src.main.python.resources.imputers.cadd_imputing import CaddImputing
+from src.main.python.resources.checkers.cadd_version_checker import CaddVersionChecker
+from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 
 
 class Main:

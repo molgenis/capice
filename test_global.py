@@ -2,9 +2,9 @@ import os
 import unittest
 import warnings
 
-from src.main import Main
-from src.global_manager import CapiceManager
-from src.utilities.utilities import get_project_root_dir
+from src.main_capice import Main
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 __program__ = 'CAPICE prediction testing'
 __version__ = 1.0

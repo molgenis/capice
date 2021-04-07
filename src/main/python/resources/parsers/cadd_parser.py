@@ -1,4 +1,4 @@
-from src.logger import Logger
+from src.main.python.core.logger import Logger
 import pandas as pd
 
 

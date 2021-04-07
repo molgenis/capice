@@ -1,8 +1,8 @@
-from src.utilities.utilities import get_project_root_dir, load_modules, importer
-from src.errors.errors import InitializationError
+from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
+from src.main.python.resources.errors.errors import InitializationError
 import inspect
-from src.logger import Logger
-from src.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
+from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
 import os
 
@@ -29,7 +29,7 @@ class PreProcessor:
         Function to see if the training protocol should be used or the preprocessors should be loaded in.
         """
         if self.train:
-            from src.models.training_preprocessor import TrainPreprocessor
+            from src.main.python.resources.models.training_preprocessor import TrainPreprocessor
             self.preprocessor = TrainPreprocessor()
         else:
             self._load_preprocessors()
@@ -41,7 +41,12 @@ class PreProcessor:
         get_supported_cadd_version() and get_supported_genomebuild_version().
         """
         self.log.info('Identifying preprocessing files.')
-        directory = os.path.join(get_project_root_dir(), 'src', 'models')
+        directory = os.path.join(get_project_root_dir(),
+                                 'src',
+                                 'main',
+                                 'python',
+                                 'resources',
+                                 'models')
         usable_modules = load_modules(directory)
         if len(usable_modules) < 1:
             self._raise_no_module_found_error()

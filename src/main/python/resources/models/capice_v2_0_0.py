@@ -3,8 +3,8 @@ File to contain all specific information for the updated XGBoost 1.1.1 model, cr
 original model was.
 """
 
-from src.models.model_abstract import TemplateSetup
-from src.utilities.utilities import get_project_root_dir
+from src.main.python.resources.models.model_abstract import TemplateSetup
+from src.main.python.resources.utilities.utilities import get_project_root_dir
 import os
 
 

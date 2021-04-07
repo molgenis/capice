@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from src.logger import Logger
+from src.main.python.core.logger import Logger
 
 
 class TemplateImputeValues(metaclass=ABCMeta):
