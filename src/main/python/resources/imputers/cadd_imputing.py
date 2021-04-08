@@ -44,7 +44,7 @@ class CaddImputing:
             self._raise_no_module_found_error()
         loaded_modules = importer(usable_modules=usable_modules, path=directory)
         for module in loaded_modules:
-            if "name" in dir(module) and "_cadd_features" in dir(module) and "_impute_values" in dir(module):
+            if "name" in dir(module) and "_json_name" in dir(module):
                 self.modules.append(module)
         if len(self.modules) < 1:
             self._raise_no_module_found_error()

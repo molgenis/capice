@@ -231,9 +231,11 @@ class TestGlobal(unittest.TestCase):
         for file, overwrite in self.processing_files_overwrite.items():
             preprocessor, processed_file = self.prepare_upon_preprocessing(model=overwrite, file=file)
             model_features = preprocessor.get_model_features()
+            processed_columns = processed_file.columns
             for feature in model_features:
                 # Check if all model features are present before predicting
-                self.assertIn(feature, processed_file.columns)
+                self.assertIn(feature, processed_columns)
+
             # Check if none of the processed columns can be marked as categorical
             self.assertEqual(len(processed_file[model_features].select_dtypes(include=["O"]).columns), 0)
 

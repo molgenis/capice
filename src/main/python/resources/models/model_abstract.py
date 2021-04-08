@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.checkers.property_checker import PropertyChecker
 import pandas as pd
 import numpy as np
 import pickle
@@ -13,6 +14,7 @@ class TemplateSetup(metaclass=ABCMeta):
     """
     def __init__(self, name, usable, cadd_version, grch_build):
         self.log = Logger().logger
+        self.property_checker = PropertyChecker()
         self.name = name
         self.usable = usable
         self.supported_cadd_version = cadd_version
@@ -39,10 +41,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
         :param value: str
         """
-        if not isinstance(value, str):
-            error_message = 'Expected a string usable variable, but got {}.'.format(type(value))
-            self.log.critical(error_message)
-            raise TypeError(error_message)
+        self.property_checker.check_property(value=value, expected_type=str)
         self._name = value
 
     @property
@@ -63,10 +62,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
         :param value: bool
         """
-        if not isinstance(value, bool):
-            error_message = 'Expected a boolean usable variable, but got {}.'.format(type(value))
-            self.log.critical(error_message)
-            raise TypeError(error_message)
+        self.property_checker.check_property(value=value, expected_type=bool)
         self._usable = value
 
     @property
@@ -87,11 +83,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
         :param value: float or None
         """
-        if not isinstance(value, float):
-            if value is not None:
-                error_message = 'Expected a float cadd version, but got: {}.'.format(type(value))
-                self.log.critical(error_message)
-                raise TypeError(error_message)
+        self.property_checker.check_property(value=value, expected_type=float)
         self._cadd_version = value
 
     @property
@@ -112,11 +104,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
         :param value: integer or None
         """
-        if not isinstance(value, int):
-            if value is not None:
-                error_message = 'Expected a integer usable variable, but got {}.'.format(type(value))
-                self.log.critical(error_message)
-                raise TypeError(error_message)
+        self.property_checker.check_property(value=value, expected_type=int)
         self._grch_build = value
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
@@ -217,6 +205,7 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: processed pandas DataFrame
         """
         if self.train:
+            get_dummies = cadd_feats_levels_dict.keys()
             for cadd_feature in cadd_feats_levels_dict.keys():
                 feature_names = self._get_top10_or_less_cats(
                     column=dataset[cadd_feature],
@@ -225,6 +214,7 @@ class TemplateSetup(metaclass=ABCMeta):
                 dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
                                                  dataset[cadd_feature], 'other')
         else:
+            get_dummies = cadd_feats_names_dict.keys()
             for cadd_feature in cadd_feats_names_dict.keys():
                 feature_names = cadd_feats_names_dict[cadd_feature]
                 self.log.debug('For feature: {} loaded {} levels: {}'.format(
@@ -234,7 +224,7 @@ class TemplateSetup(metaclass=ABCMeta):
                 ))
                 dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
                                                  dataset[cadd_feature], 'other')
-        dataset = pd.get_dummies(dataset, columns=self.cadd_object)
+        dataset = pd.get_dummies(dataset, columns=get_dummies)
 
         # Checking if all cadd features are processed. If not, add a column containing all "false" (0)
         for cadd_feature in cadd_feats_names_dict.keys():

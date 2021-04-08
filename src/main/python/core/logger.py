@@ -97,13 +97,6 @@ class Logger:
             """
             self._logger = value
 
-        # def get_logger(self):
-        #     """
-        #     Function for external modules to request the logger instance.
-        #     :return: logging instance
-        #     """
-        #     return self.logger
-
         def get_log_loc(self):
             """
             Function for external modules to request where the log file is saved.
@@ -132,13 +125,7 @@ class Logger:
             else:
                 export_path = full_export
             return export_path
-        
-    # def get_logger(self):
-    #     """
-    #     Function to get the logger instance.
-    #     :return: logger instance
-    #     """
-    #     pass
+
 
     @property
     def logger(self):

@@ -15,6 +15,7 @@ class Train:
     """
     Train class of CAPICE to create new CAPICE like models for new or specific use cases.
     """
+
     def __init__(self,
                  __program__,
                  __author__,
@@ -151,70 +152,88 @@ class Train:
         anakin = pd.DataFrame(columns=dataset.columns)
         bins = [0, 0.01, 0.05, 0.1, 0.5, 1]
         for consequence in palpatine['Consequence'].unique():
-            self.log.debug("Processsing: {}".format(consequence))
-            selected_pathogenic = palpatine[
-                palpatine['Consequence'] == consequence]
-            selected_neutral = yoda[yoda['Consequence'] == consequence]
-            if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
-                selected_pathogenic = selected_pathogenic.sample(
-                    selected_neutral.shape[0],
-                    random_state=self.random_state
-                )
-            selected_pathogenic_histogram, bins = np.histogram(
-                selected_pathogenic['max_AF'],
-                bins=bins
-            )
-            for ind in range(len(bins) - 1):
-                lower_bound = bins[ind]
-                upper_bound = bins[ind + 1]
-                selected_pathogenic_all = self._get_vars_in_range(
-                    variants=selected_pathogenic,
-                    upper=upper_bound,
-                    lower=lower_bound
-                )
-                selected_pnv_all = self._get_vars_in_range(
-                    variants=selected_neutral,
-                    upper=upper_bound,
-                    lower=lower_bound
-                )
-                sample_num = selected_pathogenic_histogram[ind]
-                if sample_num < selected_pnv_all.shape[0]:
-                    selected_pnv_currange = selected_pnv_all.sample(
-                        sample_num,
-                        random_state=self.random_state
-                    )
-                    selected_pathogenic_currange = selected_pathogenic_all
-                else:
-                    selected_pnv_currange = selected_pnv_all
-                    selected_pathogenic_currange = \
-                        selected_pathogenic_all.sample(
-                            selected_pnv_all.shape[0],
-                            random_state=self.random_state
-                        )
-                self.log.debug(
-                    "Sampled {} variants from Possibly Neutral Variants for:"
-                    " {} (in range of: {} - {})".format(
-                        selected_pnv_currange.shape[0],
-                        consequence,
-                        lower_bound,
-                        upper_bound)
-                )
-                self.log.debug(
-                    "Sampled {} variants from Possibly Pathogenic Variants for:"
-                    " {} (in range of: {} - {})".format(
-                        selected_pathogenic_currange.shape[0],
-                        consequence,
-                        lower_bound,
-                        upper_bound)
-                )
-                anakin = anakin.append(
-                    selected_pnv_currange
-                )
-                anakin = anakin.append(
-                    selected_pathogenic_currange
-                )
+            processed_consequence = self._process_consequence(pathogenic_dataframe=palpatine,
+                                                              benign_dataframe=yoda,
+                                                              return_df_columns=anakin.columns,
+                                                              bins=bins,
+                                                              consequence=consequence)
+            anakin = anakin.append(processed_consequence)
         self.log.info('Balancing complete.')
         return anakin
+
+    def _process_consequence(self,
+                             pathogenic_dataframe: pd.DataFrame,
+                             benign_dataframe: pd.DataFrame,
+                             return_df_columns: list,
+                             consequence: str,
+                             bins: list):
+        self.log.debug("Processsing: {}".format(consequence))
+        selected_pathogenic = pathogenic_dataframe[
+            pathogenic_dataframe['Consequence'] == consequence]
+        selected_neutral = benign_dataframe[benign_dataframe['Consequence'] == consequence]
+        if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
+            selected_pathogenic = selected_pathogenic.sample(
+                selected_neutral.shape[0],
+                random_state=self.random_state
+            )
+        selected_pathogenic_histogram, bins = np.histogram(
+            selected_pathogenic['max_AF'],
+            bins=bins
+        )
+        return_df = pd.DataFrame(columns=return_df_columns)
+        for ind in range(len(bins) - 1):
+            upper_bound = bins[ind]
+            lower_bound = bins[ind + 1]
+            sample_number = selected_pathogenic_histogram[ind]
+            processed_bins = self._process_bins(selected_pathogenic=selected_pathogenic,
+                                                selected_neutral=selected_neutral,
+                                                upper_bound=upper_bound,
+                                                lower_bound=lower_bound,
+                                                sample_num=sample_number)
+            return_df = return_df.append(processed_bins)
+        return return_df
+
+    def _process_bins(self,
+                      selected_pathogenic: pd.DataFrame,
+                      selected_neutral: pd.DataFrame,
+                      upper_bound: int,
+                      lower_bound: int,
+                      sample_num: int):
+        selected_pathogenic_all = self._get_vars_in_range(
+            variants=selected_pathogenic,
+            upper=upper_bound,
+            lower=lower_bound
+        )
+        selected_pnv_all = self._get_vars_in_range(
+            variants=selected_neutral,
+            upper=upper_bound,
+            lower=lower_bound
+        )
+        if sample_num < selected_pnv_all.shape[0]:
+            selected_pnv_currange = selected_pnv_all.sample(
+                sample_num,
+                random_state=self.random_state
+            )
+            selected_pathogenic_currange = selected_pathogenic_all
+        else:
+            selected_pnv_currange = selected_pnv_all
+            selected_pathogenic_currange = selected_pathogenic_all.sample(
+                selected_pnv_all.shape[0],
+                random_state=self.random_state
+            )
+        self.log.debug(
+            "Sampled {} variants from Possibly Neutral Variants in range of: {} - {}".format(
+                selected_pnv_currange.shape[0],
+                lower_bound,
+                upper_bound)
+        )
+        self.log.debug(
+            "Sampled {} variants from Possibly Pathogenic Variants in range of: {} - {}".format(
+                selected_pathogenic_currange.shape[0],
+                lower_bound,
+                upper_bound)
+        )
+        return selected_pathogenic_currange.append(selected_pnv_currange)
 
     @staticmethod
     def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
