@@ -116,6 +116,8 @@ class CaddImputing:
             dataset=datafile
         )
         datafile.dropna(how='all', subset=self.columns)
+        datafile = datafile[~datafile['CAPICE_drop_out']]
+        datafile.drop(columns=['CAPICE_drop_out'], inplace=True)
         datafile.fillna(self.impute_values, inplace=True)
         self.log.info('Imputing successfully performed.')
         return datafile

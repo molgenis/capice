@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.resources.utilities.utilities import get_project_root_dir
-from src.main.python.resources.checkers.property_checker import PropertyChecker
+from src.main.python.resources.checkers.property_checker_logger import PropertyCheckerLogger
 import os
 import json
 
@@ -13,7 +13,7 @@ class TemplateImputeValues(metaclass=ABCMeta):
 
     def __init__(self, name, usable, cadd_version, grch_build):
         self.log = Logger().logger
-        self.property_checker = PropertyChecker()
+        self.property_checker = PropertyCheckerLogger()
         self.name = name
         self.usable = usable
         self.supported_cadd_version = cadd_version

@@ -1,3 +1,6 @@
+from src.main.python.resources.checkers.property_checker import PropertyChecker
+
+
 class CapiceManager:
     """
     Test
@@ -7,6 +10,7 @@ class CapiceManager:
         Class to make a logfile on the progress being made.
         """
         def __init__(self):
+            self.property_checker = PropertyChecker()
             self.log_loc = '.'
             self.now = None
             self.overwrite_impute = False
@@ -25,8 +29,7 @@ class CapiceManager:
 
         @log_loc.setter
         def log_loc(self, value):
-            if not isinstance(value, str):
-                raise TypeError('Expected a string for log location, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=str)
             self._log_loc = value
 
         @property
@@ -43,9 +46,7 @@ class CapiceManager:
 
         @overwrite_impute.setter
         def overwrite_impute(self, value=None):
-            if not isinstance(value, (str, bool)):
-                raise TypeError('Expected overwrite impute to be either boolean or string, but got: {}'.format(
-                    type(value)))
+            self.property_checker.check_property(value=value, expected_type=(str, bool))
             self._overwrite_impute = value
 
         @property
@@ -54,10 +55,7 @@ class CapiceManager:
 
         @overwrite_model.setter
         def overwrite_model(self, value):
-            if not isinstance(value, (str, bool)):
-                raise TypeError('Expected overwrite model to be either boolean or string, but got: {}'.format(
-                    type(value)
-                ))
+            self.property_checker.check_property(value=value, expected_type=(str, bool))
             self._overwrite_model = value
 
         @property
@@ -66,9 +64,8 @@ class CapiceManager:
 
         @cadd_version.setter
         def cadd_version(self, value):
-            if not isinstance(value, float):
-                if value is not None:
-                    raise TypeError('Expected CADD version in float or None, but got: {}'.format(type(value)))
+            print('This should be tested')
+            self.property_checker.check_property(value=value, expected_type=float, include_none=True)
             self._cadd_version = value
 
         @property
@@ -77,9 +74,7 @@ class CapiceManager:
 
         @grch_build.setter
         def grch_build(self, value):
-            if not isinstance(value, int):
-                if value is not None:
-                    raise TypeError('Expected GRCh build in integer or None, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=int, include_none=True)
             self._grch_build = value
 
         @property
@@ -88,8 +83,7 @@ class CapiceManager:
 
         @cadd_features.setter
         def cadd_features(self, value):
-            if not isinstance(value, list):
-                raise TypeError('Expected CADD features in list, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=list)
             self._cadd_features = value
 
         @property
@@ -98,8 +92,7 @@ class CapiceManager:
 
         @force.setter
         def force(self, value):
-            if not isinstance(value, bool):
-                raise TypeError('Expected force in a boolean, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._force = value
 
         @property
@@ -108,8 +101,7 @@ class CapiceManager:
 
         @verbose.setter
         def verbose(self, value):
-            if not isinstance(value, bool):
-                raise TypeError('Expected verbose in a boolean, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._verbose = value
 
         @property
@@ -118,8 +110,7 @@ class CapiceManager:
 
         @disable_logfile.setter
         def disable_logfile(self, value):
-            if not isinstance(value, bool):
-                raise TypeError('Expected disable logfile boolean, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._disable_logfile = value
 
         @property
@@ -128,8 +119,7 @@ class CapiceManager:
 
         @critical_logging_only.setter
         def critical_logging_only(self, value):
-            if not isinstance(value, bool):
-                raise TypeError('Expected critical logging only in boolean, but got: {}'.format(type(value)))
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._critical_logging_only = value
 
     instance = None
