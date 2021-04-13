@@ -22,6 +22,7 @@ class CaddImputing:
         self.module = None
         self._load_modules()
         self._is_correct_datafile_present()
+        self._check_if_imputer_is_applied()
         self.columns = []
         self.impute_values = {}
 
@@ -79,6 +80,7 @@ class CaddImputing:
                     self.module = module
                     break
 
+    def _check_if_imputer_is_applied(self):
         # Checking if self.data_file is assigned
         if self.module is None:
             if self.overrule:

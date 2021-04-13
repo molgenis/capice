@@ -34,6 +34,7 @@ class PreProcessor:
         else:
             self._load_preprocessors()
             self._load_correct_preprocessor()
+        self._check_preprocessor_is_applied()
 
     def _load_preprocessors(self):
         """
@@ -89,6 +90,7 @@ class PreProcessor:
                     self.preprocessor = preprocessor
                     break
 
+    def _check_preprocessor_is_applied(self):
         if self.preprocessor is None:
             if self.overrule:
                 error_message = 'No model data file found for overrule: {}'.format(

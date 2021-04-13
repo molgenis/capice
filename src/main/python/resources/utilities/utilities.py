@@ -143,11 +143,15 @@ def importer(usable_modules: list, path):
     for module in usable_modules:
         module = module.split('.py')[0]
         imported_module = import_module(module)
-        for attribute in dir(imported_module):
-            if not attribute.startswith('Template') and not attribute.startswith('__'):
-                get_attribute = getattr(imported_module, attribute)
-                if 'name' in dir(get_attribute) and 'usable' in dir(get_attribute):
-                    if get_attribute().usable is True:
-                        return_modules.append(get_attribute())
+        return_modules.append(_importer(imported_module=imported_module))
     sys.path.remove(path)
     return return_modules
+
+
+def _importer(imported_module):
+    for attribute in dir(imported_module):
+        if not attribute.startswith('Template') and not attribute.startswith('__'):
+            get_attribute = getattr(imported_module, attribute)
+            if 'name' in dir(get_attribute) and 'usable' in dir(get_attribute):
+                if get_attribute().usable is True:
+                    return get_attribute()

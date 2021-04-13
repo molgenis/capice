@@ -182,7 +182,7 @@ class TemplateSetup(metaclass=ABCMeta):
     def _process_objects_no_train(self, feature: str, cadd_features_dict: dict):
         for model_feature in self.model_features:
             if model_feature.startswith(feature):
-                extension = model_feature.split("_")[-1]
+                extension = model_feature.split(''.join([feature, '_']))[-1]
                 if feature in cadd_features_dict.keys():
                     cadd_features_dict[feature].append(extension)
                 else:
@@ -237,13 +237,14 @@ class TemplateSetup(metaclass=ABCMeta):
 
         return dataset
 
-    def _check_all_cadd_features_processed(self, current_cadd_feature, dataset, cadd_features_dict):
-        for processed_feature in cadd_features_dict[current_cadd_feature]:
-            col_be_present = "_".join([current_cadd_feature, processed_feature])
-            if col_be_present not in dataset.columns:
-                self.log.warning('Of CADD feature {}, detected {} not present in columns.'.format(
-                    current_cadd_feature, processed_feature))
-                dataset[col_be_present] = 0
+    def _check_all_cadd_features_processed(self, current_cadd_feature, dataset: pd.DataFrame, cadd_features_dict):
+        if not self.train:
+            for processed_feature in cadd_features_dict[current_cadd_feature]:
+                col_be_present = "_".join([current_cadd_feature, processed_feature])
+                if col_be_present not in dataset.columns:
+                    self.log.warning('Of CADD feature {}, detected {} not present in columns.'.format(
+                        current_cadd_feature, processed_feature))
+                    dataset[col_be_present] = 0
         return dataset
 
     def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):

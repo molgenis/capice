@@ -7,6 +7,7 @@ class CaddHeaderParser:
     """
     Autonomous class to parse just the header of the CADD file to get the CADD version and GRCh build.
     """
+
     def __init__(self, is_gzipped: bool, cadd_file_loc: str):
         self.log = Logger().logger
         self.log.info('Starting to parse CADD file header.')
@@ -43,27 +44,36 @@ class CaddHeaderParser:
         """
         for word in self.header.split(" "):
             if word.upper().startswith('GRCH'):
-                version_and_build = word.split("-v")
-                for version_build in version_and_build:
-                    if version_build.upper().startswith('GRCH'):
-                        version_build = version_build.upper().strip('GRCH')
-                        try:
-                            self.header_build = int(version_build)
-                            self.log.info('CADD file header genome build GRCh set to: {}'.format(self.header_build))
-                        except ValueError:
-                            self.log.error('Unable to convert CADD genome build {} to integer.'.format(version_build))
-                            raise ParserError(
-                                "Could not convert header CADD version (type = {}) to integer.".format(
-                                    type(version_build)))
-                    else:
-                        try:
-                            self.header_version = float(version_build)
-                            self.log.info('CADD file header used CADD version set to: {}'.format(self.header_version))
-                        except ValueError:
-                            self.log.error('Unable to convert CADD version {} to float.'.format(version_build))
-                            raise ParserError(
-                                "Could not convert header GRCh build (type = {}) to float.".format(
-                                    type(version_build)))
+                self._set_cadd_or_grch_build(current_word=word)
+
+    def _set_cadd_or_grch_build(self, current_word):
+        version_and_build = current_word.split("-v")
+        for version in version_and_build:
+            if version.upper().startswith('GRCH'):
+                version = version.upper().strip('GRCH')
+                type_of_variable = 'Genome build'
+                type_to_convert_to = int
+                version = self._try_except_convert_to_type(variable=version,
+                                                           type_to_convert_to=type_to_convert_to,
+                                                           type_of_variable=type_of_variable)
+                self.header_build = version
+            else:
+                type_of_variable = 'CADD build'
+                type_to_convert_to = float
+                version = self._try_except_convert_to_type(variable=version,
+                                                           type_to_convert_to=type_to_convert_to,
+                                                           type_of_variable=type_of_variable)
+                self.header_version = version
+
+    def _try_except_convert_to_type(self, variable: any, type_to_convert_to: any, type_of_variable: str):
+        try:
+            variable = type_to_convert_to(variable)
+            self.log.info('CADD file "{}" set to: {}'.format(type_of_variable, variable))
+        except ValueError:
+            error_message = 'Unable to convert CADD version {} to float.'.format(variable)
+            self.log.critical(error_message)
+            raise ParserError(error_message)
+        return variable
 
     def get_header_build(self):
         """
