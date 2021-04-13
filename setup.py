@@ -15,14 +15,15 @@ setup(
     author_email='molgenis-support@umcg.nl',
     description='Consequence Agnostic Pathogenicity Interpretation of Clinical Exoma variations. '
                 'State of the art machine learning to predict SNVs and InDels pathogenicity.',
+    long_description='file: README.md',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: LGPL-3.0',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8'
     ],
-    python_requires='>=3',
+    python_requires='>=3.6,<=3.8',
     install_requires=[
         'numpy==1.18.1',
         'pandas==1.0.2',
