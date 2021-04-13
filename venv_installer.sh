@@ -8,4 +8,4 @@ else
   echo "Virtual environment present"
 fi
 echo "All done! Do not forget to activate the venv using:"
-echo "source './venv/bin/activate' (you can use ctrl+shift+c to copy the command)"
+echo "source './venv/bin/activate'"

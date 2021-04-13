@@ -64,7 +64,6 @@ class CapiceManager:
 
         @cadd_version.setter
         def cadd_version(self, value):
-            print('This should be tested')
             self.property_checker.check_property(value=value, expected_type=float, include_none=True)
             self._cadd_version = value
 
