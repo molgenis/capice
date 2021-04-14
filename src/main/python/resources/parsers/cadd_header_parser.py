@@ -14,8 +14,8 @@ class CaddHeaderParser:
         self.is_gzipped = is_gzipped
         self.cadd_file_loc = cadd_file_loc
         self.header = None
-        self.header_build = None
-        self.header_version = None
+        self.header_build = False
+        self.header_version = False
         self.header_present = False
         self._parse_header()
         if self.header_present:

@@ -77,13 +77,13 @@ class CaddVersionChecker:
         }
         for type_of_check in dict_of_all_present.keys():
             to_check = dict_of_all_present[type_of_check]
-            if None in to_check:
-                if to_check.count(None) == len(to_check):
+            if False in to_check:
+                if to_check.count(False) == len(to_check):
                     self.check_overrule = type_of_check
                     self.log.warning('Unable to obtain {} version from file or command line!'.format(type_of_check))
                     self.check_overrule = True
                 for argument in to_check:
-                    if argument is not None:
+                    if argument is not False:
                         if type_of_check == 'CADD':
                             self.export_cadd_version = argument
                         else:
