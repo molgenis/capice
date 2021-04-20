@@ -9,10 +9,11 @@ annotated file. It's use is to gather all Command Line Arguments, check some, pr
 
 from src.main.python.core.command_line_supporter import ArgumentParser
 from src.main.python.core.input_checker import InputChecker, LogChecker
-from src.main.python.resources.utilities.utilities import convert_cla_to_str, convert_cla_to_int,\
-    convert_cla_to_float, convert_cla_to_full_string
+from src.main.python.resources.utilities.utilities import convert_cla_to_str
 from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.config_reader import ConfigReader
 from src.main_capice import Main
+from src.main_train import Train
 from datetime import datetime
 
 __program__ = 'CAPICE'
@@ -31,20 +32,21 @@ def main():
     setting global variables and providing Main.py with it's wanted arguments.
     Converting the CLAs happens because often the CLA is returned as a list.
     """
-    cla = ArgumentParser(description=__description__, type_cmd='main')
+    cla = ArgumentParser(description=__description__)
 
     # Getting all arguments.
 
     input_loc = convert_cla_to_str(cla.get_argument('input'))
     output_loc = convert_cla_to_str(cla.get_argument('output'))
-    log_loc = convert_cla_to_str(cla.get_argument('log_file'))
-    genome_build = convert_cla_to_int(cla.get_argument('genome_build'))
-    cadd_build = convert_cla_to_float(cla.get_argument('cadd_build'))
     verbose = cla.get_argument('verbose')
     force = cla.get_argument('force')
-    overwrite_impute = convert_cla_to_full_string(cla.get_argument('overwrite_impute_file'))
-    overwrite_model = convert_cla_to_full_string(cla.get_argument('overwrite_model_file'))
-    disable_logfile = cla.get_argument('disable_logfile')
+    train = cla.get_argument('train')
+
+    # Getting all config settings.
+
+    config = ConfigReader()
+    config.parse()
+    log_loc = config.get_default_value(key='logfilelocation')
 
     # Checking the log arguments
 
@@ -62,22 +64,27 @@ def main():
 
     manager = CapiceManager()
     manager.now = datetime.now()
-    manager.disable_logfile = disable_logfile
+    manager.disable_logfile = config.get_misc_value(key='disablelogfile')
     manager.log_loc = log_loc
     manager.verbose = verbose
-    manager.overwrite_impute = overwrite_impute
-    manager.overwrite_model = overwrite_model
+    manager.overwrite_impute = config.get_overwrite_value(key='imputefile')
+    manager.overwrite_model = config.get_overwrite_value(key='modelfile')
     manager.force = force
 
-    capice_main = Main(__program__=__program__,
-                       __author__=__author__,
-                       __version__=__version__,
-                       input_loc=input_loc,
-                       output_loc=output_loc,
-                       genome_build=genome_build,
-                       cadd_build=cadd_build)
+    if train:
+        capice_main = Train(__program__=__program__,
+                            __author__=__author__,
+                            __version__=__version__,
+                            input_loc=input_loc,
+                            output_loc=output_loc)
+    else:
+        capice_main = Main(__program__=__program__,
+                           __author__=__author__,
+                           __version__=__version__,
+                           input_loc=input_loc,
+                           output_loc=output_loc)
 
-    capice_main.run(train=False)
+    capice_main.run()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.exporter import Exporter
+from src.main.python.core.config_reader import ConfigReader
 from src.main.python.resources.parsers.cadd_parser import CaddParser
 from src.main.python.resources.parsers.cadd_header_parser import CaddHeaderParser
 from src.main.python.resources.imputers.cadd_imputing import CaddImputing
@@ -15,12 +16,14 @@ class Main:
     """
     def __init__(self,
                  __program__, __author__, __version__,
-                 input_loc, output_loc,
-                 genome_build, cadd_build):
+                 input_loc, output_loc):
 
         # Order is important here
         self.manager = CapiceManager()
         self.log = Logger().logger
+
+        # Config loading
+        self.config = ConfigReader()
 
         # Welcome message
 
@@ -39,24 +42,21 @@ class Main:
         self.log.debug('Input argument -i / --input confirmed: {}'.format(self.infile))
         self.output = output_loc
         self.log.debug('Output directory -o / --output confirmed: {}'.format(self.output))
-        self.cla_genome_build = genome_build
+        self.cla_genome_build = self.config.get_default_value('genomebuild')
         self.log.debug('Genome build -gb / --genome_build confirmed: {}'.format(self.cla_genome_build))
-        self.cla_cadd_version = cadd_build
+        self.cla_cadd_version = self.config.get_default_value('caddversion')
         self.log.debug('CADD build -cb / --cadd_build confirmed: {}'.format(self.cla_cadd_version))
         self.log.debug('Force flag confirmed: {}'.format(self.manager.force))
 
-    def run(self, train: bool):
+    def run(self):
         """
         Function to make CAPICE run in a prediction matter.
         """
         cadd_data = self.load_file()
         cadd_data = self.impute(loaded_cadd_data=cadd_data)
-        preprocessing_instance, cadd_data = self.preprocess(loaded_cadd_data=cadd_data, train=train)
-        if not train:
-            cadd_data = self.predict(loaded_cadd_data=cadd_data, preprocessing_instance=preprocessing_instance)
-            self._export(datafile=cadd_data)
-        else:
-            return cadd_data
+        preprocessing_instance, cadd_data = self.preprocess(loaded_cadd_data=cadd_data, train=False)
+        cadd_data = self.predict(loaded_cadd_data=cadd_data, preprocessing_instance=preprocessing_instance)
+        self._export(datafile=cadd_data)
 
     def load_file(self):
         """
