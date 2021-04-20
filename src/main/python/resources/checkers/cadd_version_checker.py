@@ -6,7 +6,7 @@ import warnings
 
 class CaddVersionChecker:
     """
-    Class to check the given CADD command line arguments and the header of the CADD file
+    Class to check the given CADD config arguments and the header of the CADD file
 
     Class is self running thanks to the init, no function has to be called externally.
     """
@@ -17,9 +17,9 @@ class CaddVersionChecker:
                  file_cadd_version: float,
                  file_grch_build: int):
         """
-        Class to check the given CADD command line arguments and the header of the CADD file
-        :param cla_cadd_version: float, command line argument for the used CADD version
-        :param cla_grch_build: int, command line argument for the used GRCh build
+        Class to check the given CADD config arguments and the header of the CADD file
+        :param cla_cadd_version: float, config argument for the used CADD version
+        :param cla_grch_build: int, config argument for the used GRCh build
         :param file_cadd_version: float, the CADD version present in the header of the CADD file
         :param file_grch_build: int, the GRCh build present in the header of the CADD file
         """
@@ -68,7 +68,7 @@ class CaddVersionChecker:
 
     def _check_all_present(self):
         """
-        Function to check if both the CADD version and GRCh build are present within either the command line
+        Function to check if both the CADD version and GRCh build are present within either the config
         arguments or within the file.
         """
         dict_of_all_present = {
@@ -77,13 +77,13 @@ class CaddVersionChecker:
         }
         for type_of_check in dict_of_all_present.keys():
             to_check = dict_of_all_present[type_of_check]
-            if None in to_check:
-                if to_check.count(None) == len(to_check):
+            if False in to_check:
+                if to_check.count(False) == len(to_check):
                     self.check_overrule = type_of_check
-                    self.log.warning('Unable to obtain {} version from file or command line!'.format(type_of_check))
+                    self.log.warning('Unable to obtain {} version from file or config file!'.format(type_of_check))
                     self.check_overrule = True
                 for argument in to_check:
-                    if argument is not None:
+                    if argument is not False:
                         if type_of_check == 'CADD':
                             self.export_cadd_version = argument
                         else:
@@ -93,8 +93,8 @@ class CaddVersionChecker:
 
     def _check_version_match(self):
         """
-        Function to check if the Command Line Argument and the file header specified CADD versions match.
-        If not: use the command line argument as form of "overwrite" and warn.
+        Function to check if the Config Argument and the file header specified CADD versions match.
+        If not: use the config argument as form of "overwrite" and warn.
         """
         if len(self.check_match) > 0:
             for check_match in self.check_match:
@@ -107,7 +107,7 @@ class CaddVersionChecker:
                         self._raise_version_mismatch(type_of_mismatch=check_match,
                                                      match_successful=True)
                     self.export_cadd_version = self.cla_cadd_version
-                else:
+                elif check_match == 'GRCh':
                     if self.cla_grch_build != self.file_grch_build:
                         self._raise_version_mismatch(type_of_mismatch=check_match,
                                                      version_cla=self.cla_grch_build,

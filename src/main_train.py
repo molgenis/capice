@@ -1,7 +1,6 @@
 from src.main_capice import Main
-from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.checkers.train_checker import TrainChecker
+from src.main.python.core.config_reader import ConfigReader
 from src.main.python.core.exporter import Exporter
 import pandas as pd
 import numpy as np
@@ -11,7 +10,7 @@ import json
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
-class Train:
+class Train(Main):
     """
     Train class of CAPICE to create new CAPICE like models for new or specific use cases.
     """
@@ -21,37 +20,30 @@ class Train:
                  __author__,
                  __version__,
                  input_loc,
-                 output_loc,
-                 balance,
-                 default,
-                 specified_default,
-                 split,
-                 early_exit,
-                 train_test_size):
-
-        self.manager = CapiceManager()
-        self.log = Logger().logger
-        self.__program__ = __program__
-        self.__author__ = __author__
-        self.__version__ = __version__
+                 output_loc):
+        super().__init__(__program__=__program__,
+                         __author__=__author__,
+                         __version__=__version__,
+                         input_loc=input_loc,
+                         output_loc=output_loc)
 
         # Argument logging
-        self.input_loc = input_loc
-        self.output_loc = output_loc
-        self.balance = balance
+        self.balance = self.config.get_train_value('makebalanced')
         self.log.debug('Make input dataset balanced confirmed: {}'.format(self.balance))
-        self.default = default
+        self.default = self.config.get_train_value('default')
         self.log.debug('The use of the default Python 3.6 hyperparameters set to: {}'.format(self.default))
-        self.specified_default = specified_default
+        self.specified_default = self.config.get_train_value('specifieddefaults')
         self.log.debug('The use of specified default hyperparameters set to: {}'.format(self.specified_default))
-        self.n_split = split
+        self.n_split = self.config.get_train_value('split')
         self.log.debug('Split has been confirmed, set to: {}'.format(self.n_split))
-        self.early_exit = early_exit
+        self.early_exit = self.config.get_train_value('earlyexit')
         if self.early_exit:
             self.log.debug('Early exit flag confirmed.')
-        self.train_test_size = train_test_size
+        self.train_test_size = self.config.get_train_value('traintestsize')
         self.log.debug('The percentage of data used for the testing dataset within training: {}'.format(
             self.train_test_size))
+
+        # Global variables
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
@@ -60,27 +52,19 @@ class Train:
         self.processed_features = []
         self.verbose = self.manager.verbose
         self.model_type = None
-        self.exporter = Exporter(file_path=self.output_loc)
+        self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
 
-    def main(self):
+    def run(self):
         """
         Main function. Will make a variety of calls to the required modules in order to create new CAPICE models.
         """
-        input_loc = self.input_loc
-        capice_processing = Main(__program__=self.__program__,
-                                 __author__=self.__author__,
-                                 __version__=self.__version__,
-                                 input_loc=input_loc,
-                                 output_loc=self.output_loc,
-                                 genome_build=None,
-                                 cadd_build=None)
-        data = capice_processing.load_file()
+        data = self.load_file()
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
             data = self.process_balance_in_the_force(dataset=data)
-        if self.n_split:
+        if self.n_split > 0.0:
             self.log.info('Splitting input dataset before any preprocessing happens.')
             data, _ = self.split_data(dataset=data, test_size=self.n_split, export=True)
         if self.balance:
@@ -90,9 +74,9 @@ class Train:
         self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
-        imputed_data = capice_processing.impute(loaded_cadd_data=data)
+        imputed_data = self.impute(loaded_cadd_data=data)
         self.cadd_features = self.manager.cadd_features
-        processed_data = capice_processing.preprocess(loaded_cadd_data=imputed_data, train=True)[1]
+        processed_data = self.preprocess(loaded_cadd_data=imputed_data, train=True)[1]
         self._get_processed_features(dataset=processed_data)
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
