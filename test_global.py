@@ -37,7 +37,7 @@ class TestGlobal(unittest.TestCase):
         cls.cadd_build = 1.4
         cls.grch_build = 37
         cls.impute_overwrite = 'CADD 1.4, GRCh build 37'
-        cls.model_overwrite = 'CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.'
+        cls.model_overwrite = 'CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.'
 
         # Initialize global manager and setting global variables
         cls.manager = CapiceManager()
@@ -87,7 +87,7 @@ class TestGlobal(unittest.TestCase):
         self.main.balance = False
         self.main.specified_default = False
         self.main._integration_test = False
-        time.sleep(5)
+        time.sleep(0.5)
         print('----------------------------------------------------------------------')
 
     def test_unit_loadfile(self):
@@ -181,6 +181,7 @@ class TestGlobal(unittest.TestCase):
         """
         Unit test for the preprocessor to see if the preprocessor works with the config overwrite variables.
         """
+        print('Preprocessing (unit) (overwrite)')
         self.manager.overwrite_impute = self.impute_overwrite
         self.manager.overwrite_model = self.model_overwrite
         self.main.preprocess(loaded_cadd_data=self.main.impute(loaded_cadd_data=self.main.load_file()), train=False)

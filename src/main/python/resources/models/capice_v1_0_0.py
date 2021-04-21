@@ -26,7 +26,7 @@ class ModelSetupXGBoost0721(TemplateSetup):
         return model_loc
 
     def _load_model_features(self):
-        return self.model.feature_names
+        self.model_features = self.model.feature_names
 
     def _predict(self, predict_data):
         return self.model.predict(predict_data)
