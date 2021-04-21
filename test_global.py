@@ -2,6 +2,7 @@ import os
 import unittest
 import warnings
 import pickle
+import time
 from datetime import datetime
 
 from src.main_train import Train
@@ -36,7 +37,7 @@ class TestGlobal(unittest.TestCase):
         cls.cadd_build = 1.4
         cls.grch_build = 37
         cls.impute_overwrite = 'CADD 1.4, GRCh build 37'
-        cls.model_overwrite = 'CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.'
+        cls.model_overwrite = 'CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.'
 
         # Initialize global manager and setting global variables
         cls.manager = CapiceManager()
@@ -59,8 +60,7 @@ class TestGlobal(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        # teardown_class()
-        pass
+        teardown_class()
 
     def setUp(self):
         """
@@ -87,6 +87,7 @@ class TestGlobal(unittest.TestCase):
         self.main.balance = False
         self.main.specified_default = False
         self.main._integration_test = False
+        time.sleep(5)
         print('----------------------------------------------------------------------')
 
     def test_unit_loadfile(self):
