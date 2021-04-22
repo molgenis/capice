@@ -12,12 +12,12 @@ class XGBoost111(TemplateSetup):
     def __init__(self):
         super().__init__(
             name="CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.",
-            usable=True,
+            usable=False,
             cadd_version=1.4,
             grch_build=37
         )
 
     @staticmethod
     def _get_model_loc():
-        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_model', 'xgb_booster37.pickle.dat')
+        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_model', 'GRCh37', 'xgb_booster37.pickle.dat')
         return model_loc

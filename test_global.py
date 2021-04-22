@@ -37,7 +37,7 @@ class TestGlobal(unittest.TestCase):
         cls.cadd_build = 1.4
         cls.grch_build = 37
         cls.impute_overwrite = 'CADD 1.4, GRCh build 37'
-        cls.model_overwrite = 'CAPICE using XGBoost 1.1.1, CADD 1.4 and genome build 37.'
+        cls.model_overwrite = 'CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.'
 
         # Initialize global manager and setting global variables
         cls.manager = CapiceManager()

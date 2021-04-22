@@ -32,7 +32,8 @@ The CAPICE software is also provided in this repository for running CAPICE in yo
 The following sections will guide you through the steps needed for the variant annotation and the execution of
 making predictions using the CAPICE model.
 
-### Download and installation
+### Download and installation (UNIX like systems)
+__Note: this install is for Python 3.6__
 
 1. Software and libraries
 CAPICE scripts can be downloaded from the CAPICE github repository.
@@ -43,25 +44,44 @@ cd capice
 
 1.1 Installation of libraries
 
-The following libraries are required to run CAPICE in Python 3.6 (__NOTE__: These are __NOT__ supplied within the requirements.txt):
+CAPICE can be installed through the setup.py supplied.
+
+```
+pip install .
+```
+
+If you do not have admin rights, a virtual environment can be used aswell, which can be installed as following:
+
+```
+bash venv_installer.sh
+```
+
+Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
 numpy | Version 1.13.3
 pandas | Version 0.21.0
 scipy | Version 1.0.1
 scikit-learn | Version 0.19.1
-xgboost | Version 0.72.1
+xgboost | Version 0.72.1 (Version 0.90 also works)
 ```
 
-For Python 3.7 and greater, the following libraries are required (and can be installed in a Python virtual environment using `venv_installer.sh`):
+`pip install numpy==1.13.3 pandas==0.21.0 scipy==1.0.1 scikit-learn==0.19.1 xgboost==0.72.1`
+
+For Python 3.7 and 3.8, the following packages have to be manually installed:
 ```
 numpy | Version 1.18.1
 pandas | Version 1.0.2
+scipy | Version 1.6.2
 scikit-learn | Version 0.23.1
-xgboost | Version 1.1.1
+xgboost | Version 0.90
 ```
 
-### Usage for predictions
+`pip install numpy==1.18.1 pandas==1.0.2 scipy==1.6.2 scikit-learn==0.23.1 xgboost==0.90`
+
+__Installation on Windows systems is not possible. Please refer to UNIX like systems (iOS or Linux) or use the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).__
+
+### Usage
 
 CAPICE predictions can be run by using the following command:
 
@@ -72,22 +92,12 @@ CAPICE requires the following arguments:
 - -i / --input: The path to the input [CADD annotated](https://cadd.gs.washington.edu/) dataset using the tab separator (can be both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/test_cadd14_grch37_annotated.tsv.gz` for CADD 1.4 and genome build 37.
 - -o / --output: The path to the directory where the output is placed (will be made if it does not exists).
 
-The following arguments are partially optional:
-
-- -cb / --cadd_build: If no original header of the CADD output file is present then this argument requires a float (like 1.4) to tell CAPICE what CADD version was used to annotate the file.
-- -gb / --genome_build: If no original header of the CADD output file is present then this argument requires an integer (like 37) to tell CAPICE what the Genome Build version was used to annotate the file.
-
-The following arguments can be used to specifically select a certain model file or imputing file:
-
-- --overwrite_impute_file: The full string (without quotation marks) of the return of the `get_name()` function within a certain imputing file.
-- --overwrite_model_file: The full string (without quotation marks) of the return of the `get_name()` function within a certain model file.
-
-The following flags can be added:
-
+The following flags are optional:
 - -v / --verbose: Display more in depth messages within the progress of CAPICE.
 - -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
-- -l / --log_file: Path to a directory where log files are stored. Will be made if it does not exists. Default is in the output directory.
-- --disable_logfile: Flag to disable the creation of a logfile. Will output to STDout and STDerr.
+- --train: Activates the 'train new CAPICE-like models' within CAPICE.
+
+_Alternatively, further setup can be performed in the `config.cfg`_
 
 #### Output of CAPICE prediction files
 
@@ -107,43 +117,6 @@ Outside of Predictions, this repository also provides users the availability to 
 Unlike CAPICE Predictions, this input file is fully dependent on the imputing file used to impute the input dataset, but requires 2 columns at the very least: `sample_weight` and `binarized_label`.
 Sample weight can be 1 for all samples if no sample weight should be applied. Binarized label should be either 0 or 1, depending on your labels of classification. 
 _Note: when applying balancing to the input dataset, only a 2 class problem can be processed._
-
-To make new CAPICE like models, run the following command:
-
-`python3 train_model.py` _arguments_
-
-The following arguments are required:
-
-- -i / --input: Path to a input dataset in TSV format.
-- -o / --output: Path to an output directory. Will be made if it does not exists.
-- --overwrite_impute_file: The full string (without quotation marks) of the return of the `get_name()` function within a certain imputing file.
-
-The following arguments are optional:
-
-- -b / --balance: Flag to be added when the input dataset is required to be balanced on Allele frequency, consequence and the distribution of pathogenic and benign samples.
-- -l / --log_file: Path to a directory in where log files are stored. Will be made if it does not exists. Default will be within the output directory.
-- -d / --default: Flag to be added when the originally published hyper parameters should be used to create a new model.
-- -sd / --specified_default: Path to a JSON containing the 3 tunable hyper parameters: `learning_rate` (in float), `max_depth` (in integer) and `n_estimators` (in integer). If both -d and -sd are called, -sd will overrule -d.
-- -s / --split: Float that defines a split of the input data before any processing happens, but after balancing happens (if called). Use this flag if you want to create a benchmarking / validating dataset out of the initial input dataset.
-- -ttsize / --train_test_size: Float that defines what percentage of the processed data will be used as test dataset once the model is actually training.
-- -e / --exit: Flag to be called if the program should exit right after balancing (if called), splitting (using -s, if called) and the loading of default hyper parameters (if called) for testing purposes or for data preparation purposes.
-- -v / --verbose: Flag to print more debugging messages.
-- -f / --force: Flag to be called if output files should be overwritten if they exist.
-- --disable_logfile: Flag to be called if the creation of a logfile is not wanted.
-
-###### Examples:
-
-- Balance out the given file and make an XGBoost model on the balanced set using the originally published hyper parameters, while logging more messages:
-    - `python3 train_model.py -i path/to/cadd/annotated/file -o path/to/output -b -d -v` 
-
-- Do not balance out the given dataset and split it to a 90% dataset to be used for imputing, preprocessing and training. The remaining 10% could be used for later validation:
-    - `python3 train_model.py -i path/to/balanced/cadd/annotated/file -o path/to/output -v -s 0.1`
-
-- Make a model using previously found optimal hyper parameters, without balancing out the input dataset, while using 90% of the input dataset for training:
-    - `python3 train_model.py -i path/to/cadd/annotated/file -o path/to/output -v -s 0.1 -sd path/to/hyperparameters.json`
-    
-- Balance out and split a dataset, without training:
-    - `python3 train_model.py -i path/to/cadd/annotated/file -o path/to/output -s 0.1 -v -e`
 
 #### Outputs for training a new model:
 
@@ -176,12 +149,18 @@ There are plans to make a "Capice Explain Tool" which will tell how a score came
 
 - Training a new model failed with an error in `joblib.externals.loky.process_executor.RemoteTraceback` with `ValueError: unknown format is not supported`. Why?
 
-This could possibly originate from a low sample size during the cross validation in RandomSearchCV. Please [contact](https://github.com/molgenis/capice/issues) us for further help.
+This could possibly originate from a low sample size during the cross validation in RandomSearchCV. Please [contact us](https://github.com/molgenis/capice/issues) for further help.
 
 - I'm on Windows and installing XGBoost fails with the PIP error `“No files/directories in C:\path\to\xgboost\pip-egg-info (from PKG-INFO)”`. Am I doing something wrong?
 
 Unfortunatly, XGBoost does not cooperate well with Windows. You might want to try to install [Setuptools](https://pypi.org/project/setuptools/) before you attempt to install the dependencies. 
 If that does not work either, we suggest you use either a Unix style virtual machine or, if you are using Windows 10, the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) is also available in the Windows Store for free, which is guaranteed to work.
+
+- I'm getting a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>` when loading in the model, what is going wrong?
+
+CAPICE has been further developed on Python3.8, where installing xgboost 0.72.1 was unavailable other than forcing it. For this, XGBoost 1.1.1 was used. 
+Due to this, another model file was created, which means that there is overlap between the model files. A solution for this is to set the 
+`usable=True` to `usable=False` within `capice_v(version).py` `super.__init__()` function.
   
 
 
