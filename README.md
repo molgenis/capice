@@ -33,7 +33,9 @@ The following sections will guide you through the steps needed for the variant a
 making predictions using the CAPICE model.
 
 ### Download and installation (UNIX like systems)
-__Note: this install is for Python 3.6__
+__Note: this install is for Python 3.7 and Python 3.8. 
+Python 3.6 is also supported and install can be found at the bottom of this chapter.
+Python 3.5 and lower or Python 3.9 and higher is not supported (yet).__
 
 1. Software and libraries
 CAPICE scripts can be downloaded from the CAPICE github repository.
@@ -59,17 +61,6 @@ bash venv_installer.sh
 Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
-numpy | Version 1.13.3
-pandas | Version 0.21.0
-scipy | Version 1.0.1
-scikit-learn | Version 0.19.1
-xgboost | Version 0.72.1 (Version 0.90 also works)
-```
-
-`pip install numpy==1.13.3 pandas==0.21.0 scipy==1.0.1 scikit-learn==0.19.1 xgboost==0.72.1`
-
-For Python 3.7 and 3.8, the following packages have to be manually installed:
-```
 numpy | Version 1.18.1
 pandas | Version 1.0.2
 scipy | Version 1.6.2
@@ -78,6 +69,18 @@ xgboost | Version 0.90
 ```
 
 `pip install numpy==1.18.1 pandas==1.0.2 scipy==1.6.2 scikit-learn==0.23.1 xgboost==0.90`
+
+For Python 3.6, the following packages have to be manually installed:
+
+```
+numpy | Version 1.13.3
+pandas | Version 0.21.0
+scipy | Version 1.0.1
+scikit-learn | Version 0.19.1
+xgboost | Version 0.72.1 (Version 0.90 also works)
+```
+
+`pip install numpy==1.13.3 pandas==0.21.0 scipy==1.0.1 scikit-learn==0.19.1 xgboost==0.72.1`
 
 __Installation on Windows systems is not possible. Please refer to UNIX like systems (iOS or Linux) or use the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).__
 

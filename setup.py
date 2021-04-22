@@ -26,13 +26,13 @@ setup(
         'License :: LGPL-3.0',
         'Programming Language :: Python :: 3.6'
     ],
-    python_requires='3.6.*',
+    python_requires='3.7.*,3.8.*',
     install_requires=[
-        'numpy==1.13.3',
-        'pandas==0.21.0',
-        'scipy==1.0.1',
-        'scikit-learn==0.19.1',
-        'xgboost==0.72.1'
+        'numpy==1.18.1',
+        'pandas==1.0.2',
+        'scipy==1.6.2',
+        'scikit-learn==0.23.1',
+        'xgboost==0.90'
     ],
     extras_require={
         'test': [
