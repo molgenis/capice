@@ -10,6 +10,8 @@ from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.config_reader import ConfigReader
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
+from src.main.python.core.input_checker import InputChecker
+
 __program__ = 'CAPICE prediction testing'
 __version__ = 1.0
 __author__ = 'R.J. Sietsma'
@@ -56,6 +58,9 @@ class TestGlobal(unittest.TestCase):
                          input_loc=cls.input_file,
                          output_loc=cls.output)
 
+        # Case specific testing
+        cls.input_checker = InputChecker()
+
         print('Set up complete, testing cases.')
 
     @classmethod
@@ -87,6 +92,10 @@ class TestGlobal(unittest.TestCase):
         self.main.balance = False
         self.main.specified_default = False
         self.main._integration_test = False
+
+        # Case specific resets
+        self.input_checker.output_filename = ''
+        self.input_checker.output_directory = ''
         time.sleep(0.5)
         print('----------------------------------------------------------------------')
 
@@ -212,6 +221,9 @@ class TestGlobal(unittest.TestCase):
         self.assertEqual(len(processed_file[model_features].select_dtypes(include=["O"]).columns), 0)
 
     def test_component_preprocessing_train(self):
+        """
+        Component test for the preprocessing part with train=True.
+        """
         print('Preprocessing (train) (component)')
         self.manager.overwrite_impute = self.impute_overwrite
         loaded_file = self.main.load_file()
@@ -240,11 +252,17 @@ class TestGlobal(unittest.TestCase):
         self.assertEqual(len(preprocessed_file[test_features].select_dtypes(include=["O"]).columns), 0)
 
     def test_unit_prediction(self):
+        """
+        Unit test for the prediction part of CAPICE.
+        """
         print('Prediction (unit)')
         preprocessing_instance, processed_file = self.prepare_upon_preprocessing(model=self.model_overwrite)
         self.main.predict(loaded_cadd_data=processed_file, preprocessing_instance=preprocessing_instance)
 
     def test_component_prediction(self):
+        """
+        Component test for prediction to see if the combined score of all is greater than 0.
+        """
         print('Prediction (component)')
         preprocessing_instance, processed_file = self.prepare_upon_preprocessing(model=self.model_overwrite)
         prediction = self.main.predict(loaded_cadd_data=processed_file,
@@ -253,6 +271,9 @@ class TestGlobal(unittest.TestCase):
         self.assertGreater(prediction['probabilities'].sum(), 0)
 
     def test_integration_training(self):
+        """
+        Integration test for the full training part of CAPICE. With check if the correct class is exported.
+        """
         print('Training (integration)')
         self.main.infile = self.train_file
         self.manager.overwrite_impute = self.impute_overwrite
@@ -268,6 +289,9 @@ class TestGlobal(unittest.TestCase):
         self.assertEqual('xgboost.sklearn.XGBClassifier', best_model)
 
     def test_unit_split(self):
+        """
+        Unit test to see if split works.
+        """
         print('Split (unit)')
         self.main.infile = self.train_file
         self.manager.overwrite_impute = self.impute_overwrite
@@ -275,6 +299,9 @@ class TestGlobal(unittest.TestCase):
         self.main.split_data(dataset=input_file, test_size=0.2)
 
     def test_component_split(self):
+        """
+        Component test for split to see if the correct sizes of datasets are created.
+        """
         print('Split (component)')
         self.main.infile = self.train_file
         self.manager.overwrite_impute = self.impute_overwrite
@@ -324,12 +351,18 @@ class TestGlobal(unittest.TestCase):
         self.assertEqual(defaults['n_estimators'], 10)
 
     def test_unit_balancing(self):
+        """
+        Unit test for the balancing algorithm.
+        """
         print('Balancing (unit)')
         self.main.infile = self.train_file
         self.manager.overwrite_impute = self.impute_overwrite
         self.main.process_balance_in_the_force(dataset=self.main.load_file())
 
     def test_component_balancing(self):
+        """
+        Component test for the balancing with test to see if the amount of benign and pathogenic variants are the same.
+        """
         print('Balancing (component)')
         self.main.infile = self.train_file
         self.manager.overwrite_impute = self.impute_overwrite
@@ -337,6 +370,48 @@ class TestGlobal(unittest.TestCase):
         n_zero = balanced_file[balanced_file['binarized_label'] == 0].shape[0]
         n_one = balanced_file[balanced_file['binarized_label'] == 1].shape[0]
         self.assertEqual(n_zero, n_one)
+
+    def test_input_output_conversion_case1(self):
+        """
+        Test for the input checker if the correct input, output directory and output filename are set.
+        Testing with only an input
+        """
+        print('Input output conversion (input only)')
+        test_input = './CAPICE_example/test_cadd14_grch37_annotated.tsv.gz'
+        test_output = None
+        expected_output_filename = 'test_cadd14_grch37_annotated_capice.tsv.gz'
+        expected_output_directory = './CAPICE_example'
+        self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
+        self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
+        self.assertEqual(self.input_checker.get_output_directory(), expected_output_directory)
+
+    def test_input_output_conversion_case2(self):
+        """
+        Test for the input checker if the correct input, output directory and output filename are set.
+        Testing with input and an output directory.
+        """
+        print('Input output conversion (input + output directory)')
+        test_input = './CAPICE_example/test_cadd14_grch37_annotated.tsv.gz'
+        test_output = './test_output'
+        expected_output_filename = 'test_cadd14_grch37_annotated_capice.tsv.gz'
+        expected_output_directory = './test_output'
+        self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
+        self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
+        self.assertEqual(self.input_checker.get_output_directory(), expected_output_directory)
+
+    def test_input_output_conversion_case3(self):
+        """
+        Test for the input checker if the correct input, output directory and output filename are set.
+        Testing with input, output directory AND filename.
+        """
+        print('Input output conversion (input + output directory + filename)')
+        test_input = './CAPICE_example/test_cadd14_grch37_annotated.tsv.gz'
+        test_output = './test_output/test.txt'
+        expected_output_filename = 'test.txt.gz'
+        expected_output_directory = './test_output'
+        self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
+        self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
+        self.assertEqual(self.input_checker.get_output_directory(), expected_output_directory)
 
 
 def setup_class():

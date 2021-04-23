@@ -22,6 +22,7 @@ class CapiceManager:
             self.disable_logfile = False
             self.critical_logging_only = False
             self.cadd_features = []
+            self.output_filename = ''
 
         @property
         def log_loc(self):
@@ -120,6 +121,15 @@ class CapiceManager:
         def critical_logging_only(self, value):
             self.property_checker.check_property(value=value, expected_type=bool)
             self._critical_logging_only = value
+
+        @property
+        def output_filename(self):
+            return self._output_filename
+
+        @output_filename.setter
+        def output_filename(self, value):
+            self.property_checker.check_property(value=value, expected_type=str)
+            self._output_filename = value
 
     instance = None
 
@@ -328,6 +338,14 @@ class CapiceManager:
 
         :param value: boolean
         """
+        pass
+
+    @property
+    def output_filename(self):
+        return self._output_filename
+
+    @output_filename.setter
+    def output_filename(self, value):
         pass
 
     def __new__(cls):

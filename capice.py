@@ -7,7 +7,7 @@ annotated file. It's use is to gather all Command Line Arguments, check some, pr
 ./src/main_capice.py with it's wanted arguments.
 """
 
-from src.main.python.core.command_line_supporter import ArgumentParser
+from src.main.python.core.command_line_parser import ArgumentParser
 from src.main.python.core.input_checker import InputChecker, LogChecker
 from src.main.python.resources.utilities.utilities import convert_cla_to_str
 from src.main.python.core.global_manager import CapiceManager
@@ -48,17 +48,20 @@ def main():
     config.parse()
     log_loc = config.get_default_value(key='logfilelocation')
 
-    # Checking the log arguments
-
-    lc = LogChecker(log_loc=log_loc, output_loc=output_loc)
-    log_loc = lc.check_log_loc()
-
     # Checking the input arguments.
 
     input_checker = InputChecker()
 
     input_checker.check_input_loc(input_loc=input_loc)
+    input_checker.check_input_output_directories(input_path=input_loc, output_path=output_loc)
+    output_loc = input_checker.get_output_directory()
+    output_filename = input_checker.get_output_filename()
     input_checker.check_output_loc(output_loc=output_loc)
+
+    # Checking the log arguments
+
+    lc = LogChecker(log_loc=log_loc, output_loc=output_loc)
+    log_loc = lc.check_log_loc()
 
     # Initializing the manager
 
@@ -70,6 +73,7 @@ def main():
     manager.overwrite_impute = config.get_overwrite_value(key='imputefile')
     manager.overwrite_model = config.get_overwrite_value(key='modelfile')
     manager.force = force
+    manager.output_filename = output_filename
 
     if train:
         capice_main = Train(__program__=__program__,

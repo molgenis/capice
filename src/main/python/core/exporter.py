@@ -14,6 +14,7 @@ class Exporter:
         self.log = Logger().logger
         self.force = CapiceManager().force
         self.now = CapiceManager().now
+        self.capice_filename = CapiceManager().output_filename
         self.file_path = file_path
         self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
 
@@ -22,8 +23,7 @@ class Exporter:
         Function specific to export the dataset created for the prediction pathway.
         :param datafile: prediction pandas DataFrame
         """
-        file_name_capice = 'capice_{}'.format(self.now.strftime("%H%M%S%f_%d%m%Y"))
-        filename = self._export_filename_ready(file_name=file_name_capice)
+        filename = self._export_filename_ready(file_name=self.capice_filename, check_extension=False)
         datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
 
@@ -34,7 +34,7 @@ class Exporter:
         :param name: Name of the export file
         :param feature: Name of what is exported
         """
-        filename = self._export_filename_ready(file_name=name, type_export='dataset')
+        filename = self._export_filename_ready(file_name=name)
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
         self.log.info('Exported {} with shape {} to: {}'.format(feature, datafile.shape, filename))
 
@@ -54,20 +54,23 @@ class Exporter:
         with open(filename, 'wb') as model_dump:
             pickle.dump(model, model_dump)
 
-    def _export_filename_ready(self, file_name, type_export='prediction'):
+    def _export_filename_ready(self, file_name, type_export='dataset', check_extension=True):
         """
         Function to build an unique filename in case that force is turned off.
         :param file_name: Name of the to be created file
         :param type_export: "prediction" for the prediction pathway, "dataset" for the export of datasets or
         "model" for the export of models.
+        :param check_extension: Boolean if the extension should be checked before exporting.
         :return: full export path
         """
         path_and_filename = os.path.join(self.file_path, file_name)
-        types_export_and_extensions = {'prediction': '.tsv',
-                                       'dataset': '.tsv.gz',
+        types_export_and_extensions = {'dataset': '.tsv.gz',
                                        'model': '.pickle.dat'}
-        extension = types_export_and_extensions[type_export]
-        full_path = os.path.join(self.file_path, file_name + extension)
+        if check_extension:
+            extension = types_export_and_extensions[type_export]
+            if not file_name.endswith(extension):
+                file_name = file_name + extension
+        full_path = os.path.join(self.file_path, file_name)
         export_path = None
         if not check_file_exists(full_path):
             self.log.info('No file found at {}, save to create.'.format(full_path))
