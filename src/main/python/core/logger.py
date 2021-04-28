@@ -71,7 +71,7 @@ class Logger:
                 print('Log file disabled. Using Stdout and Stderr.')
             logging.basicConfig(
                 level=self.log_level,
-                format="%(asctime)s [%(threadName)-10.10s] "
+                format="%(asctime)s [CAPICE] "
                        "[%(levelname)-4.4s]  "
                        "%(message)s",
                 handlers=handlers

@@ -55,7 +55,7 @@ class InputChecker:
                 # Then I know it's an output filename
                 self.output_directory = os.path.dirname(input_path)
                 self.output_filename = output_path
-        self._check_gzip_extension()
+        # self._check_gzip_extension()
 
     def _create_capice_output_filename(self, input_path, output_path=None, append_capice=True, ispath=False):
         if output_path is None:
