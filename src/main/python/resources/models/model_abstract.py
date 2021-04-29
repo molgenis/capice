@@ -278,7 +278,6 @@ class TemplateSetup(metaclass=ABCMeta):
         self._load_model()
         self._load_model_features()
         data['probabilities'] = self._predict(self._create_input_matrix(dataset=data))
-        data['ID'] = '.'
         self.log.info('Predicting successful.')
         return data
 

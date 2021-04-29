@@ -16,7 +16,7 @@ class Exporter:
         self.now = CapiceManager().now
         self.capice_filename = CapiceManager().output_filename
         self.file_path = file_path
-        self.export_cols = ['chr_pos_ref_alt', 'ID', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
+        self.export_cols = ['chr_pos_ref_alt', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
 
     def export_capice_prediction(self, datafile: pd.DataFrame):
         """
@@ -24,8 +24,20 @@ class Exporter:
         :param datafile: prediction pandas DataFrame
         """
         filename = self._export_filename_ready(file_name=self.capice_filename, check_extension=False)
-        datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
+        # datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
+        datafile = self._export_legacy_prediction(datafile=datafile)
+        datafile.to_csv(filename, sep='\t', index=False)
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
+
+    def _export_legacy_prediction(self, datafile):
+        datafile = datafile[self.export_cols]
+        datafile['prediction'] = 'empty'
+        datafile['combined_prediction'] = 'empty'
+        datafile['PHRED'] = 0.0
+        datafile.drop(columns='FeatureID', inplace=True)
+        datafile = datafile[['chr_pos_ref_alt', 'GeneName', 'Consequence',
+                             'PHRED', 'probabilities', 'prediction', 'combined_prediction']]
+        return datafile
 
     def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str, feature: str):
         """
