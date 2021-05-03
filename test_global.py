@@ -407,7 +407,8 @@ class TestGlobal(unittest.TestCase):
         print('Input output conversion (input + output directory + filename)')
         test_input = './CAPICE_example/test_cadd14_grch37_annotated.tsv.gz'
         test_output = './test_output/test.txt'
-        expected_output_filename = 'test.txt.gz'
+        # expected_output_filename = 'test.txt.gz'
+        expected_output_filename = 'test.txt'  # Legacy support, if legacy is disabled can be removed.
         expected_output_directory = './test_output'
         self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
         self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)

@@ -1,5 +1,6 @@
 from src.main.python.resources.errors.errors import VersionError, InputError
-from src.main.python.resources.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists
+from src.main.python.resources.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists, \
+    get_filename_and_extension
 import warnings
 import sys
 import os
@@ -60,8 +61,7 @@ class InputChecker:
     def _create_capice_output_filename(self, input_path, output_path=None, append_capice=True, ispath=False):
         if output_path is None:
             output_path = input_path
-        input_filename = os.path.basename(input_path).split('.')[0]
-        extension = '.'.join(os.path.basename(input_path).split('.')[1:])
+        input_filename, extension = get_filename_and_extension(input_path)
         if append_capice:
             self.output_filename = '{}_capice.{}'.format(input_filename, extension)
         else:

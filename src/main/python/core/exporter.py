@@ -1,9 +1,10 @@
-from src.main.python.resources.utilities.utilities import check_file_exists
+from src.main.python.resources.utilities.utilities import check_file_exists, get_filename_and_extension
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.logger import Logger
 import os
 import pandas as pd
 import pickle
+import warnings
 
 
 class Exporter:
@@ -30,10 +31,16 @@ class Exporter:
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
 
     def _export_legacy_prediction(self, datafile):
+        warnings.warn('Using legacy export function, deprecated in 2.1.', DeprecationWarning)
         datafile = datafile[self.export_cols]
-        datafile['prediction'] = 'empty'
-        datafile['combined_prediction'] = 'empty'
-        datafile['PHRED'] = 0.0
+
+        # Required to prevent the SettingWithCopyWarning, even when using:
+        # dataframe.loc[row_indexer,col_indexer] = value
+        pd.options.mode.chained_assignment = None
+
+        datafile.loc[:, 'prediction'] = 'empty'
+        datafile.loc[:, 'combined_prediction'] = 'empty'
+        datafile.loc[:, 'PHRED'] = 0.0
         datafile.drop(columns='FeatureID', inplace=True)
         datafile = datafile[['chr_pos_ref_alt', 'GeneName', 'Consequence',
                              'PHRED', 'probabilities', 'prediction', 'combined_prediction']]
@@ -95,10 +102,12 @@ class Exporter:
             self.log.info('Found existing file at {}, not able to overwrite. Creating new filename.'.format(
                 full_path
             ))
+            filename, extension = get_filename_and_extension(full_path)
+            basedir = os.path.dirname(path_and_filename)
             export_exists = True
             extension_counter = 1
             while export_exists:
-                attempted_file = path_and_filename + "_{}".format(extension_counter) + extension
+                attempted_file = os.path.join(basedir, filename + "_{}.".format(extension_counter) + extension)
                 if not check_file_exists(attempted_file):
                     self.log.info('Able to create {}'.format(attempted_file))
                     export_exists = False
