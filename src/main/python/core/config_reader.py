@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.main.python.resources.enums.sections import Sections
 import os
 
 
@@ -11,21 +12,22 @@ class ConfigReader:
             self.overwrites = None
             self.misc = None
             self.train = None
+            self.error = 'ERROR'
 
         def parse(self):
             self._parse()
             self._check_all_sections_present()
-            self.defaults = self.config['DEFAULTS']
-            self.overwrites = self.config['OVERWRITES']
-            self.misc = self.config['MISC']
-            self.train = self.config['TRAINING']
+            self.defaults = self.config[Sections.DEFAULTS.value]
+            self.overwrites = self.config[Sections.OVERWRITES.value]
+            self.misc = self.config[Sections.MISC.value]
+            self.train = self.config[Sections.TRAINING.value]
 
         def _parse(self):
             self.config.read(os.path.join(get_project_root_dir(), 'config.cfg'))
 
         def get_default_value(self, key):
             key = key.lower()
-            value = self.defaults.get(key, fallback='ERROR')
+            value = self.defaults.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='DEFAULTS')
             if key == 'genomebuild':
                 value = self._check_value_default(value=value, else_type=int)
@@ -38,7 +40,7 @@ class ConfigReader:
 
         def get_overwrite_value(self, key):
             key = key.lower()
-            value = self.overwrites.get(key, fallback='ERROR')
+            value = self.overwrites.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='OVERWRITES')
             value = self._check_value_default(value=value, else_type=str)
             return value
@@ -47,9 +49,9 @@ class ConfigReader:
             key = key.lower()
             boolean = ['disablelogfile']
             if key in boolean:
-                value = self.misc.getboolean(key, fallback='ERROR')
+                value = self.misc.getboolean(key, fallback=self.error)
             else:
-                value = self.misc.get(key, fallback='ERROR')
+                value = self.misc.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='MISC')
             return value
 
@@ -58,17 +60,17 @@ class ConfigReader:
             boolean = ['makebalanced', 'earlyexit', 'default']
             float_values = ['split', 'traintestsize']
             if key in boolean:
-                value = self.train.getboolean(key, fallback='ERROR')
+                value = self.train.getboolean(key, fallback=self.error)
             elif key in float_values:
-                value = self.train.getfloat(key, fallback='ERROR')
+                value = self.train.getfloat(key, fallback=self.error)
             else:
-                value = self.train.get(key, fallback='ERROR')
+                value = self.train.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='TRAINING')
             value = self._check_value_default(value=value, else_type=str)
             return value
 
         def _check_value_has_error(self, value, keysearch, section):
-            if value == 'ERROR':
+            if value == self.error:
                 self._raise_key_not_found(section=section, keysearch=keysearch)
 
         def _check_all_sections_present(self):

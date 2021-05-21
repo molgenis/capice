@@ -77,19 +77,40 @@ class CaddVersionChecker:
         }
         for type_of_check in dict_of_all_present.keys():
             to_check = dict_of_all_present[type_of_check]
-            if False in to_check:
-                if to_check.count(False) == len(to_check):
-                    self.check_overrule = type_of_check
-                    self.log.warning('Unable to obtain {} version from file or config file!'.format(type_of_check))
-                    self.check_overrule = True
-                for argument in to_check:
-                    if argument is not False:
-                        if type_of_check == 'CADD':
-                            self.export_cadd_version = argument
-                        else:
-                            self.export_grch_build = argument
+            self._check_individual_argument(to_check=to_check, type_of_check=type_of_check)
+
+    def _check_individual_argument(self, to_check, type_of_check):
+        """
+        Function belonging to _check_all_present to check if a CADD version and GRCh build can be set globally.
+        :param to_check: list
+        :param type_of_check: string
+        """
+        if False in to_check:
+            if to_check.count(False) == len(to_check):
+                self._turn_on_check_overrule(type_of_check=type_of_check)
+            for argument in to_check:
+                self._apply_export_version(argument=argument, type_of_check=type_of_check)
+        else:
+            self.check_match.append(type_of_check)
+
+    def _turn_on_check_overrule(self, type_of_check):
+        """
+        Function to turn on the overrule check if no CADD or GRCh arguments are passed.
+        """
+        self.check_overrule = type_of_check
+        self.log.warning('Unable to obtain {} version from file or config file!'.format(type_of_check))
+        self.check_overrule = True
+
+    def _apply_export_version(self, argument, type_of_check):
+        """
+        Function to set the global CADD version or GRCh build.
+        :param argument: int or float
+        """
+        if argument is not False:
+            if type_of_check == 'CADD':
+                self.export_cadd_version = argument
             else:
-                self.check_match.append(type_of_check)
+                self.export_grch_build = argument
 
     def _check_version_match(self):
         """
@@ -99,23 +120,29 @@ class CaddVersionChecker:
         if len(self.check_match) > 0:
             for check_match in self.check_match:
                 if check_match == 'CADD':
-                    if self.cla_cadd_version != self.file_cadd_version:
-                        self._raise_version_mismatch(type_of_mismatch=check_match,
-                                                     version_cla=self.cla_cadd_version,
-                                                     version_file=self.file_cadd_version)
-                    else:
-                        self._raise_version_mismatch(type_of_mismatch=check_match,
-                                                     match_successful=True)
-                    self.export_cadd_version = self.cla_cadd_version
+                    self._check_cadd_match(check_match=check_match)
                 elif check_match == 'GRCh':
-                    if self.cla_grch_build != self.file_grch_build:
-                        self._raise_version_mismatch(type_of_mismatch=check_match,
-                                                     version_cla=self.cla_grch_build,
-                                                     version_file=self.file_grch_build)
-                    else:
-                        self._raise_version_mismatch(type_of_mismatch=check_match,
-                                                     match_successful=True)
-                    self.export_grch_build = self.cla_grch_build
+                    self._check_grch_match(check_match=check_match)
+
+    def _check_cadd_match(self, check_match):
+        if self.cla_cadd_version != self.file_cadd_version:
+            self._raise_version_mismatch(type_of_mismatch=check_match,
+                                         version_cla=self.cla_cadd_version,
+                                         version_file=self.file_cadd_version)
+        else:
+            self._raise_version_mismatch(type_of_mismatch=check_match,
+                                         match_successful=True)
+        self.export_cadd_version = self.cla_cadd_version
+
+    def _check_grch_match(self, check_match):
+        if self.cla_grch_build != self.file_grch_build:
+            self._raise_version_mismatch(type_of_mismatch=check_match,
+                                         version_cla=self.cla_grch_build,
+                                         version_file=self.file_grch_build)
+        else:
+            self._raise_version_mismatch(type_of_mismatch=check_match,
+                                         match_successful=True)
+        self.export_grch_build = self.cla_grch_build
 
     def _raise_version_mismatch(self, type_of_mismatch, version_cla=None, version_file=None, match_successful=False):
         if match_successful:

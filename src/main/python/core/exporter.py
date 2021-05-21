@@ -1,4 +1,5 @@
 from src.main.python.resources.utilities.utilities import check_file_exists, get_filename_and_extension
+from src.main.python.resources.enums.sections import Column
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.logger import Logger
 import os
@@ -11,13 +12,18 @@ class Exporter:
     """
     Class specifically export files and create unique filenames.
     """
+
     def __init__(self, file_path):
         self.log = Logger().logger
         self.force = CapiceManager().force
         self.now = CapiceManager().now
         self.capice_filename = CapiceManager().output_filename
         self.file_path = file_path
-        self.export_cols = ['chr_pos_ref_alt', 'GeneName', 'FeatureID', 'Consequence', 'probabilities']
+        self.export_cols = [Column.chr_pos_ref_alt.value,
+                            Column.GeneName.value,
+                            Column.FeatureID.value,
+                            Column.Consequence.value,
+                            Column.probabilities.value]
 
     def export_capice_prediction(self, datafile: pd.DataFrame):
         """
@@ -38,12 +44,19 @@ class Exporter:
         # dataframe.loc[row_indexer,col_indexer] = value
         pd.options.mode.chained_assignment = None
 
-        datafile.loc[:, 'prediction'] = 'empty'
-        datafile.loc[:, 'combined_prediction'] = 'empty'
-        datafile.loc[:, 'PHRED'] = 0.0
-        datafile.drop(columns='FeatureID', inplace=True)
-        datafile = datafile[['chr_pos_ref_alt', 'GeneName', 'Consequence',
-                             'PHRED', 'probabilities', 'prediction', 'combined_prediction']]
+        datafile.loc[:, Column.prediction.value] = 'empty'
+        datafile.loc[:, Column.combined_prediction.value] = 'empty'
+        datafile.loc[:, Column.PHRED.value] = 0.0
+        datafile.drop(columns=Column.FeatureID.value, inplace=True)
+        datafile = datafile[
+            [Column.chr_pos_ref_alt.value,
+             Column.GeneName.value,
+             Column.Consequence.value,
+             Column.PHRED.value,
+             Column.probabilities.value,
+             Column.prediction.value,
+             Column.combined_prediction.value]
+        ]
         return datafile
 
     def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str, feature: str):

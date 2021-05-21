@@ -9,7 +9,7 @@ class TrainChecker:
     def __init__(self):
         self.log = Logger().logger
 
-    def specified_defaults_checker(self, loaded_defaults: dict):
+    def check_specified_defaults(self, loaded_defaults: dict):
         """
         Function to check if "learning_rate", "n_estimators" and "max_depth" are present within the specified defaults
         file. Also check if the variable type of the parameters match the expected type.

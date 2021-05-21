@@ -1,6 +1,5 @@
 from src.main_capice import Main
 from src.main.python.resources.checkers.train_checker import TrainChecker
-from src.main.python.core.config_reader import ConfigReader
 from src.main.python.core.exporter import Exporter
 import pandas as pd
 import numpy as np
@@ -112,7 +111,7 @@ class Train(Main):
             train_checker = TrainChecker()
             with open(self.specified_default) as json_file:
                 defaults = json.load(json_file)
-            train_checker.specified_defaults_checker(loaded_defaults=defaults)
+            train_checker.check_specified_defaults(loaded_defaults=defaults)
             self.log.debug('Specified defaults located at {} successfully loaded.'.format(self.specified_default))
             self.default = True
         else:

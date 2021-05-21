@@ -23,6 +23,7 @@ import logging
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import check_file_exists
 import os
+import sys
 
 
 class Logger:
@@ -59,7 +60,7 @@ class Logger:
             Function to set up the logger instance with the correct format and filename.
             :return: logger instance
             """
-            handlers = [logging.StreamHandler()]
+            handlers = [logging.StreamHandler(sys.stderr)]
             if not self.create_logfile:
                 now = self.global_settings.now
                 out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))

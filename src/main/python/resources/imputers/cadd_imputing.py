@@ -65,12 +65,11 @@ class CaddImputing:
         Function to check the CADD version and GRCh build (or --overwrite_impute_file) match the impute file.
         """
         for module in self.modules:
-            if self.overrule:
-                if module.name == self.overrule:
-                    self.log.info('Overrule successful for: {} , located at: {}'.format(
-                        self.overrule, inspect.getfile(module.__class__)))
-                    self.module = module
-                    break
+            if self.overrule and module.name == self.overrule:
+                self.log.info('Overrule successful for: {} , located at: {}'.format(
+                    self.overrule, inspect.getfile(module.__class__)))
+                self.module = module
+                break
             else:
                 module_cadd_version = module.supported_cadd_version
                 module_grch_build = module.supported_grch_build
@@ -84,9 +83,7 @@ class CaddImputing:
         # Checking if self.data_file is assigned
         if self.module is None:
             if self.overrule:
-                error_message = 'No imputing data file found for overrule: {}'.format(
-                    self.overrule
-                )
+                error_message = 'No imputing data file found for overrule: {}'.format(self.overrule)
             else:
                 error_message = 'No imputing data file found for CADD version: {} and genome build: {}'.format(
                     self.cadd_version,
@@ -111,12 +108,8 @@ class CaddImputing:
         """
         self._load_values()
         datafile = self._check_chrom_pos(datafile)
-        self._get_nan_ratio_per_column(
-            dataset=datafile
-        )
-        self._get_full_nan_row(
-            dataset=datafile
-        )
+        self._get_nan_ratio_per_column(dataset=datafile)
+        self._get_full_nan_row(dataset=datafile)
         datafile.dropna(how='all', subset=self.columns)
         datafile = datafile[~datafile['CAPICE_drop_out']]
         datafile.drop(columns=['CAPICE_drop_out'], inplace=True)
@@ -145,15 +138,19 @@ class CaddImputing:
         Generic function to get the percentage of gaps per column
         :param dataset: not imputed pandas DataFrame
         """
-        n_samples = dataset.shape[0]
         for column in dataset.columns:
-            n_nan = dataset[column].isnull().sum()
-            if n_nan > 0:
-                p_nan = round((n_nan / n_samples) * 100, ndigits=2)
-                self.log.debug('NaN detected in column {}, percentage: {}%.'.format(
-                    column,
-                    p_nan
-                ))
+            series = dataset[column]
+            self._calculate_percentage_nan(column=series)
+
+    def _calculate_percentage_nan(self, column):
+        n_nan = column.isnull().sum()
+        if n_nan > 0:
+            n_samples = column.size
+            p_nan = round((n_nan / n_samples) * 100, ndigits=2)
+            self.log.debug('NaN detected in column {}, percentage: {}%.'.format(
+                column.name,
+                p_nan
+            ))
 
     def _get_full_nan_row(self, dataset: pd.DataFrame):
         """
@@ -168,7 +165,7 @@ class CaddImputing:
         if samples_dropped_out.shape[0] > 0:
             self.log.warning('The following samples are filtered out due to missing values: (indexing is python based, '
                              'so the index starts at 0). \n {}'.format(
-                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
-            )
+                                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
+                             )
         else:
             self.log.info('No samples are filtered out due to too many NaN values.')

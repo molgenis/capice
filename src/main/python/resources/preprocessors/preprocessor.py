@@ -75,12 +75,11 @@ class PreProcessor:
         the cadd version and genome build.
         """
         for preprocessor in self.preprocessors:
-            if self.overrule:
-                if preprocessor.name == self.overrule:
-                    self.log.info('Overrule successful for: {} , located at: {}'.format(
-                        self.overrule, inspect.getfile(preprocessor.__class__)))
-                    self.preprocessor = preprocessor
-                    break
+            if self.overrule and preprocessor.name == self.overrule:
+                self.log.info('Overrule successful for: {} , located at: {}'.format(
+                    self.overrule, inspect.getfile(preprocessor.__class__)))
+                self.preprocessor = preprocessor
+                break
             else:
                 module_cadd = preprocessor.supported_cadd_version
                 module_grch = preprocessor.supported_grch_build
@@ -98,8 +97,8 @@ class PreProcessor:
                 )
             else:
                 error_message = 'No model data file found for CADD version: {} and genome build: {}'.format(
-                     self.cadd_version,
-                     self.grch_version
+                    self.cadd_version,
+                    self.grch_version
                 )
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)

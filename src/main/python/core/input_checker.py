@@ -1,8 +1,7 @@
-from src.main.python.resources.errors.errors import VersionError, InputError
+from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists, \
     get_filename_and_extension
 import warnings
-import sys
 import os
 
 
@@ -86,20 +85,9 @@ class LogChecker:
     """
     Initial check of the arguments for the logger.
     """
-    def __init__(self, log_loc: str, output_loc: str):
-        self._check_python_version()
+    def __init__(self, log_loc: [str, None], output_loc: str):
         self.log_loc = log_loc
         self.output_loc = output_loc
-
-    @staticmethod
-    def _check_python_version():
-        """
-        Check if the python version is at least 3.0.0
-        """
-        if sys.version_info[0] == 2:
-            raise VersionError('Python 2 is not supported.')
-        if sys.version_info[1] < 6:
-            raise VersionError('Python3.6 must at least be installed.')
 
     def check_log_loc(self):
         """
