@@ -127,7 +127,6 @@ class Logger:
                 export_path = full_export
             return export_path
 
-
     @property
     def logger(self):
         """

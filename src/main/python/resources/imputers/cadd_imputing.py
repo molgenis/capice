@@ -1,5 +1,6 @@
 from src.main.python.core.logger import Logger
 import inspect
+import numpy as np
 from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
 from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
@@ -123,14 +124,22 @@ class CaddImputing:
         :param dataset: not imputed pandas DataFrame
         :return: pandas DataFrame containing no NaN or gaps for #Chrom and Pos columns.
         """
+        chrom_is_float = False
         if dataset['#Chrom'].isnull().values.any():
+            if dataset.dtypes['#Chrom'] == np.float64:
+                chrom_is_float = True
             n_delete = dataset['#Chrom'].isnull().values.sum()
             self.log.warning('Detected NaN in the Chromosome column! Deleting {} row(s).'.format(n_delete))
             dataset = dataset[~dataset['#Chrom'].isnull()]
         if dataset['Pos'].isnull().values.any():
             n_delete = dataset['Pos'].isnull().values.sum()
             self.log.warning('Detected NaN is the Position column! Deleting {} row(s).'.format(n_delete))
-            dataset = dataset[~dataset['#Chrom'].isnull()]
+            dataset = dataset[~dataset['Pos'].isnull()]
+        dataset.index = range(0, dataset.shape[0])
+        if chrom_is_float:
+            dataset['#Chrom'] = dataset['#Chrom'].astype(int)
+            dataset['#Chrom'] = dataset['#Chrom'].astype(str)
+        dataset['Pos'] = dataset['Pos'].astype(int)
         return dataset
 
     def _get_nan_ratio_per_column(self, dataset: pd.DataFrame):

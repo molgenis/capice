@@ -32,7 +32,7 @@ class CaddHeaderParser:
             with gzip.open(self.cadd_file_loc, mode='rt') as file:
                 first_line = file.readline().strip()
         else:
-            with open(self.cadd_file_loc) as file:
+            with open(self.cadd_file_loc, mode='rt') as file:
                 first_line = file.readline().strip()
         if first_line.startswith("##"):
             self.header_present = True
