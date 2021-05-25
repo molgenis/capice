@@ -46,13 +46,13 @@ cd capice
 
 1.1 Installation of libraries
 
-CAPICE can be installed through the setup.py supplied.
+CAPICE can be installed through the supplied setup.py.
 
 ```
 pip install .
 ```
 
-If you do not have admin rights, a virtual environment can be used aswell, which can be installed as following:
+If you do not have admin rights, a virtual environment can be used as well, which can be installed as following:
 
 ```
 bash venv_installer.sh
