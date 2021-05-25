@@ -60,7 +60,7 @@ class TestLogger(unittest.TestCase):
         with open(os.path.join(self.output_loc, 'present_file.log'), 'wt') as logfile:
             logfile.write('Already present')
         new_filename = self.log._create_log_export_name(out_file_name='present_file')
-        self.assertEqual(os.path.basename(new_filename), 'present_file_1.log')
+        self.assertEqual(new_filename, os.path.join(self.output_loc, 'present_file_1.log'))
 
 
 if __name__ == '__main__':

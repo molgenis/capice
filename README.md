@@ -61,14 +61,14 @@ bash venv_installer.sh
 Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
-numpy | Version 1.18.1
-pandas | Version 1.0.2
+numpy | Version 1.20.2
+pandas | Version 1.2.4
 scipy | Version 1.6.2
-scikit-learn | Version 0.23.1
+scikit-learn | Version 0.24.2
 xgboost | Version 0.90
 ```
 
-`pip install numpy==1.18.1 pandas==1.0.2 scipy==1.6.2 scikit-learn==0.23.1 xgboost==0.90`
+`pip install numpy==1.20.2 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==0.90`
 
 For Python 3.6, the following packages have to be manually installed:
 
@@ -136,7 +136,8 @@ For models exported during the training procedure:
 _Note: to load in a pickled instance of a model, use the following commands:_
 ```
 import pickle
-model = pickle.load(open(path/to/model_file.pickle.dat, 'rb'))
+with open(path/to/model_file.pickle.dat, 'rb') as model_file:
+    model = pickle.load(model_file)
 ```
 
 ## FAQ:
