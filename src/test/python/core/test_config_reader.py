@@ -39,7 +39,7 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_misc(self):
         print('Section misc')
-        required_arguments = ['disablelogfile']
+        required_arguments = ['enablelogfile']
         for argument in required_arguments:
             self.assertTrue(argument in self.config.misc)
 
@@ -65,8 +65,8 @@ class TestConfigReader(unittest.TestCase):
 
     def test_get_misc_key(self):
         print('Get misc key')
-        value = self.config.get_misc_value(key='disablelogfile')
-        self.assertFalse(value)
+        value = self.config.get_misc_value(key='enablelogfile')
+        self.assertTrue(value)
 
     def test_get_training_key(self):
         print('Get training key')

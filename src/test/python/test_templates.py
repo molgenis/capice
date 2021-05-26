@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from src.main_capice import Main
+from src.main.python.core.logger import Logger
 from src.main.python.core.config_reader import ConfigReader
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir
@@ -13,7 +14,7 @@ def set_up_manager_and_loc():
     """
     manager = CapiceManager()
     manager.now = datetime.now()
-    manager.disable_logfile = True
+    manager.enable_logfile = False
     manager.critical_logging_only = True
     manager.verbose = False
     root_dir = get_project_root_dir()
@@ -32,6 +33,7 @@ def teardown():
         for file in os.listdir(test_folder):
             os.remove(os.path.join(test_folder, file))
     os.rmdir(test_folder)
+    Logger.instance = None
 
 
 def set_up_main():

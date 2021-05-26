@@ -19,7 +19,7 @@ class CapiceManager:
             self.grch_build = 0
             self.force = False
             self.verbose = False
-            self.disable_logfile = False
+            self.enable_logfile = False
             self.critical_logging_only = False
             self.cadd_features = []
             self.output_filename = ''
@@ -105,13 +105,13 @@ class CapiceManager:
             self._verbose = value
 
         @property
-        def disable_logfile(self):
-            return self._disable_logfile
+        def enable_logfile(self):
+            return self._enable_logfile
 
-        @disable_logfile.setter
-        def disable_logfile(self, value):
+        @enable_logfile.setter
+        def enable_logfile(self, value):
             self.property_checker.check_property(value=value, expected_type=bool)
-            self._disable_logfile = value
+            self._enable_logfile = value
 
         @property
         def critical_logging_only(self):
@@ -303,18 +303,18 @@ class CapiceManager:
         pass
 
     @property
-    def disable_logfile(self):
+    def enable_logfile(self):
         """
-        Getter for setter disable_logfile
+        Getter for setter enable_logfile
 
         :return: boolean
         """
-        return self._disable_logfile
+        return self._enable_logfile
 
-    @disable_logfile.setter
-    def disable_logfile(self, value):
+    @enable_logfile.setter
+    def enable_logfile(self, value):
         """
-        Singleton property disable_logfile, to tell the logger whenever a logfile should be made or if everything
+        Singleton property enable_logfile, to tell the logger whenever a logfile should be made or if everything
         should be piped to STDout and STDerr. Raises TypeError if not supplied with a boolean.
 
         :param value: boolean

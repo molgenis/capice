@@ -162,10 +162,23 @@ If that does not work either, we suggest you use either a Unix style virtual mac
 
 - I'm getting a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>` when loading in the model, what is going wrong?
 
-CAPICE has been further developed on Python3.8, where installing xgboost 0.72.1 was unavailable other than forcing it. For this, XGBoost 1.1.1 was used. 
-Due to this, another model file was created, which means that there is overlap between the model files. A solution for this is to set the 
-`usable=True` to `usable=False` within `capice_v(version).py` `super.__init__()` function.
-  
+CAPICE has been further developed on Python3.8 and Python3.9, where installing xgboost 0.72.1 was unavailable other than forcing it. To fix this issue, XGBoost 0.90 can be used which is compatible with Python3.7, 3.8 and 3.9.
 
+
+- I'm trying to run CAPICE, but I'm getting the following error: 
+`xgboost.core.XGBoostError: XGBoost Library (libxgboost.dylib) could not be loaded.`
+
+This error is caused on (likely) OSX when the package "OpenMP" is not installed. Please install `libomp` to get XGBoost running.
+
+- I'm getting the following error: `ModuleNotFoundError: No module named 'sklearn'`, what is going wrong?
+
+"sklearn" is a module that should be installed when `scikit-learn` is installed. Either install `sklearn` manually though `pip install sklearn` or try to re-install scikit-learn.
+
+- I'm trying to run the tests, but either no tests are run or tests are throwing errors. Is this bad design?
+
+Not at all, the tests cover at least 80% of all code of CAPICE, although specific test command is required:
+```
+python3 -m unittest discover src.test.python
+```
 
 

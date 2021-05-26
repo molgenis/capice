@@ -29,17 +29,19 @@ import sys
 class Logger:
     """
     Singleton logger class developed by both Martijn Vochteloo and Robert Jarik Sietsma.
-    Facilitates the python logging library.
+    Facilitates the python logging library.py
     """
-    
+
     class __Logger:
         def __init__(self):
             self.final_log_loc = None
             self.global_settings = CapiceManager()
             self.log_level = self.set_loglevel()
             self.output_loc = self.global_settings.log_loc
-            self.create_logfile = self.global_settings.disable_logfile
-            self.logger = self.load_logger()
+            self.create_logfile = self.global_settings.enable_logfile
+            self.logger = None
+            if self.logger is None:
+                self.load_logger()
 
         def set_loglevel(self):
             """
@@ -58,26 +60,32 @@ class Logger:
         def load_logger(self):
             """
             Function to set up the logger instance with the correct format and filename.
+
             :return: logger instance
             """
-            handlers = [logging.StreamHandler(sys.stderr)]
-            if not self.create_logfile:
+            logger = logging.getLogger('CAPICE')
+            logger.setLevel(self.log_level)
+            console_handler = logging.StreamHandler(sys.stderr)
+            formatter = logging.Formatter("%(asctime)s "
+                                          "[%(name)s] "
+                                          "[%(filename)s] "
+                                          "[%(funcName)s] "
+                                          "[%(levelname)-4.4s]  "
+                                          "%(message)s")
+            console_handler.setFormatter(formatter)
+            logger.addHandler(console_handler)
+            if self.create_logfile:
                 now = self.global_settings.now
                 out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
                 out_file = self._create_log_export_name(out_file_name)
                 self.final_log_loc = out_file
-                handlers.append(logging.FileHandler(out_file))
+                file_handler = logging.FileHandler(out_file)
+                file_handler.setFormatter(formatter)
+                logger.addHandler(file_handler)
                 print('Log location confirmed: {}'.format(out_file))
             else:
                 print('Log file disabled. Using Stdout and Stderr.')
-            logging.basicConfig(
-                level=self.log_level,
-                format="%(asctime)s [CAPICE] "
-                       "[%(levelname)-4.4s]  "
-                       "%(message)s",
-                handlers=handlers
-            )
-            return logging.getLogger(__name__)
+            self.logger = logger
 
         @property
         def logger(self):

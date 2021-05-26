@@ -16,7 +16,7 @@ class TestSpecificLogCalls(unittest.TestCase):
         cls.manager, cls.output_loc = set_up_manager_and_loc()
         cls.manager.critical_logging_only = False
         cls.manager.verbose = True
-        cls.manager.disable_logfile = True
+        cls.manager.enable_logfile = False
         cls.manager.log_loc = cls.output_loc
         cls.manager.now = datetime.now()
 
@@ -40,8 +40,10 @@ class TestSpecificLogCalls(unittest.TestCase):
                 'baz': [None, 77, 88, 99]
             }
         )
-        messages_present = ['[CAPICE] [DEBU]  NaN detected in column bar, percentage: 50.0%.',
-                            '[CAPICE] [DEBU]  NaN detected in column baz, percentage: 25.0%.']
+        messages_present = ['[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] [DEBU]  '
+                            'NaN detected in column bar, percentage: 50.0%.',
+                            '[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] [DEBU]  '
+                            'NaN detected in column baz, percentage: 25.0%.']
         self.manager.cadd_version = 1.4
         self.manager.grch_build = 37
         imputer = CaddImputing()

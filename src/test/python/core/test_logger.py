@@ -1,18 +1,25 @@
 import os
 import unittest
+from datetime import datetime
 from src.main.python.core.logger import Logger
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.test.python.test_templates import teardown
 
 
 class TestLogger(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        cls.manager, cls.output_loc = set_up_manager_and_loc()
+        cls.manager = CapiceManager()
+        cls.output_loc = os.path.join(get_project_root_dir(), '.test_output')
+        if not os.path.exists(cls.output_loc):
+            os.makedirs(cls.output_loc)
+        cls.manager.now = datetime.now()
         cls.manager.log_loc = cls.output_loc
         cls.manager.critical_logging_only = False
-        cls.manager.disable_logfile = False
-        cls.log = Logger()
+        cls.manager.enable_logfile = True
+        cls.log = Logger().logger
 
     @classmethod
     def tearDownClass(cls):
@@ -21,11 +28,13 @@ class TestLogger(unittest.TestCase):
 
     def setUp(self):
         print('Testing case:')
+        self.log = Logger()
 
     def tearDown(self):
         print('Resetting arguments.')
-        self.manager.verbose = False
-        self.log.create_logfile = False
+        # Logger.instance = None
+        # self.manager.verbose = False
+        # self.log.create_logfile = False
 
     def test_loglevel_nonverbose(self):
         print('Loglevel non verbose')
@@ -40,9 +49,21 @@ class TestLogger(unittest.TestCase):
 
     def test_create_logfile(self):
         print('Creating logfile')
+        message = 'This is a test_create_logfile specific message for testing purposes'
+        self.log.logger.info(message)
+        expected_out_message = '[CAPICE] [test_logger.py] [test_create_logfile] [INFO]  {}'.format(message)
+        logfile = os.listdir(self.output_loc)[0]
+        with open(os.path.join(self.output_loc, logfile), 'rt') as log_messages:
+            messages = log_messages.readlines()
+        stripped_messages = []
+        for log in messages:
+            stripped_messages.append(' '.join(log.strip().split(' ')[2:]))
+        self.assertIn(expected_out_message, stripped_messages)
+
+    def test_filehandler(self):
+        print('Logging filehandler')
         self.manager.log_loc = self.output_loc
-        logger_load = self.log.load_logger()
-        handlers = logger_load.parent.handlers
+        handlers = self.log.logger.handlers
         string_handlers = []
         for handler in handlers:
             string_handlers.append(str(handler.__class__))
