@@ -19,7 +19,7 @@ class CapiceManager:
             self.grch_build = 0
             self.force = False
             self.verbose = False
-            self.enable_logfile = False
+            self.enable_logfile = True
             self.critical_logging_only = False
             self.cadd_features = []
             self.output_filename = ''
