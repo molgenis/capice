@@ -22,9 +22,11 @@ setup(
                 'State of the art machine learning to predict SNVs and InDels pathogenicity.',
     long_description=long_description,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'License :: LGPL-3.0',
-        'Programming Language :: Python :: 3.6'
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9'
     ],
     python_requires='>=3.7',
     install_requires=[
@@ -34,11 +36,6 @@ setup(
         'scikit-learn==0.24.2',
         'xgboost==0.90'
     ],
-    extras_require={
-        'test': [
-            'pytest'
-        ]
-    },
     entry_points={
         'console_scripts': [
             'capice = capice:main'

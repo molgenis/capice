@@ -67,7 +67,7 @@ def main():
 
     manager = CapiceManager()
     manager.now = datetime.now()
-    manager.disable_logfile = config.get_misc_value(key='disablelogfile')
+    manager.enable_logfile = config.get_misc_value(key='enablelogfile')
     manager.log_loc = log_loc
     manager.verbose = verbose
     manager.overwrite_impute = config.get_overwrite_value(key='imputefile')

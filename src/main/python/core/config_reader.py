@@ -47,7 +47,7 @@ class ConfigReader:
 
         def get_misc_value(self, key):
             key = key.lower()
-            boolean = ['disablelogfile']
+            boolean = ['enablelogfile']
             if key in boolean:
                 value = self.misc.getboolean(key, fallback=self.error)
             else:

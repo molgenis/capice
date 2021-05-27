@@ -46,13 +46,13 @@ cd capice
 
 1.1 Installation of libraries
 
-CAPICE can be installed through the setup.py supplied.
+CAPICE can be installed through the supplied setup.py.
 
 ```
 pip install .
 ```
 
-If you do not have admin rights, a virtual environment can be used aswell, which can be installed as following:
+If you do not have admin rights, a virtual environment can be used as well, which can be installed as following:
 
 ```
 bash venv_installer.sh
@@ -61,14 +61,14 @@ bash venv_installer.sh
 Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
-numpy | Version 1.18.1
-pandas | Version 1.0.2
+numpy | Version 1.20.2
+pandas | Version 1.2.4
 scipy | Version 1.6.2
-scikit-learn | Version 0.23.1
+scikit-learn | Version 0.24.2
 xgboost | Version 0.90
 ```
 
-`pip install numpy==1.18.1 pandas==1.0.2 scipy==1.6.2 scikit-learn==0.23.1 xgboost==0.90`
+`pip install numpy==1.20.2 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==0.90`
 
 For Python 3.6, the following packages have to be manually installed:
 
@@ -136,7 +136,8 @@ For models exported during the training procedure:
 _Note: to load in a pickled instance of a model, use the following commands:_
 ```
 import pickle
-model = pickle.load(open(path/to/model_file.pickle.dat, 'rb'))
+with open(path/to/model_file.pickle.dat, 'rb') as model_file:
+    model = pickle.load(model_file)
 ```
 
 ## FAQ:
@@ -161,10 +162,23 @@ If that does not work either, we suggest you use either a Unix style virtual mac
 
 - I'm getting a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>` when loading in the model, what is going wrong?
 
-CAPICE has been further developed on Python3.8, where installing xgboost 0.72.1 was unavailable other than forcing it. For this, XGBoost 1.1.1 was used. 
-Due to this, another model file was created, which means that there is overlap between the model files. A solution for this is to set the 
-`usable=True` to `usable=False` within `capice_v(version).py` `super.__init__()` function.
-  
+CAPICE has been further developed on Python3.8 and Python3.9, where installing xgboost 0.72.1 was unavailable other than forcing it. To fix this issue, XGBoost 0.90 can be used which is compatible with Python3.7, 3.8 and 3.9.
 
+
+- I'm trying to run CAPICE, but I'm getting the following error: 
+`xgboost.core.XGBoostError: XGBoost Library (libxgboost.dylib) could not be loaded.`
+
+This error is caused on (likely) OSX when the package "OpenMP" is not installed. Please install `libomp` to get XGBoost running.
+
+- I'm getting the following error: `ModuleNotFoundError: No module named 'sklearn'`, what is going wrong?
+
+"sklearn" is a module that should be installed when `scikit-learn` is installed. Either install `sklearn` manually though `pip install sklearn` or try to re-install scikit-learn.
+
+- I'm trying to run the tests, but either no tests are run or tests are throwing errors. Is this bad design?
+
+Not at all, the tests cover at least 80% of all code of CAPICE, although specific test command is required:
+```
+python3 -m unittest discover src.test.python
+```
 
 

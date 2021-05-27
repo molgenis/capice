@@ -4,21 +4,6 @@ import sys
 from importlib import import_module
 
 
-class Printf:
-    def __init__(self, verbose: bool):
-        self.verbose = verbose
-
-    def printf(self, *args, **kwargs):
-        """
-        Just like the normal python print,
-        but will only print if verbose is set to true.
-        :param args: any
-        :param kwargs: any print arguments
-        """
-        if self.verbose:
-            print(*args, **kwargs)
-
-
 def is_gzipped(file_path: str):
     """
     Function to check if the given file path is gzipped
@@ -73,45 +58,6 @@ def convert_cla_to_str(cla: any):
     """
     if isinstance(cla, list):
         return str(cla[0])
-    else:
-        return cla
-
-
-def convert_cla_to_int(cla: any):
-    """
-    Function to convert a Command Line Argument to integer.
-    Will return the given argument if not a list.
-    :param cla: any
-    :return: any
-    """
-    if isinstance(cla, list):
-        return int(cla[0])
-    else:
-        return cla
-
-
-def convert_cla_to_float(cla: any):
-    """
-    Function to convert a Command Line Argument to float.
-    Will return the given argument if not a list.
-    :param cla: any
-    :return: any
-    """
-    if isinstance(cla, list):
-        return float(cla[0])
-    else:
-        return cla
-
-
-def convert_cla_to_full_string(cla: any):
-    """
-    Function to convert large multiple words arguments to a single string.
-    Will return the given argument if not a list.
-    :param cla: any
-    :return: str or None
-    """
-    if isinstance(cla, list):
-        return " ".join(cla)
     else:
         return cla
 
