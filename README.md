@@ -95,7 +95,7 @@ CAPICE requires the following arguments:
 - -i / --input: The path to the input [CADD annotated](https://cadd.gs.washington.edu/) dataset using the tab separator (can be both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/test_cadd14_grch37_annotated.tsv.gz` for CADD 1.4 and genome build 37.
 
 The following flags are optional:
-- -o / --output: The path to the directory, output filename or output directory and filename where the output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the file will be placed within the input directory. __The file will always be gzipped!__
+- -o / --output: The path to the directory, output filename or output directory and filename where the output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the file will be placed within the input directory. __The file will always be gzipped with a .gz extension!__
 - -v / --verbose: Display more in depth messages within the progress of CAPICE.
 - -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
 - --train: Activates the 'train new CAPICE-like models' within CAPICE.

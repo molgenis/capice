@@ -42,7 +42,7 @@ class TestExporter(unittest.TestCase):
         print('Prediction output')
         self.exporter.capice_filename = 'test_output.tsv'
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        exported_data = pd.read_csv(os.path.join(self.output_loc, 'test_output.tsv'), sep='\t')
+        exported_data = pd.read_csv(os.path.join(self.output_loc, 'test_output.tsv'), compression='gzip', sep='\t')
         pd.testing.assert_frame_equal(exported_data, self.prediction_output_dataframe)
 
     def test_dataset_export(self):
@@ -69,7 +69,9 @@ class TestExporter(unittest.TestCase):
         self.exporter.force = True
         self.exporter.capice_filename = 'already_present_file.tsv'
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        forced_file = pd.read_csv(os.path.join(self.output_loc, 'already_present_file.tsv'), sep='\t')
+        forced_file = pd.read_csv(
+            os.path.join(self.output_loc, 'already_present_file.tsv'), compression='gzip', sep='\t'
+        )
         pd.testing.assert_frame_equal(forced_file, self.prediction_output_dataframe)
 
 

@@ -86,8 +86,7 @@ class TestInputChecker(unittest.TestCase):
         print('Input output conversion (input + output directory + filename)')
         test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
         test_output = os.path.join('.', 'test_output', 'test.txt')
-        # expected_output_filename = 'test.txt.gz'
-        expected_output_filename = 'test.txt'  # Legacy support, if legacy is disabled can be removed.
+        expected_output_filename = 'test.txt.gz'
         expected_output_directory = os.path.join('.', 'test_output')
         self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
         self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
@@ -97,9 +96,10 @@ class TestInputChecker(unittest.TestCase):
         print('Input output conversion (input + filename)')
         test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
         test_output = 'test.txt'
+        expected_output_filename = 'test.txt.gz'
         expected_output_directory = os.path.join('.', 'CAPICE_example')
         self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
-        self.assertEqual(self.input_checker.get_output_filename(), test_output)
+        self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
         self.assertEqual(self.input_checker.get_output_directory(), expected_output_directory)
 
     def test_log_checker_both(self):
