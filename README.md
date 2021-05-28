@@ -108,7 +108,6 @@ A file will be put out containing the following columns:
 
 - __No__ index
 - chr_pos_ref_alt: column containing the chromosome, position, reference and alternative separated by an underscore.
-- ID: Column full of `.`.
 - GeneName: The ENSEMBL gene name of the variant as supplied by CADD.
 - FeatureID: The ENSEMBL feature ID (Transcript ID or regulatory feature ID).
 - Consequence: The type of consequence that the variant has as supplied by CADD.
