@@ -19,17 +19,6 @@ class TestExporter(unittest.TestCase):
             Column.Consequence.value: ['Synonymous', 'Frame-shift'],
             Column.probabilities.value: [0.01, 0.998]
         })
-        cls.legacy_export_prediction = pd.DataFrame(
-            {
-                Column.chr_pos_ref_alt.value: ['1_100_A_C', '2_200_T_G'],
-                Column.GeneName.value: ['foo', 'bar'],
-                Column.Consequence.value: ['Synonymous', 'Frame-shift'],
-                Column.PHRED.value: [0.0, 0.0],
-                Column.probabilities.value: [0.01, 0.998],
-                Column.prediction.value: ['empty', 'empty'],
-                Column.combined_prediction.value: ['empty', 'empty']
-            }
-        )
         cls.export_dataset = pd.DataFrame(
             {
                 'chr': [1, 2],
@@ -53,13 +42,8 @@ class TestExporter(unittest.TestCase):
         print('Prediction output')
         self.exporter.capice_filename = 'test_output.tsv'
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        exported_data = pd.read_csv(os.path.join(self.output_loc, 'test_output.tsv'), sep='\t')
-        pd.testing.assert_frame_equal(exported_data, self.legacy_export_prediction)
-
-    def test_legacy_conversion(self):
-        print('Legacy output conversion')
-        converted_legacy = self.exporter._export_legacy_prediction(datafile=self.prediction_output_dataframe)
-        pd.testing.assert_frame_equal(converted_legacy, self.legacy_export_prediction)
+        exported_data = pd.read_csv(os.path.join(self.output_loc, 'test_output.tsv'), compression='gzip', sep='\t')
+        pd.testing.assert_frame_equal(exported_data, self.prediction_output_dataframe)
 
     def test_dataset_export(self):
         print('Dataset export')
@@ -85,8 +69,10 @@ class TestExporter(unittest.TestCase):
         self.exporter.force = True
         self.exporter.capice_filename = 'already_present_file.tsv'
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        forced_file = pd.read_csv(os.path.join(self.output_loc, 'already_present_file.tsv'), sep='\t')
-        pd.testing.assert_frame_equal(forced_file, self.legacy_export_prediction)
+        forced_file = pd.read_csv(
+            os.path.join(self.output_loc, 'already_present_file.tsv'), compression='gzip', sep='\t'
+        )
+        pd.testing.assert_frame_equal(forced_file, self.prediction_output_dataframe)
 
 
 if __name__ == '__main__':

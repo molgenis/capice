@@ -14,6 +14,3 @@ class Column(Enum):
     FeatureID = 'FeatureID'
     Consequence = 'Consequence'
     probabilities = 'probabilities'
-    prediction = 'prediction'
-    combined_prediction = 'combined_prediction'
-    PHRED = 'PHRED'
