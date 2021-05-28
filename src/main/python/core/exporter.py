@@ -5,7 +5,6 @@ from src.main.python.core.logger import Logger
 import os
 import pandas as pd
 import pickle
-import warnings
 
 
 class Exporter:
@@ -31,33 +30,8 @@ class Exporter:
         :param datafile: prediction pandas DataFrame
         """
         filename = self._export_filename_ready(file_name=self.capice_filename, check_extension=False)
-        # datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
-        datafile = self._export_legacy_prediction(datafile=datafile)
-        datafile.to_csv(filename, sep='\t', index=False)
+        datafile[self.export_cols].to_csv(filename, sep='\t', index=False)
         self.log.info('Successfully exported CAPICE datafile to: {}'.format(filename))
-
-    def _export_legacy_prediction(self, datafile):
-        warnings.warn('Using legacy export function, deprecated in 2.1.', DeprecationWarning)
-        datafile = datafile[self.export_cols]
-
-        # Required to prevent the SettingWithCopyWarning, even when using:
-        # dataframe.loc[row_indexer,col_indexer] = value
-        pd.options.mode.chained_assignment = None
-
-        datafile.loc[:, Column.prediction.value] = 'empty'
-        datafile.loc[:, Column.combined_prediction.value] = 'empty'
-        datafile.loc[:, Column.PHRED.value] = 0.0
-        datafile.drop(columns=Column.FeatureID.value, inplace=True)
-        datafile = datafile[
-            [Column.chr_pos_ref_alt.value,
-             Column.GeneName.value,
-             Column.Consequence.value,
-             Column.PHRED.value,
-             Column.probabilities.value,
-             Column.prediction.value,
-             Column.combined_prediction.value]
-        ]
-        return datafile
 
     def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str, feature: str):
         """

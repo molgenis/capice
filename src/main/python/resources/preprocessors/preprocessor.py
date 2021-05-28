@@ -65,7 +65,7 @@ class PreProcessor:
         Specialized function to be used into _load_preprocessors() and _load_correct_preprocessor() to be raised when
         no preprocessing files can be found.
         """
-        error_message = 'No usable python files are found within the imputing directory!'
+        error_message = 'No usable python files are found within the model directory!'
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 

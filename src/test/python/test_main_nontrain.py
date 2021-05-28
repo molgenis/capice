@@ -37,7 +37,7 @@ class TestMainNonTrain(unittest.TestCase):
                     output_loc=self.output_dir)
         main.run()
         prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'), sep='\t')
-        self.assertEqual(prediction_output.shape, (20, 7))
+        self.assertEqual(prediction_output.shape, (20, 5))
 
 
 if __name__ == '__main__':
