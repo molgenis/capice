@@ -33,9 +33,9 @@ The following sections will guide you through the steps needed for the variant a
 making predictions using the CAPICE model.
 
 ### Download and installation (UNIX like systems)
-__Note: this install is for Python 3.7 and Python 3.8. 
+__Note: this install is for Python 3.7, Python 3.8 and Python 3.9. 
 Python 3.6 is also supported and install can be found at the bottom of this chapter.
-Python 3.5 and lower or Python 3.9 and higher is not supported (yet).__
+Python 3.5 and lower is not supported.__
 
 1. Software and libraries
 CAPICE scripts can be downloaded from the CAPICE github repository.
@@ -96,6 +96,17 @@ CAPICE requires the following arguments:
 
 The following flags are optional:
 - -o / --output: The path to the directory, output filename or output directory and filename where the output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the file will be placed within the input directory. __The file will always be gzipped with a .gz extension!__
+
+_For instance:_
+
+`-i input.txt` becomes `input_capice.txt.gz`
+
+`-i input.txt -o output.txt` becomes `output.txt.gz`
+
+`-i input.txt -o path/to/output.txt` becomes `path/to/output.txt.gz`
+
+`-i input.txt -o path/to/output` becomes `path/to/output/input_capice.txt.gz`
+
 - -v / --verbose: Display more in depth messages within the progress of CAPICE.
 - -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
 - --train: Activates the 'train new CAPICE-like models' within CAPICE.
