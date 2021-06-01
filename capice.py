@@ -19,7 +19,7 @@ from datetime import datetime
 __program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
 __license__ = 'LGPL-3.0'
-__version__ = 2.0
+__version__ = '2.0.0'
 __description__ = "{} (version: {}) is a program developed and maintained by {}. " \
                   "The program facilitates a pathogenicity prediction for a CADD annotated VCF file. " \
                   "This program is developed under the {} license and is provided 'as-is' without any warranty " \
