@@ -2,11 +2,14 @@ from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.exporter import Exporter
 from src.main.python.core.config_reader import ConfigReader
-from src.main.python.resources.parsers.cadd_parser import CaddParser
-from src.main.python.resources.parsers.cadd_header_parser import CaddHeaderParser
+from src.main.python.resources.parsers.input_parser import InputParser
+from src.main.python.resources.parsers.input_header_parser import InputHeaderParser
 from src.main.python.resources.imputers.cadd_imputing import CaddImputing
 from src.main.python.resources.checkers.cadd_version_checker import CaddVersionChecker
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
+from src.main.python.resources.annotaters.annotator import Annotator
+from src.main.python.resources.enums.sections import FileType
+from src.main.python.core.input_checker import InputChecker
 
 
 class Main:
@@ -47,12 +50,15 @@ class Main:
         self.cla_cadd_version = self.config.get_default_value('caddversion')
         self.log.debug('CADD build -cb / --cadd_build confirmed: {}'.format(self.cla_cadd_version))
         self.log.debug('Force flag confirmed: {}'.format(self.manager.force))
+        self.file_type = None
 
     def run(self):
         """
         Function to make CAPICE run in a prediction matter.
         """
         cadd_data = self.load_file()
+        if self.file_type == FileType.VEP.value:
+            cadd_data = self.annotate(loaded_data=cadd_data)
         cadd_data = self.impute(loaded_cadd_data=cadd_data)
         preprocessing_instance, cadd_data = self.preprocess(loaded_cadd_data=cadd_data, train=False)
         cadd_data = self.predict(loaded_cadd_data=cadd_data, preprocessing_instance=preprocessing_instance)
@@ -60,31 +66,46 @@ class Main:
 
     def load_file(self):
         """
-        Function to load the CADD file into main
+        Function to load the input file into main
         :return: pandas DataFrame
         """
         is_gzipped = False
         if self.infile.endswith('.gz'):
             is_gzipped = True
-        cadd_header_parser = CaddHeaderParser(
+        input_header_parser = InputHeaderParser(
             is_gzipped=is_gzipped,
-            cadd_file_loc=self.infile
+            input_file_loc=self.infile
         )
-        header_present = cadd_header_parser.get_header_present()
-        header_version = cadd_header_parser.get_header_version()
-        header_build = cadd_header_parser.get_header_build()
-        CaddVersionChecker(
-            cla_cadd_version=self.cla_cadd_version,
-            cla_grch_build=self.cla_genome_build,
-            file_cadd_version=header_version,
-            file_grch_build=header_build
+        self.file_type = input_header_parser.get_file_type()
+        skip_rows = input_header_parser.get_skip_rows()
+        if self.file_type == FileType.CADD.value:
+            header_version = input_header_parser.get_header_version()
+            header_build = input_header_parser.get_header_build()
+            CaddVersionChecker(
+                cla_cadd_version=self.cla_cadd_version,
+                cla_grch_build=self.cla_genome_build,
+                file_cadd_version=header_version,
+                file_grch_build=header_build
+            )
+        else:
+            InputChecker().check_cadd_db_and_reference(
+                cadd_db=self.manager.cadd_database,
+                reference=self.manager.reference_genome
+            )
+        input_parser = InputParser()
+        input_file = input_parser.parse(
+            input_file_loc=self.infile,
+            skip_rows=skip_rows
         )
-        cadd_parser = CaddParser()
-        cadd_file = cadd_parser.parse(
-            cadd_file_loc=self.infile,
-            header_present=header_present
-        )
-        return cadd_file
+        return input_file
+
+    @staticmethod
+    def annotate(loaded_data):
+        """
+        Function to annotate the VEP file to a CADD like file
+        """
+        annotated_data = Annotator().annotate(dataset=loaded_data)
+        return annotated_data
 
     @staticmethod
     def impute(loaded_cadd_data):

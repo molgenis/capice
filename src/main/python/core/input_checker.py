@@ -9,6 +9,7 @@ class InputChecker:
     """
     Checker for the remaining supplied arguments
     """
+
     def __init__(self):
         self.output_filename = ''
         self.output_directory = ''
@@ -74,6 +75,16 @@ class InputChecker:
         if not self.output_filename.endswith('.gz'):
             self.output_filename = self.output_filename + '.gz'
 
+    @staticmethod
+    def check_cadd_db_and_reference(cadd_db, reference):
+        """
+        Function to check if the CADD database, it's .tbi file and the reference files all exist
+        """
+        if not check_file_exists(cadd_db) and not check_file_exists(
+                '{}.{}'.format(cadd_db, 'tbi')) and not check_file_exists(
+                reference):
+            raise FileNotFoundError('Unable to locate all required files to annotate through the CADD database.')
+
     def get_output_filename(self):
         return self.output_filename
 
@@ -85,6 +96,7 @@ class LogChecker:
     """
     Initial check of the arguments for the logger.
     """
+
     def __init__(self, log_loc: [str, None], output_loc: str):
         self.log_loc = log_loc
         self.output_loc = output_loc

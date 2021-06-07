@@ -5,6 +5,7 @@ class Sections(Enum):
     DEFAULTS = 'DEFAULTS'
     OVERWRITES = 'OVERWRITES'
     MISC = 'MISC'
+    CADD = 'CADD'
     TRAINING = 'TRAINING'
 
 
@@ -14,3 +15,8 @@ class Column(Enum):
     FeatureID = 'FeatureID'
     Consequence = 'Consequence'
     probabilities = 'probabilities'
+
+
+class FileType(Enum):
+    VEP = 'VEP'
+    CADD = 'CADD'

@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='capice',
-    version='2.0',
+    version='2.0.0',
     packages=['src', 'src.main', 'src.main.python', 'src.main.python.core', 'src.main.python.resources',
               'src.main.python.resources.errors', 'src.main.python.resources.models',
               'src.main.python.resources.parsers', 'src.main.python.resources.checkers',
@@ -34,7 +34,8 @@ setup(
         'pandas==1.2.4',
         'scipy==1.6.2',
         'scikit-learn==0.24.2',
-        'xgboost==0.90'
+        'xgboost==0.90',
+        'pysam==0.16.0.1'
     ],
     entry_points={
         'console_scripts': [

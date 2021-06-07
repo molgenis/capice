@@ -11,6 +11,7 @@ class ConfigReader:
             self.defaults = None
             self.overwrites = None
             self.misc = None
+            self.cadd = None
             self.train = None
             self.error = 'ERROR'
 
@@ -19,6 +20,7 @@ class ConfigReader:
             self._check_all_sections_present()
             self.defaults = self.config[Sections.DEFAULTS.value]
             self.overwrites = self.config[Sections.OVERWRITES.value]
+            self.cadd = self.config[Sections.CADD.value]
             self.misc = self.config[Sections.MISC.value]
             self.train = self.config[Sections.TRAINING.value]
 
@@ -42,6 +44,13 @@ class ConfigReader:
             key = key.lower()
             value = self.overwrites.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='OVERWRITES')
+            value = self._check_value_default(value=value, else_type=str)
+            return value
+
+        def get_cadd_value(self, key):
+            key = key.lower()
+            value = self.cadd.get(key, fallback=self.error)
+            self._check_value_has_error(value=value, keysearch=key, section='CADD')
             value = self._check_value_default(value=value, else_type=str)
             return value
 
@@ -122,6 +131,14 @@ class ConfigReader:
     def get_misc_value(self, key):
         """
         Function to get a value from the MISC section of the config.
+
+        key: str
+        """
+        pass
+
+    def get_cadd_value(self, key):
+        """
+        Function to get a value from the CADD section of the config.
 
         key: str
         """

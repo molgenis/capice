@@ -1,6 +1,7 @@
 import unittest
 from src.main.python.core.config_reader import ConfigReader
 from src.main.python.resources.enums.sections import Sections
+import os
 
 
 class TestConfigReader(unittest.TestCase):
@@ -33,6 +34,16 @@ class TestConfigReader(unittest.TestCase):
         for argument in required_arguments:
             self.assertTrue(argument in self.config.overwrites)
 
+    def test_section_cadd_present(self):
+        print('Section CADD present')
+        self.assertTrue(Sections.CADD.value in self.config.config.sections())
+
+    def test_section_cadd(self):
+        print('Section CADD')
+        required_arguments = ['databaselocation', 'reference']
+        for argument in required_arguments:
+            self.assertTrue(argument in self.config.cadd)
+
     def test_section_misc_present(self):
         print('Section misc present')
         self.assertTrue(Sections.MISC.value in self.config.config.sections())
@@ -56,22 +67,27 @@ class TestConfigReader(unittest.TestCase):
     def test_get_default_key(self):
         print('Get default key')
         value = self.config.get_default_value(key='logfilelocation')
-        self.assertIsNone(value)
+        self.assertTrue(value is None or isinstance(value, str))
 
     def test_get_overwrite_key(self):
         print('Get overwrite key')
         value = self.config.get_overwrite_value(key='imputefile')
-        self.assertFalse(value)
+        self.assertTrue(isinstance(value, str) or value is False)
+
+    def test_get_cadd_key(self):
+        print('Get CADD key')
+        value = self.config.get_cadd_value(key='databaselocation')
+        self.assertTrue(os.path.exists(value) or value is False)
 
     def test_get_misc_key(self):
         print('Get misc key')
         value = self.config.get_misc_value(key='enablelogfile')
-        self.assertTrue(value)
+        self.assertIsInstance(value, bool)
 
     def test_get_training_key(self):
         print('Get training key')
         value = self.config.get_train_value(key='traintestsize')
-        self.assertEqual(value, 0.2)
+        self.assertIsInstance(value, float)
 
 
 if __name__ == '__main__':

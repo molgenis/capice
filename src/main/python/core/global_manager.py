@@ -23,6 +23,8 @@ class CapiceManager:
             self.critical_logging_only = False
             self.cadd_features = []
             self.output_filename = ''
+            self.cadd_database = False
+            self.reference_genome = False
 
         @property
         def log_loc(self):
@@ -130,6 +132,24 @@ class CapiceManager:
         def output_filename(self, value):
             self.property_checker.check_property(value=value, expected_type=str)
             self._output_filename = value
+
+        @property
+        def cadd_database(self):
+            return self._cadd_database
+
+        @cadd_database.setter
+        def cadd_database(self, value):
+            self.property_checker.check_property(value=value, expected_type=(bool, str))
+            self._cadd_database = value
+
+        @property
+        def reference_genome(self):
+            return self._reference_genome
+
+        @reference_genome.setter
+        def reference_genome(self, value):
+            self.property_checker.check_property(value=value, expected_type=(bool, str))
+            self._reference_genome = value
 
     instance = None
 
@@ -342,10 +362,56 @@ class CapiceManager:
 
     @property
     def output_filename(self):
+        """
+        Getter for setter output_filename
+
+        :return: path-like
+        """
         return self._output_filename
 
     @output_filename.setter
     def output_filename(self, value):
+        """
+        Singleton property output_filename, to set the output file name that CAPICE prediction will produce.
+
+        :param value: path-like
+        """
+        pass
+
+    @property
+    def cadd_database(self):
+        """
+        Getter for setter cadd_database
+
+        :return: False or path-like
+        """
+        return self._cadd_database
+
+    @cadd_database.setter
+    def cadd_database(self, value):
+        """
+        Singleton property cadd_database, to set the location of the CADD database TABIX file.
+
+        :param value: False or path-like
+        """
+        pass
+
+    @property
+    def reference_genome(self):
+        """
+        Getter for setter reference_genome
+
+        :return: False or path-like
+        """
+        return self._reference_genome
+
+    @reference_genome.setter
+    def reference_genome(self, value):
+        """
+        Singleton property reference_genome, to set the location of the GRCh37 reference genome.
+
+        :param value: False or path-like
+        """
         pass
 
     def __new__(cls):
