@@ -1,0 +1,2 @@
+class LookupAnnotator:
+    pass

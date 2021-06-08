@@ -1,5 +1,7 @@
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.annotaters.processer import ProcessorAnnotator
+from src.main.python.resources.annotaters.lookup import LookupAnnotator
 import pandas as pd
 
 
