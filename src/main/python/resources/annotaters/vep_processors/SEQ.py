@@ -12,13 +12,15 @@ class SEQ(Template):
     def usable(cls):
         return True
 
-    @classmethod
     @property
-    def columns(cls):
+    def columns(self):
         return ['GC', 'CpG']
 
-    def __init__(self):
-        super().__init__()
-
-    def process(self, seq):
-        pass
+    def process(self, value):
+        return_value = []
+        seq = value[SEQ.name]
+        seq_len = len(seq)
+        num_n = seq.count('N')
+        return_value.append((seq.count('C') + seq.count('G') + num_n * 0.41) / seq_len)
+        return_value.append((seq.count('CG') + num_n * 0.01) / (seq_len - 1) * 2)
+        return return_value

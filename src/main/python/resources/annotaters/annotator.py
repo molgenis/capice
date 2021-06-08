@@ -19,3 +19,11 @@ class Annotator:
         self.log.info('Starting annotation processing')
         annotated_dataset = dataset  # change once everything is ready
         return annotated_dataset
+
+    @staticmethod
+    def _correct_percentage_sign(dataset: pd.DataFrame):
+        new_columns = []
+        for column in dataset.columns:
+            new_columns.append(column.split('%')[1])
+        dataset.columns = new_columns
+        return dataset

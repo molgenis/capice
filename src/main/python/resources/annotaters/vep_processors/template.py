@@ -14,14 +14,14 @@ class Template(metaclass=ABCMeta):
     def usable(cls):
         return False
 
-    @classmethod
     @abstractmethod
     @property
-    def columns(cls):
+    def columns(self):
         return []
 
-    def __init__(self):
-        pass
+    @property
+    def delete_after(self):
+        return True
 
     @abstractmethod
     def process(self, value):
