@@ -1,4 +1,7 @@
+import pandas as pd
+
 from src.main.python.resources.annotaters.vep_processors.template import Template
+import numpy as np
 
 
 class MotifName(Template):
@@ -16,11 +19,7 @@ class MotifName(Template):
     def columns(self):
         return ['motifECount', 'motifEName']
 
-    def process(self, value):
-        return_list = []
-        if value[MotifName.name] is not None:
-            return_list.append('1')
-            return_list.append(value[MotifName])
-        else:
-            return_list = [None, None]
-        return return_list
+    def process(self, dataframe: pd.DataFrame):
+        dataframe['motifEName'] = dataframe[self.name]
+        dataframe['motifECount'] = np.where(dataframe[self.name].isna(), None, '1')
+        return dataframe

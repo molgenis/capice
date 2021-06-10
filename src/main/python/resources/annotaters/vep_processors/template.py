@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import pandas as pd
 
 
 class Template(metaclass=ABCMeta):
@@ -15,14 +16,5 @@ class Template(metaclass=ABCMeta):
         return False
 
     @abstractmethod
-    @property
-    def columns(self):
-        return []
-
-    @property
-    def delete_after(self):
-        return True
-
-    @abstractmethod
-    def process(self, value):
+    def process(self, dataframe: pd.DataFrame):
         pass

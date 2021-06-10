@@ -15,7 +15,3 @@ class ProteinPosition(CDNAPosition):
     @property
     def columns(self):
         return ['protPos', 'relProtPos']
-
-    @property
-    def get_name(self):
-        return ProteinPosition.name

@@ -1,4 +1,6 @@
+import pandas as pd
 from src.main.python.resources.annotaters.vep_processors.template import Template
+import numpy as np
 
 
 class MotifEHIPos(Template):
@@ -16,8 +18,6 @@ class MotifEHIPos(Template):
     def columns(self):
         return ['motifEHIPos']
 
-    def process(self, value):
-        return_value = 0
-        if value[MotifEHIPos.name] == 'Y':
-            return_value = 1
-        return return_value
+    def process(self, dataset: pd.DataFrame):
+        dataset['motifEHIPos'] = np.where(dataset[self.name] == 'Y', 1, 0)
+        return dataset

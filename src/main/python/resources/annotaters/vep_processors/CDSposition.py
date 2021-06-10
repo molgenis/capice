@@ -15,7 +15,3 @@ class CDSPosition(CDNAPosition):
     @property
     def columns(self):
         return ['CDSpos', 'relCDSpos']
-
-    @property
-    def get_name(self):
-        return CDSPosition.name
