@@ -1,16 +1,12 @@
-from src.main.python.resources.annotaters.vep_processors.cDNAposition import CDNAPosition
+from src.main.python.resources.annotaters.vep_processors.template_position import TemplatePosition
 
 
-class CDSPosition(CDNAPosition):
-    @classmethod
-    @property
-    def name(cls):
-        return 'CDS_position'
-
-    @classmethod
-    @property
-    def usable(cls):
-        return True
+class CDSPosition(TemplatePosition):
+    def __init__(self):
+        super(CDSPosition, self).__init__(
+            name='CDS_position',
+            usable=True
+        )
 
     @property
     def columns(self):

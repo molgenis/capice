@@ -10,7 +10,10 @@ class Annotator:
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.fasta_lookup = FastaLookupAnnotator()
+        self.lookup = LookupAnnotator()
+        self.manual_annotater = ProcessorAnnotator()
         self.dataset = dataset
+        self._correct_percentage_sign()
 
     def annotate(self):
         """
@@ -18,8 +21,9 @@ class Annotator:
         :return: pandas dataframe similar to the output of the CADD pipeline
         """
         self.log.info('Starting annotation processing')
-        annotated_dataset = self.dataset  # change once everything is ready
-        return annotated_dataset
+        self._add_sequence()
+        self.dataset = self.manual_annotater.process(dataset=self.dataset)
+        return self.dataset
 
     def _correct_percentage_sign(self):
         new_columns = []
@@ -27,9 +31,9 @@ class Annotator:
             new_columns.append(column.split('%')[1])
         self.dataset.columns = new_columns
 
-    def _add_sequence(self, dataset: pd.DataFrame):
+    def _add_sequence(self):
         self.log.debug('Annotation addition: sequence')
-        self.dataset['SEQ'] = dataset.apply(
+        self.dataset['Seq'] = self.dataset.apply(
             lambda x: self.fasta_lookup.get_reference_sequence(
                 chromosome=x['CHROM'],
                 start=x['POS'] - 75,

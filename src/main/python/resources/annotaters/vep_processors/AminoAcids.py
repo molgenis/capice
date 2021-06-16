@@ -3,14 +3,11 @@ from src.main.python.resources.annotaters.vep_processors.template import Templat
 
 
 class AminoAcids(Template):
-    @classmethod
-    @property
-    def name(cls):
-        return 'Amino_acids'
-
-    @classmethod
-    def usable(cls):
-        return True
+    def __init__(self):
+        super(AminoAcids, self).__init__(
+            name='Amino_acids',
+            usable=True
+        )
 
     @property
     def columns(self):
@@ -25,6 +22,6 @@ class AminoAcids(Template):
         return self.columns[1]
 
     def process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split('/')
+        dataframe[self.columns] = dataframe[self.name].str.split('/', expand=True)
         dataframe[self.naa].fillna(dataframe[self.oaa], inplace=True)
         return dataframe

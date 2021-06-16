@@ -20,15 +20,11 @@ class Domain(Template):
     Finally the index numbers are aggregated over the columns with the 'min' function, mapped back to the string and
     applied.
     """
-    @classmethod
-    @property
-    def name(cls):
-        return 'DOMAINS'
-
-    @classmethod
-    @property
-    def usable(cls):
-        return True
+    def __init__(self):
+        super(Domain, self).__init__(
+            name='DOMAINS',
+            usable=True
+        )
 
     @property
     def columns(self):

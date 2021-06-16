@@ -4,19 +4,11 @@ import numpy as np
 
 
 class MotifEHIPos(Template):
-    @classmethod
-    @property
-    def name(cls):
-        return 'HIGH_INF_POS'
-
-    @classmethod
-    @property
-    def usable(cls):
-        return True
-
-    @property
-    def columns(self):
-        return ['motifEHIPos']
+    def __init__(self):
+        super(MotifEHIPos, self).__init__(
+            name='HIGH_INF_POS',
+            usable=True
+        )
 
     def process(self, dataset: pd.DataFrame):
         dataset['motifEHIPos'] = np.where(dataset[self.name] == 'Y', 1, 0)

@@ -1,11 +1,46 @@
 from src.main.python.core.logger import Logger
 import pandas as pd
+import os
+from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
 
 
 class ProcessorAnnotator:
     def __init__(self):
         self.log = Logger().logger
-    pass
+        self.vep_annotators = []
+        self.location = os.path.join(get_project_root_dir(),
+                                     'src',
+                                     'main',
+                                     'python',
+                                     'resources',
+                                     'annotaters',
+                                     'vep_processors')
+        self._load_vep_annotators()
+
+    def _load_vep_annotators(self):
+        python_modules = load_modules(self.location)
+        self._check_n_modules(python_modules)
+        loaded_python_modules = importer(python_modules, path=self.location)
+        self._check_n_modules(loaded_python_modules)
+        for module in loaded_python_modules:
+            if 'name' in dir(module) and module.usable:
+                self.vep_annotators.append(module)
+        self._check_n_modules(self.vep_annotators)
+
+    def _check_n_modules(self, modules_list):
+        if len(modules_list) < 1:
+            error_message = 'Unable to locate VEP Processors at {}, was the directory moved?'.format(self.location)
+            self.log.critical(error_message)
+            raise FileNotFoundError(error_message)
+
+    def process(self, dataset: pd.DataFrame):
+        for processor in self.vep_annotators:
+            if processor.name in dataset.columns and processor.usable:
+                dataset = processor.process(dataset)
+                dataset.drop(columns=processor.name, inplace=True)
+            else:
+                self.log.warning('Could not use processor {} on input dataset!'.format(processor.name))
+        return dataset
 
     @staticmethod
     def _col_renamer(dataframe: pd.DataFrame):
@@ -15,7 +50,8 @@ class ProcessorAnnotator:
         """
         dataframe.rename(
             columns={
-                'Gene': 'GeneID',
+                'HGNC_ID': 'GeneID',
+                'SYMBOL_SOURCE': 'SourceID',
                 'Feature': 'FeatureID',
                 'SYMBOL': 'GeneName',
                 'INTRON': 'Intron',

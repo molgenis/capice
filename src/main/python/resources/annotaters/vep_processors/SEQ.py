@@ -4,15 +4,11 @@ from src.main.python.resources.annotaters.vep_processors.template import Templat
 
 
 class SEQ(Template):
-    @classmethod
-    @property
-    def name(cls):
-        return 'Seq'
-
-    @classmethod
-    @property
-    def usable(cls):
-        return True
+    def __init__(self):
+        super(SEQ, self).__init__(
+            name='Seq',
+            usable=True
+        )
 
     def process(self, dataframe: pd.DataFrame):
         dataframe['GC'] = (dataframe[self.name].str.count('C') + dataframe[self.name].str.count('G') + dataframe[

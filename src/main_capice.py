@@ -104,7 +104,8 @@ class Main:
         """
         Function to annotate the VEP file to a CADD like file
         """
-        annotated_data = Annotator().annotate(dataset=loaded_data)
+        annotator = Annotator(dataset=loaded_data)
+        annotated_data = annotator.annotate()
         return annotated_data
 
     @staticmethod

@@ -47,6 +47,7 @@ class InputHeaderParser:
         if self.skip_rows == 0:
             self.header_present = True
             self.header = line
+            self.skip_rows += 1
         else:
             self.skip_rows += 1
 
