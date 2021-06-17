@@ -20,9 +20,14 @@ class Annotator:
         Start the annotation process.
         :return: pandas dataframe similar to the output of the CADD pipeline
         """
-        self.log.info('Starting annotation processing')
+        self.log.info('Starting annotation process for {} samples (amount of columns: {})'.format(
+            self.dataset.shape[0],
+            self.dataset.shape[1]
+        ))
         self._add_sequence()
         self.dataset = self.manual_annotater.process(dataset=self.dataset)
+        self.log.info('Annotation for {} samples succesfull, amount of columns: {}'.format(self.dataset.shape[0],
+                                                                                           self.dataset.shape[1]))
         return self.dataset
 
     def _correct_percentage_sign(self):

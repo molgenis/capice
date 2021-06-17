@@ -83,7 +83,7 @@ class ConfigReader:
                 self._raise_key_not_found(section=section, keysearch=keysearch)
 
         def _check_all_sections_present(self):
-            should_be_present = ['DEFAULTS', 'OVERWRITES', 'MISC', 'TRAINING']
+            should_be_present = ['DEFAULTS', 'OVERWRITES', 'CADD', 'MISC', 'TRAINING']
             for section in should_be_present:
                 if section not in self.config.sections():
                     raise KeyError('Unable to locate {} in config file.'.format(section))

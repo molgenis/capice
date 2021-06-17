@@ -40,7 +40,7 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_cadd(self):
         print('Section CADD')
-        required_arguments = ['databaselocation', 'reference']
+        required_arguments = ['snvsdatabaselocation', 'indelsdatabaselocation', 'reference']
         for argument in required_arguments:
             self.assertTrue(argument in self.config.cadd)
 
@@ -76,7 +76,7 @@ class TestConfigReader(unittest.TestCase):
 
     def test_get_cadd_key(self):
         print('Get CADD key')
-        value = self.config.get_cadd_value(key='databaselocation')
+        value = self.config.get_cadd_value(key='snvsdatabaselocation')
         self.assertTrue(os.path.exists(value) or value is False)
 
     def test_get_misc_key(self):

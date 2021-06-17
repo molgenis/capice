@@ -23,7 +23,8 @@ class CapiceManager:
             self.critical_logging_only = False
             self.cadd_features = []
             self.output_filename = ''
-            self.cadd_database = False
+            self.cadd_snvs_database = False
+            self.cadd_indels_database = False
             self.reference_genome = False
 
         @property
@@ -134,13 +135,22 @@ class CapiceManager:
             self._output_filename = value
 
         @property
-        def cadd_database(self):
-            return self._cadd_database
+        def cadd_snvs_database(self):
+            return self._cadd_snvs_database
 
-        @cadd_database.setter
-        def cadd_database(self, value):
+        @cadd_snvs_database.setter
+        def cadd_snvs_database(self, value):
             self.property_checker.check_property(value=value, expected_type=(bool, str))
-            self._cadd_database = value
+            self._cadd_snvs_database = value
+
+        @property
+        def cadd_indels_database(self):
+            return self._cadd_indels_database
+
+        @cadd_indels_database.setter
+        def cadd_indels_database(self, value):
+            self.property_checker.check_property(value=value, expected_type=(bool, str))
+            self._cadd_indels_database = value
 
         @property
         def reference_genome(self):
@@ -379,18 +389,36 @@ class CapiceManager:
         pass
 
     @property
-    def cadd_database(self):
+    def cadd_snvs_database(self):
         """
-        Getter for setter cadd_database
+        Getter for setter cadd_snvs_database
 
         :return: False or path-like
         """
-        return self._cadd_database
+        return self._cadd_snvs_database
 
-    @cadd_database.setter
-    def cadd_database(self, value):
+    @cadd_snvs_database.setter
+    def cadd_snvs_database(self, value):
         """
-        Singleton property cadd_database, to set the location of the CADD database TABIX file.
+        Singleton property cadd_snvs_database, to set the location of the CADD SNV database TABIX file.
+
+        :param value: False or path-like
+        """
+        pass
+
+    @property
+    def cadd_indels_database(self):
+        """
+        Getter for setter cadd_indels_database
+
+        :return: False or path-like
+        """
+        return self._cadd_indels_database
+
+    @cadd_indels_database.setter
+    def cadd_indels_database(self, value):
+        """
+        Singleton property cadd_indels_database, to set the location of the CADD InDels database TABIX file.
 
         :param value: False or path-like
         """

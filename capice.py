@@ -74,7 +74,8 @@ def main():
     manager.overwrite_model = config.get_overwrite_value(key='modelfile')
     manager.force = force
     manager.output_filename = output_filename
-    manager.cadd_database = config.get_cadd_value(key='databaselocation')
+    manager.cadd_snvs_database = config.get_cadd_value(key='snvsdatabaselocation')
+    manager.cadd_indels_database = config.get_cadd_value(key='indelsdatabaselocation')
     manager.reference_genome = config.get_cadd_value(key='reference')
 
     if train:
