@@ -27,6 +27,10 @@ class Template(metaclass=ABCMeta):
         self.property_checker.check_property(value=value, expected_type=bool)
         self._usable = value
 
+    @property
+    def drop(self):
+        return True
+
     @abstractmethod
     def process(self, dataframe: pd.DataFrame):
         pass

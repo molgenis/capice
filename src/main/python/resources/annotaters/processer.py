@@ -37,25 +37,8 @@ class ProcessorAnnotator:
         for processor in self.vep_annotators:
             if processor.name in dataset.columns and processor.usable:
                 dataset = processor.process(dataset)
-                dataset.drop(columns=processor.name, inplace=True)
+                if processor.drop:
+                    dataset.drop(columns=processor.name, inplace=True)
             else:
                 self.log.warning('Could not use processor {} on input dataset!'.format(processor.name))
         return dataset
-
-    @staticmethod
-    def _col_renamer(dataframe: pd.DataFrame):
-        """
-        Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
-        "GeneID, FeatureID, GeneName, Intron and Exon".
-        """
-        dataframe.rename(
-            columns={
-                'HGNC_ID': 'GeneID',
-                'SYMBOL_SOURCE': 'SourceID',
-                'Feature': 'FeatureID',
-                'SYMBOL': 'GeneName',
-                'INTRON': 'Intron',
-                'EXON': 'Exon'
-            }, inplace=True
-        )
-        return dataframe

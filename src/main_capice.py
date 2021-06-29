@@ -89,7 +89,8 @@ class Main:
             )
         else:
             InputChecker().check_cadd_db_and_reference(
-                cadd_db=self.manager.cadd_database,
+                cadd_snvs_db=self.manager.cadd_snvs_database,
+                cadd_indels_db=self.manager.cadd_indels_database,
                 reference=self.manager.reference_genome
             )
         input_parser = InputParser()
