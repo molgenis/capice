@@ -72,6 +72,7 @@ class LookupAnnotator:
         self.indels = None
         self._load_snvs_database()
         self._load_indels_database()
+        self._get_database_cadd_version()
         self.lookup_cols = []
         self.total = 0
         self.n_now = 0
@@ -99,6 +100,17 @@ class LookupAnnotator:
         for column in self.header:
             if column not in self.dataset:
                 self.lookup_cols.append(column)
+
+    def _get_database_cadd_version(self):
+        header = self.snvs.header[0]
+        if header.startswith('## CADD'):
+            header = header.split('GRCh')[1]
+            build_and_version = header.split(' ')[0]
+            build, version = build_and_version.split('-v')
+            build = int(build)
+            version = float(version)
+            self.manager.cadd_version = version
+            self.manager.grch_build = build
 
     def process(self, dataset: pd.DataFrame):
         """
@@ -137,6 +149,7 @@ class LookupAnnotator:
 
     def _post_process_retrieve(self, retrieved_list, chromosome, pos, ref, alt, consdetail):
         retrieval_dataframe = pd.DataFrame(retrieved_list, columns=self.header)
+        # retrieval_dataframe.replace(to_replace='NA', value=np.nan, inplace=True)
         retrieval_dataframe.replace(to_replace='NA', value=np.nan, inplace=True)
         retrieval_dataframe = retrieval_dataframe[
             (retrieval_dataframe['Ref'] == ref) &
@@ -147,7 +160,7 @@ class LookupAnnotator:
             self.log.debug(
                 'Could not retrieve data for chromosome: {}, pos: {}, ref: {}, alt: {} and consequence: {} ! '
                 'Using impute values only!'.format(chromosome, pos, ref, alt, consdetail))
-            return [None] * len(self.lookup_cols)
+            return [np.nan] * len(self.lookup_cols)
         else:
             return retrieval_dataframe[self.lookup_cols].values.tolist()[0]
 
@@ -159,6 +172,6 @@ class LookupAnnotator:
 
     def _get_indels_annotations(self, chromosome, pos):
         retrieval_list = []
-        for line in self.indels.fetch(chromosome, pos-1, pos):
+        for line in self.indels.fetch(chromosome, pos - 1, pos):
             retrieval_list.append(line.split('\t'))
         return retrieval_list

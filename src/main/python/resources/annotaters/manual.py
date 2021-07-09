@@ -4,7 +4,7 @@ import os
 from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
 
 
-class ProcessorAnnotator:
+class ManualAnnotator:
     def __init__(self):
         self.log = Logger().logger
         self.vep_annotators = []

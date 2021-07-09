@@ -141,7 +141,7 @@ class TemplateSetup(metaclass=ABCMeta):
         :param dataset: unprocessed pandas DataFrame
         :return: unprocessed pandas DataFrame containing column 'chr_pos_ref_alt'
         """
-        dataset['chr_pos_ref_alt'] = dataset[['#Chrom', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
+        dataset['chr_pos_ref_alt'] = dataset[['Chr', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
         return dataset
 
     @property
