@@ -26,6 +26,8 @@ class CaddImputing:
         self._check_if_imputer_is_applied()
         self.columns = []
         self.impute_values = {}
+        self.pre_dtypes = {}
+        self.dtypes = {}
 
     def _load_modules(self):
         """
@@ -114,31 +116,46 @@ class CaddImputing:
         datafile.dropna(how='all', subset=self.columns)
         datafile = datafile[~datafile['CAPICE_drop_out']]
         datafile.drop(columns=['CAPICE_drop_out'], inplace=True)
+        self._correct_dtypes()
         datafile.fillna(self.impute_values, inplace=True)
+        datafile = datafile.astype(dtype=self.pre_dtypes, copy=False)
+        datafile = datafile.astype(dtype=self.dtypes, copy=False)
         self.log.info('Imputing successfully performed.')
         return datafile
 
+    def _correct_dtypes(self):
+        """
+        Function to correct the dtypes that originate from the lookup annotator according to the dtypes specified
+        within the data json.
+        """
+        for key, item in self.impute_values.items():
+            if isinstance(item, int):
+                self.pre_dtypes[key] = float
+            else:
+                self.pre_dtypes[key] = type(item)
+            self.dtypes[key] = type(item)
+
     def _check_chrom_pos(self, dataset: pd.DataFrame):
         """
-        Function to check if all values of the columns #Chrom and Pos are present.
+        Function to check if all values of the columns Chr and Pos are present.
         :param dataset: not imputed pandas DataFrame
-        :return: pandas DataFrame containing no NaN or gaps for #Chrom and Pos columns.
+        :return: pandas DataFrame containing no NaN or gaps for Chr and Pos columns.
         """
         chrom_is_float = False
-        if dataset['#Chrom'].isnull().values.any():
-            if dataset.dtypes['#Chrom'] == np.float64:
+        if dataset['Chr'].isnull().values.any():
+            if dataset.dtypes['Chr'] == np.float64:
                 chrom_is_float = True
-            n_delete = dataset['#Chrom'].isnull().values.sum()
+            n_delete = dataset['Chr'].isnull().values.sum()
             self.log.warning('Detected NaN in the Chromosome column! Deleting {} row(s).'.format(n_delete))
-            dataset = dataset[~dataset['#Chrom'].isnull()]
+            dataset = dataset[~dataset['Chr'].isnull()]
         if dataset['Pos'].isnull().values.any():
             n_delete = dataset['Pos'].isnull().values.sum()
             self.log.warning('Detected NaN is the Position column! Deleting {} row(s).'.format(n_delete))
             dataset = dataset[~dataset['Pos'].isnull()]
         dataset.index = range(0, dataset.shape[0])
         if chrom_is_float:
-            dataset['#Chrom'] = dataset['#Chrom'].astype(int)
-            dataset['#Chrom'] = dataset['#Chrom'].astype(str)
+            dataset['Chr'] = dataset['Chr'].astype(int)
+            dataset['Chr'] = dataset['Chr'].astype(str)
         dataset['Pos'] = dataset['Pos'].astype(int)
         return dataset
 
@@ -174,7 +191,7 @@ class CaddImputing:
         if samples_dropped_out.shape[0] > 0:
             self.log.warning('The following samples are filtered out due to missing values: (indexing is python based, '
                              'so the index starts at 0). \n {}'.format(
-                                samples_dropped_out[['#Chrom', 'Pos', 'Ref', 'Alt', 'FeatureID']])
+                                samples_dropped_out[['Chr', 'Pos', 'Ref', 'Alt', 'FeatureID']])
                              )
         else:
             self.log.info('No samples are filtered out due to too many NaN values.')

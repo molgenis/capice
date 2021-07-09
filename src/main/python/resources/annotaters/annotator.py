@@ -1,6 +1,6 @@
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.annotaters.processer import ProcessorAnnotator
+from src.main.python.resources.annotaters.manual import ManualAnnotator
 from src.main.python.resources.annotaters.lookup import LookupAnnotator, FastaLookupAnnotator
 import pandas as pd
 
@@ -10,7 +10,7 @@ class Annotator:
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.fasta_lookup = FastaLookupAnnotator()
-        self.manual_annotater = ProcessorAnnotator()
+        self.manual_annotater = ManualAnnotator()
         self.dataset = dataset
         self._correct_percentage_sign()
         self._col_renamer()
