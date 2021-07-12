@@ -58,7 +58,7 @@ class Train(Main):
         """
         Main function. Will make a variety of calls to the required modules in order to create new CAPICE models.
         """
-        data = self.load_file()
+        data = self._rename_chrom_col(self.load_file())
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
@@ -81,6 +81,11 @@ class Train(Main):
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
         self.exporter.export_capice_model(model=model, model_type=self.model_type)
+
+    @staticmethod
+    def _rename_chrom_col(dataset):
+        dataset.rename(columns={'#Chrom': 'Chr'}, inplace=True)
+        return dataset
 
     def split_data(self, dataset, test_size: float, export: bool = False):
         """

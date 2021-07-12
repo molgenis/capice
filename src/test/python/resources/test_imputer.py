@@ -15,7 +15,7 @@ class TestImputer(unittest.TestCase):
         cls.grch_build = 37
         cls.impute_overwrite = 'CADD 1.4, GRCh build 37'
         cls.main = set_up_main()
-        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
 
     @classmethod
     def tearDownClass(cls):
@@ -41,14 +41,15 @@ class TestImputer(unittest.TestCase):
         print('Imputing (unit) (config)')
         self.main.cla_cadd_version = self.cadd_build
         self.main.cla_genome_build = self.grch_build
-        self.main.impute(loaded_cadd_data=self.main.load_file())
+        loaded_data = self.main.load_file()
+        self.main.impute(loaded_cadd_data=self.main.annotate(self.main.load_file()))
 
     def test_unit_imputation_file(self):
         """
         Unit test for imputation to be called with only the file header information.
         """
         print('Imputing (unit) (file)')
-        self.main.impute(loaded_cadd_data=self.main.load_file())
+        self.main.impute(loaded_cadd_data=self.main.annotate(self.main.load_file()))
 
     def test_unit_imputation_overwrite(self):
         """
@@ -56,7 +57,7 @@ class TestImputer(unittest.TestCase):
         """
         print('Imputing (unit) (overwrite)')
         self.manager.overwrite_impute = self.impute_overwrite
-        self.main.impute(loaded_cadd_data=self.main.load_file())
+        self.main.impute(loaded_cadd_data=self.main.annotate(self.main.load_file()))
 
     def test_component_imputation(self):
         """
@@ -64,21 +65,21 @@ class TestImputer(unittest.TestCase):
         """
         print('Imputing (component)')
         self.manager.overwrite_impute = self.impute_overwrite
-        imputed_file = self.main.impute(loaded_cadd_data=self.main.load_file())
+        imputed_file = self.main.impute(loaded_cadd_data=self.main.annotate(self.main.load_file()))
         imputed_columns = self.manager.cadd_features
         self.assertFalse(imputed_file[imputed_columns].isnull().values.any())
 
     def test_empty_chrom(self):
-        print('Empty #Chrom entry in input data')
+        print('Empty Chr entry in input data')
         dataset = pd.DataFrame(
             {
-                '#Chrom': [1, 2, None, 3],
+                'Chr': [1, 2, None, 3],
                 'Pos': [100, None, 300, 400]
             }
         )
         remainin_dataset = pd.DataFrame(
             {
-                '#Chrom': ["1", "3"],
+                'Chr': ["1", "3"],
                 'Pos': [100, 400]
             }
         )

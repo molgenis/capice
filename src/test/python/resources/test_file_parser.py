@@ -1,5 +1,4 @@
 import os
-import time
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, set_up_main
@@ -10,7 +9,7 @@ class TestFileParser(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager, output_loc = set_up_manager_and_loc()
-        input_file = os.path.join(get_project_root_dir(), 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        input_file = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
         cls.main = set_up_main()
         cls.main.infile = input_file
 
@@ -39,13 +38,9 @@ class TestFileParser(unittest.TestCase):
         """
         component testing class for loading in files, whenever they meet at least desired dimensions.
         """
-        required_shape = (20, 107)
-        required_cadd_version = 1.4
-        required_genome_build = 37
+        required_shape = (20, 22)
         file = self.main.load_file()
         self.assertEqual(file.shape, required_shape)
-        self.assertEqual(self.manager.cadd_version, required_cadd_version)
-        self.assertEqual(self.manager.grch_build, required_genome_build)
 
 
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ class TestPreprocessing(unittest.TestCase):
         print('Setting up.')
         cls.manager, output_loc = set_up_manager_and_loc()
         cls.main = set_up_main()
-        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
         cls.cadd_build = 1.4
         cls.grch_build = 37
         cls.impute_overwrite = 'CADD 1.4, GRCh build 37'
@@ -38,7 +38,9 @@ class TestPreprocessing(unittest.TestCase):
         Unit test for the preprocessor to see if the preprocessor works just the file header information.
         """
         print('Preprocessing (unit) (file)')
-        self.main.preprocess(loaded_cadd_data=self.main.impute(loaded_cadd_data=self.main.load_file()), train=False)
+        self.main.preprocess(loaded_cadd_data=self.main.impute(
+            loaded_cadd_data=self.main.annotate(self.main.load_file())
+        ), train=False)
 
     def test_unit_preprocessing_config(self):
         """
@@ -47,7 +49,9 @@ class TestPreprocessing(unittest.TestCase):
         print('Preprocessing (unit) (config)')
         self.main.cla_cadd_version = self.cadd_build
         self.main.cla_genome_build = self.grch_build
-        self.main.preprocess(loaded_cadd_data=self.main.impute(loaded_cadd_data=self.main.load_file()), train=False)
+        self.main.preprocess(loaded_cadd_data=self.main.impute(
+            loaded_cadd_data=self.main.annotate(self.main.load_file())
+        ), train=False)
 
     def test_unit_preprocessing_overwrite(self):
         """
@@ -56,7 +60,9 @@ class TestPreprocessing(unittest.TestCase):
         print('Preprocessing (unit) (overwrite)')
         self.manager.overwrite_impute = self.impute_overwrite
         self.manager.overwrite_model = self.model_overwrite
-        self.main.preprocess(loaded_cadd_data=self.main.impute(loaded_cadd_data=self.main.load_file()), train=False)
+        self.main.preprocess(loaded_cadd_data=self.main.impute(
+            loaded_cadd_data=self.main.annotate(self.main.load_file())
+        ), train=False)
 
     def test_component_preprocessing(self):
         """
@@ -64,7 +70,7 @@ class TestPreprocessing(unittest.TestCase):
         within all processed columns, there should not be 1 or more column that is still considered categorical.
         """
         print('Preprocessing (component)')
-        imputed_data = self.main.impute(loaded_cadd_data=self.main.load_file())
+        imputed_data = self.main.impute(loaded_cadd_data=self.main.annotate(self.main.load_file()))
         preprocessor, processed_file = self.main.preprocess(loaded_cadd_data=imputed_data, train=False)
         model_features = preprocessor.get_model_features()
         processed_columns = processed_file.columns
@@ -80,7 +86,7 @@ class TestPreprocessing(unittest.TestCase):
         """
         print('Preprocessing (train) (component)')
         self.manager.overwrite_impute = self.impute_overwrite
-        loaded_file = self.main.load_file()
+        loaded_file = self.main.annotate(self.main.load_file())
         imputed_file = self.main.impute(loaded_cadd_data=loaded_file)
         preprocessor, preprocessed_file = self.main.preprocess(loaded_cadd_data=imputed_file, train=True)
 

@@ -10,6 +10,7 @@ from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.annotaters.annotator import Annotator
 from src.main.python.resources.enums.sections import FileType
 from src.main.python.core.input_checker import InputChecker
+from src.main.python.resources.preprocessors.load_file_preprocessor import LoadFilePreProcessor
 
 
 class Main:
@@ -98,6 +99,8 @@ class Main:
             input_file_loc=self.infile,
             skip_rows=skip_rows
         )
+        post_load_processor = LoadFilePreProcessor(dataset=input_file)
+        input_file = post_load_processor.process()
         return input_file
 
     @staticmethod

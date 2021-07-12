@@ -21,6 +21,11 @@ def set_up_manager_and_loc():
     output_directory = os.path.join(root_dir, '.test_output')
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
+    config_reader = ConfigReader()
+    config_reader.parse()
+    manager.reference_genome = config_reader.get_cadd_value('reference')
+    manager.cadd_snvs_database = config_reader.get_cadd_value('snvsdatabaselocation')
+    manager.cadd_indels_database = config_reader.get_cadd_value('indelsdatabaselocation')
     return manager, output_directory
 
 

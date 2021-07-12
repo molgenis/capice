@@ -1,5 +1,4 @@
 import os
-import time
 import unittest
 from src.test.python.test_templates import teardown
 from src.main.python.core.input_checker import InputChecker, LogChecker
@@ -55,9 +54,9 @@ class TestInputChecker(unittest.TestCase):
         """
         print('Input output conversion (input only)')
 
-        test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = None
-        expected_output_filename = 'test_cadd14_grch37_annotated_capice.tsv.gz'
+        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
         expected_output_directory = os.path.join('.', 'CAPICE_example')
         self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
         self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
@@ -70,9 +69,9 @@ class TestInputChecker(unittest.TestCase):
         """
         print('Input output conversion (input + output directory)')
 
-        test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = os.path.join('.', 'test_output')
-        expected_output_filename = 'test_cadd14_grch37_annotated_capice.tsv.gz'
+        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
         expected_output_directory = os.path.join('.', 'test_output')
         self.input_checker.check_input_output_directories(input_path=test_input, output_path=test_output)
         self.assertEqual(self.input_checker.get_output_filename(), expected_output_filename)
@@ -84,7 +83,7 @@ class TestInputChecker(unittest.TestCase):
         Testing with input, output directory AND filename.
         """
         print('Input output conversion (input + output directory + filename)')
-        test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = os.path.join('.', 'test_output', 'test.txt')
         expected_output_filename = 'test.txt.gz'
         expected_output_directory = os.path.join('.', 'test_output')
@@ -94,7 +93,7 @@ class TestInputChecker(unittest.TestCase):
 
     def test_input_output_conversion_case4(self):
         print('Input output conversion (input + filename)')
-        test_input = os.path.join('.', 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = 'test.txt'
         expected_output_filename = 'test.txt.gz'
         expected_output_directory = os.path.join('.', 'CAPICE_example')

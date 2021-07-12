@@ -10,7 +10,7 @@ class TestModel(unittest.TestCase):
         print('Setting up.')
         manager, output_loc = set_up_manager_and_loc()
         cls.main = set_up_main()
-        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'test_cadd14_grch37_annotated.tsv.gz')
+        cls.main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
         manager.overwrite_model = 'CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.'
 
     @classmethod
@@ -28,7 +28,7 @@ class TestModel(unittest.TestCase):
         print('Prediction (unit)')
         preprocessing_instance, processed_file = self.main.preprocess(
             loaded_cadd_data=self.main.impute(
-                loaded_cadd_data=self.main.load_file()
+                loaded_cadd_data=self.main.annotate(self.main.load_file())
             ), train=False
         )
         self.main.predict(loaded_cadd_data=processed_file, preprocessing_instance=preprocessing_instance)
@@ -40,7 +40,7 @@ class TestModel(unittest.TestCase):
         print('Prediction (component)')
         preprocessing_instance, processed_file = self.main.preprocess(
             loaded_cadd_data=self.main.impute(
-                loaded_cadd_data=self.main.load_file()
+                loaded_cadd_data=self.main.annotate(self.main.load_file())
             ), train=False
         )
         prediction = self.main.predict(loaded_cadd_data=processed_file,

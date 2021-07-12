@@ -54,71 +54,10 @@ class InputHeaderParser:
     def _get_file_type(self):
         if self.header.startswith('## VEP VCF to CAPICE tsv converter'):
             self.file_type = FileType.VEP.value
-        elif self.header.startswith('## CADD'):
-            self.file_type = FileType.CADD.value
-            self._get_header_version_and_grch_build()
         else:
             error_message = 'Unable to recognize origin of input file.'
             self.log.critical(error_message)
             raise InvalidInputFileError(error_message)
-
-    def _get_header_version_and_grch_build(self):
-        """
-        Class to parse the CADD version and GRCh build present in the header of the CADD output file
-        """
-        for word in self.header.split(" "):
-            if word.upper().startswith('GRCH'):
-                self._set_cadd_or_grch_build(current_word=word)
-
-    def _set_cadd_or_grch_build(self, current_word):
-        version_and_build = current_word.split("-v")
-        for version in version_and_build:
-            if version.upper().startswith('GRCH'):
-                version = version.upper().strip('GRCH')
-                type_of_variable = 'Genome build'
-                type_to_convert_to = int
-                version = self._try_except_convert_to_type(variable=version,
-                                                           type_to_convert_to=type_to_convert_to,
-                                                           type_of_variable=type_of_variable)
-                self.header_build = version
-            else:
-                type_of_variable = 'CADD build'
-                type_to_convert_to = float
-                version = self._try_except_convert_to_type(variable=version,
-                                                           type_to_convert_to=type_to_convert_to,
-                                                           type_of_variable=type_of_variable)
-                self.header_version = version
-
-    def _try_except_convert_to_type(self, variable: any, type_to_convert_to: any, type_of_variable: str):
-        try:
-            variable = type_to_convert_to(variable)
-            self.log.info('CADD file "{}" set to: {}'.format(type_of_variable, variable))
-        except ValueError:
-            error_message = 'Unable to convert CADD version {} to float.'.format(variable)
-            self.log.critical(error_message)
-            raise ParserError(error_message)
-        return variable
-
-    def get_header_build(self):
-        """
-        Function to return the parsed CADD header GRCh build
-        :return: int
-        """
-        return self.header_build
-
-    def get_header_version(self):
-        """
-        Function to return the parsed used CADD version for annotation
-        :return: float
-        """
-        return self.header_version
-
-    def get_header_present(self):
-        """
-        Function to return the boolean value whenever a header is present within the CADD file
-        :return: bool
-        """
-        return self.header_present
 
     def get_skip_rows(self):
         """

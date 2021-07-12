@@ -12,8 +12,6 @@ class Annotator:
         self.fasta_lookup = FastaLookupAnnotator()
         self.manual_annotater = ManualAnnotator()
         self.dataset = dataset
-        self._correct_percentage_sign()
-        self._col_renamer()
         self.lookup = LookupAnnotator()
 
     def annotate(self):
@@ -31,12 +29,6 @@ class Annotator:
         self.log.debug('Final shape of the annotated data: {}'.format(self.dataset.shape))
         return self.dataset
 
-    def _correct_percentage_sign(self):
-        new_columns = []
-        for column in self.dataset.columns:
-            new_columns.append(column.split('%')[1])
-        self.dataset.columns = new_columns
-
     def _add_sequence(self):
         self.log.debug('Annotation addition: sequence')
         self.dataset['Seq'] = self.dataset.apply(
@@ -47,22 +39,3 @@ class Annotator:
             ), axis=1
         )
         self.fasta_lookup.close_connection()
-
-    def _col_renamer(self):
-        """
-        Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
-        "GeneID, FeatureID, GeneName, Intron and Exon".
-        """
-        self.dataset.rename(
-            columns={
-                'CHROM': 'Chr',
-                'POS': 'Pos',
-                'REF': 'Ref',
-                'ALT': 'Alt',
-                'SYMBOL_SOURCE': 'SourceID',
-                'Feature': 'FeatureID',
-                'SYMBOL': 'GeneName',
-                'INTRON': 'Intron',
-                'EXON': 'Exon'
-            }, inplace=True
-        )
