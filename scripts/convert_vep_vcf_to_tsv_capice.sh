@@ -15,18 +15,23 @@ main()
 
   local format="${pre_header}\n"
 
-  local -r file_info="## VEP VCF to CAPICE tsv converter\n${pre_header}"
+  local -r file_info="## VEP VCF to CAPICE tsv converter"
 
   local args=()
   args+=("+split-vep")
   args+=("-d")
   args+=("-f" "${format}")
-  args+=("-o" "${output}")
   args+=("${input}")
 
-  bcftools "${args[@]}"
+  data=$(bcftools "${args[@]}")
+  
+  if file --mime-type "$input" | grep -q gzip$; then
+	vep_line=$(zcat "${input}" | grep "VEP=")
+  else
+	vep_line=$(cat "${input}" | grep "VEP=")
+  fi
 
-  echo -e "${file_info}" | cat - ${output} > temp && mv temp ${output}
+  echo -e "${file_info}\n${vep_line}\n${pre_header}\n${data}" > ${output}
 
 }
 

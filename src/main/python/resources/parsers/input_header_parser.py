@@ -1,18 +1,19 @@
-from src.main.python.resources.errors.errors import ParserError, InvalidInputFileError
 from src.main.python.core.logger import Logger
-from src.main.python.resources.enums.sections import FileType
+from src.main.python.core.global_manager import CapiceManager
+import warnings
 import gzip
 
 
 class InputHeaderParser:
     """
-    Autonomous class to parse just the header of the input file to get the CADD version and GRCh build (if used
-    through the CADD processing pipeline). Also returns the input file type (CADD or VEP).
+    Autonomous class to parse just the header of the input file to get the amount
+    of comment lines that pandas should skip when reading.
     """
 
     def __init__(self, is_gzipped: bool, input_file_loc: str):
         self.log = Logger().logger
-        self.log.info('Starting to parse CADD file header.')
+        self.manager = CapiceManager()
+        self.log.info('Starting to parse input file header.')
         self.is_gzipped = is_gzipped
         self.input_file_loc = input_file_loc
         self.header = None
@@ -51,13 +52,20 @@ class InputHeaderParser:
         else:
             self.skip_rows += 1
 
+    def _check_vep_version(self, line):
+        if line.startswith('##VEP="'):
+            self._parse_vep_version(line)
+
+    def _parse_vep_version(self, line):
+        vep_version = float(line.split('v')[1].split('"')[0])
+        self.manager.vep_version = vep_version
+        self.log.info('Successfully identified VEP version: {}'.format(vep_version))
+
     def _get_file_type(self):
-        if self.header.startswith('## VEP VCF to CAPICE tsv converter'):
-            self.file_type = FileType.VEP.value
-        else:
-            error_message = 'Unable to recognize origin of input file.'
-            self.log.critical(error_message)
-            raise InvalidInputFileError(error_message)
+        if not self.header.startswith('## VEP VCF to CAPICE tsv converter'):
+            warning_message = 'Unable to recognize origin of input file.'
+            self.log.warning(warning_message)
+            warnings.warn(warning_message)
 
     def get_skip_rows(self):
         """
@@ -65,10 +73,3 @@ class InputHeaderParser:
         :return: int
         """
         return self.skip_rows
-
-    def get_file_type(self):
-        """
-        Function to return the type of file that was parsed.
-        :return: VEP or CADD
-        """
-        return self.file_type

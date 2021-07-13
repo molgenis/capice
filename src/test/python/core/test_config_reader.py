@@ -34,15 +34,15 @@ class TestConfigReader(unittest.TestCase):
         for argument in required_arguments:
             self.assertTrue(argument in self.config.overwrites)
 
-    def test_section_cadd_present(self):
-        print('Section CADD present')
-        self.assertTrue(Sections.CADD.value in self.config.config.sections())
+    def test_section_datafiles_present(self):
+        print('Section DATAFILES present')
+        self.assertTrue(Sections.DATAFILES.value in self.config.config.sections())
 
-    def test_section_cadd(self):
-        print('Section CADD')
-        required_arguments = ['snvsdatabaselocation', 'indelsdatabaselocation', 'reference']
+    def test_section_datafiles(self):
+        print('Section DATAFILES')
+        required_arguments = ['reference']
         for argument in required_arguments:
-            self.assertTrue(argument in self.config.cadd)
+            self.assertTrue(argument in self.config.datafiles)
 
     def test_section_misc_present(self):
         print('Section misc present')
@@ -74,9 +74,9 @@ class TestConfigReader(unittest.TestCase):
         value = self.config.get_overwrite_value(key='imputefile')
         self.assertTrue(isinstance(value, str) or value is False)
 
-    def test_get_cadd_key(self):
+    def test_get_datafiles_key(self):
         print('Get CADD key')
-        value = self.config.get_cadd_value(key='snvsdatabaselocation')
+        value = self.config.get_datafiles_value(key='reference')
         self.assertTrue(os.path.exists(value) or value is False)
 
     def test_get_misc_key(self):

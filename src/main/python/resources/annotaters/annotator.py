@@ -1,7 +1,7 @@
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.annotaters.manual import ManualAnnotator
-from src.main.python.resources.annotaters.lookup import LookupAnnotator, FastaLookupAnnotator
+from src.main.python.resources.annotaters.lookup import FastaLookupAnnotator
 import pandas as pd
 
 
@@ -12,7 +12,6 @@ class Annotator:
         self.fasta_lookup = FastaLookupAnnotator()
         self.manual_annotater = ManualAnnotator()
         self.dataset = dataset
-        self.lookup = LookupAnnotator()
 
     def annotate(self):
         """
@@ -22,9 +21,6 @@ class Annotator:
         self.log.info('Starting manual annotation process.')
         self._add_sequence()
         self.dataset = self.manual_annotater.process(dataset=self.dataset)
-        self.log.info('Manual annotation successful.')
-        self.log.info('Starting annotation using CADD database, please hold.')
-        self.dataset = self.lookup.process(dataset=self.dataset)
         self.log.info('Annotation successful.')
         self.log.debug('Final shape of the annotated data: {}'.format(self.dataset.shape))
         return self.dataset

@@ -6,15 +6,14 @@ for imputing.
 from src.main.python.resources.data_files.imputing.impute_values_abstract import TemplateImputeValues
 
 
-class Cadd14Grch37(TemplateImputeValues):
+class VEP104(TemplateImputeValues):
     def __init__(self):
         super().__init__(
-                name='CADD 1.4, GRCh build 37',
+                name='VEP104',
                 usable=True,
-                cadd_version=1.4,
-                grch_build=37
+                vep_version=104.0
         )
 
     @staticmethod
     def _json_name():
-        return 'Cadd14Grch37.json'
+        return 'VEP104.json'
