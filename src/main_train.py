@@ -165,7 +165,7 @@ class Train(Main):
                 random_state=self.random_state
             )
         selected_pathogenic_histogram, bins = np.histogram(
-            selected_pathogenic['max_AF'],
+            selected_pathogenic['MAX_AF'],
             bins=bins
         )
         return_df = pd.DataFrame(columns=return_df_columns)
@@ -233,8 +233,8 @@ class Train(Main):
         :return: pandas.DataFrame
         """
         vars_in_range = variants.where(
-            (variants['max_AF'] < upper) &
-            (variants['max_AF'] >= lower)
+            (variants['MAX_AF'] < upper) &
+            (variants['MAX_AF'] >= lower)
         ).dropna(how='all')
         return vars_in_range
 
