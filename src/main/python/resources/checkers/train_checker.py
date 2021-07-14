@@ -38,7 +38,7 @@ class TrainChecker:
         """
         required_columns = ['binarized_label', 'sample_weight']
         if include_balancing:
-            required_columns += ['Consequence', 'max_AF']
+            required_columns += ['Consequence', 'MAX_AF']
         for col_name in required_columns:
             if col_name not in dataset.columns:
                 error_message = 'Error locating label {} within dataset!'.format(col_name)

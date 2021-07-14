@@ -14,8 +14,7 @@ class CaddImputing:
 
     def __init__(self):
         self.manager = CapiceManager()
-        self.cadd_version = self.manager.cadd_version
-        self.grch_build = self.manager.grch_build
+        self.vep_version = self.manager.vep_version
         self.log = Logger().logger
         self.log.info('Imputer started.')
         self.overrule = self.manager.overwrite_impute
@@ -74,9 +73,8 @@ class CaddImputing:
                 self.module = module
                 break
             else:
-                module_cadd_version = module.supported_cadd_version
-                module_grch_build = module.supported_grch_build
-                if module_cadd_version == self.cadd_version and module_grch_build == self.grch_build:
+                module_vep_version = module.supported_vep_version
+                if module_vep_version == self.vep_version:
                     self.log.info('Impute data file successfully found: {} , located at: {}'.format(
                         module.name, inspect.getfile(module.__class__)))
                     self.module = module
@@ -88,19 +86,18 @@ class CaddImputing:
             if self.overrule:
                 error_message = 'No imputing data file found for overrule: {}'.format(self.overrule)
             else:
-                error_message = 'No imputing data file found for CADD version: {} and genome build: {}'.format(
-                    self.cadd_version,
-                    self.grch_build
+                error_message = 'No imputing data file found for VEP version: {}'.format(
+                    self.vep_version
                 )
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
-    def _load_values(self):
+    def _load_values(self, datafile: pd.DataFrame):
         """
         Function to be called right when impute() is called, gets the cadd features and impute values from the
         impute file and saves the cadd features to the manager.
         """
-        self.columns = self.module.cadd_features
+        self.columns = datafile.columns[~datafile.columns.isin(['Chr', 'Pos', 'Ref', 'Alt'])]
         self.manager.cadd_features = self.columns
         self.impute_values = self.module.impute_values
 
@@ -109,7 +106,7 @@ class CaddImputing:
         Function to call the CaddImputing to start imputing.
         :return: pandas DataFrame
         """
-        self._load_values()
+        self._load_values(datafile)
         datafile = self._check_chrom_pos(datafile)
         self._get_nan_ratio_per_column(dataset=datafile)
         self._get_full_nan_row(dataset=datafile)

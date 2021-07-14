@@ -76,16 +76,14 @@ class InputChecker:
             self.output_filename = self.output_filename + '.gz'
 
     @staticmethod
-    def check_cadd_db_and_reference(cadd_snvs_db, cadd_indels_db, reference):
+    def check_reference(reference):
         """
-        Function to check if the CADD database, it's .tbi file and the reference files all exist
+        Function to check if the reference files exist
         """
-        if not check_file_exists(cadd_snvs_db) and not check_file_exists(
-                '{}.{}'.format(cadd_snvs_db, 'tbi')) and not check_file_exists(
-                reference) and not check_file_exists(cadd_indels_db) and not check_file_exists(
-            '{}.{}'.format(cadd_indels_db, 'tbi')
-        ):
-            raise FileNotFoundError('Unable to locate all required files to annotate through the CADD database.')
+        locs = [reference, '{}.{}'.format(reference, 'fai')]
+        for loc in locs:
+            if loc is False or not check_file_exists(loc):
+                raise FileNotFoundError('Unable to locate all required files to annotate through the CADD database.')
 
     def get_output_filename(self):
         return self.output_filename

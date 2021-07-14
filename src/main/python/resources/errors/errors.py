@@ -24,10 +24,3 @@ class InitializationError(Exception):
     Raised when a function is called before the class is initialized
     """
     pass
-
-
-class InvalidInputFileError(Exception):
-    """
-    Raised when an input file is given but CAPICE does not recognize its origin
-    """
-    pass

@@ -11,7 +11,7 @@ class ConfigReader:
             self.defaults = None
             self.overwrites = None
             self.misc = None
-            self.cadd = None
+            self.datafiles = None
             self.train = None
             self.error = 'ERROR'
 
@@ -20,7 +20,7 @@ class ConfigReader:
             self._check_all_sections_present()
             self.defaults = self.config[Sections.DEFAULTS.value]
             self.overwrites = self.config[Sections.OVERWRITES.value]
-            self.cadd = self.config[Sections.CADD.value]
+            self.datafiles = self.config[Sections.DATAFILES.value]
             self.misc = self.config[Sections.MISC.value]
             self.train = self.config[Sections.TRAINING.value]
 
@@ -47,9 +47,9 @@ class ConfigReader:
             value = self._check_value_default(value=value, else_type=str)
             return value
 
-        def get_cadd_value(self, key):
+        def get_datafiles_value(self, key):
             key = key.lower()
-            value = self.cadd.get(key, fallback=self.error)
+            value = self.datafiles.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='CADD')
             value = self._check_value_default(value=value, else_type=str)
             return value
@@ -83,7 +83,7 @@ class ConfigReader:
                 self._raise_key_not_found(section=section, keysearch=keysearch)
 
         def _check_all_sections_present(self):
-            should_be_present = ['DEFAULTS', 'OVERWRITES', 'CADD', 'MISC', 'TRAINING']
+            should_be_present = ['DEFAULTS', 'OVERWRITES', 'DATAFILES', 'MISC', 'TRAINING']
             for section in should_be_present:
                 if section not in self.config.sections():
                     raise KeyError('Unable to locate {} in config file.'.format(section))
