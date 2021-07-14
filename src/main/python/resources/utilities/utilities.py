@@ -71,15 +71,16 @@ def load_modules(path):
     modules = []
     for module in os.listdir(path):
         if module.endswith('.py'):
-            if not module.endswith('__.py') and not module.endswith('abstract.py'):
+            if not module.endswith('__.py') and not module.endswith(
+                    'abstract.py'):
                 modules.append(module)
     return modules
 
 
 def importer(usable_modules: list, path):
     """
-    Utilitarian function for the imputer and preprocessor to dynamically load in the modules using the import_module
-    library.
+    Utilitarian function for the imputer and preprocessor to dynamically load
+    in the modules using the import_module library.
     :param usable_modules: list of modules present within a certain directory
     :param path: path of said directory
     :return: list of usable modules
@@ -96,7 +97,8 @@ def importer(usable_modules: list, path):
 
 def _importer(imported_module):
     for attribute in dir(imported_module):
-        if not attribute.startswith('Template') and not attribute.startswith('__'):
+        if not attribute.startswith('Template') and \
+                not attribute.startswith('__'):
             get_attribute = getattr(imported_module, attribute)
             if 'name' in dir(get_attribute) and 'usable' in dir(get_attribute):
                 if get_attribute().usable is True:
@@ -105,7 +107,8 @@ def _importer(imported_module):
 
 def get_filename_and_extension(path):
     """
-    Function to get the filename and extension of a file from a given input path or input filename.
+    Function to get the filename and extension of a file from a given input
+    path or input filename.
     :param path: string
     :return: filename (string), extension (string)
     """

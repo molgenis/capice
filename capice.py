@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 """
-CAPICE.py is a module of CAPICE that is supposed to be called when the user wants to make a prediction over a CADD
-annotated file. It's use is to gather all Command Line Arguments, check some, provide the global manager
-(./src/global_manager.py CapiceManager) with arguments that are used in multiple modules and provide
-./src/main_capice.py with it's wanted arguments.
+CAPICE.py is a module of CAPICE that is supposed to be called when the user
+wants to make a prediction over a VEP annotated file. It's use is to gather all
+Command Line Arguments, check some, provide the global manager
+(./src/global_manager.py CapiceManager) with arguments that are used in multiple
+modules and provide ./src/main_capice.py with it's wanted arguments.
 """
 
 from src.main.python.core.command_line_parser import ArgumentParser
@@ -20,10 +21,15 @@ __program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
 __license__ = 'LGPL-3.0'
 __version__ = '2.0.0'
-__description__ = "{} (version: {}) is a program developed and maintained by {}. " \
-                  "The program facilitates a pathogenicity prediction for a CADD annotated VCF file. " \
-                  "This program is developed under the {} license and is provided 'as-is' without any warranty " \
-                  "or indemnification of any kind.".format(__program__, __version__, __author__, __license__)
+__description__ = """{} (version: {}) is a program developed and maintained by 
+{}. The program facilitates a pathogenicity prediction for a VEP annotated VCF 
+file. This program is developed under the {} license and is provided 'as-is' 
+without any warranty or indemnification of any kind.""".format(
+    __program__,
+    __version__,
+    __author__,
+    __license__
+)
 
 
 def main():
@@ -53,7 +59,8 @@ def main():
     input_checker = InputChecker()
 
     input_checker.check_input_loc(input_loc=input_loc)
-    input_checker.check_input_output_directories(input_path=input_loc, output_path=output_loc)
+    input_checker.check_input_output_directories(input_path=input_loc,
+                                                 output_path=output_loc)
     output_loc = input_checker.get_output_directory()
     output_filename = input_checker.get_output_filename()
     input_checker.check_output_loc(output_loc=output_loc)
@@ -72,6 +79,8 @@ def main():
     manager.verbose = verbose
     manager.overwrite_impute = config.get_overwrite_value(key='imputefile')
     manager.overwrite_model = config.get_overwrite_value(key='modelfile')
+    manager.config_vep_version = config.get_default_value(key='vepversion')
+    manager.config_grch_build = config.get_default_value(key='genomebuild')
     manager.force = force
     manager.output_filename = output_filename
     manager.reference_genome = config.get_datafiles_value(key='reference')

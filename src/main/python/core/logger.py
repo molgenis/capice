@@ -10,7 +10,7 @@
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+       https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +28,10 @@ import sys
 
 class Logger:
     """
-    Singleton logger class developed by both Martijn Vochteloo and Robert Jarik Sietsma.
-    Facilitates the python logging library.py
+    Singleton logger class developed by both:
+    - Martijn Vochteloo
+    - Robert Jarik Sietsma.
+    Facilitates the python logging library
     """
 
     class __Logger:
@@ -45,7 +47,8 @@ class Logger:
 
         def set_loglevel(self):
             """
-            Function to set the log level at where messages are printed or logged. For more information, see:
+            Function to set the log level at where messages are printed or
+            logged. For more information, see:
             https://docs.python.org/3/library/logging.html#logging-levels
             :return: logging level
             """
@@ -59,7 +62,8 @@ class Logger:
 
         def load_logger(self):
             """
-            Function to set up the logger instance with the correct format and filename.
+            Function to set up the logger instance with the correct format and
+            filename.
 
             :return: logger instance
             """
@@ -76,7 +80,9 @@ class Logger:
             logger.addHandler(console_handler)
             if self.create_logfile:
                 now = self.global_settings.now
-                out_file_name = 'capice_{}'.format(now.strftime("%H%M%S%f_%d%m%Y"))
+                out_file_name = 'capice_{}'.format(
+                    now.strftime("%H%M%S%f_%d%m%Y")
+                )
                 out_file = self._create_log_export_name(out_file_name)
                 self.final_log_loc = out_file
                 file_handler = logging.FileHandler(out_file)
@@ -108,7 +114,8 @@ class Logger:
 
         def get_log_loc(self):
             """
-            Function for external modules to request where the log file is saved.
+            Function for external modules to request where the log file is
+            saved.
             :return: path-like
             """
             return self.final_log_loc
@@ -126,7 +133,9 @@ class Logger:
                 log_file_exist = True
                 counter = 1
                 while log_file_exist:
-                    attempted_filename = partial_export + '_{}.log'.format(counter)
+                    attempted_filename = partial_export + '_{}.log'.format(
+                        counter
+                    )
                     if not check_file_exists(attempted_filename):
                         log_file_exist = False
                         export_path = attempted_filename
@@ -146,7 +155,8 @@ class Logger:
 
     def get_log_loc(self):
         """
-        Function to get the real location where the logfile is stored for this instance of CAPICE.
+        Function to get the real location where the logfile is stored for this
+        instance of CAPICE.
         :return: path-like
         """
         pass

@@ -29,17 +29,21 @@ class ArgumentParser:
                               nargs=1,
                               type=str,
                               required=True,
-                              help='The location of the CADD'
-                                   ' annotated SNV file.')
+                              help='The location of the converted VEP'
+                                   ' annotated TSV file.')
 
         optional.add_argument('-o',
                               '--output',
                               nargs=1,
                               type=str,
                               default=None,
-                              help='The output filename or the output directory where the output file will be placed. '
-                                   'An output filename does not work when the --train flag is also used. Note: '
-                                   'the output file will always be gzipped! (except for model files)')
+                              help="""The output filename or the output 
+                              directory where the output file will be placed. 
+                              An output filename does not work when the --train 
+                              flag is also used. 
+                              Note: the output file will always be gzipped! 
+                              (except for model files)"""
+                              )
 
         optional.add_argument('-v',
                               '--verbose',
@@ -49,7 +53,8 @@ class ArgumentParser:
         optional.add_argument('-f',
                               '--force',
                               action='store_true',
-                              help='Overwrites output if it already exists. (NOT AVAILABLE FOR LOGGING)')
+                              help='Overwrites output if it already exists. '
+                                   '(NOT AVAILABLE FOR LOGGING)')
 
         optional.add_argument('--train',
                               action='store_true',

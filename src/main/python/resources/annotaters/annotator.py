@@ -16,13 +16,15 @@ class Annotator:
     def annotate(self):
         """
         Start the annotation process.
-        :return: pandas dataframe similar to the output of the CADD pipeline
+        :return: pandas dataframe
         """
         self.log.info('Starting manual annotation process.')
         self._add_sequence()
         self.dataset = self.manual_annotater.process(dataset=self.dataset)
         self.log.info('Annotation successful.')
-        self.log.debug('Final shape of the annotated data: {}'.format(self.dataset.shape))
+        self.log.debug(
+            'Final shape of the annotated data: {}'.format(self.dataset.shape)
+        )
         return self.dataset
 
     def _add_sequence(self):

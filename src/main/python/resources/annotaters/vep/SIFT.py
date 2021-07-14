@@ -1,4 +1,5 @@
-from src.main.python.resources.annotaters.vep_processors.template_sift_polyphen import TemplateSiftPolyPhen
+from src.main.python.resources.annotaters.vep.template_sift_polyphen import \
+    TemplateSiftPolyPhen
 
 
 class SIFT(TemplateSiftPolyPhen):

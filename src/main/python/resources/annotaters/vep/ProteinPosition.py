@@ -1,4 +1,5 @@
-from src.main.python.resources.annotaters.vep_processors.template_position import TemplatePosition
+from src.main.python.resources.annotaters.vep.template_position import \
+    TemplatePosition
 
 
 class ProteinPosition(TemplatePosition):

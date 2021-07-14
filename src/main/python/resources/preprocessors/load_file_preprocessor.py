@@ -9,8 +9,9 @@ class LoadFilePreProcessor:
 
     def process(self):
         """
-        Function to start the LoadFilePreProcessor to correct the input file of each column starting with %
-        and the renaming of certain columns, like #CHROM to Chr.
+        Function to start the LoadFilePreProcessor to correct the input file of
+        each column starting with % and the renaming of certain columns,
+        like #CHROM to Chr.
 
         Returns
         -------
@@ -28,7 +29,12 @@ class LoadFilePreProcessor:
     def _correct_percentage_sign(self):
         new_columns = []
         for column in self.dataset.columns:
-            new_columns.append(column.split('%')[1])
+            if column.startswith('%'):
+                new_columns.append(column.split('%')[1])
+            elif column.startswith('#'):
+                new_columns.append(column.split('#')[1])
+            else:
+                new_columns.append(column)
         self.dataset.columns = new_columns
 
     def _col_renamer(self):

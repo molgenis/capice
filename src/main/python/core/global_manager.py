@@ -5,26 +5,29 @@ class CapiceManager:
     """
     Test
     """
+
     class __CapiceManager:
         """
         Class to make a logfile on the progress being made.
         """
+
         def __init__(self):
             self.property_checker = PropertyChecker()
             self.log_loc = '.'
             self.now = None
             self.overwrite_impute = False
             self.overwrite_model = False
-            self.cadd_version = 0.0
             self.grch_build = 0
+            self.config_grch_build = 0
             self.force = False
             self.verbose = False
             self.enable_logfile = True
             self.critical_logging_only = False
-            self.cadd_features = []
+            self.annotation_features = []
             self.output_filename = ''
             self.reference_genome = False
             self.vep_version = 0.0
+            self.config_vep_version = 0.0
 
         @property
         def log_loc(self):
@@ -49,7 +52,8 @@ class CapiceManager:
 
         @overwrite_impute.setter
         def overwrite_impute(self, value=None):
-            self.property_checker.check_property(value=value, expected_type=(str, bool))
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(str, bool))
             self._overwrite_impute = value
 
         @property
@@ -58,17 +62,9 @@ class CapiceManager:
 
         @overwrite_model.setter
         def overwrite_model(self, value):
-            self.property_checker.check_property(value=value, expected_type=(str, bool))
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(str, bool))
             self._overwrite_model = value
-
-        @property
-        def cadd_version(self):
-            return self._cadd_version
-
-        @cadd_version.setter
-        def cadd_version(self, value):
-            self.property_checker.check_property(value=value, expected_type=float, include_none=True)
-            self._cadd_version = value
 
         @property
         def grch_build(self):
@@ -76,17 +72,34 @@ class CapiceManager:
 
         @grch_build.setter
         def grch_build(self, value):
-            self.property_checker.check_property(value=value, expected_type=int, include_none=True)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(int, bool))
             self._grch_build = value
 
         @property
-        def cadd_features(self):
-            return self._cadd_features
+        def config_grch_build(self):
+            """
+            Getter for setter config_grch_build
 
-        @cadd_features.setter
-        def cadd_features(self, value):
-            self.property_checker.check_property(value=value, expected_type=list)
-            self._cadd_features = value
+            :return: int
+            """
+            return self._config_grch_build
+
+        @config_grch_build.setter
+        def config_grch_build(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(int, bool))
+            self._config_grch_build = value
+
+        @property
+        def annotation_features(self):
+            return self._annotation_features
+
+        @annotation_features.setter
+        def annotation_features(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=list)
+            self._annotation_features = value
 
         @property
         def force(self):
@@ -94,7 +107,8 @@ class CapiceManager:
 
         @force.setter
         def force(self, value):
-            self.property_checker.check_property(value=value, expected_type=bool)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=bool)
             self._force = value
 
         @property
@@ -103,7 +117,8 @@ class CapiceManager:
 
         @verbose.setter
         def verbose(self, value):
-            self.property_checker.check_property(value=value, expected_type=bool)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=bool)
             self._verbose = value
 
         @property
@@ -112,7 +127,8 @@ class CapiceManager:
 
         @enable_logfile.setter
         def enable_logfile(self, value):
-            self.property_checker.check_property(value=value, expected_type=bool)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=bool)
             self._enable_logfile = value
 
         @property
@@ -121,7 +137,8 @@ class CapiceManager:
 
         @critical_logging_only.setter
         def critical_logging_only(self, value):
-            self.property_checker.check_property(value=value, expected_type=bool)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=bool)
             self._critical_logging_only = value
 
         @property
@@ -139,7 +156,8 @@ class CapiceManager:
 
         @reference_genome.setter
         def reference_genome(self, value):
-            self.property_checker.check_property(value=value, expected_type=(bool, str))
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(bool, str))
             self._reference_genome = value
 
         @property
@@ -148,8 +166,19 @@ class CapiceManager:
 
         @vep_version.setter
         def vep_version(self, value):
-            self.property_checker.check_property(value=value, expected_type=float)
+            self.property_checker.check_property(value=value,
+                                                 expected_type=float)
             self._vep_version = value
+
+        @property
+        def config_vep_version(self):
+            return self._config_vep_version
+
+        @config_vep_version.setter
+        def config_vep_version(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(float, bool))
+            self._config_vep_version = value
 
     instance = None
 
@@ -183,7 +212,8 @@ class CapiceManager:
     @now.setter
     def now(self, value):
         """
-        Singleton property now, to set a datetime instance of when program instance started.
+        Singleton property now, to set a datetime instance of when program
+        instance started.
 
         :param value: datetime instance
         """
@@ -201,7 +231,8 @@ class CapiceManager:
     @overwrite_impute.setter
     def overwrite_impute(self, value=None):
         """
-        Singleton property overwrite_impute, to set a string for the imputer to overwrite the CADD version and genome
+        Singleton property overwrite_impute, to set a string for the imputer to
+        overwrite the VEP version and genome
         build. Raises a TypeError if not supplied with a string or False.
 
         :param value: False or string
@@ -220,29 +251,12 @@ class CapiceManager:
     @overwrite_model.setter
     def overwrite_model(self, value):
         """
-        Singleton property overwrite_model, to set a string for the preprocessor and predictor to overwrite the
-        CADD version and genome build. Raises a TypeError if not supplied with a string or False.
+        Singleton property overwrite_model, to set a string for the
+        preprocessor and predictor to overwrite the
+        VEP version and genome build. Raises a TypeError if not supplied with a
+        string or False.
 
         :param value: False or string
-        """
-        pass
-
-    @property
-    def cadd_version(self):
-        """
-        Getter for setter cadd_version
-
-        :return: float
-        """
-        return self._cadd_version
-
-    @cadd_version.setter
-    def cadd_version(self, value):
-        """
-        Singleton property cadd_version, to set the globally available CADD version parsed from either the CADD file or
-        from the command line arguments. Raises TypeError if not supplied with a float or None.
-
-        :param value: float
         """
         pass
 
@@ -258,27 +272,50 @@ class CapiceManager:
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the globally available GRCh build parsed from either the CADD file or
-        from the command line arguments. Raises TypeError if not supplied with an integer or None.
+        Singleton property grch_build, to set the globally available GRCh build
+        parsed from the config.
+        Raises TypeError if not supplied with an integer or None.
 
         :param value: integer
         """
         pass
 
     @property
-    def cadd_features(self):
+    def config_grch_build(self):
         """
-        Getter for setter cadd_features
+        Getter for setter config_grch_build
+
+        :return: int
+        """
+        return self._config_vep_version
+
+    @config_grch_build.setter
+    def config_grch_build(self, value):
+        """
+        Singleton property config_grch_build,
+        to set the GRCh build present in the config.
+        Raises TypeError if not supplied with an integer or False.
+
+        :param value: int
+        """
+        pass
+
+    @property
+    def annotation_features(self):
+        """
+        Getter for setter annotation_features
 
         :return: list
         """
-        return self._cadd_features
+        return self._annotation_features
 
-    @cadd_features.setter
-    def cadd_features(self, value):
+    @annotation_features.setter
+    def annotation_features(self, value):
         """
-        Singleton property cadd_features, to set the globally available CADD features parsed in the imputer for the
-        preprocessor and predictor. Raises TypeError if not supplied with a list.
+        Singleton property annotation_features, to set the globally available
+        annotation features parsed in the imputer for the
+        preprocessor and predictor. Raises TypeError if not supplied with a
+        list.
 
         :param value: list
         """
@@ -296,7 +333,8 @@ class CapiceManager:
     @force.setter
     def force(self, value):
         """
-        Singleton property force, to tell the exporter to overwrite an already existing output file.
+        Singleton property force, to tell the exporter to overwrite an already
+        existing output file.
         Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
@@ -315,8 +353,9 @@ class CapiceManager:
     @verbose.setter
     def verbose(self, value):
         """
-        Singleton property verbose, to print more (debug) messages during the process. Raises TypeError if not
-        supplied with a boolean.
+        Singleton property verbose, to print more (debug) messages during the
+        process.
+        Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
         """
@@ -334,8 +373,10 @@ class CapiceManager:
     @enable_logfile.setter
     def enable_logfile(self, value):
         """
-        Singleton property enable_logfile, to tell the logger whenever a logfile should be made or if everything
-        should be piped to STDout and STDerr. Raises TypeError if not supplied with a boolean.
+        Singleton property enable_logfile,
+        to tell the logger whenever a logfile should be made or if everything
+        should be piped to STDout and STDerr.
+        Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
         """
@@ -353,8 +394,10 @@ class CapiceManager:
     @critical_logging_only.setter
     def critical_logging_only(self, value):
         """
-        Singleton property critical_logging_only, to tell the logger to only log CRITICAL loglevel events to file /
-        STDout and STDerr. Raises TypeError if not supplied with a boolean.
+        Singleton property critical_logging_only,
+        to tell the logger to only log CRITICAL loglevel events to file /
+        STDout and STDerr.
+        Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
         """
@@ -372,7 +415,8 @@ class CapiceManager:
     @output_filename.setter
     def output_filename(self, value):
         """
-        Singleton property output_filename, to set the output file name that CAPICE prediction will produce.
+        Singleton property output_filename,
+        to set the output file name that CAPICE prediction will produce.
 
         :param value: path-like
         """
@@ -390,7 +434,8 @@ class CapiceManager:
     @reference_genome.setter
     def reference_genome(self, value):
         """
-        Singleton property reference_genome, to set the location of the GRCh37 reference genome.
+        Singleton property reference_genome,
+        to set the location of the GRCh37 reference genome.
 
         :param value: False or path-like
         """
@@ -408,7 +453,28 @@ class CapiceManager:
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version, to set the VEP version present in the parsed input file.
+        Singleton property vep_version,
+        to set the VEP version present in the parsed input file.
+
+        :param value: float
+        """
+        pass
+
+    @property
+    def config_vep_version(self):
+        """
+        Getter for setter config_vep_version
+
+        :return: float
+        """
+        return self._config_vep_version
+
+    @config_vep_version.setter
+    def config_vep_version(self, value):
+        """
+        Singleton property config_vep_version,
+        to set the VEP version present in the config.
+        Raises TypeError if not supplied with an integer or False.
 
         :param value: float
         """

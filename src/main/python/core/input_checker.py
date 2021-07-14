@@ -1,6 +1,6 @@
 from src.main.python.resources.errors.errors import InputError
-from src.main.python.resources.utilities.utilities import prepare_dir, check_dir_exists, check_file_exists, \
-    get_filename_and_extension
+from src.main.python.resources.utilities.utilities import prepare_dir,\
+    check_dir_exists, check_file_exists, get_filename_and_extension
 import warnings
 import os
 
@@ -48,22 +48,27 @@ class InputChecker:
                 # Then I know it's an output filepath + possibly name
                 if os.path.splitext(output_path)[1] != '':
                     # Then I know it is a full path + filename
-                    self._create_capice_output_filename(input_path=output_path, append_capice=False)
+                    self._create_capice_output_filename(input_path=output_path,
+                                                        append_capice=False)
                 else:
                     # Then I know it's a full path
-                    self._create_capice_output_filename(input_path=input_path, output_path=output_path, ispath=True)
+                    self._create_capice_output_filename(input_path=input_path,
+                                                        output_path=output_path,
+                                                        ispath=True)
             else:
                 # Then I know it's an output filename
                 self.output_directory = os.path.dirname(input_path)
                 self.output_filename = output_path
         self._check_gzip_extension()
 
-    def _create_capice_output_filename(self, input_path, output_path=None, append_capice=True, ispath=False):
+    def _create_capice_output_filename(self, input_path, output_path=None,
+                                       append_capice=True, ispath=False):
         if output_path is None:
             output_path = input_path
         input_filename, extension = get_filename_and_extension(input_path)
         if append_capice:
-            self.output_filename = '{}_capice.{}'.format(input_filename, extension)
+            self.output_filename = '{}_capice.{}'.format(input_filename,
+                                                         extension)
         else:
             self.output_filename = '{}.{}'.format(input_filename, extension)
         if ispath:
@@ -83,7 +88,9 @@ class InputChecker:
         locs = [reference, '{}.{}'.format(reference, 'fai')]
         for loc in locs:
             if loc is False or not check_file_exists(loc):
-                raise FileNotFoundError('Unable to locate all required files to annotate through the CADD database.')
+                raise FileNotFoundError(
+                    'Unable to locate all required files to annotate.'
+                )
 
     def get_output_filename(self):
         return self.output_filename
@@ -108,12 +115,20 @@ class LogChecker:
         """
         if self.log_loc:
             if not check_dir_exists(self.log_loc):
-                warnings.warn("Output location {} not found, creating.".format(self.log_loc))
+                warnings.warn(
+                    "Output location {} not found, creating.".format(
+                        self.log_loc
+                    )
+                )
                 prepare_dir(self.log_loc)
             log_loc = self.log_loc
         else:
             if not check_dir_exists(self.output_loc):
-                warnings.warn("Output location {} not found, creating.".format(self.output_loc))
+                warnings.warn(
+                    "Output location {} not found, creating.".format(
+                        self.output_loc
+                    )
+                )
                 prepare_dir(self.output_loc)
             log_loc = self.output_loc
         return log_loc
