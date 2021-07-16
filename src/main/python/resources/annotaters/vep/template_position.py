@@ -32,8 +32,8 @@ class TemplatePosition(Template):
             '',
             regex=False
         )
-        dataframe[self.pos_col] = \
-        dataframe[self.pos_col].str.split('-', expand=True)[0]
+        dataframe[self.pos_col] = dataframe[self.pos_col].str.split(
+            '-', expand=True)[0]
         for column in self.columns:
             dataframe[column] = dataframe[column].astype(float)
         return dataframe
