@@ -2,6 +2,8 @@ from pathlib import Path
 import os
 import sys
 from importlib import import_module
+import warnings
+import functools
 
 
 def is_gzipped(file_path: str):
@@ -117,3 +119,15 @@ def get_filename_and_extension(path):
     filename = splitted_path[0]
     extension = ".".join(splitted_path[1:])
     return filename, extension
+
+
+def deprecated(func):
+    @functools.wraps(func)
+    def new_func(*args, **kwargs):
+        warnings.simplefilter('always', DeprecationWarning)
+        warnings.warn('Call to deprecated function {}.'.format(func.__name__),
+                      category=DeprecationWarning,
+                      stacklevel=2)
+        warnings.simplefilter('default', DeprecationWarning)
+        return func(*args, **kwargs)
+    return new_func

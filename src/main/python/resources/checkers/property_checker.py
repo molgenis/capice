@@ -16,7 +16,7 @@ class PropertyChecker:
                 if value is not None:
                     error_message = """
                     Expected variable type {} but got {}
-                    """.format(expected_type, type(value))
+                    """.format(expected_type, type(value)).strip()
                     self._talk_to_logger(error_message=error_message)
                     raise TypeError(error_message)
 

@@ -44,7 +44,9 @@ class FastaLookupAnnotator:
                 start = 0
             return_sequence = self.fasta.fetch(chromosome, start, end)
             if append_ns:
-                return_sequence = '{}{}'.format('N' * append_ns, return_sequence)
+                return_sequence = '{}{}'.format(
+                    'N' * append_ns, return_sequence
+                )
             return return_sequence
         except KeyError:
             self.log.warning(

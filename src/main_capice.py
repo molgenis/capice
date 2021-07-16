@@ -56,9 +56,15 @@ class Main:
         self.log.debug(
             'Output directory -o / --output confirmed: {}'.format(self.output)
         )
+        config_vep_version = self.config.get_default_value('vepversion')
+        self.log.debug(
+            'Config VEP version confirmed: {}'.format(
+                config_vep_version
+            )
+        )
         config_genome_build = self.config.get_default_value('genomebuild')
         self.log.debug(
-            'Genome build -gb / --genome_build confirmed: {}'.format(
+            'Config Genome build confirmed: {}'.format(
                 config_genome_build
             )
         )

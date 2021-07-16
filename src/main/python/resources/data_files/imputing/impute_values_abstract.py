@@ -90,6 +90,16 @@ class TemplateImputeValues(metaclass=ABCMeta):
         return 'none'
 
     @property
+    def annotation_features(self):
+        """
+        Property getter annotation_feature.
+        Get the annotation features defined within the impute file.
+
+        :return: list
+        """
+        return list(self.impute_data.keys())
+
+    @property
     def impute_values(self):
         """
         Property impute_values getter. Get the default / impute values as

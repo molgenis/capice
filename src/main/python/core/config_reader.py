@@ -36,11 +36,18 @@ class ConfigReader:
                 key = self._post_process_grch(key)
                 value = self._check_value_default(value=value, else_type=int)
             elif key == 'vepversion':
+                value = self._convert_vep_to_float(value)
                 value = self._check_value_default(value=value, else_type=float)
-
             if key == 'logfilelocation':
                 value = self._check_value_default(value=value, else_type=str)
             return value
+
+        @staticmethod
+        def _convert_vep_to_float(vep_key):
+            if isinstance(vep_key, int):
+                return float(vep_key)
+            else:
+                return vep_key
 
         @staticmethod
         def _post_process_grch(grch_key):

@@ -72,7 +72,8 @@ class InputVersionChecker:
                 self.manager.overwrite_model is False:
             error_message = """
             VEP version or GRCh build not specified and both overwrites are not 
-            set! Not able to find a correct impute or processing file!"""
+            set! Not able to find a correct impute or processing file!
+            """.strip()
             self.log.critical(error_message)
             raise InputError(error_message)
 
@@ -181,6 +182,6 @@ class InputVersionChecker:
                 type_of_mismatch,
                 version_cla,
                 version_file
-            )
+            ).strip()
             warnings.warn(warning_message)
             self.log.warning(warning_message)

@@ -1,7 +1,8 @@
 import unittest
 import pandas as pd
 from src.test.python.test_templates import teardown, set_up_manager_and_loc
-from src.main.python.resources.preprocessors.load_file_preprocessor import LoadFilePreProcessor
+from src.main.python.resources.preprocessors.load_file_preprocessor import \
+    LoadFilePreProcessor
 
 
 class TestFilePreProcessor(unittest.TestCase):
@@ -20,7 +21,8 @@ class TestFilePreProcessor(unittest.TestCase):
 
     def test_load_file_pre_processor(self):
         """
-        Test to see if the post file loading processor outputs according to expectation.
+        Test to see if the post file loading processor outputs according to
+        expectation.
         """
         print('Load file preprocessor.')
         data = pd.DataFrame(

@@ -16,7 +16,7 @@ class InputHeaderParser:
         self.log.info('Starting to parse input file header.')
         self.is_gzipped = is_gzipped
         self.input_file_loc = input_file_loc
-        self.header = None
+        self.header = ''
         self.header_build = False
         self.header_version = False
         self.header_present = False
@@ -26,7 +26,7 @@ class InputHeaderParser:
         if self.header_present:
             self.log.info(
                 "Input file header successfully identified: {}".format(
-                    self.header)
+                    self.header.strip())
             )
             self._get_file_type()
         else:

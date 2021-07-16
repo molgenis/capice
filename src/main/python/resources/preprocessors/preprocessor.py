@@ -112,7 +112,7 @@ class PreProcessor:
                     """.format(
                         preprocessor.name,
                         inspect.getfile(preprocessor.__class__)
-                    )
+                    ).strip()
                     )
                     self.preprocessor = preprocessor
                     break
@@ -129,7 +129,7 @@ class PreProcessor:
                 genome build: {}""".format(
                     self.vep_version,
                     self.grch_build
-                )
+                ).strip()
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 

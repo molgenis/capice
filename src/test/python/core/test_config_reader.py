@@ -16,17 +16,21 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_defaults_present(self):
         print('Section defaults present')
-        self.assertTrue(Sections.DEFAULTS.value in self.config.config.sections())
+        self.assertTrue(
+            Sections.DEFAULTS.value in self.config.config.sections()
+        )
 
     def test_section_defaults(self):
         print('Section defaults')
-        required_arguments = ['logfilelocation', 'genomebuild', 'caddversion']
+        required_arguments = ['logfilelocation', 'genomebuild', 'vepversion']
         for argument in required_arguments:
             self.assertTrue(argument in self.config.defaults)
 
     def test_section_overwrites_present(self):
         print('Section overwrites present')
-        self.assertTrue(Sections.OVERWRITES.value in self.config.config.sections())
+        self.assertTrue(
+            Sections.OVERWRITES.value in self.config.config.sections()
+        )
 
     def test_section_overwrites(self):
         print('Section overwrites')
@@ -36,7 +40,9 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_datafiles_present(self):
         print('Section DATAFILES present')
-        self.assertTrue(Sections.DATAFILES.value in self.config.config.sections())
+        self.assertTrue(
+            Sections.DATAFILES.value in self.config.config.sections()
+        )
 
     def test_section_datafiles(self):
         print('Section DATAFILES')
@@ -56,11 +62,16 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_training_present(self):
         print('Section training present')
-        self.assertTrue(Sections.TRAINING.value in self.config.config.sections())
+        self.assertTrue(
+            Sections.TRAINING.value in self.config.config.sections()
+        )
 
     def test_section_training(self):
         print('Section training')
-        required_argument = ['makebalanced', 'default', 'specifieddefaults', 'split', 'traintestsize', 'earlyexit']
+        required_argument = ['makebalanced', 'default',
+                             'specifieddefaults', 'split',
+                             'traintestsize', 'earlyexit'
+                             ]
         for argument in required_argument:
             self.assertTrue(argument in self.config.train)
 

@@ -17,8 +17,8 @@ class CapiceManager:
             self.now = None
             self.overwrite_impute = False
             self.overwrite_model = False
-            self.grch_build = 0
-            self.config_grch_build = 0
+            self.grch_build = False
+            self.config_grch_build = False
             self.force = False
             self.verbose = False
             self.enable_logfile = True
@@ -26,8 +26,8 @@ class CapiceManager:
             self.annotation_features = []
             self.output_filename = ''
             self.reference_genome = False
-            self.vep_version = 0.0
-            self.config_vep_version = 0.0
+            self.vep_version = False
+            self.config_vep_version = False
 
         @property
         def log_loc(self):

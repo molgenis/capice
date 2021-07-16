@@ -2,7 +2,7 @@ from src.main.python.core.logger import Logger
 import inspect
 import numpy as np
 from src.main.python.resources.utilities.utilities import \
-    get_project_root_dir, load_modules, importer
+    get_project_root_dir, load_modules, importer, deprecated
 from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
 import os
@@ -27,6 +27,7 @@ class CapiceImputing:
         self._is_correct_datafile_present()
         self._check_if_imputer_is_applied()
         self.columns = []
+        self.annotation_columns_present = []
         self.impute_values = {}
         self.pre_dtypes = {}
         self.dtypes = {}
@@ -113,22 +114,24 @@ class CapiceImputing:
                                 '{}'.format(self.overrule)
             else:
                 error_message = 'No imputing data file found for ' \
-                                'VEP version: {} and' \
+                                'VEP version: {} and ' \
                                 'GRCh build: {}'.format(self.vep_version,
                                                         self.grch_build
                                                         )
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
-    def _load_values(self, datafile: pd.DataFrame):
+    def _load_values(self, dataset: pd.DataFrame):
         """
         Function to be called right when impute() is called,
         gets the input datafile features,
         imputes values from the impute file and
         saves the datafile features to the manager.
         """
-        self.columns = datafile.columns[
-            ~datafile.columns.isin(['Chr', 'Pos', 'Ref', 'Alt'])]
+        self.columns = self.module.annotation_features
+        for col in self.columns:
+            if col in dataset.columns:
+                self.annotation_columns_present.append(col)
         self.manager.annotation_features = self.columns
         self.impute_values = self.module.impute_values
 
@@ -141,14 +144,22 @@ class CapiceImputing:
         datafile = self._check_chrom_pos(datafile)
         self._get_nan_ratio_per_column(dataset=datafile)
         self._get_full_nan_row(dataset=datafile)
-        datafile.dropna(how='all', subset=self.columns)
+        datafile.dropna(how='all', subset=self.annotation_columns_present)
         datafile = datafile[~datafile['CAPICE_drop_out']]
         datafile.drop(columns=['CAPICE_drop_out'], inplace=True)
         self._correct_dtypes(datafile=datafile)
         datafile.fillna(self.impute_values, inplace=True)
         datafile = datafile.astype(dtype=self.pre_dtypes, copy=False)
         datafile = datafile.astype(dtype=self.dtypes, copy=False)
+        datafile = self._add_missing_columns(datafile)
         self.log.info('Imputing successfully performed.')
+        return datafile
+
+    @deprecated
+    def _add_missing_columns(self, datafile: pd.DataFrame):
+        for key, value in self.impute_values.items():
+            if key not in datafile.columns:
+                datafile[key] = value
         return datafile
 
     def _correct_dtypes(self, datafile: pd.DataFrame):
@@ -223,7 +234,8 @@ class CapiceImputing:
         """
         n_samples = dataset.shape[0]
         dataset.index = range(1, n_samples + 1)
-        dataset['CAPICE_drop_out'] = dataset[self.columns].isnull().values.all(
+        dataset['CAPICE_drop_out'] = dataset[
+            self.annotation_columns_present].isnull().values.all(
             axis=1)
         samples_dropped_out = dataset[dataset['CAPICE_drop_out']]
         if samples_dropped_out.shape[0] > 0:
