@@ -34,7 +34,7 @@ making predictions using the CAPICE model.
 
 ### Download and installation (UNIX like systems)
 __Note: this install is for Python 3.7, Python 3.8 and Python 3.9. 
-Python 3.6 is also supported and install can be found at the bottom of this chapter.
+The install instructions for Python 3.6 can be found at the bottom of this chapter.
 Python 3.5 and lower is not supported.__
 
 1. Software and libraries
@@ -44,7 +44,7 @@ git clone https://github.com/molgenis/capice.git
 cd capice
 ```
 
-1.1 Installation of libraries
+#### 1.1 Installation of libraries
 
 CAPICE can be installed through the supplied setup.py.
 
@@ -84,6 +84,11 @@ xgboost | Version 0.72.1 (Version 0.90 also works)
 
 __Installation on Windows systems is not possible. Please refer to UNIX like systems (iOS or Linux) or use the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10).__
 
+#### 1.2 Additional required files
+
+CAPICE requires a [Faidx indexed fasta file](http://www.htslib.org/doc/samtools-faidx.html), with contigs 1-22, X, Y and MT. We recommend the [1000genomes reference fasta](http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/technical/reference/) (both `human_g1k_v37.fasta.gz` and `human_g1k_v37.fasta.gz.fai` are required) (MD5sum can be found [here](https://gatk.broadinstitute.org/hc/en-us/articles/360035890711-GRCh37-hg19-b37-humanG1Kv37-Human-Reference-Discrepancies)).
+Once the reference fasta and it's Faidx index have been created, set the location of the fasta file in `config.cfg`.
+
 ### Usage
 
 CAPICE predictions can be run by using the following command:
@@ -92,7 +97,7 @@ CAPICE predictions can be run by using the following command:
 
 CAPICE requires the following arguments:
 
-- -i / --input: The path to the input [CADD annotated](https://cadd.gs.washington.edu/) dataset using the tab separator (can be both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/test_cadd14_grch37_annotated.tsv.gz` for CADD 1.4 and genome build 37.
+- -i / --input: The path to the input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/CAPICE_input.tsv.gz` for genome build 37. The annotations within this file are based on VEP104.2 . VEP outputs can be converted using the `convert_vep_to_tsv_capice.sh` script in `scripts`.
 
 The following flags are optional:
 - -o / --output: The path to the directory, output filename or output directory and filename where the output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the file will be placed within the input directory. __The file will always be gzipped with a .gz extension!__
@@ -117,11 +122,10 @@ _Alternatively, further setup can be performed in the `config.cfg`_
 
 A file will be put out containing the following columns:
 
-- __No__ index
 - chr_pos_ref_alt: column containing the chromosome, position, reference and alternative separated by an underscore.
-- GeneName: The ENSEMBL gene name of the variant as supplied by CADD.
+- GeneName: The ENSEMBL gene name of the variant as supplied by VEP.
 - FeatureID: The ENSEMBL feature ID (Transcript ID or regulatory feature ID).
-- Consequence: The type of consequence that the variant has as supplied by CADD.
+- Consequence: The type of consequence that the variant has as supplied by VEP.
 - probabilities: The predicted CAPICE score for the variant. The higher the score, the more likely that the variant is pathogenic.
 
 ### Usage for making new CAPICE like models
@@ -154,7 +158,7 @@ with open(path/to/model_file.pickle.dat, 'rb') as model_file:
 
 - Will CAPICE support CADD 1.6 and Genome Build 38?
 
-In a future patch CAPICE will add support for CADD 1.6 and Genome Build 38, for both CADD 1.4 and CADD 1.6.
+While genome build 38 will be supported in the future, CADD 1.6 will not be. Even CADD 1.4 is deprecated at this point. Input annotation is fully handled by VEP.
 
 - These scores are nice and all, but what do they really mean for this particular variant?
 
