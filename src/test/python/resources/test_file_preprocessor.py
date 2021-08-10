@@ -1,8 +1,8 @@
 import unittest
 import pandas as pd
 from src.test.python.test_templates import teardown, set_up_manager_and_loc
-from src.main.python.resources.preprocessors.load_file_preprocessor import \
-    LoadFilePreProcessor
+from src.main.python.resources.preprocessors.load_file_postprocessor import \
+    LoadFilePostProcessor
 
 
 class TestFilePreProcessor(unittest.TestCase):
@@ -45,15 +45,15 @@ class TestFilePreProcessor(unittest.TestCase):
                 "Pos": [100, 200, 300],
                 "Ref": ['A', 'T', 'G'],
                 "Alt": ['T', 'G', 'A'],
-                "SourceID": ['foo', 'foo', 'bar'],
-                "FeatureID": ['bar', 'bar', 'buz'],
-                "GeneName": ['g1', 'g2', 'g3'],
+                "id_source": ['foo', 'foo', 'bar'],
+                "transcript": ['bar', 'bar', 'buz'],
+                "gene_name": ['g1', 'g2', 'g3'],
                 "Intron": [1, 0, 0],
                 "Exon": [0, 1, 1]
             }
         )
 
-        processor = LoadFilePreProcessor(dataset=data)
+        processor = LoadFilePostProcessor(dataset=data)
         observed_output = processor.process()
         pd.testing.assert_frame_equal(expected_output, observed_output)
 

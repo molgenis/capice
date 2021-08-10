@@ -43,7 +43,7 @@ class TestMainNonTrain(unittest.TestCase):
             compression='gzip',
             sep='\t'
         )
-        self.assertEqual(prediction_output.shape, (20, 5))
+        self.assertEqual(prediction_output.shape, (20, 9))
 
 
 if __name__ == '__main__':

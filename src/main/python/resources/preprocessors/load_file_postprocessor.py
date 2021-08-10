@@ -2,14 +2,14 @@ import pandas as pd
 from src.main.python.core.logger import Logger
 
 
-class LoadFilePreProcessor:
+class LoadFilePostProcessor:
     def __init__(self, dataset: pd.DataFrame):
         self.dataset = dataset
         self.log = Logger().logger
 
     def process(self):
         """
-        Function to start the LoadFilePreProcessor to correct the input file of
+        Function to start the LoadFilePostProcessor to correct the input file of
         each column starting with % and the renaming of certain columns,
         like #CHROM to Chr.
 
@@ -22,8 +22,8 @@ class LoadFilePreProcessor:
         self._correct_percentage_sign()
         self.log.debug('% sign corrected, starting renaming of columns.')
         self._col_renamer()
-        self.dataset['Chr'] = self.dataset['Chr'].astype(str)
-        self.log.info('LoadFilePreProcessor successful.')
+        self._correct_dtypes()
+        self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
 
     def _correct_percentage_sign(self):
@@ -37,6 +37,9 @@ class LoadFilePreProcessor:
                 new_columns.append(column)
         self.dataset.columns = new_columns
 
+    def _correct_dtypes(self):
+        self.dataset['Chr'] = self.dataset['Chr'].astype(str)
+
     def _col_renamer(self):
         """
         Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
@@ -48,9 +51,10 @@ class LoadFilePreProcessor:
                 'POS': 'Pos',
                 'REF': 'Ref',
                 'ALT': 'Alt',
-                'SYMBOL_SOURCE': 'SourceID',
-                'Feature': 'FeatureID',
-                'SYMBOL': 'GeneName',
+                'HGNC_ID': 'gene_id',
+                'SYMBOL_SOURCE': 'id_source',
+                'Feature': 'transcript',
+                'SYMBOL': 'gene_name',
                 'INTRON': 'Intron',
                 'EXON': 'Exon'
             }, inplace=True
