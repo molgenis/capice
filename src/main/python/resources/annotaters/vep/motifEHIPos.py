@@ -1,5 +1,5 @@
 import pandas as pd
-from src.main.python.resources.annotaters.vep_processors.template import Template
+from src.main.python.resources.annotaters.vep.template import Template
 import numpy as np
 
 

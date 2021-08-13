@@ -1,7 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.checkers.property_checker_logger import PropertyCheckerLogger
+from src.main.python.resources.checkers.property_checker_logger import \
+    PropertyCheckerLogger
+from src.main.python.resources.utilities.utilities import deprecated
 import pandas as pd
 import numpy as np
 import pickle
@@ -12,17 +14,18 @@ class TemplateSetup(metaclass=ABCMeta):
     Abstract class to act as template for new models that might be
     added in future patches of CAPICE. Contains the necessary steps for preprocessing as well.
     """
-    def __init__(self, name, usable, cadd_version, grch_build):
+
+    def __init__(self, name, usable, vep_version, grch_build):
         self.log = Logger().logger
         self.property_checker = PropertyCheckerLogger()
         self.name = name
         self.usable = usable
-        self.supported_cadd_version = cadd_version
+        self.supported_vep_version = vep_version
         self.supported_grch_build = grch_build
-        self.cadd_features = CapiceManager().cadd_features
+        self.annotation_features = CapiceManager().annotation_features
         self.train = False
         self.model = None
-        self.cadd_object = []
+        self.annotation_object = []
         self.model_features = None
 
     @property
@@ -66,25 +69,29 @@ class TemplateSetup(metaclass=ABCMeta):
         self._usable = value
 
     @property
-    def supported_cadd_version(self):
+    def supported_vep_version(self):
         """
         Property getter supported_cadd_version, to get the float cadd_version value of a model/prediction file
         that is supported within the module.
 
         :return: float or None
         """
-        return self._cadd_version
+        return self._vep_version
 
-    @supported_cadd_version.setter
-    def supported_cadd_version(self, value):
+    @supported_vep_version.setter
+    def supported_vep_version(self, value):
         """
         Property setter supported_cadd_version, to set the float cadd_version value of a model/prediction file
         that is supported within the module. Raises TypeError if not supplied with a float or None.
 
         :param value: float or None
         """
-        self.property_checker.check_property(value=value, expected_type=float, include_none=True)
-        self._cadd_version = value
+        self.property_checker.check_property(
+            value=value,
+            expected_type=float,
+            include_none=True
+        )
+        self._vep_version = value
 
     @property
     def supported_grch_build(self):
@@ -121,8 +128,19 @@ class TemplateSetup(metaclass=ABCMeta):
         dataset = self._duplicate_chr_pos_ref_alt(dataset=dataset)
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
+        if not self.train:
+            processed_dataset = self._check_all_model_features_present(
+                processed_dataset
+            )
         self.log.info('Successfully preprocessed data.')
         return processed_dataset
+
+    @deprecated
+    def _check_all_model_features_present(self, dataset: pd.DataFrame):
+        for feature in self.model_features:
+            if feature not in dataset.columns:
+                dataset[feature] = 0
+        return dataset
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):
         """
@@ -130,9 +148,13 @@ class TemplateSetup(metaclass=ABCMeta):
         :param dataset: pandas DataFrame
         """
         for feature in dataset.select_dtypes(include=["O"]).columns:
-            if feature in self.cadd_features:
-                self.cadd_object.append(feature)
-        self.log.debug('Converting the categorical columns: {}.'.format(", ".join(self.cadd_object)))
+            if feature in self.annotation_features:
+                self.annotation_object.append(feature)
+        self.log.debug(
+            'Converting the categorical columns: {}.'.format(
+                ", ".join(self.annotation_object)
+            )
+        )
 
     @staticmethod
     def _duplicate_chr_pos_ref_alt(dataset):
@@ -161,33 +183,40 @@ class TemplateSetup(metaclass=ABCMeta):
         :param dataset: unprocessed pandas DataFrame
         :return: processed pandas DataFrame
         """
-        cadd_feats_dict = {}
+        annotation_feats_dict = {}
         if self.train:
             hardcoded_features = ['Ref', 'Alt', 'Domain']
             for feature in hardcoded_features:
-                cadd_feats_dict[feature] = 5
-            self.log.info('Training protocol, creating new categorical conversion identifiers.')
-            for feat in self.cadd_object:
-                if feat not in cadd_feats_dict.keys():
-                    cadd_feats_dict[feat] = 5
+                annotation_feats_dict[feature] = 5
+            self.log.info(
+                'Training protocol, '
+                'creating new categorical conversion identifiers.'
+            )
+            for feat in self.annotation_object:
+                if feat not in annotation_feats_dict.keys():
+                    annotation_feats_dict[feat] = 5
         else:
-            for feature in self.cadd_object:
-                cadd_feats_dict = self._process_objects_no_train(feature=feature, cadd_features_dict=cadd_feats_dict)
+            for feature in self.annotation_object:
+                annotation_feats_dict = self._process_objects_no_train(
+                    feature=feature,
+                    annotation_features_dict=annotation_feats_dict
+                )
         processed_data = self._process_categorical_vars(
             dataset=dataset,
-            cadd_feats_dict=cadd_feats_dict
+            annotation_feats_dict=annotation_feats_dict
         )
         return processed_data
 
-    def _process_objects_no_train(self, feature: str, cadd_features_dict: dict):
+    def _process_objects_no_train(self, feature: str,
+                                  annotation_features_dict: dict):
         for model_feature in self.model_features:
             if model_feature.startswith(feature):
                 extension = model_feature.split(''.join([feature, '_']))[-1]
-                if feature in cadd_features_dict.keys():
-                    cadd_features_dict[feature].append(extension)
+                if feature in annotation_features_dict.keys():
+                    annotation_features_dict[feature].append(extension)
                 else:
-                    cadd_features_dict[feature] = [extension]
-        return cadd_features_dict
+                    annotation_features_dict[feature] = [extension]
+        return annotation_features_dict
 
     def _load_model_features(self):
         """
@@ -200,7 +229,7 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _process_categorical_vars(self,
                                   dataset: pd.DataFrame,
-                                  cadd_feats_dict: dict):
+                                  annotation_feats_dict: dict):
         """
         Processor of categorical columns. Will create new columns based on the quantity of a value within a column.
         :param dataset: unprocessed pandas DataFrame
@@ -208,42 +237,58 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: processed pandas DataFrame
         """
         if self.train:
-            for cadd_feature in cadd_feats_dict.keys():
+            for annotation_feature in annotation_feats_dict.keys():
                 feature_names = self._get_top10_or_less_cats(
-                    column=dataset[cadd_feature],
-                    return_num=cadd_feats_dict[cadd_feature]
+                    column=dataset[annotation_feature],
+                    return_num=annotation_feats_dict[annotation_feature]
                 )
-                dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
-                                                 dataset[cadd_feature], 'other')
+                dataset[annotation_feature] = np.where(
+                    dataset[annotation_feature].isin(feature_names),
+                    dataset[annotation_feature],
+                    'other')
         else:
-            for cadd_feature in cadd_feats_dict.keys():
-                feature_names = cadd_feats_dict[cadd_feature]
+            for annotation_feature in annotation_feats_dict.keys():
+                feature_names = annotation_feats_dict[annotation_feature]
                 self.log.debug('For feature: {} loaded {} levels: {}'.format(
-                    cadd_feature,
+                    annotation_feature,
                     len(feature_names),
                     feature_names
                 ))
-                dataset[cadd_feature] = np.where(dataset[cadd_feature].isin(feature_names),
-                                                 dataset[cadd_feature], 'other')
-        dataset = pd.get_dummies(dataset, columns=list(cadd_feats_dict.keys()))
+                dataset[annotation_feature] = np.where(
+                    dataset[annotation_feature].isin(feature_names),
+                    dataset[annotation_feature],
+                    'other'
+                )
+        dataset = pd.get_dummies(
+            dataset,
+            columns=list(annotation_feats_dict.keys())
+        )
 
-        # Checking if all cadd features are processed. If not, add a column containing all "false" (0)
-        for cadd_feature in cadd_feats_dict.keys():
-            dataset = self._check_all_cadd_features_processed(
-                current_cadd_feature=cadd_feature,
+        # Checking if all annotation features are processed.
+        # If not, add a column containing all "false" (0)
+        for annotation_feature in annotation_feats_dict.keys():
+            dataset = self._check_all_annotation_features_processed(
+                current_annotation_feature=annotation_feature,
                 dataset=dataset,
-                cadd_features_dict=cadd_feats_dict
+                annotation_features_dict=annotation_feats_dict
             )
 
         return dataset
 
-    def _check_all_cadd_features_processed(self, current_cadd_feature, dataset: pd.DataFrame, cadd_features_dict):
+    def _check_all_annotation_features_processed(self,
+                                                 current_annotation_feature,
+                                                 dataset: pd.DataFrame,
+                                                 annotation_features_dict):
         if not self.train:
-            for processed_feature in cadd_features_dict[current_cadd_feature]:
-                col_be_present = "_".join([current_cadd_feature, processed_feature])
+            afd = annotation_features_dict
+            for processed_feature in afd[current_annotation_feature]:
+                col_be_present = "_".join(
+                    [current_annotation_feature, processed_feature])
                 if col_be_present not in dataset.columns:
-                    self.log.warning('Of CADD feature {}, detected {} not present in columns.'.format(
-                        current_cadd_feature, processed_feature))
+                    self.log.warning(
+                        'Of annotation feature {},'
+                        ' detected {} not present in columns.'.format(
+                            current_annotation_feature, processed_feature))
                     dataset[col_be_present] = 0
         return dataset
 

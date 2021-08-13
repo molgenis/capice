@@ -32,13 +32,29 @@ class ConfigReader:
             value = self.defaults.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key, section='DEFAULTS')
             if key == 'genomebuild':
+                key = self._post_process_grch(key)
                 value = self._check_value_default(value=value, else_type=int)
-            elif key == 'caddversion':
+            elif key == 'vepversion':
+                value = self._convert_vep_to_float(value)
                 value = self._check_value_default(value=value, else_type=float)
-
             if key == 'logfilelocation':
                 value = self._check_value_default(value=value, else_type=str)
             return value
+
+        @staticmethod
+        def _convert_vep_to_float(vep_key):
+            if isinstance(vep_key, int):
+                return float(vep_key)
+            else:
+                return vep_key
+
+        @staticmethod
+        def _post_process_grch(grch_key):
+            if grch_key.startswith('grch'):
+                grch_key = grch_key.split('h')[1]
+            if '.' in grch_key:
+                grch_key = grch_key.split('.')[0]
+            return grch_key
 
         def get_overwrite_value(self, key):
             key = key.lower()
@@ -136,9 +152,9 @@ class ConfigReader:
         """
         pass
 
-    def get_cadd_value(self, key):
+    def get_datafiles_value(self, key):
         """
-        Function to get a value from the CADD section of the config.
+        Function to get a value from the DATAFILES section of the config.
 
         key: str
         """

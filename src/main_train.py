@@ -47,7 +47,7 @@ class Train(Main):
         self.split_random_state = 4
         self.model_random_state = 0
         self.defaults = {}
-        self.cadd_features = []
+        self.annotation_features = []
         self.processed_features = []
         self.verbose = self.manager.verbose
         self.model_type = None
@@ -73,9 +73,11 @@ class Train(Main):
         self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
-        imputed_data = self.impute(loaded_cadd_data=data)
-        self.cadd_features = self.manager.cadd_features
-        processed_data = self.preprocess(loaded_cadd_data=imputed_data, train=True)[1]
+        imputed_data = self.impute(loaded_data=data)
+        self.annotation_features = self.manager.annotation_features
+        processed_data = self.preprocess(
+            loaded_data=imputed_data, train=True
+        )[1]
         self._get_processed_features(dataset=processed_data)
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
@@ -245,7 +247,7 @@ class Train(Main):
         :param dataset: pandas.DataFrame
         """
         for column in dataset.columns:
-            for feature in self.cadd_features:
+            for feature in self.annotation_features:
                 if column == feature or column.startswith(feature):
                     if column not in self.processed_features:
                         self.processed_features.append(column)

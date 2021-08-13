@@ -1,4 +1,4 @@
-from src.main.python.resources.annotaters.vep_processors.template import Template
+from src.main.python.resources.annotaters.vep.template import Template
 import pandas as pd
 
 

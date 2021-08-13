@@ -14,7 +14,7 @@ class ManualAnnotator:
                                      'python',
                                      'resources',
                                      'annotaters',
-                                     'vep_processors')
+                                     'vep')
         self._load_vep_annotators()
 
     def _load_vep_annotators(self):

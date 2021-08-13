@@ -72,6 +72,8 @@ def main():
     manager.verbose = verbose
     manager.overwrite_impute = config.get_overwrite_value(key='imputefile')
     manager.overwrite_model = config.get_overwrite_value(key='modelfile')
+    manager.config_vep_version = config.get_default_value(key='vepversion')
+    manager.config_grch_build = config.get_default_value(key='genomebuild')
     manager.force = force
     manager.output_filename = output_filename
     manager.reference_genome = config.get_datafiles_value(key='reference')

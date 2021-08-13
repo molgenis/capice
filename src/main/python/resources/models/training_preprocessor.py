@@ -10,7 +10,7 @@ class TrainPreprocessor(TemplateSetup):
         super().__init__(
             name='Preprocessor for training',
             usable=False,
-            cadd_version=None,
+            vep_version=None,
             grch_build=None
         )
 

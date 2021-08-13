@@ -17,8 +17,8 @@ class PreProcessor:
         self.log = Logger().logger
         self.log.info('Preprocessor started.')
         self.overrule = self.manager.overwrite_model
-        self.cadd_version = self.manager.cadd_version
-        self.grch_version = self.manager.grch_build
+        self.vep_version = self.manager.vep_version
+        self.grch_build = self.manager.grch_build
         self.train = is_train
         self.preprocessors = []
         self.preprocessor = None
@@ -53,7 +53,7 @@ class PreProcessor:
             self._raise_no_module_found_error()
         imported_modules = importer(usable_modules=usable_modules, path=directory)
         for module in imported_modules:
-            if "name" in dir(module) and "supported_cadd_version" in dir(
+            if "name" in dir(module) and "supported_vep_version" in dir(
                     module) and "supported_grch_build" in dir(module):
                 self.preprocessors.append(module)
         if len(self.preprocessors) < 1:
@@ -81,11 +81,18 @@ class PreProcessor:
                 self.preprocessor = preprocessor
                 break
             else:
-                module_cadd = preprocessor.supported_cadd_version
+                module_vep = preprocessor.supported_vep_version
                 module_grch = preprocessor.supported_grch_build
-                if module_cadd == self.cadd_version and module_grch == self.grch_version:
-                    self.log.info('Preprocessing and model file successfully found: {} , Located at: {}'.format(
-                        preprocessor.name, inspect.getfile(preprocessor.__class__)))
+                if module_vep == self.vep_version and \
+                        module_grch == self.grch_build:
+                    self.log.info("""
+                    Preprocessing and model file successfully found: {} , 
+                    Located at: {}
+                    """.format(
+                        preprocessor.name,
+                        inspect.getfile(preprocessor.__class__)
+                    ).strip()
+                    )
                     self.preprocessor = preprocessor
                     break
 

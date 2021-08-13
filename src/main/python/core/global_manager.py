@@ -15,16 +15,17 @@ class CapiceManager:
             self.now = None
             self.overwrite_impute = False
             self.overwrite_model = False
-            self.cadd_version = 0.0
-            self.grch_build = 0
+            self.grch_build = False
+            self.config_grch_build = False
             self.force = False
             self.verbose = False
             self.enable_logfile = True
             self.critical_logging_only = False
-            self.cadd_features = []
+            self.annotation_features = []
             self.output_filename = ''
             self.reference_genome = False
-            self.vep_version = 0.0
+            self.vep_version = False
+            self.config_vep_version = False
 
         @property
         def log_loc(self):
@@ -62,15 +63,6 @@ class CapiceManager:
             self._overwrite_model = value
 
         @property
-        def cadd_version(self):
-            return self._cadd_version
-
-        @cadd_version.setter
-        def cadd_version(self, value):
-            self.property_checker.check_property(value=value, expected_type=float, include_none=True)
-            self._cadd_version = value
-
-        @property
         def grch_build(self):
             return self._grch_build
 
@@ -80,13 +72,29 @@ class CapiceManager:
             self._grch_build = value
 
         @property
-        def cadd_features(self):
-            return self._cadd_features
+        def config_grch_build(self):
+            """
+            Getter for setter config_grch_build
 
-        @cadd_features.setter
-        def cadd_features(self, value):
-            self.property_checker.check_property(value=value, expected_type=list)
-            self._cadd_features = value
+            :return: int
+            """
+            return self._config_grch_build
+
+        @config_grch_build.setter
+        def config_grch_build(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(int, bool))
+            self._config_grch_build = value
+
+        @property
+        def annotation_features(self):
+            return self._annotation_features
+
+        @annotation_features.setter
+        def annotation_features(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=list)
+            self._annotation_features = value
 
         @property
         def force(self):
@@ -150,6 +158,16 @@ class CapiceManager:
         def vep_version(self, value):
             self.property_checker.check_property(value=value, expected_type=float)
             self._vep_version = value
+
+        @property
+        def config_vep_version(self):
+            return self._config_vep_version
+
+        @config_vep_version.setter
+        def config_vep_version(self, value):
+            self.property_checker.check_property(value=value,
+                                                 expected_type=(float, bool))
+            self._config_vep_version = value
 
     instance = None
 
@@ -228,25 +246,6 @@ class CapiceManager:
         pass
 
     @property
-    def cadd_version(self):
-        """
-        Getter for setter cadd_version
-
-        :return: float
-        """
-        return self._cadd_version
-
-    @cadd_version.setter
-    def cadd_version(self, value):
-        """
-        Singleton property cadd_version, to set the globally available CADD version parsed from either the CADD file or
-        from the command line arguments. Raises TypeError if not supplied with a float or None.
-
-        :param value: float
-        """
-        pass
-
-    @property
     def grch_build(self):
         """
         Getter for setter grch_build
@@ -266,19 +265,41 @@ class CapiceManager:
         pass
 
     @property
-    def cadd_features(self):
+    def config_grch_build(self):
         """
-        Getter for setter cadd_features
+        Getter for setter config_grch_build
+
+        :return: int
+        """
+        return self._config_vep_version
+
+    @config_grch_build.setter
+    def config_grch_build(self, value):
+        """
+        Singleton property config_grch_build,
+        to set the GRCh build present in the config.
+        Raises TypeError if not supplied with an integer or False.
+
+        :param value: int
+        """
+        pass
+
+    @property
+    def annotation_features(self):
+        """
+        Getter for setter annotation_features
 
         :return: list
         """
-        return self._cadd_features
+        return self._annotation_features
 
-    @cadd_features.setter
-    def cadd_features(self, value):
+    @annotation_features.setter
+    def annotation_features(self, value):
         """
-        Singleton property cadd_features, to set the globally available CADD features parsed in the imputer for the
-        preprocessor and predictor. Raises TypeError if not supplied with a list.
+        Singleton property annotation_features, to set the globally available
+        annotation features parsed in the imputer for the
+        preprocessor and predictor. Raises TypeError if not supplied with a
+        list.
 
         :param value: list
         """
@@ -408,7 +429,28 @@ class CapiceManager:
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version, to set the VEP version present in the parsed input file.
+        Singleton property vep_version,
+        to set the VEP version present in the parsed input file.
+
+        :param value: float
+        """
+        pass
+
+    @property
+    def config_vep_version(self):
+        """
+        Getter for setter config_vep_version
+
+        :return: float
+        """
+        return self._config_vep_version
+
+    @config_vep_version.setter
+    def config_vep_version(self, value):
+        """
+        Singleton property config_vep_version,
+        to set the VEP version present in the config.
+        Raises TypeError if not supplied with an integer or False.
 
         :param value: float
         """

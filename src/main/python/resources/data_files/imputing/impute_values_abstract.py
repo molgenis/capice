@@ -11,12 +11,13 @@ class TemplateImputeValues(metaclass=ABCMeta):
     Abstract template class for new imputing files.
     """
 
-    def __init__(self, name, usable, vep_version):
+    def __init__(self, name, usable, vep_version, grch_build):
         self.log = Logger().logger
         self.property_checker = PropertyCheckerLogger()
         self.name = name
         self.usable = usable
         self.supported_vep_version = vep_version
+        self.supported_grch_build = grch_build
         self.impute_data = self._get_impute_data()
 
     @property
@@ -45,6 +46,15 @@ class TemplateImputeValues(metaclass=ABCMeta):
     def supported_vep_version(self, value):
         self.property_checker.check_property(value=value, expected_type=float)
         self._vep_version = value
+
+    @property
+    def supported_grch_build(self):
+        return self._grch_build
+
+    @supported_grch_build.setter
+    def supported_grch_build(self, value):
+        self.property_checker.check_property(value=value, expected_type=int)
+        self._grch_build = value
 
     def _get_impute_data(self):
         with open(self._json_loc()) as json_file:
@@ -79,9 +89,10 @@ class TemplateImputeValues(metaclass=ABCMeta):
         return 'none'
 
     @property
-    def cadd_features(self):
+    def annotation_features(self):
         """
-        Property cadd_features getter. Get the CADD features as defined within an impute file.
+        Property getter annotation_feature.
+        Get the annotation features defined within the impute file.
 
         :return: list
         """

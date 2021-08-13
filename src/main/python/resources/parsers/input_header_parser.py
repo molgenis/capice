@@ -16,7 +16,7 @@ class InputHeaderParser:
         self.log.info('Starting to parse input file header.')
         self.is_gzipped = is_gzipped
         self.input_file_loc = input_file_loc
-        self.header = None
+        self.header = ''
         self.header_build = False
         self.header_version = False
         self.header_present = False
@@ -24,7 +24,10 @@ class InputHeaderParser:
         self.skip_rows = 0
         self._parse_header()
         if self.header_present:
-            self.log.info("Input file header successfully identified: {}".format(self.header))
+            self.log.info(
+                "Input file header successfully identified: {}".format(
+                    self.header.strip())
+            )
             self._get_file_type()
         else:
             self.log.warning('Unable to parse input file header, header not located. Does the header start with "##"?')
@@ -39,6 +42,7 @@ class InputHeaderParser:
             file_handle = open(self.input_file_loc, mode='rt')
         for line in file_handle:
             if line.startswith('##'):
+                self._check_vep_version(line=line)
                 self._add_skip_row(line=line)
             else:
                 break
@@ -57,9 +61,23 @@ class InputHeaderParser:
             self._parse_vep_version(line)
 
     def _parse_vep_version(self, line):
-        vep_version = float(line.split('v')[1].split('"')[0])
-        self.manager.vep_version = vep_version
-        self.log.info('Successfully identified VEP version: {}'.format(vep_version))
+        for annotation in line.split(' '):
+            if annotation.startswith('##VEP'):
+                self.header_version = float(
+                    annotation.split('v')[1].split('"')[0]
+                )
+                self.log.info(
+                    'Header VEP version identified: {}'.format(
+                        self.header_version
+                    )
+                )
+            elif annotation.startswith('assembly'):
+                self.header_build = int(annotation.split('h')[1].split('.')[0])
+                self.log.info(
+                    'Header GRCh build identified: {}'.format(
+                        self.header_build
+                    )
+                )
 
     def _get_file_type(self):
         if not self.header.startswith('## VEP VCF to CAPICE tsv converter'):
@@ -73,3 +91,21 @@ class InputHeaderParser:
         :return: int
         """
         return self.skip_rows
+
+    def get_vep_version(self):
+        """
+        Function to return the float value of the VEP version used to generate
+        the input file.
+
+        :return: float
+        """
+        return self.header_version
+
+    def get_grch_build(self):
+        """
+        Function to return the float value of the GRCh build used to generate
+        the input file.
+
+        :return: int
+        """
+        return self.header_build

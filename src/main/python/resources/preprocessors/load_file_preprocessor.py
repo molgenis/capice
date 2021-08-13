@@ -28,7 +28,12 @@ class LoadFilePreProcessor:
     def _correct_percentage_sign(self):
         new_columns = []
         for column in self.dataset.columns:
-            new_columns.append(column.split('%')[1])
+            if column.startswith('%'):
+                new_columns.append(column.split('%')[1])
+            elif column.startswith('#'):
+                new_columns.append(column.split('#')[1])
+            else:
+                new_columns.append(column)
         self.dataset.columns = new_columns
 
     def _col_renamer(self):
