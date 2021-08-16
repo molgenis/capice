@@ -29,7 +29,8 @@ def set_up_manager_and_loc():
 
 def teardown():
     """
-    Function to remove any and all files from the '.test_output' folder and remove the folder itself too.
+    Function to remove any and all files from the '.test_output' folder and
+    remove the folder itself too.
     """
     test_folder = os.path.join(get_project_root_dir(), '.test_output')
     if len(os.listdir(test_folder)) > 0:

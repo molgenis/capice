@@ -41,9 +41,18 @@ class TestExporter(unittest.TestCase):
     def test_prediction_output(self):
         print('Prediction output')
         self.exporter.capice_filename = 'test_output.tsv'
-        self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        exported_data = pd.read_csv(os.path.join(self.output_loc, 'test_output.tsv'), compression='gzip', sep='\t')
-        pd.testing.assert_frame_equal(exported_data, self.prediction_output_dataframe)
+        self.exporter.export_capice_prediction(
+            datafile=self.prediction_output_dataframe
+        )
+        exported_data = pd.read_csv(
+            os.path.join(self.output_loc, 'test_output.tsv'),
+            compression='gzip',
+            sep='\t'
+        )
+        pd.testing.assert_frame_equal(
+            exported_data,
+            self.prediction_output_dataframe
+        )
 
     def test_dataset_export(self):
         print('Dataset export')
@@ -52,27 +61,49 @@ class TestExporter(unittest.TestCase):
             name='test',
             feature='Testing dataset'
         )
-        exported_dataset = pd.read_csv(os.path.join(self.output_loc, 'test.tsv.gz'), sep='\t')
-        pd.testing.assert_frame_equal(exported_dataset, self.export_dataset)
+        exported_dataset = pd.read_csv(
+            os.path.join(self.output_loc, 'test.tsv.gz'),
+            sep='\t'
+        )
+        pd.testing.assert_frame_equal(
+            exported_dataset,
+            self.export_dataset
+        )
 
     def test_exporter_filename_generator_dataset_extension(self):
         print('Filename generator (with dataset and extension=True)')
-        with open(os.path.join(self.output_loc, 'filename.tsv.gz'), 'wt') as fake_file:
+        with open(
+                os.path.join(self.output_loc, 'filename.tsv.gz'),
+                'wt') as fake_file:
             fake_file.write('This is a fake file')
-        new_filename = self.exporter._export_filename_ready(file_name='filename')
-        self.assertEqual(new_filename, os.path.join(self.output_loc, 'filename_1.tsv.gz'))
+        new_filename = self.exporter._export_filename_ready(
+            file_name='filename'
+        )
+        self.assertEqual(
+            new_filename,
+            os.path.join(self.output_loc, 'filename_1.tsv.gz')
+        )
 
     def test_exporter_force(self):
         print('Filename generator (with force=True)')
-        with open(os.path.join(self.output_loc, 'already_present_file.tsv'), 'wt') as present_file:
+        with open(
+                os.path.join(self.output_loc, 'already_present_file.tsv'),
+                'wt') as present_file:
             present_file.write('This file is already present')
         self.exporter.force = True
         self.exporter.capice_filename = 'already_present_file.tsv'
-        self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        forced_file = pd.read_csv(
-            os.path.join(self.output_loc, 'already_present_file.tsv'), compression='gzip', sep='\t'
+        self.exporter.export_capice_prediction(
+            datafile=self.prediction_output_dataframe
         )
-        pd.testing.assert_frame_equal(forced_file, self.prediction_output_dataframe)
+        forced_file = pd.read_csv(
+            os.path.join(self.output_loc, 'already_present_file.tsv'),
+            compression='gzip',
+            sep='\t'
+        )
+        pd.testing.assert_frame_equal(
+            forced_file,
+            self.prediction_output_dataframe
+        )
 
 
 if __name__ == '__main__':

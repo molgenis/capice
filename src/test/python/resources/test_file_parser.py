@@ -1,7 +1,8 @@
 import os
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
-from src.test.python.test_templates import set_up_manager_and_loc, teardown, set_up_main
+from src.test.python.test_templates import set_up_manager_and_loc, teardown,\
+    set_up_main
 
 
 class TestFileParser(unittest.TestCase):
@@ -9,7 +10,8 @@ class TestFileParser(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager, output_loc = set_up_manager_and_loc()
-        input_file = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
+        input_file = os.path.join(get_project_root_dir(), 'CAPICE_example',
+                                  'CAPICE_input.tsv.gz')
         cls.main = set_up_main()
         cls.main.infile = input_file
 
@@ -36,7 +38,8 @@ class TestFileParser(unittest.TestCase):
 
     def test_component_loadfile(self):
         """
-        component testing class for loading in files, whenever they meet at least desired dimensions.
+        component testing class for loading in files, whenever they meet at
+        least desired dimensions.
         """
         required_shape = (20, 22)
         file = self.main.load_file()

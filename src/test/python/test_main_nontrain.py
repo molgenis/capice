@@ -15,7 +15,10 @@ class TestMainNonTrain(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, cls.output_dir = set_up_manager_and_loc()
-        manager.output_filename = os.path.join(cls.output_dir, 'test_output.txt')
+        manager.output_filename = os.path.join(
+            cls.output_dir,
+            'test_output.txt'
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -27,14 +30,19 @@ class TestMainNonTrain(unittest.TestCase):
 
     def test_integration_main_nontrain(self):
         print('Main no-train (integration)')
-        infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
+        infile = os.path.join(get_project_root_dir(), 'CAPICE_example',
+                              'CAPICE_input.tsv.gz')
         main = Main(__program__=__program__,
                     __version__=__version__,
                     __author__=__author__,
                     input_loc=infile,
                     output_loc=self.output_dir)
         main.run()
-        prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'), compression='gzip', sep='\t')
+        prediction_output = pd.read_csv(
+            os.path.join(self.output_dir, 'test_output.txt'),
+            compression='gzip',
+            sep='\t'
+        )
         self.assertEqual(prediction_output.shape, (20, 5))
 
 

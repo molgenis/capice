@@ -30,12 +30,6 @@ class TestLogger(unittest.TestCase):
         print('Testing case:')
         self.log = Logger()
 
-    def tearDown(self):
-        print('Resetting arguments.')
-        # Logger.instance = None
-        # self.manager.verbose = False
-        # self.log.create_logfile = False
-
     def test_loglevel_nonverbose(self):
         print('Loglevel non verbose')
         loglevel = self.log.set_loglevel()
@@ -49,9 +43,14 @@ class TestLogger(unittest.TestCase):
 
     def test_create_logfile(self):
         print('Creating logfile')
-        message = 'This is a test_create_logfile specific message for testing purposes'
+        message = 'This is a test_create_logfile specific ' \
+                  'message for testing purposes'
         self.log.logger.info(message)
-        expected_out_message = '[CAPICE] [test_logger.py] [test_create_logfile] [INFO]  {}'.format(message)
+        expected_out_message = '[CAPICE] ' \
+                               '[test_logger.py] ' \
+                               '[test_create_logfile] ' \
+                               '[INFO]  ' \
+                               '{}'.format(message)
         logfile = os.listdir(self.output_loc)[0]
         with open(os.path.join(self.output_loc, logfile), 'rt') as log_messages:
             messages = log_messages.readlines()
@@ -78,10 +77,16 @@ class TestLogger(unittest.TestCase):
 
     def test_creating_log_filename(self):
         print('Logfile filename')
-        with open(os.path.join(self.output_loc, 'present_file.log'), 'wt') as logfile:
+        with open(
+                os.path.join(self.output_loc, 'present_file.log'),
+                'wt') as logfile:
             logfile.write('Already present')
-        new_filename = self.log._create_log_export_name(out_file_name='present_file')
-        self.assertEqual(new_filename, os.path.join(self.output_loc, 'present_file_1.log'))
+        new_filename = self.log._create_log_export_name(
+            out_file_name='present_file'
+        )
+        self.assertEqual(
+            new_filename, os.path.join(self.output_loc, 'present_file_1.log')
+        )
 
 
 if __name__ == '__main__':
