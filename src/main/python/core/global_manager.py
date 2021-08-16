@@ -5,12 +5,10 @@ class CapiceManager:
     """
     Test
     """
-
     class __CapiceManager:
         """
         Class to make a logfile on the progress being made.
         """
-
         def __init__(self):
             self.property_checker = PropertyChecker()
             self.log_loc = '.'
@@ -52,8 +50,7 @@ class CapiceManager:
 
         @overwrite_impute.setter
         def overwrite_impute(self, value=None):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=(str, bool))
+            self.property_checker.check_property(value=value, expected_type=(str, bool))
             self._overwrite_impute = value
 
         @property
@@ -62,8 +59,7 @@ class CapiceManager:
 
         @overwrite_model.setter
         def overwrite_model(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=(str, bool))
+            self.property_checker.check_property(value=value, expected_type=(str, bool))
             self._overwrite_model = value
 
         @property
@@ -72,8 +68,7 @@ class CapiceManager:
 
         @grch_build.setter
         def grch_build(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=(int, bool))
+            self.property_checker.check_property(value=value, expected_type=int, include_none=True)
             self._grch_build = value
 
         @property
@@ -107,8 +102,7 @@ class CapiceManager:
 
         @force.setter
         def force(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._force = value
 
         @property
@@ -117,8 +111,7 @@ class CapiceManager:
 
         @verbose.setter
         def verbose(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._verbose = value
 
         @property
@@ -127,8 +120,7 @@ class CapiceManager:
 
         @enable_logfile.setter
         def enable_logfile(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._enable_logfile = value
 
         @property
@@ -137,8 +129,7 @@ class CapiceManager:
 
         @critical_logging_only.setter
         def critical_logging_only(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
+            self.property_checker.check_property(value=value, expected_type=bool)
             self._critical_logging_only = value
 
         @property
@@ -156,8 +147,7 @@ class CapiceManager:
 
         @reference_genome.setter
         def reference_genome(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=(bool, str))
+            self.property_checker.check_property(value=value, expected_type=(bool, str))
             self._reference_genome = value
 
         @property
@@ -166,8 +156,7 @@ class CapiceManager:
 
         @vep_version.setter
         def vep_version(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=float)
+            self.property_checker.check_property(value=value, expected_type=float)
             self._vep_version = value
 
         @property
@@ -212,8 +201,7 @@ class CapiceManager:
     @now.setter
     def now(self, value):
         """
-        Singleton property now, to set a datetime instance of when program
-        instance started.
+        Singleton property now, to set a datetime instance of when program instance started.
 
         :param value: datetime instance
         """
@@ -231,8 +219,7 @@ class CapiceManager:
     @overwrite_impute.setter
     def overwrite_impute(self, value=None):
         """
-        Singleton property overwrite_impute, to set a string for the imputer to
-        overwrite the VEP version and genome
+        Singleton property overwrite_impute, to set a string for the imputer to overwrite the CADD version and genome
         build. Raises a TypeError if not supplied with a string or False.
 
         :param value: False or string
@@ -251,10 +238,8 @@ class CapiceManager:
     @overwrite_model.setter
     def overwrite_model(self, value):
         """
-        Singleton property overwrite_model, to set a string for the
-        preprocessor and predictor to overwrite the
-        VEP version and genome build. Raises a TypeError if not supplied with a
-        string or False.
+        Singleton property overwrite_model, to set a string for the preprocessor and predictor to overwrite the
+        CADD version and genome build. Raises a TypeError if not supplied with a string or False.
 
         :param value: False or string
         """
@@ -272,9 +257,8 @@ class CapiceManager:
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the globally available GRCh build
-        parsed from the config.
-        Raises TypeError if not supplied with an integer or None.
+        Singleton property grch_build, to set the globally available GRCh build parsed from either the CADD file or
+        from the command line arguments. Raises TypeError if not supplied with an integer or None.
 
         :param value: integer
         """
@@ -333,8 +317,7 @@ class CapiceManager:
     @force.setter
     def force(self, value):
         """
-        Singleton property force, to tell the exporter to overwrite an already
-        existing output file.
+        Singleton property force, to tell the exporter to overwrite an already existing output file.
         Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
@@ -353,9 +336,8 @@ class CapiceManager:
     @verbose.setter
     def verbose(self, value):
         """
-        Singleton property verbose, to print more (debug) messages during the
-        process.
-        Raises TypeError if not supplied with a boolean.
+        Singleton property verbose, to print more (debug) messages during the process. Raises TypeError if not
+        supplied with a boolean.
 
         :param value: boolean
         """
@@ -373,10 +355,8 @@ class CapiceManager:
     @enable_logfile.setter
     def enable_logfile(self, value):
         """
-        Singleton property enable_logfile,
-        to tell the logger whenever a logfile should be made or if everything
-        should be piped to STDout and STDerr.
-        Raises TypeError if not supplied with a boolean.
+        Singleton property enable_logfile, to tell the logger whenever a logfile should be made or if everything
+        should be piped to STDout and STDerr. Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
         """
@@ -394,10 +374,8 @@ class CapiceManager:
     @critical_logging_only.setter
     def critical_logging_only(self, value):
         """
-        Singleton property critical_logging_only,
-        to tell the logger to only log CRITICAL loglevel events to file /
-        STDout and STDerr.
-        Raises TypeError if not supplied with a boolean.
+        Singleton property critical_logging_only, to tell the logger to only log CRITICAL loglevel events to file /
+        STDout and STDerr. Raises TypeError if not supplied with a boolean.
 
         :param value: boolean
         """
@@ -415,8 +393,7 @@ class CapiceManager:
     @output_filename.setter
     def output_filename(self, value):
         """
-        Singleton property output_filename,
-        to set the output file name that CAPICE prediction will produce.
+        Singleton property output_filename, to set the output file name that CAPICE prediction will produce.
 
         :param value: path-like
         """
@@ -434,8 +411,7 @@ class CapiceManager:
     @reference_genome.setter
     def reference_genome(self, value):
         """
-        Singleton property reference_genome,
-        to set the location of the GRCh37 reference genome.
+        Singleton property reference_genome, to set the location of the GRCh37 reference genome.
 
         :param value: False or path-like
         """
