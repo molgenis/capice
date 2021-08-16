@@ -11,6 +11,8 @@ Help()
 
 main()
 {
+  set -e
+
   local -r pre_header="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%HGNC_ID\t%Feature\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%DOMAINS\t%MOTIF_NAME\t%HIGH_INF_POS\t%MOTIF_SCORE_CHANGE\t%EXON\t%INTRON"
 
   local format="${pre_header}\n"
@@ -21,9 +23,14 @@ main()
   args+=("+split-vep")
   args+=("-d")
   args+=("-f" "${format}")
+  args+=("-o" "${output}")
   args+=("${input}")
 
-  data=$(bcftools "${args[@]}")
+  echo "Starting BCFTools."
+
+  bcftools "${args[@]}"
+
+  echo "BCFTools finished, building output file."
   
   if file --mime-type "$input" | grep -q gzip$; then
 	vep_line=$(zcat "${input}" | grep "VEP=")
@@ -31,7 +38,13 @@ main()
 	vep_line=$(cat "${input}" | grep "VEP=")
   fi
 
-  echo -e "${file_info}\n${vep_line}\n${pre_header}\n${data}" > ${output}
+  echo -e "${file_info}\n${vep_line}\n${pre_header}" | cat - ${output} > temp && mv temp ${output}
+
+  echo "Output file ready, gzipping."
+
+  gzip ${output}
+
+  echo "Done."
 
 }
 
