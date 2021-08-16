@@ -30,7 +30,8 @@ class ConfigReader:
         def get_default_value(self, key):
             key = key.lower()
             value = self.defaults.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key, section='DEFAULTS')
+            self._check_value_has_error(value=value, keysearch=key,
+                                        section='DEFAULTS')
             if key == 'genomebuild':
                 key = self._post_process_grch(key)
                 value = self._check_value_default(value=value, else_type=int)
@@ -59,14 +60,16 @@ class ConfigReader:
         def get_overwrite_value(self, key):
             key = key.lower()
             value = self.overwrites.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key, section='OVERWRITES')
+            self._check_value_has_error(value=value, keysearch=key,
+                                        section='OVERWRITES')
             value = self._check_value_default(value=value, else_type=str)
             return value
 
         def get_datafiles_value(self, key):
             key = key.lower()
             value = self.datafiles.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key, section='CADD')
+            self._check_value_has_error(value=value, keysearch=key,
+                                        section='CADD')
             value = self._check_value_default(value=value, else_type=str)
             return value
 
@@ -77,7 +80,8 @@ class ConfigReader:
                 value = self.misc.getboolean(key, fallback=self.error)
             else:
                 value = self.misc.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key, section='MISC')
+            self._check_value_has_error(value=value, keysearch=key,
+                                        section='MISC')
             return value
 
         def get_train_value(self, key):
@@ -90,7 +94,8 @@ class ConfigReader:
                 value = self.train.getfloat(key, fallback=self.error)
             else:
                 value = self.train.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key, section='TRAINING')
+            self._check_value_has_error(value=value, keysearch=key,
+                                        section='TRAINING')
             value = self._check_value_default(value=value, else_type=str)
             return value
 
@@ -99,10 +104,13 @@ class ConfigReader:
                 self._raise_key_not_found(section=section, keysearch=keysearch)
 
         def _check_all_sections_present(self):
-            should_be_present = ['DEFAULTS', 'OVERWRITES', 'DATAFILES', 'MISC', 'TRAINING']
+            should_be_present = ['DEFAULTS', 'OVERWRITES', 'DATAFILES', 'MISC',
+                                 'TRAINING']
             for section in should_be_present:
                 if section not in self.config.sections():
-                    raise KeyError('Unable to locate {} in config file.'.format(section))
+                    raise KeyError(
+                        'Unable to locate {} in config file.'.format(section)
+                    )
 
         @staticmethod
         def _check_value_default(value, else_type):
@@ -118,7 +126,11 @@ class ConfigReader:
             return value
 
         def _raise_key_not_found(self, section, keysearch):
-            raise KeyError('Not able to get request {} in section {}.'.format(keysearch, section))
+            raise KeyError('Not able to get request {} in section {}.'.format(
+                keysearch,
+                section
+            )
+            )
 
     instance = None
 

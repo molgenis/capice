@@ -2,7 +2,8 @@ from abc import abstractmethod
 
 
 class PropertyChecker:
-    def check_property(self, value: any, expected_type: any, include_none: bool = False):
+    def check_property(self, value: any, expected_type: any,
+                       include_none: bool = False):
         """
         Logger method to raise a TypeError when a Property is not set correctly.
 
@@ -13,7 +14,9 @@ class PropertyChecker:
         if not isinstance(value, expected_type):
             if include_none:
                 if value is not None:
-                    error_message = 'Expected variable type {} but got {}'.format(expected_type, type(value))
+                    error_message = """
+                    Expected variable type {} but got {}
+                    """.format(expected_type, type(value)).strip()
                     self._talk_to_logger(error_message=error_message)
                     raise TypeError(error_message)
 

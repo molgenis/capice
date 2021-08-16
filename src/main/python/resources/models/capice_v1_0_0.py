@@ -1,5 +1,6 @@
 """
-File that contains all information specific to the originally published CAPICE model using XGBoost 0.72.1.
+File that contains all information specific to the originally published CAPICE
+model using XGBoost 0.72.1.
 """
 
 from src.main.python.resources.models.model_abstract import TemplateSetup
@@ -22,7 +23,12 @@ class ModelSetupXGBoost0721(TemplateSetup):
 
     @staticmethod
     def _get_model_loc():
-        model_loc = os.path.join(get_project_root_dir(), 'CAPICE_model', 'GRCh37', 'xgb_booster.pickle.dat')
+        model_loc = os.path.join(
+            get_project_root_dir(),
+            'CAPICE_model',
+            'GRCh37',
+            'xgb_booster.pickle.dat'
+        )
         return model_loc
 
     def _load_model_features(self):

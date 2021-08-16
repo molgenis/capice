@@ -12,7 +12,8 @@ import pickle
 class TemplateSetup(metaclass=ABCMeta):
     """
     Abstract class to act as template for new models that might be
-    added in future patches of CAPICE. Contains the necessary steps for preprocessing as well.
+    added in future patches of CAPICE.
+    Contains the necessary steps for preprocessing as well.
     """
 
     def __init__(self, name, usable, vep_version, grch_build):
@@ -40,7 +41,8 @@ class TemplateSetup(metaclass=ABCMeta):
     @name.setter
     def name(self, value='Template'):
         """
-        Property setter name, to set a name for a model module. Raises TypeError if not supplied with a string.
+        Property setter name, to set a name for a model module.
+        Raises TypeError if not supplied with a string.
 
         :param value: str
         """
@@ -50,8 +52,8 @@ class TemplateSetup(metaclass=ABCMeta):
     @property
     def usable(self):
         """
-        Property getter usable, to get the boolean value of a model module whenever it can be used for preprocessing
-        and prediction.
+        Property getter usable, to get the boolean value of a model module
+        whenever it can be used for preprocessing and prediction.
 
         :return: bool
         """
@@ -60,8 +62,9 @@ class TemplateSetup(metaclass=ABCMeta):
     @usable.setter
     def usable(self, value=False):
         """
-        Property setter usable, to set the boolean value of a model module whenever it should be used for
-        preprocessing and prediction. Raises TypeError if not supplied with a boolean.
+        Property setter usable, to set the boolean value of a model module
+        whenever it should be used for preprocessing and prediction.
+        Raises TypeError if not supplied with a boolean.
 
         :param value: bool
         """
@@ -71,7 +74,8 @@ class TemplateSetup(metaclass=ABCMeta):
     @property
     def supported_vep_version(self):
         """
-        Property getter supported_cadd_version, to get the float cadd_version value of a model/prediction file
+        Property getter supported_annotation_version,
+        to get the float annotation_version value of a model/prediction file
         that is supported within the module.
 
         :return: float or None
@@ -81,8 +85,10 @@ class TemplateSetup(metaclass=ABCMeta):
     @supported_vep_version.setter
     def supported_vep_version(self, value):
         """
-        Property setter supported_cadd_version, to set the float cadd_version value of a model/prediction file
-        that is supported within the module. Raises TypeError if not supplied with a float or None.
+        Property setter supported_annotation_version,
+        to set the float annotation_version value of a model/prediction file
+        that is supported within the module.
+        Raises TypeError if not supplied with a float or None.
 
         :param value: float or None
         """
@@ -96,7 +102,8 @@ class TemplateSetup(metaclass=ABCMeta):
     @property
     def supported_grch_build(self):
         """
-        Property getter supported_grch_build, to get the integer grch_build value that defines what genome build
+        Property getter supported_grch_build,
+        to get the integer grch_build value that defines what genome build
         is supported by the model/prediction module.
 
         :return: integer or None
@@ -106,12 +113,18 @@ class TemplateSetup(metaclass=ABCMeta):
     @supported_grch_build.setter
     def supported_grch_build(self, value):
         """
-        Property getter supported_grch_build, to set the integer value grch_build that defines what genome build
-        is supported by the model/prediction module. Raises TypeError if not supplied with an integer or None.
+        Property getter supported_grch_build,
+        to set the integer value grch_build that defines what genome build
+        is supported by the model/prediction module.
+        Raises TypeError if not supplied with an integer or None.
 
         :param value: integer or None
         """
-        self.property_checker.check_property(value=value, expected_type=int, include_none=True)
+        self.property_checker.check_property(
+            value=value,
+            expected_type=int,
+            include_none=True
+        )
         self._grch_build = value
 
     def preprocess(self, dataset: pd.DataFrame, is_train: bool):
@@ -144,7 +157,8 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):
         """
-        Function to get the categorical columns that are within the supplied CADD features of the imputing file.
+        Function to get the categorical columns that are within the supplied
+        annotation features of the imputing file.
         :param dataset: pandas DataFrame
         """
         for feature in dataset.select_dtypes(include=["O"]).columns:
@@ -159,11 +173,14 @@ class TemplateSetup(metaclass=ABCMeta):
     @staticmethod
     def _duplicate_chr_pos_ref_alt(dataset):
         """
-        Function to create the chr_pos_ref_alt column so that it doesn't get lost in preprocessing.
+        Function to create the chr_pos_ref_alt column so that it doesn't get
+        lost in preprocessing.
         :param dataset: unprocessed pandas DataFrame
-        :return: unprocessed pandas DataFrame containing column 'chr_pos_ref_alt'
+        :return: unprocessed pandas DataFrame
+            containing column 'chr_pos_ref_alt'
         """
-        dataset['chr_pos_ref_alt'] = dataset[['Chr', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
+        dataset['chr_pos_ref_alt'] = dataset[
+            ['Chr', 'Pos', 'Ref', 'Alt']].astype(str).agg('_'.join, axis=1)
         return dataset
 
     @property
@@ -176,10 +193,12 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _process_objects(self, dataset: pd.DataFrame):
         """
-        (If train) will create a dictionary telling the processor how many categories are within a certain column. If
-        not train: Will look up each CADD feature from the impute file within the columns of the datafile (either
-        in full name or the column starts with the feature from the impute file). This dictionary is then passed to the
-        actual processor.
+        (If train) will create a dictionary telling the processor how many
+        categories are within a certain column.
+        If not train: Will look up each annotation feature from the impute file
+        within the columns of the datafile (either in full name or the column
+        starts with the feature from the impute file).
+        This dictionary is then passed to the actual processor.
         :param dataset: unprocessed pandas DataFrame
         :return: processed pandas DataFrame
         """
@@ -220,8 +239,8 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _load_model_features(self):
         """
-        Function to access the protected member of the XGBoost _Booster class to get the features that the model is
-        trained on.
+        Function to access the protected member of the XGBoost _Booster class
+        to get the features that the model is trained on.
         :return: list
         """
         self.log.info('Using features saved within the model.')
@@ -231,9 +250,12 @@ class TemplateSetup(metaclass=ABCMeta):
                                   dataset: pd.DataFrame,
                                   annotation_feats_dict: dict):
         """
-        Processor of categorical columns. Will create new columns based on the quantity of a value within a column.
+        Processor of categorical columns. Will create new columns based on the
+        quantity of a value within a column.
         :param dataset: unprocessed pandas DataFrame
-        :param cadd_feats_dict: dictionary that is to contain the levels for each categorical feature
+        :param annotation_feats_dict:
+            dictionary that is to contain the levels for each categorical
+            feature
         :return: processed pandas DataFrame
         """
         if self.train:
@@ -294,8 +316,9 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):
         """
-        Function for when a training file is preprocessed to get the top return_num quantity values within a
-        categorical column. Some converting is done for the logger to be able to print them.
+        Function for when a training file is preprocessed to get the top
+        return_num quantity values within a categorical column.
+        Some converting is done for the logger to be able to print them.
         :param column: pandas Series
         :param return_num: integer
         :return: pandas Series
@@ -316,19 +339,22 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def predict(self, data: pd.DataFrame):
         """
-        Function to load the model and predict the CAPICE scores. Can be overwritten in case of legacy support.
+        Function to load the model and predict the CAPICE scores.
+        Can be overwritten in case of legacy support.
         :return: pandas DataFrame
         """
         self.log.info('Predicting for {} samples.'.format(data.shape[0]))
         self._load_model()
         self._load_model_features()
-        data['probabilities'] = self._predict(self._create_input_matrix(dataset=data))
+        data['probabilities'] = self._predict(
+            self._create_input_matrix(dataset=data))
         self.log.info('Predicting successful.')
         return data
 
     def _predict(self, predict_data):
         """
-        Further down defined prediction function, which is different for XGBoost 0.72.1 and 1.1.1.
+        Further down defined prediction function, which is different for
+        XGBoost 0.72.1 and current XGBoost version.
         :param predict_data: preprocessed pandas DataFrame
         :return: numpy array
         """
@@ -336,7 +362,8 @@ class TemplateSetup(metaclass=ABCMeta):
 
     def _create_input_matrix(self, dataset: pd.DataFrame):
         """
-        Also a template function, which can be overwritten to be compatible with first generation CAPICE
+        Also a template function, which can be overwritten to be compatible
+        with first generation CAPICE.
         :param dataset: pandas DataFrame
         :return: XGBoost workable data
         """
@@ -351,7 +378,8 @@ class TemplateSetup(metaclass=ABCMeta):
         if not self.train:
             with open(self._get_model_loc(), 'rb') as model_file:
                 model = pickle.load(model_file)
-            self.log.info('Successfully loaded model at: {}'.format(self._get_model_loc()))
+            self.log.info('Successfully loaded model at: {}'.format(
+                self._get_model_loc()))
         self.model = model
 
     @staticmethod
@@ -359,7 +387,8 @@ class TemplateSetup(metaclass=ABCMeta):
     def _get_model_loc():
         """
         Template to mark the directory where the model is located.
-        Use of os.path.join is required. You may use the get_project_root_dir() from utilities if the model is
+        Use of os.path.join is required.
+        You may use the get_project_root_dir() from utilities if the model is
         within this project directory.
         :return: path-like or None if no model has been created yet.
         """

@@ -11,13 +11,14 @@ from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.annotaters.annotator import Annotator
 from src.main.python.core.input_checker import InputChecker
-from src.main.python.resources.preprocessors.load_file_preprocessor import LoadFilePreProcessor
+from src.main.python.resources.preprocessors.load_file_preprocessor import \
+    LoadFilePreProcessor
 
 
 class Main:
     """
-    Main class of CAPICE to call the different modules to impute, preprocess and eventually predict a score over a CADD
-    annotated file.
+    Main class of CAPICE to call the different modules to impute,
+    preprocess and eventually predict a score over a CAPICE annotated file.
     """
     def __init__(self,
                  __program__, __author__, __version__,
@@ -32,19 +33,25 @@ class Main:
 
         # Welcome message
 
-        self.log.info('Thank you for using {}, version: {}, created by: {}.'.format(
-            __program__,
-            __version__,
-            __author__
-        ))
+        self.log.info(
+            'Thank you for using {}, version: {}, created by: {}.'.format(
+                __program__,
+                __version__,
+                __author__
+            )
+        )
 
-        self.log.info('Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose))
+        self.log.info(
+            'Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose)
+        )
 
         # Order is less important here
 
         self.log.info('Arguments passed. Starting program.')
         self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: {}'.format(self.infile))
+        self.log.debug(
+            'Input argument -i / --input confirmed: {}'.format(self.infile)
+        )
         self.output = output_loc
         self.log.debug(
             'Output directory -o / --output confirmed: {}'.format(self.output)
@@ -116,7 +123,7 @@ class Main:
     @staticmethod
     def annotate(loaded_data):
         """
-        Function to annotate the VEP file to a CADD like file
+        Function to annotate the VEP file to a CAPICE file
         """
         annotator = Annotator(dataset=loaded_data)
         annotated_data = annotator.annotate()
@@ -156,4 +163,6 @@ class Main:
         """
         Function to prepare the data to be exported
         """
-        Exporter(file_path=self.output).export_capice_prediction(datafile=datafile)
+        Exporter(file_path=self.output).export_capice_prediction(
+            datafile=datafile
+        )

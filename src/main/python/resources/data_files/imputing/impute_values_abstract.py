@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.resources.utilities.utilities import get_project_root_dir
-from src.main.python.resources.checkers.property_checker_logger import PropertyCheckerLogger
+from src.main.python.resources.checkers.property_checker_logger import \
+    PropertyCheckerLogger
 import os
 import json
 
@@ -82,8 +83,8 @@ class TemplateImputeValues(metaclass=ABCMeta):
     @abstractmethod
     def _json_name():
         """
-        Abstract template function to define the location of where the imputing JSON is stored, containing the
-        required columns for the input datafile.
+        Abstract template function to define the location of where the imputing
+        JSON is stored, containing the required columns for the input datafile.
         :return: path-like
         """
         return 'none'
@@ -101,7 +102,8 @@ class TemplateImputeValues(metaclass=ABCMeta):
     @property
     def impute_values(self):
         """
-        Property impute_values getter. Get the default / impute values as defined within an impute file.
+        Property impute_values getter. Get the default / impute values as
+        defined within an impute file.
 
         :return: dict
         """

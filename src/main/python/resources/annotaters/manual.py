@@ -1,7 +1,8 @@
 from src.main.python.core.logger import Logger
 import pandas as pd
 import os
-from src.main.python.resources.utilities.utilities import get_project_root_dir, load_modules, importer
+from src.main.python.resources.utilities.utilities import get_project_root_dir,\
+    load_modules, importer
 
 
 class ManualAnnotator:
@@ -29,7 +30,8 @@ class ManualAnnotator:
 
     def _check_n_modules(self, modules_list):
         if len(modules_list) < 1:
-            error_message = 'Unable to locate VEP Processors at {}, was the directory moved?'.format(self.location)
+            error_message = 'Unable to locate VEP Processors at {}, ' \
+                            'was the directory moved?'.format(self.location)
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
@@ -40,5 +42,9 @@ class ManualAnnotator:
                 if processor.drop:
                     dataset.drop(columns=processor.name, inplace=True)
             else:
-                self.log.warning('Could not use processor {} on input dataset!'.format(processor.name))
+                self.log.warning(
+                    'Could not use processor {} on input dataset!'.format(
+                        processor.name
+                    )
+                )
         return dataset

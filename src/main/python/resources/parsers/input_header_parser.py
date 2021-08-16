@@ -6,8 +6,8 @@ import gzip
 
 class InputHeaderParser:
     """
-    Autonomous class to parse just the header of the input file to get the amount
-    of comment lines that pandas should skip when reading.
+    Autonomous class to parse just the header of the input file to get the
+    amount of comment lines that pandas should skip when reading.
     """
 
     def __init__(self, is_gzipped: bool, input_file_loc: str):
@@ -30,7 +30,10 @@ class InputHeaderParser:
             )
             self._get_file_type()
         else:
-            self.log.warning('Unable to parse input file header, header not located. Does the header start with "##"?')
+            self.log.warning(
+                'Unable to parse input file header, header not located. '
+                'Does the header start with "##"?'
+            )
 
     def _parse_header(self):
         """
@@ -87,7 +90,9 @@ class InputHeaderParser:
 
     def get_skip_rows(self):
         """
-        Function to return the integer value of how many rows pandas.read_csv() should skip to reach the data
+        Function to return the integer value of how many rows pandas.read_csv()
+        should skip to reach the data.
+
         :return: int
         """
         return self.skip_rows
