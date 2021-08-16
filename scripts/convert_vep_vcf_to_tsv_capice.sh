@@ -21,9 +21,14 @@ main()
   args+=("+split-vep")
   args+=("-d")
   args+=("-f" "${format}")
+  args+=("-o" "${output}")
   args+=("${input}")
 
-  data=$(bcftools "${args[@]}")
+  echo "Starting BCFTools."
+
+  bcftools "${args[@]}"
+
+  echo "BCFTools finished, building output file."
   
   if file --mime-type "$input" | grep -q gzip$; then
 	vep_line=$(zcat "${input}" | grep "VEP=")
@@ -31,7 +36,13 @@ main()
 	vep_line=$(cat "${input}" | grep "VEP=")
   fi
 
-  echo -e "${file_info}\n${vep_line}\n${pre_header}\n${data}" > ${output}
+  echo -e "${file_info}\n${vep_line}\n${pre_header}" | cat - ${output} > temp && mv temp ${output}
+
+  echo "Output file ready, gzipping."
+
+  gzip ${output}
+
+  echo "Done."
 
 }
 
