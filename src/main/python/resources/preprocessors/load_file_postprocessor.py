@@ -2,7 +2,7 @@ import pandas as pd
 from src.main.python.core.logger import Logger
 
 
-class LoadFilePreProcessor:
+class LoadFilePostProcessor:
     def __init__(self, dataset: pd.DataFrame):
         self.dataset = dataset
         self.log = Logger().logger
@@ -12,6 +12,9 @@ class LoadFilePreProcessor:
         Function to start the LoadFilePreProcessor to correct the input file of
         each column starting with % and the renaming of certain columns,
         like #CHROM to Chr.
+        Function to start the LoadFilePostProcessor to correct the input file
+        of each column starting with % and
+        the renaming of certain columns, like #CHROM to Chr.
 
         Returns
         -------
@@ -23,7 +26,7 @@ class LoadFilePreProcessor:
         self.log.debug('% sign corrected, starting renaming of columns.')
         self._col_renamer()
         self.dataset['Chr'] = self.dataset['Chr'].astype(str)
-        self.log.info('LoadFilePreProcessor successful.')
+        self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
 
     def _correct_percentage_sign(self):

@@ -1,11 +1,11 @@
 import unittest
 import pandas as pd
 from src.test.python.test_templates import teardown, set_up_manager_and_loc
-from src.main.python.resources.preprocessors.load_file_preprocessor import \
-    LoadFilePreProcessor
+from src.main.python.resources.preprocessors.load_file_postprocessor import \
+    LoadFilePostProcessor
 
 
-class TestFilePreProcessor(unittest.TestCase):
+class TestFilePostProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         print('Setting up.')
@@ -53,7 +53,7 @@ class TestFilePreProcessor(unittest.TestCase):
             }
         )
 
-        processor = LoadFilePreProcessor(dataset=data)
+        processor = LoadFilePostProcessor(dataset=data)
         observed_output = processor.process()
         pd.testing.assert_frame_equal(expected_output, observed_output)
 
