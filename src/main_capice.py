@@ -11,9 +11,8 @@ from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.annotaters.annotator import Annotator
 from src.main.python.core.input_checker import InputChecker
-from src.main.python.resources.preprocessors.load_file_postprocessor import LoadFilePostProcessor
-from src.main.python.resources.preprocessors.load_file_preprocessor import \
-    LoadFilePreProcessor
+from src.main.python.resources.preprocessors.load_file_postprocessor import \
+    LoadFilePostProcessor
 
 
 class Main:

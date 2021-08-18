@@ -12,8 +12,9 @@ class LoadFilePostProcessor:
         Function to start the LoadFilePreProcessor to correct the input file of
         each column starting with % and the renaming of certain columns,
         like #CHROM to Chr.
-        Function to start the LoadFilePostProcessor to correct the input file of each column starting with %
-        and the renaming of certain columns, like #CHROM to Chr.
+        Function to start the LoadFilePostProcessor to correct the input file
+        of each column starting with % and
+        the renaming of certain columns, like #CHROM to Chr.
 
         Returns
         -------
