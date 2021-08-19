@@ -1,6 +1,7 @@
 from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import prepare_dir,\
-    check_dir_exists, check_file_exists, get_filename_and_extension
+    check_dir_exists, check_file_exists, get_filename_and_extension, \
+    check_tilde_prefix
 import warnings
 import os
 
@@ -20,8 +21,10 @@ class InputChecker:
         Function to check if there is a file at the input location
         :param input_loc: full path to input file
         """
+        input_loc = check_tilde_prefix(input_loc)
         if not check_file_exists(input_loc):
             raise InputError("Input file does not exist!")
+        return input_loc
 
     @staticmethod
     def check_output_loc(output_loc):
@@ -60,6 +63,7 @@ class InputChecker:
                 self.output_directory = os.path.dirname(input_path)
                 self.output_filename = output_path
         self._check_gzip_extension()
+        self.output_directory = check_tilde_prefix(self.output_directory)
 
     def _create_capice_output_filename(self, input_path, output_path=None,
                                        append_capice=True, ispath=False):
@@ -131,4 +135,5 @@ class LogChecker:
                 )
                 prepare_dir(self.output_loc)
             log_loc = self.output_loc
+        log_loc = check_tilde_prefix(log_loc)
         return log_loc

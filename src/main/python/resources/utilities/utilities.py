@@ -131,3 +131,9 @@ def deprecated(func):
         warnings.simplefilter('default', DeprecationWarning)
         return func(*args, **kwargs)
     return new_func
+
+
+def check_tilde_prefix(directory):
+    if directory.startswith('~/'):
+        directory = os.path.expanduser(directory)
+    return directory
