@@ -88,6 +88,11 @@ class TestLogger(unittest.TestCase):
             new_filename, os.path.join(self.output_loc, 'present_file_1.log')
         )
 
+    def test_logger_class(self):
+        print('Logger class')
+        self.assertEqual(str(self.log.logger.__class__),
+                         "<class 'logging.RootLogger'>")
+
 
 if __name__ == '__main__':
     unittest.main()

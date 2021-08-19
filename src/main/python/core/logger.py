@@ -67,15 +67,18 @@ class Logger:
 
             :return: logger instance
             """
-            logger = logging.getLogger('CAPICE')
+            # Making a root logger to make sure the level is set correctly.
+            logger = logging.getLogger()
+            # Now renaming it to CAPICE.
+            logger.name = 'CAPICE'
             logger.setLevel(self.log_level)
-            console_handler = logging.StreamHandler(sys.stderr)
             formatter = logging.Formatter("%(asctime)s "
                                           "[%(name)s] "
                                           "[%(filename)s] "
                                           "[%(funcName)s] "
                                           "[%(levelname)-4.4s]  "
                                           "%(message)s")
+            console_handler = logging.StreamHandler(sys.stderr)
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
             if self.create_logfile:
@@ -142,7 +145,7 @@ class Logger:
                     counter += 1
             else:
                 export_path = full_export
-            return export_path
+            return os.path.abspath(export_path)
 
     @property
     def logger(self):
