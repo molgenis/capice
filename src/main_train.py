@@ -76,6 +76,7 @@ class Train(Main):
         order to create new CAPICE models.
         """
         data = self._rename_chrom_col(self.load_file())
+        data = self.annotate(loaded_data=data)
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
@@ -97,7 +98,7 @@ class Train(Main):
         self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
-        imputed_data = self.impute(loaded_data=data)
+        imputed_data = self.impute(loaded_data=data, train=True)
         self.annotation_features = self.manager.annotation_features
         processed_data = self.preprocess(
             loaded_data=imputed_data, train=True

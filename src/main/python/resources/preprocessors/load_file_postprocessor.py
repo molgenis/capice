@@ -55,6 +55,7 @@ class LoadFilePostProcessor:
                 'Feature': 'FeatureID',
                 'SYMBOL': 'GeneName',
                 'INTRON': 'Intron',
-                'EXON': 'Exon'
+                'EXON': 'Exon',
+                'MAX_AF': 'max_AF'
             }, inplace=True
         )

@@ -1,5 +1,6 @@
 from src.main.python.resources.annotaters.vep.template import Template
 import pandas as pd
+import numpy as np
 
 
 class TemplatePosition(Template):
@@ -34,6 +35,11 @@ class TemplatePosition(Template):
         )
         dataframe[self.pos_col] = dataframe[self.pos_col].str.split(
             '-', expand=True)[0]
+
         for column in self.columns:
+            dataframe.loc[
+                dataframe[dataframe[column] == ''].index,
+                column
+            ] = np.nan
             dataframe[column] = dataframe[column].astype(float)
         return dataframe
