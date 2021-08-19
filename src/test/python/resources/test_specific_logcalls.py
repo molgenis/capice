@@ -39,9 +39,9 @@ class TestSpecificLogCalls(unittest.TestCase):
             }
         )
         messages_present = [
-            '[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] '
+            '[CAPICE] [capice_imputing.py] [_calculate_percentage_nan] '
             '[DEBU]  NaN detected in column bar, percentage: 50.0%.',
-            '[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] '
+            '[CAPICE] [capice_imputing.py] [_calculate_percentage_nan] '
             '[DEBU]  NaN detected in column baz, percentage: 25.0%.'
         ]
         self.manager.vep_version = 104.0

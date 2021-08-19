@@ -67,7 +67,10 @@ class Logger:
 
             :return: logger instance
             """
-            logger = logging.getLogger('CAPICE')
+            # Making a root logger to make sure the level is set correctly.
+            logger = logging.getLogger()
+            # Now renaming it to CAPICE.
+            logger.name = 'CAPICE'
             logger.setLevel(self.log_level)
             console_handler = logging.StreamHandler(sys.stderr)
             formatter = logging.Formatter("%(asctime)s "
