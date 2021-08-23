@@ -357,9 +357,9 @@ class Train(Main):
                 scale_pos_weight=1,
                 base_score=0.5,
                 random_state=self.model_random_state,
-                learning_rate=self.defaults['learning_rate'],
-                n_estimators=self.defaults['n_estimators'],
-                max_depth=self.defaults['max_depth']
+                learning_rate=self.defaults[enums_train.learning_rate.value],
+                n_estimators=self.defaults[enums_train.n_estimators.value],
+                max_depth=self.defaults[enums_train.max_depth.value]
             )
             ransearch1 = model_estimator
             self.model_type = 'XGBClassifier'

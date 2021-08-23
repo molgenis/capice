@@ -68,8 +68,7 @@ class TrainChecker:
             ]
         for col_name in required_columns:
             if col_name not in dataset.columns:
-                error_message = """
-                Error locating label {} within dataset!
-                """.format(col_name)
+                error_message = \
+                    "Error locating label {} within dataset!".format(col_name)
                 self.log.critical(error_message)
                 raise KeyError(error_message)
