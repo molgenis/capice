@@ -4,6 +4,7 @@ from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.checkers.property_checker_logger import \
     PropertyCheckerLogger
 from src.main.python.resources.utilities.utilities import deprecated
+from src.main.python.resources.enums.sections import Column
 import pandas as pd
 import numpy as np
 import pickle
@@ -346,7 +347,7 @@ class TemplateSetup(metaclass=ABCMeta):
         self.log.info('Predicting for {} samples.'.format(data.shape[0]))
         self._load_model()
         self._load_model_features()
-        data['probabilities'] = self._predict(
+        data[Column.score.value] = self._predict(
             self._create_input_matrix(dataset=data))
         self.log.info('Predicting successful.')
         return data
