@@ -11,7 +11,12 @@ class Sections(Enum):
 
 class Column(Enum):
     chr_pos_ref_alt = 'chr_pos_ref_alt'
-    GeneName = 'GeneName'
-    FeatureID = 'FeatureID'
-    Consequence = 'Consequence'
-    probabilities = 'probabilities'
+    chr = 'chr'
+    pos = 'pos'
+    ref = 'ref'
+    alt = 'alt'
+    gene_name = 'gene_name'
+    gene_id = 'gene_id'
+    id_source = 'id_source'
+    transcript = 'transcript'
+    score = 'score'
