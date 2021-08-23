@@ -3,6 +3,7 @@ import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
     set_up_main
+from src.main.python.resources.enums.sections import Column
 
 
 class TestModel(unittest.TestCase):
@@ -56,7 +57,7 @@ class TestModel(unittest.TestCase):
             preprocessing_instance=preprocessing_instance
         )
         # Combined sum of the prediction score should be higher than 0
-        self.assertGreater(prediction['probabilities'].sum(), 0)
+        self.assertGreater(prediction[Column.score.value].sum(), 0)
 
 
 if __name__ == '__main__':

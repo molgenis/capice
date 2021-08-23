@@ -32,12 +32,6 @@ class FastaLookupAnnotator:
         :return: string, obtained reference sequence.
         """
         try:
-            self.log.debug(
-                'Obtaining reference sequence for: '
-                '[Chromosome: {}], [start: {}], [stop: {}]'.format(
-                    chromosome, start, end
-                )
-            )
             append_ns = False
             if start < 0:
                 append_ns = abs(start)

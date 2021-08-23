@@ -106,7 +106,7 @@ class TestImputer(unittest.TestCase):
             }
         )
         self.manager.overwrite_impute = self.impute_overwrite
-        imputer = CapiceImputing()
+        imputer = CapiceImputing(train=False)
         processed_dataframe = imputer._check_chrom_pos(dataset=dataset)
         pd.testing.assert_frame_equal(processed_dataframe, remainin_dataset)
 

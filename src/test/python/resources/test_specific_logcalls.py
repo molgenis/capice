@@ -46,7 +46,7 @@ class TestSpecificLogCalls(unittest.TestCase):
         ]
         self.manager.vep_version = 104.0
         self.manager.grch_build = 37
-        imputer = CapiceImputing()
+        imputer = CapiceImputing(train=False)
         imputer._get_nan_ratio_per_column(dataset=nan_dataframe)
         log_messages = new_stdout.getvalue().splitlines()
         sys.stderr = old_stdout

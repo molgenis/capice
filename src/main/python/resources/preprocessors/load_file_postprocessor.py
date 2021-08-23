@@ -9,7 +9,7 @@ class LoadFilePostProcessor:
 
     def process(self):
         """
-        Function to start the LoadFilePreProcessor to correct the input file of
+        Function to start the LoadFilePostProcessor to correct the input file of
         each column starting with % and the renaming of certain columns,
         like #CHROM to Chr.
         Function to start the LoadFilePostProcessor to correct the input file
@@ -25,7 +25,7 @@ class LoadFilePostProcessor:
         self._correct_percentage_sign()
         self.log.debug('% sign corrected, starting renaming of columns.')
         self._col_renamer()
-        self.dataset['Chr'] = self.dataset['Chr'].astype(str)
+        self._correct_dtypes()
         self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
 
@@ -40,6 +40,9 @@ class LoadFilePostProcessor:
                 new_columns.append(column)
         self.dataset.columns = new_columns
 
+    def _correct_dtypes(self):
+        self.dataset['Chr'] = self.dataset['Chr'].astype(str)
+
     def _col_renamer(self):
         """
         Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
@@ -51,9 +54,10 @@ class LoadFilePostProcessor:
                 'POS': 'Pos',
                 'REF': 'Ref',
                 'ALT': 'Alt',
-                'SYMBOL_SOURCE': 'SourceID',
-                'Feature': 'FeatureID',
-                'SYMBOL': 'GeneName',
+                'HGNC_ID': 'gene_id',
+                'SYMBOL_SOURCE': 'id_source',
+                'Feature': 'transcript',
+                'SYMBOL': 'gene_name',
                 'INTRON': 'Intron',
                 'EXON': 'Exon',
                 'MAX_AF': 'max_AF'

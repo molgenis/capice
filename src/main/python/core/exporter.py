@@ -19,11 +19,15 @@ class Exporter:
         self.now = CapiceManager().now
         self.capice_filename = CapiceManager().output_filename
         self.file_path = file_path
-        self.export_cols = [Column.chr_pos_ref_alt.value,
-                            Column.GeneName.value,
-                            Column.FeatureID.value,
-                            Column.Consequence.value,
-                            Column.probabilities.value]
+        self.export_cols = [Column.chr.value,
+                            Column.pos.value,
+                            Column.ref.value,
+                            Column.alt.value,
+                            Column.gene_name.value,
+                            Column.gene_id.value,
+                            Column.id_source.value,
+                            Column.transcript.value,
+                            Column.score.value]
 
     def export_capice_prediction(self, datafile: pd.DataFrame):
         """
@@ -35,6 +39,7 @@ class Exporter:
             file_name=self.capice_filename,
             check_extension=False
         )
+        datafile = self._post_process_split_cols(datafile)
         datafile[self.export_cols].to_csv(
             filename,
             sep='\t',
@@ -44,6 +49,20 @@ class Exporter:
         self.log.info(
             'Successfully exported CAPICE datafile to: {}'.format(filename)
         )
+
+    @staticmethod
+    def _post_process_split_cols(datafile: pd.DataFrame):
+        datafile[
+            [Column.chr.value,
+             Column.pos.value,
+             Column.ref.value,
+             Column.alt.value
+             ]
+        ] = datafile[Column.chr_pos_ref_alt.value].str.split(
+            '_',
+            expand=True
+        )
+        return datafile
 
     def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str,
                                        feature: str):
