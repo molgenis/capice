@@ -14,10 +14,22 @@ class TestExporter(unittest.TestCase):
         cls.exporter = Exporter(file_path=cls.output_loc)
         cls.prediction_output_dataframe = pd.DataFrame({
             Column.chr_pos_ref_alt.value: ['1_100_A_C', '2_200_T_G'],
-            Column.GeneName.value: ['foo', 'bar'],
-            Column.FeatureID.value: ['TRANS_01', 'TRANS_02'],
-            Column.Consequence.value: ['Synonymous', 'Frame-shift'],
-            Column.probabilities.value: [0.01, 0.998]
+            Column.gene_name.value: ['foo', 'bar'],
+            Column.gene_id.value: [1000, 2000],
+            Column.id_source.value: ['foo', 'bar'],
+            Column.transcript.value: ['TRANS_01', 'TRANS_02'],
+            Column.score.value: [0.01, 0.998]
+        })
+        cls.expected_prediction_output_dataframe = pd.DataFrame({
+            Column.chr.value: ['1', '2'],
+            Column.pos.value: [100, 200],
+            Column.ref.value: ['A', 'T'],
+            Column.alt.value: ['C', 'G'],
+            Column.gene_name.value: ['foo', 'bar'],
+            Column.gene_id.value: [1000, 2000],
+            Column.id_source.value: ['foo', 'bar'],
+            Column.transcript.value: ['TRANS_01', 'TRANS_02'],
+            Column.score.value: [0.01, 0.998]
         })
         cls.export_dataset = pd.DataFrame(
             {
@@ -49,9 +61,11 @@ class TestExporter(unittest.TestCase):
             compression='gzip',
             sep='\t'
         )
+        exported_data[Column.chr.value] = exported_data[
+            Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(
             exported_data,
-            self.prediction_output_dataframe
+            self.expected_prediction_output_dataframe
         )
 
     def test_dataset_export(self):
@@ -100,9 +114,12 @@ class TestExporter(unittest.TestCase):
             compression='gzip',
             sep='\t'
         )
+        forced_file[Column.chr.value] = forced_file[Column.chr.value].astype(
+            str
+        )
         pd.testing.assert_frame_equal(
             forced_file,
-            self.prediction_output_dataframe
+            self.expected_prediction_output_dataframe
         )
 
 
