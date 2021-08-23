@@ -100,6 +100,40 @@ class TestAnnotator(unittest.TestCase):
             expected_outcome, outcome
         )
 
+    def test_bug_attributeerror_template_sift_polyphen(self):
+        print('Testing bug "AttributeError: Can only use .str accessor with '
+              'string values!" within template_sift_polyphen manual annotator.')
+        bugged_dataframe = pd.DataFrame(
+            {
+                'Chr': ['1', '2'],
+                'Pos': [100, 200],
+                'Ref': ['A', 'GCC'],
+                'Alt': ['C', 'C'],
+                'SIFT': [np.nan, np.nan],
+                'PolyPhen': [np.nan, np.nan]
+            }
+        )
+
+        expected_dataframe = pd.DataFrame(
+            {
+                'Chr': ['1', '2'],
+                'Pos': [100, 200],
+                'Ref': ['A', 'GCC'],
+                'Alt': ['C', 'C'],
+                'SIFTcat': [np.nan, np.nan],
+                'SIFTval': [np.nan, np.nan],
+                'PolyPhenCat': [np.nan, np.nan],
+                'PolyPhenVal': [np.nan, np.nan]
+            }
+        )
+        annotator = Annotator(bugged_dataframe)
+        out_dataframe = annotator.annotate()
+        # Testing for expected dataframe columns, since it processes more.
+        pd.testing.assert_frame_equal(
+            expected_dataframe,
+            out_dataframe[expected_dataframe.columns]
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

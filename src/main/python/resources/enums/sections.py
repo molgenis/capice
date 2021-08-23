@@ -23,7 +23,7 @@ class Column(Enum):
 
 
 class Train(Enum):
-    Consequence = Column.Consequence.value
+    Consequence = 'Consequence'
     max_AF = 'max_AF'
     sample_weight = 'sample_weight'
     binarized_label = 'binarized_label'
