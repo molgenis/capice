@@ -38,6 +38,7 @@ def teardown():
             os.remove(os.path.join(test_folder, file))
     os.rmdir(test_folder)
     Logger.instance = None
+    CapiceManager.instance = None
 
 
 def set_up_main():
