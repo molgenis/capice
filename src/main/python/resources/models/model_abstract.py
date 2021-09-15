@@ -245,7 +245,7 @@ class TemplateSetup(metaclass=ABCMeta):
         :return: list
         """
         self.log.info('Using features saved within the model.')
-        self.model_features = self.model._Booster.feature_names
+        self.model_features = self.model.get_booster().feature_names
 
     def _process_categorical_vars(self,
                                   dataset: pd.DataFrame,
