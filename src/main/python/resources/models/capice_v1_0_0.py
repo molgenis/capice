@@ -30,3 +30,12 @@ class ModelSetupXGBoost0721(TemplateSetup):
             'xgb_booster.pickle.dat'
         )
         return model_loc
+
+    def _load_model_features(self):
+        self.model_features = self.model.feature_names
+
+    def _predict(self, predict_data):
+        return self.model.predict(predict_data)
+
+    def _create_input_matrix(self, dataset):
+        return DMatrix(dataset[self.model_features])
