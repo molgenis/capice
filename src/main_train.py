@@ -385,8 +385,17 @@ class Train(Main):
                                             n_iter=n_iter,
                                             verbose=verbosity)
             self.model_type = 'RandomizedSearchCV'
-        eval_set = [(test_set[self.processed_features],
-                     test_set[EnumsTrain.binarized_label.value], 'test')]
+        if int(xgb.__version__.split('.')[0]) > 0:
+            eval_set = [(
+                test_set[self.processed_features],
+                test_set[EnumsTrain.binarized_label.value]
+            )]
+        else:
+            eval_set = [(
+                test_set[self.processed_features],
+                test_set[EnumsTrain.binarized_label.value],
+                'test'
+            )]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set[EnumsTrain.binarized_label.value],
