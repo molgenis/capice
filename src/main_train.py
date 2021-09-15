@@ -388,16 +388,14 @@ class Train(Main):
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label']
+                test_set[enums_train.binarized_label.value]
             )]
         else:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label'],
+                test_set[enums_train.binarized_label.value],
                 'test'
             )]
-        eval_set = [(test_set[self.processed_features],
-                     test_set[enums_train.binarized_label.value], 'test')]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set[enums_train.binarized_label.value],
