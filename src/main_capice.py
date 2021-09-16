@@ -100,9 +100,9 @@ class Main:
             input_file_loc=self.infile
         )
         skip_rows = input_header_parser.get_skip_rows()
-        InputChecker().check_reference(
-            reference=self.manager.reference_genome
-        )
+        # InputChecker().check_reference(
+        #     reference=self.manager.reference_genome
+        # )
         file_vep_version = input_header_parser.get_vep_version()
         file_grch_build = input_header_parser.get_grch_build()
         InputVersionChecker(
