@@ -265,7 +265,7 @@ class CapiceManager:
         """
         Getter for setter grch_build
 
-        :return: integer
+        :return: int
         """
         return self._grch_build
 
@@ -276,7 +276,7 @@ class CapiceManager:
         parsed from the config.
         Raises TypeError if not supplied with an integer or None.
 
-        :param value: integer
+        :param value: int
         """
         pass
 

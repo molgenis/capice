@@ -53,7 +53,7 @@ class Domain(Template):
         subset = dataframe[self.name].str.split('&', expand=True)
         subset = subset.apply(lambda x: x.str.split(':', expand=True)[0],
                               axis=0)
-        subset = self.process_ndomain(subset)
+        subset = self._process_ndomain(subset)
         subset.replace(self.levels_dict, inplace=True)
         subset = self.process_others(subset)
         subset = subset.agg('min', axis=1)
@@ -62,7 +62,7 @@ class Domain(Template):
         return dataframe
 
     @staticmethod
-    def process_ndomain(subset: pd.DataFrame):
+    def _process_ndomain(subset: pd.DataFrame):
         for col in subset.columns:
             subset[col] = np.where(
                 subset[col].str.contains('_domain') & subset[col].notnull(),
@@ -76,6 +76,7 @@ class Domain(Template):
             )
         return subset
 
+    @staticmethod
     def process_others(self, subset: pd.DataFrame):
         for col in subset.columns:
             subset[col] = np.where(

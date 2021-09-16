@@ -14,8 +14,7 @@ class FastaLookupAnnotator:
     def _load_fasta(self):
         self.log.info('Loading in Fasta file, this may take a moment.')
         self.fasta = pysam.FastaFile(self.fasta_loc)
-        self.log.info(
-            'Succesfully loaded Fasta file at: {}'.format(self.fasta_loc))
+        self.log.info(f'Succesfully loaded Fasta file at: {self.fasta_loc}')
 
     def get_reference_sequence(self, chromosome: str, start: int, end: int):
         """
@@ -34,9 +33,7 @@ class FastaLookupAnnotator:
         try:
             self.log.debug(
                 'Obtaining reference sequence for: '
-                '[Chromosome: {}], [start: {}], [stop: {}]'.format(
-                    chromosome, start, end
-                )
+                f'[Chromosome: {chromosome}], [start: {start}], [stop: {end}]'
             )
             append_ns = False
             if start < 0:
