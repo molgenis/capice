@@ -9,7 +9,7 @@ class FastaLookupAnnotator:
         self.manager = CapiceManager()
         self.fasta_loc = self.manager.reference_genome
         self.fasta = None
-        self._load_fasta()
+        # self._load_fasta()
 
     def _load_fasta(self):
         self.log.info('Loading in Fasta file, this may take a moment.')
