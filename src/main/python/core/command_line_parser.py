@@ -47,6 +47,18 @@ class ArgumentParser:
                                    "always be gzipped! (except for model files)"
                               )
 
+        optional.add_argument('-c',
+                              '--config',
+                              nargs=1,
+                              type=str,
+                              default=None,
+                              help="Input the location of a custom config. "
+                                   "Must be similar to 'default.cfg' in the "
+                                   "project root folder. Defaults to the "
+                                   "default.cfg in the root folder if left "
+                                   "empty."
+                              )
+
         optional.add_argument('-v',
                               '--verbose',
                               action='store_true',

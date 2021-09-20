@@ -1,4 +1,5 @@
 from configparser import ConfigParser
+from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.main.python.resources.enums.sections import Sections
 import os
@@ -8,6 +9,7 @@ class ConfigReader:
     class __ConfigReader:
         def __init__(self):
             self.config = ConfigParser()
+            self.config_loc = CapiceManager().config_loc
             self.defaults = None
             self.overwrites = None
             self.misc = None
@@ -25,7 +27,15 @@ class ConfigReader:
             self.train = self.config[Sections.TRAINING.value]
 
         def _parse(self):
-            self.config.read(os.path.join(get_project_root_dir(), 'config.cfg'))
+            if self.config_loc:
+                self.config.read(self.config_loc)
+            else:
+                self.config.read(
+                    os.path.join(
+                        get_project_root_dir(),
+                        'default.cfg'
+                    )
+                )
 
         def get_default_value(self, key):
             key = key.lower()
