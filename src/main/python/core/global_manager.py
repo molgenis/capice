@@ -272,8 +272,7 @@ class CapiceManager:
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build,
-        to set the GRCh build present in the parsed input file.
+        Singleton property grch_build, to set the definitive GRCh build to be used.
         Raises TypeError if not supplied with an integer or None.
 
         :param value: int
@@ -453,8 +452,7 @@ class CapiceManager:
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version,
-        to set the VEP version present in the parsed input file.
+        Singleton property vep_version, to set the definitive VEP version to be used.
 
         :param value: float
         """
