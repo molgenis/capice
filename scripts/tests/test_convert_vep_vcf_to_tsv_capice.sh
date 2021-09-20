@@ -4,6 +4,9 @@
 readonly CURRENT_PATH=$(pwd)
 BASE_PATH=$(realpath "$0") && readonly BASE_PATH=${BASE_PATH%/*}
 
+# Variable that stores whether a single test failed.
+any_test_failed=false
+
 main() {
   # Preparations.
   cd ${BASE_PATH}
@@ -24,6 +27,12 @@ main() {
   # Cleanup.
   rm ${input_vcf%.gz}
   rm ${expected_output%.gz}
+
+  # Returns exitcode based on whether tests failed.
+  if [[ ${any_test_failed} == true ]]
+  then
+    exit 1
+  fi
 }
 
 # $1: the generated exitcode
@@ -31,9 +40,10 @@ main() {
 validateIfFailed() {
   if [[ $1 != 1 ]]
   then
-    echo "$2 failed"
+    echo "$2: has exitcode 0, but expected 1"
+    any_test_failed=true
   else
-    echo "$2 succeeded"
+    echo "$2: done"
   fi
 
   rmSilent ${actual_output}
@@ -44,11 +54,16 @@ validateIfFailed() {
 validateOutputFile() {
   if [[ $1 != 0 ]]
   then
-    echo "$2 failed"
+    echo "$2: has exitcode 1, but expected 0"
+    any_test_failed=true
   else
     gunzip ${actual_output}
     local checksum_expected=$(shasum -a 256 ${expected_output%.gz} | cut -d ' ' -f1)
     shasum -a 256 -c <<< "${checksum_expected%.gz}  ${actual_output%.gz}"
+    if [[ $? == 1 ]]
+    then
+      any_test_failed=true
+    fi
   fi
 
   rmSilent ${actual_output%.gz}
@@ -60,12 +75,12 @@ rmSilent() {
 
 testValidTextInput() {
   bash ../convert_vep_vcf_to_tsv_capice.sh -i ${input_vcf%.gz} -o ${actual_output} &> /dev/null
-  validateOutputFile $? 'testValidTextInput'
+  validateOutputFile "$?" 'testValidTextInput'
 }
 
 testValidGzipInput() {
   bash ../convert_vep_vcf_to_tsv_capice.sh -i ${input_vcf} -o ${actual_output} &> /dev/null
-  validateOutputFile $? 'testValidGzipInput'
+  validateOutputFile "$?" 'testValidGzipInput'
 }
 
 testEmptyInputParameter() {
