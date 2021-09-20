@@ -272,8 +272,8 @@ class CapiceManager:
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the globally available GRCh build
-        parsed from the config.
+        Singleton property grch_build,
+        to set the GRCh build present in the parsed input file.
         Raises TypeError if not supplied with an integer or None.
 
         :param value: int

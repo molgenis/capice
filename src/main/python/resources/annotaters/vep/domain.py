@@ -55,7 +55,7 @@ class Domain(Template):
                               axis=0)
         subset = self._process_ndomain(subset)
         subset.replace(self.levels_dict, inplace=True)
-        subset = self.process_others(subset)
+        subset = self._process_others(subset)
         subset = subset.agg('min', axis=1)
         subset.replace(self.output_dict, inplace=True)
         dataframe[self.columns] = subset
@@ -77,7 +77,7 @@ class Domain(Template):
         return subset
 
     @staticmethod
-    def process_others(self, subset: pd.DataFrame):
+    def _process_others(self, subset: pd.DataFrame):
         for col in subset.columns:
             subset[col] = np.where(
                 subset[col].notnull() & ~subset[col].isin(
