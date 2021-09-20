@@ -29,7 +29,7 @@ main() {
   rm ${expected_output%.gz}
 
   # Returns exitcode based on whether tests failed.
-  if [[ ${any_test_failed} == true ]]
+  if [[ "${any_test_failed}" == true ]]
   then
     exit 1
   fi
