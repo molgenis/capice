@@ -92,7 +92,7 @@ class InputChecker:
         """
         Function to check if the reference files exist
         """
-        locs = [reference, '{}.{}'.format(reference, 'fai')]
+        locs = [reference, f'{reference}.fai']
         for loc in locs:
             if loc is False or not check_file_exists(loc):
                 raise FileNotFoundError(

@@ -30,8 +30,8 @@ class ManualAnnotator:
 
     def _check_n_modules(self, modules_list):
         if len(modules_list) < 1:
-            error_message = 'Unable to locate VEP Processors at {}, ' \
-                            'was the directory moved?'.format(self.location)
+            error_message = f'Unable to locate VEP Processors at {self.location}, ' \
+                            'was the directory moved?'
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
@@ -43,8 +43,6 @@ class ManualAnnotator:
                     dataset.drop(columns=processor.name, inplace=True)
             else:
                 self.log.warning(
-                    'Could not use processor {} on input dataset!'.format(
-                        processor.name
-                    )
+                    f'Could not use processor {processor.name} on input dataset!'
                 )
         return dataset
