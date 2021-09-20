@@ -37,12 +37,14 @@ class ArgumentParser:
                               nargs=1,
                               type=str,
                               default=None,
-                              help="""The output filename or the output 
-                              directory where the output file will be placed. 
-                              An output filename does not work when the --train 
-                              flag is also used. 
-                              Note: the output file will always be gzipped! 
-                              (except for model files)"""
+                              help="The output filename or the output "
+                                   "directory where the output file will "
+                                   "be placed. Exports to location of "
+                                   "the CAPICE call by default."
+                                   "An output filename does not work when "
+                                   "the --train flag is also used. "
+                                   "Note: the output file will "
+                                   "always be gzipped! (except for model files)"
                               )
 
         optional.add_argument('-v',
@@ -58,7 +60,12 @@ class ArgumentParser:
 
         optional.add_argument('--train',
                               action='store_true',
-                              help='Future addition.')
+                              help='Call the training protocol of CAPICE to'
+                                   'create a new CAPICE like model. Prints '
+                                   'out a lot of messages during training, '
+                                   'even with verbose set to False. Finetune '
+                                   'the training protocol by using the '
+                                   'config.')
         return parser
 
     def get_argument(self, argument_key):
