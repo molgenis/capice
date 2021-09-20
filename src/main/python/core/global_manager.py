@@ -265,18 +265,17 @@ class CapiceManager:
         """
         Getter for setter grch_build
 
-        :return: integer
+        :return: int
         """
         return self._grch_build
 
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the globally available GRCh build
-        parsed from the config.
+        Singleton property grch_build, to set the definitive GRCh build to be used.
         Raises TypeError if not supplied with an integer or None.
 
-        :param value: integer
+        :param value: int
         """
         pass
 
@@ -453,8 +452,7 @@ class CapiceManager:
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version,
-        to set the VEP version present in the parsed input file.
+        Singleton property vep_version, to set the definitive VEP version to be used.
 
         :param value: float
         """
