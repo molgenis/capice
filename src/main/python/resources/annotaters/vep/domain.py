@@ -76,7 +76,6 @@ class Domain(Template):
             )
         return subset
 
-    @staticmethod
     def _process_others(self, subset: pd.DataFrame):
         for col in subset.columns:
             subset[col] = np.where(
