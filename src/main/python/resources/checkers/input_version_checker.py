@@ -21,8 +21,12 @@ class InputVersionChecker:
         the header of the VEP file match.
         :param config_vep_version: float,
             config argument for the used VEP version
-        :param file_vep_version: flaot,
+        :param file_vep_version: float,
+            VEP version according to parsed input file
+        :param config_grch_build: int,
             config argument for the used GRCh build
+        :param file_grch_build: int,
+            GRCh build according to parsed input file
         """
         self.config_vep_version = config_vep_version
         self.file_vep_version = file_vep_version
@@ -35,6 +39,13 @@ class InputVersionChecker:
         self.unable_check = []
         self.check_overrule = False
         self.log = Logger().logger
+
+        self._run()
+
+    def _run(self):
+        """
+        Runs checks.
+        """
         self._check_all_present()
         if self.check_overrule:
             self._check_overrule()
@@ -70,10 +81,10 @@ class InputVersionChecker:
         """
         if self.manager.overwrite_impute is False and \
                 self.manager.overwrite_model is False:
-            error_message = """
-            VEP version or GRCh build not specified and both overwrites are not 
-            set! Not able to find a correct impute or processing file!
-            """.strip()
+            error_message = (
+                'VEP version or GRCh build not specified and both overwrites are not\n' 
+                'set! Not able to find a correct impute or processing file!'
+            )
             self.log.critical(error_message)
             raise InputError(error_message)
 
@@ -114,11 +125,8 @@ class InputVersionChecker:
         Function to turn on the overrule check if no VEP or GRCh arguments are
         passed.
         """
-        self.check_overrule = type_of_check
         self.log.warning(
-            'Unable to obtain {} version from file or config file!'.format(
-                type_of_check
-            )
+            f'Unable to obtain {type_of_check} version from file or config file!'
         )
         self.check_overrule = True
 

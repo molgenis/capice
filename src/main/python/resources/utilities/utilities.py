@@ -4,6 +4,7 @@ import sys
 from importlib import import_module
 import warnings
 import functools
+import logging
 
 
 def is_gzipped(file_path: str):
@@ -133,7 +134,10 @@ def deprecated(func):
     return new_func
 
 
-def check_tilde_prefix(directory):
-    if directory.startswith('~/'):
-        directory = os.path.expanduser(directory)
-    return directory
+class SetCustomLoggingFilter(logging.Filter):
+    def __init__(self, custom_loglevels):
+        super(SetCustomLoggingFilter, self).__init__()
+        self.custom_loglevels = custom_loglevels
+
+    def filter(self, record) -> bool:
+        return record.levelno in self.custom_loglevels

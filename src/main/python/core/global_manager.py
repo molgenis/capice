@@ -1,50 +1,34 @@
 from src.main.python.resources.checkers.property_checker import PropertyChecker
+import os
+from datetime import datetime
 
 
 class CapiceManager:
     """
-    Test
+    Global CAPICE manager, to keep track of variables used throughout
+    the entirety of CAPICE.
     """
-
     class __CapiceManager:
-        """
-        Class to make a logfile on the progress being made.
-        """
-
         def __init__(self):
             self.property_checker = PropertyChecker()
-            self.log_loc = '.'
-            self.now = None
+            self._now = datetime.now()
             self.overwrite_impute = False
             self.overwrite_model = False
             self.grch_build = False
             self.config_grch_build = False
             self.force = False
             self.verbose = False
-            self.enable_logfile = True
             self.critical_logging_only = False
             self.annotation_features = []
             self.output_filename = ''
             self.reference_genome = False
             self.vep_version = False
             self.config_vep_version = False
-
-        @property
-        def log_loc(self):
-            return self._log_loc
-
-        @log_loc.setter
-        def log_loc(self, value):
-            self.property_checker.check_property(value=value, expected_type=str)
-            self._log_loc = value
+            self.config_loc = None
 
         @property
         def now(self):
             return self._now
-
-        @now.setter
-        def now(self, value):
-            self._now = value
 
         @property
         def overwrite_impute(self):
@@ -122,16 +106,6 @@ class CapiceManager:
             self._verbose = value
 
         @property
-        def enable_logfile(self):
-            return self._enable_logfile
-
-        @enable_logfile.setter
-        def enable_logfile(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
-            self._enable_logfile = value
-
-        @property
         def critical_logging_only(self):
             return self._critical_logging_only
 
@@ -180,25 +154,20 @@ class CapiceManager:
                                                  expected_type=(float, bool))
             self._config_vep_version = value
 
+        @property
+        def config_loc(self):
+            return self._config_loc
+
+        @config_loc.setter
+        def config_loc(self, value):
+            if value is not None:
+                if not os.path.isfile(value):
+                    raise FileNotFoundError(
+                        'Given config location is not a file!'
+                    )
+            self._config_loc = value
+
     instance = None
-
-    @property
-    def log_loc(self):
-        """
-        Getter for setter log_loc
-
-        :return: string
-        """
-        return self._log_loc
-
-    @log_loc.setter
-    def log_loc(self, value):
-        """
-        Singleton property log_loc, to set the location of the logfile.
-
-        :param value: string
-        """
-        pass
 
     @property
     def now(self):
@@ -265,18 +234,17 @@ class CapiceManager:
         """
         Getter for setter grch_build
 
-        :return: integer
+        :return: int
         """
         return self._grch_build
 
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the globally available GRCh build
-        parsed from the config.
+        Singleton property grch_build, to set the definitive GRCh build to be used.
         Raises TypeError if not supplied with an integer or None.
 
-        :param value: integer
+        :param value: int
         """
         pass
 
@@ -362,27 +330,6 @@ class CapiceManager:
         pass
 
     @property
-    def enable_logfile(self):
-        """
-        Getter for setter enable_logfile
-
-        :return: boolean
-        """
-        return self._enable_logfile
-
-    @enable_logfile.setter
-    def enable_logfile(self, value):
-        """
-        Singleton property enable_logfile,
-        to tell the logger whenever a logfile should be made or if everything
-        should be piped to STDout and STDerr.
-        Raises TypeError if not supplied with a boolean.
-
-        :param value: boolean
-        """
-        pass
-
-    @property
     def critical_logging_only(self):
         """
         Getter for setter critical_logging_only
@@ -453,8 +400,7 @@ class CapiceManager:
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version,
-        to set the VEP version present in the parsed input file.
+        Singleton property vep_version, to set the definitive VEP version to be used.
 
         :param value: float
         """
@@ -477,6 +423,24 @@ class CapiceManager:
         Raises TypeError if not supplied with an integer or False.
 
         :param value: float
+        """
+        pass
+
+    @property
+    def config_loc(self):
+        """
+        Getter for seter config_loc
+
+        return: str, path-like
+        """
+        return self._config_loc
+
+    @config_loc.setter
+    def config_loc(self, value):
+        """
+        Singleton property config_loc,
+        to set the location of a custom config used in a CAPICE run.
+        Raises FileNotFoundError if custom config does not exist
         """
         pass
 

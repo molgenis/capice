@@ -13,8 +13,6 @@ def set_up_manager_and_loc():
     :return: manager instance, output_directory
     """
     manager = CapiceManager()
-    manager.now = datetime.now()
-    manager.enable_logfile = False
     manager.critical_logging_only = True
     manager.verbose = False
     root_dir = get_project_root_dir()
@@ -33,10 +31,11 @@ def teardown():
     remove the folder itself too.
     """
     test_folder = os.path.join(get_project_root_dir(), '.test_output')
-    if len(os.listdir(test_folder)) > 0:
-        for file in os.listdir(test_folder):
-            os.remove(os.path.join(test_folder, file))
-    os.rmdir(test_folder)
+    if os.path.isdir(test_folder):
+        if len(os.listdir(test_folder)) > 0:
+            for file in os.listdir(test_folder):
+                os.remove(os.path.join(test_folder, file))
+        os.rmdir(test_folder)
     Logger.instance = None
     CapiceManager.instance = None
 
