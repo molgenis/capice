@@ -6,7 +6,7 @@ class SEQ(Template):
     def __init__(self):
         super(SEQ, self).__init__(
             name='Seq',
-            usable=True
+            usable=False
         )
 
     def process(self, dataframe: pd.DataFrame):

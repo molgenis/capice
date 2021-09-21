@@ -1,5 +1,6 @@
 import os
 import unittest
+from pathlib import Path
 from src.test.python.test_templates import teardown
 from src.main.python.core.input_checker import InputChecker, LogChecker
 from src.main.python.resources.errors.errors import InputError
@@ -16,6 +17,7 @@ class TestInputChecker(unittest.TestCase):
         if not os.path.exists(cls.output_directory):
             os.makedirs(cls.output_directory)
         cls.input_checker = InputChecker()
+        cls.call_dir = str(Path('.').absolute())
 
     @classmethod
     def tearDownClass(cls):
@@ -66,7 +68,7 @@ class TestInputChecker(unittest.TestCase):
         test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = None
         expected_output_filename = 'CAPICE_input_capice.tsv.gz'
-        expected_output_directory = os.path.join('.', 'CAPICE_example')
+        expected_output_directory = self.call_dir
         self.input_checker.check_input_output_directories(
             input_path=test_input,
             output_path=test_output
@@ -134,7 +136,7 @@ class TestInputChecker(unittest.TestCase):
         test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = 'test.txt'
         expected_output_filename = 'test.txt.gz'
-        expected_output_directory = os.path.join('.', 'CAPICE_example')
+        expected_output_directory = self.call_dir
         self.input_checker.check_input_output_directories(
             input_path=test_input,
             output_path=test_output

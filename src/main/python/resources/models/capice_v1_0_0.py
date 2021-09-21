@@ -16,7 +16,7 @@ class ModelSetupXGBoost0721(TemplateSetup):
     def __init__(self):
         super().__init__(
             name="CAPICE using XGBoost 0.72.1, CADD 1.4 and genome build 37.",
-            usable=True,
+            usable=False,
             vep_version=104.0,
             grch_build=37
         )

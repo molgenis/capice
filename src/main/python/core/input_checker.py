@@ -3,6 +3,7 @@ from src.main.python.resources.utilities.utilities import prepare_dir,\
     check_dir_exists, check_file_exists, get_filename_and_extension
 import warnings
 import os
+from pathlib import Path
 
 
 class InputChecker:
@@ -13,6 +14,7 @@ class InputChecker:
     def __init__(self):
         self.output_filename = ''
         self.output_directory = ''
+        self._call_loc = str(Path('.').absolute())
 
     @staticmethod
     def check_input_loc(input_loc):
@@ -35,13 +37,14 @@ class InputChecker:
 
     def check_input_output_directories(self, input_path, output_path):
         """
-        Function to check the input location, output location and will provide
-        :param input_path:
-        :param output_path:
-        :return:
+        Function to check the input location, output location and filename to
+        tell the exporter where to place what file.
+        :param input_path: str, path-like
+        :param output_path: str, path-like (if missing: supply None)
         """
         if output_path is None:
-            self._create_capice_output_filename(input_path=input_path)
+            self._create_capice_output_filename(input_path=input_path,
+                                                export_to_call=True)
         else:
             # Check if it is a path or else just a filename
             if len(os.path.dirname(output_path)) > 0:
@@ -57,14 +60,18 @@ class InputChecker:
                                                         ispath=True)
             else:
                 # Then I know it's an output filename
-                self.output_directory = os.path.dirname(input_path)
+                self.output_directory = self._call_loc
                 self.output_filename = output_path
         self._check_gzip_extension()
 
     def _create_capice_output_filename(self, input_path, output_path=None,
-                                       append_capice=True, ispath=False):
-        if output_path is None:
+                                       append_capice=True, ispath=False,
+                                       export_to_call=False):
+        if output_path is None and not export_to_call:
             output_path = input_path
+        elif output_path is None and export_to_call:
+            output_path = self._call_loc
+            ispath = True
         input_filename, extension = get_filename_and_extension(input_path)
         if append_capice:
             self.output_filename = '{}_capice.{}'.format(input_filename,
@@ -85,7 +92,7 @@ class InputChecker:
         """
         Function to check if the reference files exist
         """
-        locs = [reference, '{}.{}'.format(reference, 'fai')]
+        locs = [reference, f'{reference}.fai']
         for loc in locs:
             if loc is False or not check_file_exists(loc):
                 raise FileNotFoundError(
