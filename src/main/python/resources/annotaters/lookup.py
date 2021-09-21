@@ -9,13 +9,12 @@ class FastaLookupAnnotator:
         self.manager = CapiceManager()
         self.fasta_loc = self.manager.reference_genome
         self.fasta = None
-        self._load_fasta()
+        # self._load_fasta()
 
     def _load_fasta(self):
         self.log.info('Loading in Fasta file, this may take a moment.')
         self.fasta = pysam.FastaFile(self.fasta_loc)
-        self.log.info(
-            'Succesfully loaded Fasta file at: {}'.format(self.fasta_loc))
+        self.log.info(f'Succesfully loaded Fasta file at: {self.fasta_loc}')
 
     def get_reference_sequence(self, chromosome: str, start: int, end: int):
         """
@@ -32,6 +31,10 @@ class FastaLookupAnnotator:
         :return: string, obtained reference sequence.
         """
         try:
+            self.log.debug(
+                'Obtaining reference sequence for: '
+                f'[Chromosome: {chromosome}], [start: {start}], [stop: {end}]'
+            )
             append_ns = False
             if start < 0:
                 append_ns = abs(start)
