@@ -1,4 +1,5 @@
 from src.main.python.resources.checkers.property_checker import PropertyChecker
+import os
 
 
 class CapiceManager:
@@ -28,6 +29,7 @@ class CapiceManager:
             self.reference_genome = False
             self.vep_version = False
             self.config_vep_version = False
+            self.config_loc = None
 
         @property
         def log_loc(self):
@@ -179,6 +181,19 @@ class CapiceManager:
             self.property_checker.check_property(value=value,
                                                  expected_type=(float, bool))
             self._config_vep_version = value
+
+        @property
+        def config_loc(self):
+            return self._config_loc
+
+        @config_loc.setter
+        def config_loc(self, value):
+            if value is not None:
+                if not os.path.isfile(value):
+                    raise FileNotFoundError(
+                        'Given config location is not a file!'
+                    )
+            self._config_loc = value
 
     instance = None
 
@@ -475,6 +490,24 @@ class CapiceManager:
         Raises TypeError if not supplied with an integer or False.
 
         :param value: float
+        """
+        pass
+
+    @property
+    def config_loc(self):
+        """
+        Getter for seter config_loc
+
+        return: str, path-like
+        """
+        return self._config_loc
+
+    @config_loc.setter
+    def config_loc(self, value):
+        """
+        Singleton property config_loc,
+        to set the location of a custom config used in a CAPICE run.
+        Raises FileNotFoundError if custom config does not exist
         """
         pass
 

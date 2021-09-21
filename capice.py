@@ -47,6 +47,13 @@ def main():
     verbose = cla.get_argument('verbose')
     force = cla.get_argument('force')
     train = cla.get_argument('train')
+    config_argument = convert_cla_to_str(cla.get_argument('config'))
+
+    # Initializing manager (temporary location)
+
+    manager = CapiceManager()
+    manager.now = datetime.now()
+    manager.config_loc = config_argument
 
     # Getting all config settings.
 
@@ -72,8 +79,6 @@ def main():
 
     # Initializing the manager
 
-    manager = CapiceManager()
-    manager.now = datetime.now()
     manager.enable_logfile = config.get_misc_value(key='enablelogfile')
     manager.log_loc = log_loc
     manager.verbose = verbose
