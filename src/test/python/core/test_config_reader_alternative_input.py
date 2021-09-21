@@ -9,15 +9,23 @@ class TestConfigReaderAlternativeLocation(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
+        ConfigReader.instance = None
         cls.manager = CapiceManager()
         cls.config_loc = os.path.join(
             get_project_root_dir(),
             'CAPICE_example',
             'not_so_default.cfg'
         )
+        print(cls.config_loc)
         cls.manager.config_loc = cls.config_loc
         cls.config = ConfigReader()
         cls.config.parse()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        print('Tearing down.')
+        ConfigReader.instance = None
+        CapiceManager.instance = None
 
     def setUp(self):
         print('Testing case:')
