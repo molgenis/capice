@@ -14,9 +14,6 @@ class TestSpecificLogCalls(unittest.TestCase):
         cls.manager, cls.output_loc = set_up_manager_and_loc()
         cls.manager.critical_logging_only = False
         cls.manager.verbose = True
-        cls.manager.enable_logfile = False
-        cls.manager.log_loc = cls.output_loc
-        cls.manager.now = datetime.now()
 
     @classmethod
     def tearDownClass(cls):

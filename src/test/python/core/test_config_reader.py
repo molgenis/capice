@@ -22,7 +22,7 @@ class TestConfigReader(unittest.TestCase):
 
     def test_section_defaults(self):
         print('Section defaults')
-        required_arguments = ['logfilelocation', 'genomebuild', 'vepversion']
+        required_arguments = ['genomebuild', 'vepversion']
         for argument in required_arguments:
             self.assertTrue(argument in self.config.defaults)
 
@@ -50,16 +50,6 @@ class TestConfigReader(unittest.TestCase):
         for argument in required_arguments:
             self.assertTrue(argument in self.config.datafiles)
 
-    def test_section_misc_present(self):
-        print('Section misc present')
-        self.assertTrue(Sections.MISC.value in self.config.config.sections())
-
-    def test_section_misc(self):
-        print('Section misc')
-        required_arguments = ['enablelogfile']
-        for argument in required_arguments:
-            self.assertTrue(argument in self.config.misc)
-
     def test_section_training_present(self):
         print('Section training present')
         self.assertTrue(
@@ -77,8 +67,8 @@ class TestConfigReader(unittest.TestCase):
 
     def test_get_default_key(self):
         print('Get default key')
-        value = self.config.get_default_value(key='logfilelocation')
-        self.assertTrue(value is None or isinstance(value, str))
+        value = self.config.get_default_value(key='vepversion')
+        self.assertTrue(value is False or isinstance(value, int))
 
     def test_get_overwrite_key(self):
         print('Get overwrite key')
@@ -89,11 +79,6 @@ class TestConfigReader(unittest.TestCase):
         print('Get CADD key')
         value = self.config.get_datafiles_value(key='reference')
         self.assertTrue(os.path.exists(value) or value is False)
-
-    def test_get_misc_key(self):
-        print('Get misc key')
-        value = self.config.get_misc_value(key='enablelogfile')
-        self.assertIsInstance(value, bool)
 
     def test_get_training_key(self):
         print('Get training key')
