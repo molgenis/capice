@@ -1,4 +1,5 @@
 from configparser import ConfigParser
+from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.main.python.resources.enums.sections import Sections
 import os
@@ -8,6 +9,7 @@ class ConfigReader:
     class __ConfigReader:
         def __init__(self):
             self.config = ConfigParser()
+            self.config_loc = CapiceManager().config_loc
             self.defaults = None
             self.overwrites = None
             self.misc = None
@@ -25,7 +27,15 @@ class ConfigReader:
             self.train = self.config[Sections.TRAINING.value]
 
         def _parse(self):
-            self.config.read(os.path.join(get_project_root_dir(), 'config.cfg'))
+            if self.config_loc:
+                self.config.read(self.config_loc)
+            else:
+                self.config.read(
+                    os.path.join(
+                        get_project_root_dir(),
+                        'default.cfg'
+                    )
+                )
 
         def get_default_value(self, key):
             key = key.lower()
@@ -33,7 +43,7 @@ class ConfigReader:
             self._check_value_has_error(value=value, keysearch=key,
                                         section='DEFAULTS')
             if key == 'genomebuild':
-                key = self._post_process_grch(key)
+                value = self._post_process_grch(value)
                 value = self._check_value_default(value=value, else_type=int)
             elif key == 'vepversion':
                 value = self._convert_vep_to_float(value)
@@ -51,27 +61,25 @@ class ConfigReader:
 
         @staticmethod
         def _post_process_grch(grch_key):
-            if grch_key.startswith('grch'):
+            if grch_key.lower().startswith('grch'):
                 grch_key = grch_key.split('h')[1]
             if '.' in grch_key:
                 grch_key = grch_key.split('.')[0]
             return grch_key
 
-        def get_overwrite_value(self, key):
+        def _get_simple_value(self, key, section, section_name):
             key = key.lower()
-            value = self.overwrites.get(key, fallback=self.error)
+            value = section.get(key, fallback=self.error)
             self._check_value_has_error(value=value, keysearch=key,
-                                        section='OVERWRITES')
+                                        section=section_name)
             value = self._check_value_default(value=value, else_type=str)
             return value
 
+        def get_overwrite_value(self, key):
+            return self._get_simple_value(key, self.overwrites, 'OVERWRITES')
+
         def get_datafiles_value(self, key):
-            key = key.lower()
-            value = self.datafiles.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key,
-                                        section='CADD')
-            value = self._check_value_default(value=value, else_type=str)
-            return value
+            return self._get_simple_value(key, self.datafiles, 'CADD')
 
         def get_misc_value(self, key):
             key = key.lower()
@@ -108,9 +116,7 @@ class ConfigReader:
                                  'TRAINING']
             for section in should_be_present:
                 if section not in self.config.sections():
-                    raise KeyError(
-                        'Unable to locate {} in config file.'.format(section)
-                    )
+                    raise KeyError(f'Unable to locate {section} in config file.')
 
         @staticmethod
         def _check_value_default(value, else_type):
@@ -126,11 +132,7 @@ class ConfigReader:
             return value
 
         def _raise_key_not_found(self, section, keysearch):
-            raise KeyError('Not able to get request {} in section {}.'.format(
-                keysearch,
-                section
-            )
-            )
+            raise KeyError(f'Not able to get request {keysearch} in section {section}.')
 
     instance = None
 
