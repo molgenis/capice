@@ -376,7 +376,8 @@ class Train(Main):
                 reg_alpha=0, reg_lambda=1,
                 scale_pos_weight=1,
                 base_score=0.5,
-                random_state=self.model_random_state
+                random_state=self.model_random_state,
+                use_label_encoder=False
             )
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,
@@ -402,7 +403,7 @@ class Train(Main):
                        early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
-                       verbose=True,
+                       verbose=self.verbose,
                        sample_weight=train_set[enums_train.sample_weight.value])
 
         return ransearch1

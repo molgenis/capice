@@ -155,16 +155,7 @@ class CapiceImputing:
         datafile.fillna(self.impute_values, inplace=True)
         datafile = datafile.astype(dtype=self.pre_dtypes, copy=False)
         datafile = datafile.astype(dtype=self.dtypes, copy=False)
-        if not self.train:
-            datafile = self._add_missing_columns(datafile)
         self.log.info('Imputing successfully performed.')
-        return datafile
-
-    @deprecated
-    def _add_missing_columns(self, datafile: pd.DataFrame):
-        for key, value in self.impute_values.items():
-            if key not in datafile.columns:
-                datafile[key] = value
         return datafile
 
     def _correct_dtypes(self, datafile: pd.DataFrame):
