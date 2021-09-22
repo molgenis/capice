@@ -17,7 +17,6 @@ class CapiceManager:
             self.grch_build = False
             self.config_grch_build = False
             self.force = False
-            self.verbose = False
             self.critical_logging_only = False
             self.annotation_features = []
             self.output_filename = ''
@@ -94,16 +93,6 @@ class CapiceManager:
             self.property_checker.check_property(value=value,
                                                  expected_type=bool)
             self._force = value
-
-        @property
-        def verbose(self):
-            return self._verbose
-
-        @verbose.setter
-        def verbose(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
-            self._verbose = value
 
         @property
         def critical_logging_only(self):
@@ -303,26 +292,6 @@ class CapiceManager:
         """
         Singleton property force, to tell the exporter to overwrite an already
         existing output file.
-        Raises TypeError if not supplied with a boolean.
-
-        :param value: boolean
-        """
-        pass
-
-    @property
-    def verbose(self):
-        """
-        Getter for setter verbose
-
-        :return: boolean
-        """
-        return self._verbose
-
-    @verbose.setter
-    def verbose(self, value):
-        """
-        Singleton property verbose, to print more (debug) messages during the
-        process.
         Raises TypeError if not supplied with a boolean.
 
         :param value: boolean

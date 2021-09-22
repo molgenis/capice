@@ -5,6 +5,7 @@ from importlib import import_module
 import warnings
 import functools
 import logging
+logger = logging.getLogger(__name__)
 
 
 def is_gzipped(file_path: str):

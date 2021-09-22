@@ -12,8 +12,6 @@ class TestSpecificLogCalls(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager, cls.output_loc = set_up_manager_and_loc()
-        cls.manager.critical_logging_only = False
-        cls.manager.verbose = True
 
     @classmethod
     def tearDownClass(cls):

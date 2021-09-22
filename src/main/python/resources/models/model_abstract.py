@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.checkers.property_checker_logger import \
     PropertyCheckerLogger
@@ -18,7 +19,6 @@ class TemplateSetup(metaclass=ABCMeta):
     """
 
     def __init__(self, name, usable, vep_version, grch_build):
-        self.log = Logger().logger
         self.property_checker = PropertyCheckerLogger()
         self.name = name
         self.usable = usable
@@ -146,7 +146,7 @@ class TemplateSetup(metaclass=ABCMeta):
             processed_dataset = self._check_all_model_features_present(
                 processed_dataset
             )
-        self.log.info('Successfully preprocessed data.')
+        logger.info('Successfully preprocessed data.')
         return processed_dataset
 
     @deprecated
@@ -165,10 +165,8 @@ class TemplateSetup(metaclass=ABCMeta):
         for feature in dataset.select_dtypes(include=["O"]).columns:
             if feature in self.annotation_features:
                 self.annotation_object.append(feature)
-        self.log.debug(
-            'Converting the categorical columns: {}.'.format(
-                ", ".join(self.annotation_object)
-            )
+        logger.debug(
+            'Converting the categorical columns: %s.', ", ".join(self.annotation_object)
         )
 
     @staticmethod
@@ -208,7 +206,7 @@ class TemplateSetup(metaclass=ABCMeta):
             hardcoded_features = ['Ref', 'Alt', 'Domain']
             for feature in hardcoded_features:
                 annotation_feats_dict[feature] = 5
-            self.log.info(
+            logger.info(
                 'Training protocol, '
                 'creating new categorical conversion identifiers.'
             )
@@ -244,7 +242,7 @@ class TemplateSetup(metaclass=ABCMeta):
         to get the features that the model is trained on.
         :return: list
         """
-        self.log.info('Using features saved within the model.')
+        logger.info('Using features saved within the model.')
         self.model_features = self.model.get_booster().feature_names
 
     def _process_categorical_vars(self,
@@ -272,11 +270,11 @@ class TemplateSetup(metaclass=ABCMeta):
         else:
             for annotation_feature in annotation_feats_dict.keys():
                 feature_names = annotation_feats_dict[annotation_feature]
-                self.log.debug('For feature: {} loaded {} levels: {}'.format(
+                logger.debug('For feature: %s loaded %s levels: %s',
                     annotation_feature,
                     len(feature_names),
                     feature_names
-                ))
+                )
                 dataset[annotation_feature] = np.where(
                     dataset[annotation_feature].isin(feature_names),
                     dataset[annotation_feature],
@@ -308,10 +306,10 @@ class TemplateSetup(metaclass=ABCMeta):
                 col_be_present = "_".join(
                     [current_annotation_feature, processed_feature])
                 if col_be_present not in dataset.columns:
-                    self.log.warning(
-                        'Of annotation feature {},'
-                        ' detected {} not present in columns.'.format(
-                            current_annotation_feature, processed_feature))
+                    logger.warning(
+                        'Of annotation feature %s,'
+                        ' detected %s not present in columns.',
+                            current_annotation_feature, processed_feature)
                     dataset[col_be_present] = 0
         return dataset
 
@@ -330,10 +328,10 @@ class TemplateSetup(metaclass=ABCMeta):
             if not isinstance(value, str):
                 value = str(value)
             printable_value_counts.append(value)
-        self.log.info('For feature: {} saved the following values: {}'.format(
+        logger.info('For feature: %s saved the following values: %s',
             column.name,
             ', '.join(printable_value_counts)
-        ))
+        )
         return value_counts
 
     # Model stuff
@@ -344,12 +342,12 @@ class TemplateSetup(metaclass=ABCMeta):
         Can be overwritten in case of legacy support.
         :return: pandas DataFrame
         """
-        self.log.info('Predicting for {} samples.'.format(data.shape[0]))
+        logger.info('Predicting for %s samples.', data.shape[0])
         self._load_model()
         self._load_model_features()
         data[Column.score.value] = self._predict(
             self._create_input_matrix(dataset=data))
-        self.log.info('Predicting successful.')
+        logger.info('Predicting successful.')
         return data
 
     def _predict(self, predict_data):
@@ -379,8 +377,8 @@ class TemplateSetup(metaclass=ABCMeta):
         if not self.train:
             with open(self._get_model_loc(), 'rb') as model_file:
                 model = pickle.load(model_file)
-            self.log.info('Successfully loaded model at: {}'.format(
-                self._get_model_loc()))
+            logger.info('Successfully loaded model at: %s',
+                self._get_model_loc())
         self.model = model
 
     @staticmethod

@@ -1,4 +1,5 @@
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 import pandas as pd
 
 
@@ -7,8 +8,6 @@ class TrainChecker:
     Class specific to the train_model.py to check certain parts within it's
     process.
     """
-    def __init__(self):
-        self.log = Logger().logger
 
     def check_specified_defaults(self, loaded_defaults: dict):
         """
@@ -29,7 +28,7 @@ class TrainChecker:
             if argument not in loaded_defaults.keys():
                 error_message = 'Argument {} is not found in the ' \
                                 'specified defaults file!'.format(argument)
-                self.log.critical(error_message)
+                logger.critical(error_message)
                 raise KeyError(error_message)
             if not isinstance(
                     loaded_defaults[argument],
@@ -42,7 +41,7 @@ class TrainChecker:
                     type(loaded_defaults[argument]
                          )
                 )
-                self.log.critical(error_message)
+                logger.critical(error_message)
                 raise TypeError(error_message)
 
     def check_labels(self, dataset: pd.DataFrame, include_balancing=False):
@@ -64,5 +63,5 @@ class TrainChecker:
                 error_message = """
                 Error locating label {} within dataset!
                 """.format(col_name)
-                self.log.critical(error_message)
+                logger.critical(error_message)
                 raise KeyError(error_message)

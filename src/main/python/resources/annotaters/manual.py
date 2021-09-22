@@ -1,4 +1,5 @@
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 import pandas as pd
 import os
 from src.main.python.resources.utilities.utilities import get_project_root_dir,\
@@ -7,7 +8,6 @@ from src.main.python.resources.utilities.utilities import get_project_root_dir,\
 
 class ManualAnnotator:
     def __init__(self):
-        self.log = Logger().logger
         self.vep_annotators = []
         self.location = os.path.join(get_project_root_dir(),
                                      'src',
@@ -32,7 +32,7 @@ class ManualAnnotator:
         if len(modules_list) < 1:
             error_message = f'Unable to locate VEP Processors at {self.location}, ' \
                             'was the directory moved?'
-            self.log.critical(error_message)
+            logger.critical(error_message)
             raise FileNotFoundError(error_message)
 
     def process(self, dataset: pd.DataFrame):
@@ -42,7 +42,7 @@ class ManualAnnotator:
                 if processor.drop:
                     dataset.drop(columns=processor.name, inplace=True)
             else:
-                self.log.warning(
+                logger.warning(
                     f'Could not use processor {processor.name} on input dataset!'
                 )
         return dataset

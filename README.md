@@ -113,6 +113,7 @@ _For instance:_
 `-i input.txt -o path/to/output` becomes `path/to/output/input_capice.txt.gz`
 
 - -v / --verbose: Display more in depth messages within the progress of CAPICE.
+- -vv: Display more in depth and debug messages within the progress of CAPICE.
 - -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
 - --train: Activates the 'train new CAPICE-like models' within CAPICE.
 

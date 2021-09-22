@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.main.python.resources.checkers.property_checker_logger import \
     PropertyCheckerLogger
@@ -13,7 +14,6 @@ class TemplateImputeValues(metaclass=ABCMeta):
     """
 
     def __init__(self, name, usable, vep_version, grch_build):
-        self.log = Logger().logger
         self.property_checker = PropertyCheckerLogger()
         self.name = name
         self.usable = usable
@@ -75,7 +75,7 @@ class TemplateImputeValues(metaclass=ABCMeta):
         json_name = self._json_name()
         if json_name == 'none':
             error_message = 'Location of JSON must be specified!'
-            self.log.critical(error_message)
+            logger.critical(error_message)
             raise FileNotFoundError(error_message)
         return os.path.join(path, json_name)
 

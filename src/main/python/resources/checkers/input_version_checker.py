@@ -1,4 +1,5 @@
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 from src.main.python.resources.errors.errors import InputError
 from src.main.python.core.global_manager import CapiceManager
 import warnings
@@ -38,7 +39,6 @@ class InputVersionChecker:
         self.check_match = []
         self.unable_check = []
         self.check_overrule = False
-        self.log = Logger().logger
 
         self._run()
 
@@ -59,7 +59,7 @@ class InputVersionChecker:
         globally later on in CAPICE.
         """
         self.manager.vep_version = self.export_vep_version
-        self.log.info('VEP version set to: {}'.format(self.export_vep_version))
+        logger.info('VEP version set to: %s', self.export_vep_version)
 
     def _set_global_grch_build(self):
         """
@@ -67,7 +67,7 @@ class InputVersionChecker:
         be used globally later on in CAPICE.
         """
         self.manager.grch_build = self.export_grch_build
-        self.log.info('GRCh build set to: {}'.format(self.export_grch_build))
+        logger.info('GRCh build set to: %s', self.export_grch_build)
 
     def _check_overrule(self):
         """
@@ -85,7 +85,7 @@ class InputVersionChecker:
                 'VEP version or GRCh build not specified and both overwrites are not\n' 
                 'set! Not able to find a correct impute or processing file!'
             )
-            self.log.critical(error_message)
+            logger.critical(error_message)
             raise InputError(error_message)
 
     def _check_all_present(self):
@@ -125,7 +125,7 @@ class InputVersionChecker:
         Function to turn on the overrule check if no VEP or GRCh arguments are
         passed.
         """
-        self.log.warning(
+        logger.warning(
             f'Unable to obtain {type_of_check} version from file or config file!'
         )
         self.check_overrule = True
@@ -177,10 +177,8 @@ class InputVersionChecker:
     def _raise_version_mismatch(self, type_of_mismatch, version_cla=None,
                                 version_file=None, match_successful=False):
         if match_successful:
-            self.log.info(
-                'Successfully matched CLA and file versions for {}.'.format(
-                    type_of_mismatch
-                )
+            logger.info(
+                'Successfully matched CLA and file versions for %s.',type_of_mismatch
             )
         else:
             warning_message = """
@@ -192,4 +190,4 @@ class InputVersionChecker:
                 version_file
             ).strip()
             warnings.warn(warning_message)
-            self.log.warning(warning_message)
+            logger.warning(warning_message)

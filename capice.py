@@ -10,12 +10,15 @@ modules and provide ./src/main_capice.py with it's wanted arguments.
 
 from src.main.python.core.command_line_parser import ArgumentParser
 from src.main.python.core.input_checker import InputChecker
+from src.main.python.core.log import setup_logger
 from src.main.python.resources.utilities.utilities import convert_cla_to_str
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.config_reader import ConfigReader
 from src.main_capice import Main
 from src.main_train import Train
 from datetime import datetime
+import logging
+logger = logging.getLogger(__name__)
 
 __program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
@@ -40,11 +43,17 @@ def main():
     """
     cla = ArgumentParser(description=__description__)
 
-    # Getting all arguments.
+    if cla.get_argument('debug'):
+        level = logging.DEBUG
+    elif cla.get_argument('verbose'):
+        level = logging.INFO
+    else:
+        level = logging.WARNING
+    setup_logger(level)
 
+    # Getting all arguments.
     input_loc = convert_cla_to_str(cla.get_argument('input'))
     output_loc = convert_cla_to_str(cla.get_argument('output'))
-    verbose = cla.get_argument('verbose')
     force = cla.get_argument('force')
     train = cla.get_argument('train')
     config_argument = convert_cla_to_str(cla.get_argument('config'))
@@ -53,7 +62,6 @@ def main():
 
     manager = CapiceManager()
     manager.config_loc = config_argument
-    manager.verbose = verbose
     manager.force = force
 
     # Getting all config settings.

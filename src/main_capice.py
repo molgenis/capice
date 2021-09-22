@@ -1,4 +1,5 @@
-from src.main.python.core.logger import Logger
+import logging
+logger = logging.getLogger(__name__)
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.exporter import Exporter
 from src.main.python.core.config_reader import ConfigReader
@@ -26,49 +27,34 @@ class Main:
 
         # Order is important here
         self.manager = CapiceManager()
-        self.log = Logger().logger
 
         # Config loading
         self.config = ConfigReader()
 
         # Welcome message
 
-        self.log.info(
-            'Thank you for using {}, version: {}, created by: {}.'.format(
-                __program__,
-                __version__,
-                __author__
-            )
-        )
-
-        self.log.info(
-            'Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose)
-        )
+        logger.info('Thank you for using %s, version: %s, created by: %s.', __program__, __version__, __author__)
 
         # Order is less important here
 
-        self.log.info('Arguments passed. Starting program.')
+        logger.info('Arguments passed. Starting program.')
         self.infile = input_loc
-        self.log.debug(
-            'Input argument -i / --input confirmed: {}'.format(self.infile)
+        logger.debug(
+            'Input argument -i / --input confirmed: %s', self.infile
         )
         self.output = output_loc
-        self.log.debug(
-            'Output directory -o / --output confirmed: {}'.format(self.output)
+        logger.debug(
+            'Output directory -o / --output confirmed: %s', self.output
         )
         config_vep_version = self.config.get_default_value('vepversion')
-        self.log.debug(
-            'Config VEP version confirmed: {}'.format(
-                config_vep_version
-            )
+        logger.debug(
+            'Config VEP version confirmed: %s', config_vep_version
         )
         config_genome_build = self.config.get_default_value('genomebuild')
-        self.log.debug(
-            'Config Genome build confirmed: {}'.format(
-                config_genome_build
-            )
+        logger.debug(
+            'Config Genome build confirmed: %s', config_genome_build
         )
-        self.log.debug('Force flag confirmed: {}'.format(self.manager.force))
+        logger.debug('Force flag confirmed: %s', self.manager.force)
 
     def run(self):
         """

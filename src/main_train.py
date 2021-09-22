@@ -1,3 +1,6 @@
+import logging
+logger = logging.getLogger(__name__)
+
 from src.main_capice import Main
 from src.main.python.resources.checkers.train_checker import TrainChecker
 from src.main.python.core.exporter import Exporter
@@ -29,33 +32,32 @@ class Train(Main):
 
         # Argument logging
         self.balance = self.config.get_train_value('makebalanced')
-        self.log.debug(
-            'Make input dataset balanced confirmed: {}'.format(self.balance)
+        logger.debug(
+            'Make input dataset balanced confirmed: %s', self.balance
         )
         self.default = self.config.get_train_value('default')
-        self.log.debug(
+        logger.debug(
             'The use of the default Python 3.6 hyperparameters set to: '
-            '{}'.format(self.default)
+            '%s', self.default
         )
         self.specified_default = self.config.get_train_value(
             'specifieddefaults'
         )
-        self.log.debug(
+        logger.debug(
             'The use of specified default hyperparameters set to: '
-            '{}'.format(self.specified_default)
+            '%s', self.specified_default
         )
         self.n_split = self.config.get_train_value('split')
-        self.log.debug(
-            'Split has been confirmed, set to: {}'.format(self.n_split)
+        logger.debug(
+            'Split has been confirmed, set to: %s', self.n_split
         )
         self.early_exit = self.config.get_train_value('earlyexit')
         if self.early_exit:
-            self.log.debug('Early exit flag confirmed.')
+            logger.debug('Early exit flag confirmed.')
         self.train_test_size = self.config.get_train_value('traintestsize')
-        self.log.debug(
+        logger.debug(
             'The percentage of data used for the '
-            'testing dataset within training: {}'.format(
-                self.train_test_size)
+            'testing dataset within training: %s', self.train_test_size
         )
 
         # Global variables
@@ -81,7 +83,7 @@ class Train(Main):
         if self.balance:
             data = self.process_balance_in_the_force(dataset=data)
         if self.n_split > 0.0:
-            self.log.info(
+            logger.info(
                 'Splitting input dataset before any preprocessing happens.'
             )
             data, _ = self.split_data(
@@ -158,10 +160,8 @@ class Train(Main):
             with open(self.specified_default) as json_file:
                 defaults = json.load(json_file)
             train_checker.check_specified_defaults(loaded_defaults=defaults)
-            self.log.debug(
-                'Specified defaults located at {} successfully loaded.'.format(
-                    self.specified_default
-                )
+            logger.debug(
+                'Specified defaults located at %s successfully loaded.', self.specified_default
             )
             self.default = True
         else:
@@ -180,7 +180,7 @@ class Train(Main):
         :param dataset: pandas.DataFrame
         :return: balanced pandas.DataFrame
         """
-        self.log.info('Balancing out the input dataset, please hold.')
+        logger.info('Balancing out the input dataset, please hold.')
         palpatine = dataset[dataset['binarized_label'] == 1]
         yoda = dataset[dataset['binarized_label'] == 0]
         anakin = pd.DataFrame(columns=dataset.columns)
@@ -194,7 +194,7 @@ class Train(Main):
                 consequence=consequence
             )
             anakin = anakin.append(processed_consequence)
-        self.log.info('Balancing complete.')
+        logger.info('Balancing complete.')
         return anakin
 
     def _process_consequence(self,
@@ -203,7 +203,7 @@ class Train(Main):
                              return_df_columns: list,
                              consequence: str,
                              bins: list):
-        self.log.debug("Processsing: {}".format(consequence))
+        logger.debug("Processsing: %s", consequence)
         selected_pathogenic = pathogenic_dataframe[
             pathogenic_dataframe['Consequence'] == consequence]
         selected_neutral = benign_dataframe[
@@ -261,19 +261,19 @@ class Train(Main):
                 selected_pnv_all.shape[0],
                 random_state=self.random_state
             )
-        self.log.debug(
-            "Sampled {} variants from Possibly Neutral Variants in range of: "
-            "{} - {}".format(
+        logger.debug(
+            "Sampled %s variants from Possibly Neutral Variants in range of: "
+            "%s - %s",
                 selected_pnv_currange.shape[0],
                 lower_bound,
-                upper_bound)
+                upper_bound
         )
-        self.log.debug(
-            "Sampled {} variants from Possibly Pathogenic Variants in range "
-            "of: {} - {}".format(
+        logger.debug(
+            "Sampled %s variants from Possibly Pathogenic Variants in range "
+            "of: %s - %s",
                 selected_pathogenic_currange.shape[0],
                 lower_bound,
-                upper_bound)
+                upper_bound
         )
         return selected_pathogenic_currange.append(selected_pnv_currange)
 
@@ -327,7 +327,7 @@ class Train(Main):
             verbosity = 1
         else:
             verbosity = 0
-        self.log.debug('Preparing the estimator model.')
+        logger.debug('Preparing the estimator model.')
 
         if self._integration_test:
             early_stopping_rounds = 1
@@ -394,7 +394,7 @@ class Train(Main):
                 test_set['binarized_label'],
                 'test'
             )]
-        self.log.info('Random search starting, please hold.')
+        logger.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set['binarized_label'],
                        early_stopping_rounds=early_stopping_rounds,
