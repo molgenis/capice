@@ -1,10 +1,9 @@
-import os
+import sys
 import unittest
-from datetime import datetime
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import teardown
+import io
 
 
 class TestLogger(unittest.TestCase):
@@ -12,14 +11,7 @@ class TestLogger(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager = CapiceManager()
-        cls.output_loc = os.path.join(get_project_root_dir(), '.test_output')
-        if not os.path.exists(cls.output_loc):
-            os.makedirs(cls.output_loc)
-        cls.manager.now = datetime.now()
-        cls.manager.log_loc = cls.output_loc
         cls.manager.critical_logging_only = False
-        cls.manager.enable_logfile = True
-        cls.log = Logger().logger
 
     @classmethod
     def tearDownClass(cls):
@@ -28,64 +20,65 @@ class TestLogger(unittest.TestCase):
 
     def setUp(self):
         print('Testing case:')
-        self.log = Logger()
+
+    def tearDown(self) -> None:
+        print('Resetting arguments.')
+        Logger.instance = None
 
     def test_loglevel_nonverbose(self):
-        print('Loglevel non verbose')
-        loglevel = self.log.set_loglevel()
-        self.assertEqual(loglevel, 20)
+        print('Loglevel info')
+        log = Logger()
+        self.assertEqual(20, log.stdout_loglevels[0])
+        self.assertEqual([30, 40, 50], sorted(log.stderr_loglevels))
 
     def test_loglevel_verbose(self):
         print('Loglevel verbose')
         self.manager.verbose = True
-        loglevel = self.log.set_loglevel()
-        self.assertEqual(loglevel, 0)
+        log = Logger()
+        self.assertEqual([10, 20], sorted(log.stdout_loglevels))
+        self.manager.verbose = False
 
-    def test_create_logfile(self):
-        print('Creating logfile')
-        message = 'This is a test_create_logfile specific ' \
-                  'message for testing purposes'
-        self.log.logger.info(message)
-        expected_out_message = '[CAPICE] ' \
-                               '[test_logger.py] ' \
-                               '[test_create_logfile] ' \
-                               '[INFO]  ' \
-                               '{}'.format(message)
-        logfile = os.listdir(self.output_loc)[0]
-        with open(os.path.join(self.output_loc, logfile), 'rt') as log_messages:
-            messages = log_messages.readlines()
-        stripped_messages = []
-        for log in messages:
-            stripped_messages.append(' '.join(log.strip().split(' ')[2:]))
-        self.assertIn(expected_out_message, stripped_messages)
+    def test_loglevel_critical_logging_only(self):
+        print('Critical logging only')
+        self.manager.critical_logging_only = True
+        log = Logger()
+        self.assertEqual(0, len(log.stdout_loglevels))
+        self.assertEqual(50, log.stderr_loglevels[0])
+        self.manager.critical_logging_only = False
 
-    def test_filehandler(self):
-        print('Logging filehandler')
-        self.manager.log_loc = self.output_loc
-        handlers = self.log.logger.handlers
-        string_handlers = []
-        for handler in handlers:
-            string_handlers.append(str(handler.__class__))
-        self.assertTrue("<class 'logging.FileHandler'>" in string_handlers)
+    def test_logger_class(self):
+        print('Logger class')
+        self.assertEqual(str(Logger().logger.__class__),
+                         "<class 'logging.RootLogger'>")
 
-    def test_final_logloc(self):
-        print('Final logloc')
-        files_present = []
-        for file in os.listdir(self.output_loc):
-            files_present.append(os.path.join(self.output_loc, file))
-        self.assertTrue(self.log.get_log_loc() in files_present)
-
-    def test_creating_log_filename(self):
-        print('Logfile filename')
-        with open(
-                os.path.join(self.output_loc, 'present_file.log'),
-                'wt') as logfile:
-            logfile.write('Already present')
-        new_filename = self.log._create_log_export_name(
-            out_file_name='present_file'
-        )
+    def test_stdout_call(self):
+        print('Logger stdout call')
+        old_stdout = sys.stdout
+        listener = io.StringIO()
+        sys.stdout = listener
+        log = Logger().logger
+        log.info('SomeString')
+        out = listener.getvalue()
+        sys.stdout = old_stdout
+        interesting_bit = ''.join(out.split('[CAPICE] ')[1:]).strip()
         self.assertEqual(
-            new_filename, os.path.join(self.output_loc, 'present_file_1.log')
+            '[test_logger.py] [test_stdout_call] [INFO]  SomeString',
+            interesting_bit
+        )
+
+    def test_stderr_call(self):
+        print('Logger stderr call')
+        old_stderr = sys.stderr
+        listener = io.StringIO()
+        sys.stderr = listener
+        log = Logger().logger
+        log.error('SomeString')
+        out = listener.getvalue()
+        sys.stderr = old_stderr
+        interesting_bit = ''.join(out.split('[CAPICE] ')[1:]).strip()
+        self.assertEqual(
+            '[test_logger.py] [test_stderr_call] [ERRO]  SomeString',
+            interesting_bit
         )
 
 

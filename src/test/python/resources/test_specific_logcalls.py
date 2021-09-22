@@ -14,9 +14,6 @@ class TestSpecificLogCalls(unittest.TestCase):
         cls.manager, cls.output_loc = set_up_manager_and_loc()
         cls.manager.critical_logging_only = False
         cls.manager.verbose = True
-        cls.manager.enable_logfile = False
-        cls.manager.log_loc = cls.output_loc
-        cls.manager.now = datetime.now()
 
     @classmethod
     def tearDownClass(cls):
@@ -39,9 +36,9 @@ class TestSpecificLogCalls(unittest.TestCase):
             }
         )
         messages_present = [
-            '[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] '
+            '[CAPICE] [capice_imputing.py] [_calculate_percentage_nan] '
             '[DEBU]  NaN detected in column bar, percentage: 50.0%.',
-            '[CAPICE] [test_specific_logcalls.py] [test_nan_calculator] '
+            '[CAPICE] [capice_imputing.py] [_calculate_percentage_nan] '
             '[DEBU]  NaN detected in column baz, percentage: 25.0%.'
         ]
         self.manager.vep_version = 104.0

@@ -12,7 +12,6 @@ class ConfigReader:
             self.config_loc = CapiceManager().config_loc
             self.defaults = None
             self.overwrites = None
-            self.misc = None
             self.datafiles = None
             self.train = None
             self.error = 'ERROR'
@@ -23,7 +22,6 @@ class ConfigReader:
             self.defaults = self.config[Sections.DEFAULTS.value]
             self.overwrites = self.config[Sections.OVERWRITES.value]
             self.datafiles = self.config[Sections.DATAFILES.value]
-            self.misc = self.config[Sections.MISC.value]
             self.train = self.config[Sections.TRAINING.value]
 
         def _parse(self):
@@ -81,17 +79,6 @@ class ConfigReader:
         def get_datafiles_value(self, key):
             return self._get_simple_value(key, self.datafiles, 'CADD')
 
-        def get_misc_value(self, key):
-            key = key.lower()
-            boolean = ['enablelogfile']
-            if key in boolean:
-                value = self.misc.getboolean(key, fallback=self.error)
-            else:
-                value = self.misc.get(key, fallback=self.error)
-            self._check_value_has_error(value=value, keysearch=key,
-                                        section='MISC')
-            return value
-
         def get_train_value(self, key):
             key = key.lower()
             boolean = ['makebalanced', 'earlyexit', 'default']
@@ -112,27 +99,28 @@ class ConfigReader:
                 self._raise_key_not_found(section=section, keysearch=keysearch)
 
         def _check_all_sections_present(self):
-            should_be_present = ['DEFAULTS', 'OVERWRITES', 'DATAFILES', 'MISC',
+            should_be_present = ['DEFAULTS', 'OVERWRITES', 'DATAFILES',
                                  'TRAINING']
             for section in should_be_present:
                 if section not in self.config.sections():
-                    raise KeyError(f'Unable to locate {section} in config file.')
+                    raise KeyError(
+                        f'Unable to locate {section} in config file.'
+                    )
 
         @staticmethod
         def _check_value_default(value, else_type):
             default = 'missing'
-            none_default = 'output'
             if isinstance(value, str):
                 if value.lower() == default:
                     value = False
-                elif value.lower() == none_default:
-                    value = None
                 else:
                     value = else_type(value)
             return value
 
         def _raise_key_not_found(self, section, keysearch):
-            raise KeyError(f'Not able to get request {keysearch} in section {section}.')
+            raise KeyError(
+                f'Not able to get request {keysearch} in section {section}.'
+            )
 
     instance = None
 
@@ -153,14 +141,6 @@ class ConfigReader:
     def get_overwrite_value(self, key):
         """
         Function to get a value from the OVERWRITES section of the config.
-
-        key: str
-        """
-        pass
-
-    def get_misc_value(self, key):
-        """
-        Function to get a value from the MISC section of the config.
 
         key: str
         """

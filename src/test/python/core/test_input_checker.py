@@ -2,7 +2,7 @@ import os
 import unittest
 from pathlib import Path
 from src.test.python.test_templates import teardown
-from src.main.python.core.input_checker import InputChecker, LogChecker
+from src.main.python.core.input_checker import InputChecker
 from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
@@ -22,10 +22,6 @@ class TestInputChecker(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print('Tearing down.')
-        to_remove = ['.another_test_log_output', '.test_log_output',
-                     '.another_test_output']
-        for removal in to_remove:
-            os.rmdir(os.path.join(get_project_root_dir(), removal))
         teardown()
 
     def setUp(self):
@@ -148,28 +144,6 @@ class TestInputChecker(unittest.TestCase):
         self.assertEqual(
             self.input_checker.get_output_directory(),
             expected_output_directory
-        )
-
-    def test_log_checker_both(self):
-        print('Log checker with both output and log_loc given')
-        log_output = os.path.join(get_project_root_dir(), '.test_log_output')
-        logchecker = LogChecker(
-            log_loc=log_output,
-            output_loc=self.output_directory
-        )
-        logchecker.check_log_loc()
-        self.assertTrue(
-            '.test_log_output' in os.listdir(get_project_root_dir())
-        )
-
-    def test_log_checker_output(self):
-        print('Log checker with only output given')
-        logchecker = LogChecker(log_loc=None, output_loc=os.path.join(
-            get_project_root_dir(), '.another_test_log_output')
-                                )
-        logchecker.check_log_loc()
-        self.assertTrue(
-            '.another_test_log_output' in os.listdir(get_project_root_dir())
         )
 
 

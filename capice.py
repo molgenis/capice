@@ -9,7 +9,7 @@ modules and provide ./src/main_capice.py with it's wanted arguments.
 """
 
 from src.main.python.core.command_line_parser import ArgumentParser
-from src.main.python.core.input_checker import InputChecker, LogChecker
+from src.main.python.core.input_checker import InputChecker
 from src.main.python.resources.utilities.utilities import convert_cla_to_str
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.config_reader import ConfigReader
@@ -49,44 +49,35 @@ def main():
     train = cla.get_argument('train')
     config_argument = convert_cla_to_str(cla.get_argument('config'))
 
-    # Initializing manager (temporary location)
+    # Initializing manager
 
     manager = CapiceManager()
-    manager.now = datetime.now()
     manager.config_loc = config_argument
+    manager.verbose = verbose
+    manager.force = force
 
     # Getting all config settings.
 
     config = ConfigReader()
     config.parse()
-    log_loc = config.get_default_value(key='logfilelocation')
 
     # Checking the input arguments.
 
     input_checker = InputChecker()
 
-    input_checker.check_input_loc(input_loc=input_loc)
+    input_loc = input_checker.check_input_loc(input_loc=input_loc)
     input_checker.check_input_output_directories(input_path=input_loc,
                                                  output_path=output_loc)
     output_loc = input_checker.get_output_directory()
     output_filename = input_checker.get_output_filename()
     input_checker.check_output_loc(output_loc=output_loc)
 
-    # Checking the log arguments
+    # Setting the remaining manager variables.
 
-    lc = LogChecker(log_loc=log_loc, output_loc=output_loc)
-    log_loc = lc.check_log_loc()
-
-    # Initializing the manager
-
-    manager.enable_logfile = config.get_misc_value(key='enablelogfile')
-    manager.log_loc = log_loc
-    manager.verbose = verbose
     manager.overwrite_impute = config.get_overwrite_value(key='imputefile')
     manager.overwrite_model = config.get_overwrite_value(key='modelfile')
     manager.config_vep_version = config.get_default_value(key='vepversion')
     manager.config_grch_build = config.get_default_value(key='genomebuild')
-    manager.force = force
     manager.output_filename = output_filename
     manager.reference_genome = config.get_datafiles_value(key='reference')
 

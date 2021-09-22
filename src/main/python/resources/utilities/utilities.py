@@ -4,6 +4,7 @@ import sys
 from importlib import import_module
 import warnings
 import functools
+import logging
 
 
 def is_gzipped(file_path: str):
@@ -131,3 +132,12 @@ def deprecated(func):
         warnings.simplefilter('default', DeprecationWarning)
         return func(*args, **kwargs)
     return new_func
+
+
+class SetCustomLoggingFilter(logging.Filter):
+    def __init__(self, custom_loglevels):
+        super(SetCustomLoggingFilter, self).__init__()
+        self.custom_loglevels = custom_loglevels
+
+    def filter(self, record) -> bool:
+        return record.levelno in self.custom_loglevels
