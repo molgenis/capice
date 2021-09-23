@@ -37,14 +37,14 @@ class Logger:
         def __init__(self):
             self.global_settings = CapiceManager()
             self.stdout = False
-            self.stdout_loglevels = []
-            self.stderr_loglevels = [logging.CRITICAL]
-            self.set_loglevels()
+            self.stdout_filter = []
+            self.stderr_loglevel = 50
+            self.set_stderr_loglevel()
             self.logger = None
             if self.logger is None:
                 self.load_logger()
 
-        def set_loglevels(self):
+        def set_stderr_loglevel(self):
             """
             Function to set the log level at where messages are printed or
             logged. For more information, see:
@@ -52,11 +52,25 @@ class Logger:
             :return: logging level
             """
             if not self.global_settings.critical_logging_only:
+                self.stderr_loglevel = 30
+            if self.global_settings.loglevel and self.stderr_loglevel < 50:
                 self.stdout = True
-                self.stderr_loglevels += [logging.WARNING, logging.ERROR]
-                self.stdout_loglevels.append(logging.INFO)
-                if self.global_settings.verbose:
-                    self.stdout_loglevels.append(logging.DEBUG)
+                self._set_stdout_filter()
+
+        def _set_stdout_filter(self):
+            """
+            Required because else Warning, Error and CRITICAL messages are
+            printed to sys.stdout.
+            """
+
+            logging_info = [logging.INFO]
+            logging_debug = logging_info + [logging.DEBUG]
+
+            dict_of_levels = {
+                10: logging_debug,
+                20: logging_info
+            }
+            self.stdout_filter = dict_of_levels[self.global_settings.loglevel]
 
         def load_logger(self):
             """
@@ -70,36 +84,34 @@ class Logger:
             # Now renaming it to CAPICE.
             logger.name = 'CAPICE'
 
-            formatter = logging.Formatter("%(asctime)s "
-                                          "[%(name)s] "
-                                          "[%(filename)s] "
-                                          "[%(funcName)s] "
-                                          "[%(levelname)-4.4s]  "
-                                          "%(message)s")
+            # Capture warnings
+            logging.captureWarnings(True)
+
+            formatter = logging.Formatter(
+                "%(asctime)s "
+                "[%(levelname)s] "
+                "%(message)s",
+                datefmt='%Y-%m-%d %H:%M:%S'
+            )
 
             # Setting the log level to debug, but with an applied filter
-            logger.setLevel(logging.DEBUG)
+            logger.setLevel(logging.NOTSET)
 
-            # sys.stdout (if not critical logging only)
+            # sys.stdout (if critical logging only isn't called and one of
+            # the verbose flags is called.
             if self.stdout:
                 stdout_handler = logging.StreamHandler(sys.stdout)
-                stdout_handler.setLevel(logging.DEBUG)
-                stdout_handler.addFilter(
-                    SetCustomLoggingFilter(
-                        self.stdout_loglevels
-                    )
-                )
+                stdout_handler.setLevel(self.global_settings.loglevel)
                 stdout_handler.setFormatter(formatter)
+                # Filter out warning, error and critical messages.
+                stdout_handler.addFilter(
+                    SetCustomLoggingFilter(self.stdout_filter)
+                )
                 logger.addHandler(stdout_handler)
 
             # sys.stderr
             stderr_handler = logging.StreamHandler(sys.stderr)
-            stderr_handler.setLevel(logging.WARNING)
-            stderr_handler.addFilter(
-                SetCustomLoggingFilter(
-                    self.stderr_loglevels
-                )
-            )
+            stderr_handler.setLevel(self.stderr_loglevel)
             stderr_handler.setFormatter(formatter)
             logger.addHandler(stderr_handler)
             self.logger = logger

@@ -89,6 +89,7 @@ class TestImputer(unittest.TestCase):
         )
         imputed_columns = self.manager.annotation_features
         print(imputed_columns)
+        print(imputed_file)
         self.assertFalse(imputed_file[imputed_columns].isnull().values.any())
 
     def test_empty_chrom(self):

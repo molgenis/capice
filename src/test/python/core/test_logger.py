@@ -18,68 +18,69 @@ class TestLogger(unittest.TestCase):
         print('Tearing down.')
         teardown()
 
+    @staticmethod
+    def capture_stdout_call():
+        old_stdout = sys.stdout
+        listener = io.StringIO()
+        sys.stdout = listener
+        log = Logger().logger
+        log.info('SomeString')
+        log.debug('SomeString')
+        out = listener.getvalue()
+        sys.stdout = old_stdout
+        return out
+
+    @staticmethod
+    def capture_stderr_call():
+        old_stderr = sys.stderr
+        listener = io.StringIO()
+        sys.stderr = listener
+        log = Logger().logger
+        log.critical('SomeString')
+        log.error('SomeString')
+        out = listener.getvalue()
+        sys.stderr = old_stderr
+        return out
+
     def setUp(self):
         print('Testing case:')
 
     def tearDown(self) -> None:
         print('Resetting arguments.')
         Logger.instance = None
+        self.manager.critical_logging_only = False
+        self.manager.loglevel = None
 
     def test_loglevel_nonverbose(self):
+        """
+        Testing Info messages just became a lot harder since the logger is set
+        to logging.NOTSET by default, with it's StreamHandlers taking care of
+        the messages itself, specially the stdout StreamHandler.
+        """
         print('Loglevel info')
-        log = Logger()
-        self.assertEqual(20, log.stdout_loglevels[0])
-        self.assertEqual([30, 40, 50], sorted(log.stderr_loglevels))
+        self.manager.loglevel = 20  # 20 = logging.INFO
+        out = self.capture_stdout_call()
+        self.assertIn('INFO', out)
+        self.assertNotIn('DEBUG', out)
 
     def test_loglevel_verbose(self):
         print('Loglevel verbose')
-        self.manager.verbose = True
-        log = Logger()
-        self.assertEqual([10, 20], sorted(log.stdout_loglevels))
-        self.manager.verbose = False
+        self.manager.loglevel = 10  # 10 = logging.DEBUG
+        out = self.capture_stdout_call()
+        self.assertIn('INFO', out)
+        self.assertIn('DEBUG', out)
 
     def test_loglevel_critical_logging_only(self):
         print('Critical logging only')
         self.manager.critical_logging_only = True
-        log = Logger()
-        self.assertEqual(0, len(log.stdout_loglevels))
-        self.assertEqual(50, log.stderr_loglevels[0])
-        self.manager.critical_logging_only = False
+        out = self.capture_stderr_call()
+        self.assertIn('CRITICAL', out)
+        self.assertNotIn('ERROR', out)
 
     def test_logger_class(self):
         print('Logger class')
         self.assertEqual(str(Logger().logger.__class__),
                          "<class 'logging.RootLogger'>")
-
-    def test_stdout_call(self):
-        print('Logger stdout call')
-        old_stdout = sys.stdout
-        listener = io.StringIO()
-        sys.stdout = listener
-        log = Logger().logger
-        log.info('SomeString')
-        out = listener.getvalue()
-        sys.stdout = old_stdout
-        interesting_bit = ''.join(out.split('[CAPICE] ')[1:]).strip()
-        self.assertEqual(
-            '[test_logger.py] [test_stdout_call] [INFO]  SomeString',
-            interesting_bit
-        )
-
-    def test_stderr_call(self):
-        print('Logger stderr call')
-        old_stderr = sys.stderr
-        listener = io.StringIO()
-        sys.stderr = listener
-        log = Logger().logger
-        log.error('SomeString')
-        out = listener.getvalue()
-        sys.stderr = old_stderr
-        interesting_bit = ''.join(out.split('[CAPICE] ')[1:]).strip()
-        self.assertEqual(
-            '[test_logger.py] [test_stderr_call] [ERRO]  SomeString',
-            interesting_bit
-        )
 
 
 if __name__ == '__main__':

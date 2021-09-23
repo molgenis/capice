@@ -66,7 +66,7 @@ class Train(Main):
         self.defaults = {}
         self.annotation_features = []
         self.processed_features = []
-        self.verbose = self.manager.verbose
+        self.loglevel = self.manager.loglevel
         self.model_type = None
         self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
@@ -325,10 +325,15 @@ class Train(Main):
             'n_estimators': scipy.stats.randint(100, 600),
             # (random integer from 10 to 600)
         }
-        if self.verbose:
-            verbosity = 1
+
+        # First checking if it is not None
+        if self.loglevel:
+            if self.loglevel < 20:
+                verbosity = 1
+                xgb_verbosity = True
         else:
             verbosity = 0
+            xgb_verbosity = False
         self.log.debug('Preparing the estimator model.')
 
         if self._integration_test:
@@ -403,7 +408,7 @@ class Train(Main):
                        early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
-                       verbose=self.verbose,
+                       verbose=xgb_verbosity,
                        sample_weight=train_set[enums_train.sample_weight.value])
 
         return ransearch1

@@ -41,10 +41,6 @@ class Main:
             )
         )
 
-        self.log.info(
-            'Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose)
-        )
-
         # Order is less important here
 
         self.log.info('Arguments passed. Starting program.')

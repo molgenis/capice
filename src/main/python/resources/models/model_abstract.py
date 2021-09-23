@@ -297,7 +297,7 @@ class TemplateSetup(metaclass=ABCMeta):
                 col_be_present = "_".join(
                     [current_annotation_feature, processed_feature])
                 if col_be_present not in dataset.columns:
-                    self.log.warning(
+                    self.log.debug(
                         'Of annotation feature {},'
                         ' detected {} not present in columns.'.format(
                             current_annotation_feature, processed_feature))
