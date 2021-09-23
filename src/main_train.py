@@ -1,5 +1,6 @@
 from src.main_capice import Main
 from src.main.python.resources.checkers.train_checker import TrainChecker
+from src.main.python.resources.enums.sections import Train as enums_train
 from src.main.python.core.exporter import Exporter
 import pandas as pd
 import numpy as np
@@ -76,6 +77,7 @@ class Train(Main):
         order to create new CAPICE models.
         """
         data = self._rename_chrom_col(self.load_file())
+        data = self.annotate(loaded_data=data)
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
@@ -166,9 +168,9 @@ class Train(Main):
             self.default = True
         else:
             defaults = {
-                'learning_rate': 0.10495845238185281,
-                'max_depth': 422,
-                'n_estimators': 15
+                enums_train.learning_rate.value: 0.10495845238185281,
+                enums_train.max_depth.value: 422,
+                enums_train.n_estimators.value: 15
             }
         self.defaults = defaults
 
@@ -181,11 +183,11 @@ class Train(Main):
         :return: balanced pandas.DataFrame
         """
         self.log.info('Balancing out the input dataset, please hold.')
-        palpatine = dataset[dataset['binarized_label'] == 1]
-        yoda = dataset[dataset['binarized_label'] == 0]
+        palpatine = dataset[dataset[enums_train.binarized_label.value] == 1]
+        yoda = dataset[dataset[enums_train.binarized_label.value] == 0]
         anakin = pd.DataFrame(columns=dataset.columns)
         bins = [0, 0.01, 0.05, 0.1, 0.5, 1]
-        for consequence in palpatine['Consequence'].unique():
+        for consequence in palpatine[enums_train.Consequence.value].unique():
             processed_consequence = self._process_consequence(
                 pathogenic_dataframe=palpatine,
                 benign_dataframe=yoda,
@@ -205,9 +207,9 @@ class Train(Main):
                              bins: list):
         self.log.debug("Processsing: {}".format(consequence))
         selected_pathogenic = pathogenic_dataframe[
-            pathogenic_dataframe['Consequence'] == consequence]
+            pathogenic_dataframe[enums_train.Consequence.value] == consequence]
         selected_neutral = benign_dataframe[
-            benign_dataframe['Consequence'] == consequence
+            benign_dataframe[enums_train.Consequence.value] == consequence
             ]
         if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
             selected_pathogenic = selected_pathogenic.sample(
@@ -215,7 +217,7 @@ class Train(Main):
                 random_state=self.random_state
             )
         selected_pathogenic_histogram, bins = np.histogram(
-            selected_pathogenic['MAX_AF'],
+            selected_pathogenic[enums_train.max_AF.value],
             bins=bins
         )
         return_df = pd.DataFrame(columns=return_df_columns)
@@ -288,8 +290,8 @@ class Train(Main):
         :return: pandas.DataFrame
         """
         vars_in_range = variants.where(
-            (variants['MAX_AF'] < upper) &
-            (variants['MAX_AF'] >= lower)
+            (variants[enums_train.max_AF.value] < upper) &
+            (variants[enums_train.max_AF.value] >= lower)
         ).dropna(how='all')
         return vars_in_range
 
@@ -355,9 +357,9 @@ class Train(Main):
                 scale_pos_weight=1,
                 base_score=0.5,
                 random_state=self.model_random_state,
-                learning_rate=self.defaults['learning_rate'],
-                n_estimators=self.defaults['n_estimators'],
-                max_depth=self.defaults['max_depth']
+                learning_rate=self.defaults[enums_train.learning_rate.value],
+                n_estimators=self.defaults[enums_train.n_estimators.value],
+                max_depth=self.defaults[enums_train.max_depth.value]
             )
             ransearch1 = model_estimator
             self.model_type = 'XGBClassifier'
@@ -374,7 +376,8 @@ class Train(Main):
                 reg_alpha=0, reg_lambda=1,
                 scale_pos_weight=1,
                 base_score=0.5,
-                random_state=self.model_random_state
+                random_state=self.model_random_state,
+                use_label_encoder=False
             )
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,
@@ -386,21 +389,21 @@ class Train(Main):
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label']
+                test_set[enums_train.binarized_label.value]
             )]
         else:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label'],
+                test_set[enums_train.binarized_label.value],
                 'test'
             )]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
-                       train_set['binarized_label'],
+                       train_set[enums_train.binarized_label.value],
                        early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
-                       verbose=True,
-                       sample_weight=train_set['sample_weight'])
+                       verbose=self.verbose,
+                       sample_weight=train_set[enums_train.sample_weight.value])
 
         return ransearch1

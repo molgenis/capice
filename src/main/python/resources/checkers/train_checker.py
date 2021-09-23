@@ -1,4 +1,5 @@
 from src.main.python.core.logger import Logger
+from src.main.python.resources.enums.sections import Train
 import pandas as pd
 
 
@@ -56,13 +57,18 @@ class TrainChecker:
         :param dataset: pandas DataFrame
         :param include_balancing: bool
         """
-        required_columns = ['binarized_label', 'sample_weight']
+        required_columns = [
+            Train.binarized_label.value,
+            Train.sample_weight.value
+        ]
         if include_balancing:
-            required_columns += ['Consequence', 'MAX_AF']
+            required_columns += [
+                Train.Consequence.value,
+                Train.max_AF.value
+            ]
         for col_name in required_columns:
             if col_name not in dataset.columns:
-                error_message = """
-                Error locating label {} within dataset!
-                """.format(col_name)
+                error_message = \
+                    "Error locating label {} within dataset!".format(col_name)
                 self.log.critical(error_message)
                 raise KeyError(error_message)
