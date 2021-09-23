@@ -88,7 +88,6 @@ class TestImputer(unittest.TestCase):
             )
         )
         imputed_columns = self.manager.annotation_features
-        print(imputed_columns)
         self.assertFalse(imputed_file[imputed_columns].isnull().values.any())
 
     def test_empty_chrom(self):
@@ -106,7 +105,7 @@ class TestImputer(unittest.TestCase):
             }
         )
         self.manager.overwrite_impute = self.impute_overwrite
-        imputer = CapiceImputing(train=False)
+        imputer = CapiceImputing()
         processed_dataframe = imputer._check_chrom_pos(dataset=dataset)
         pd.testing.assert_frame_equal(processed_dataframe, remainin_dataset)
 
