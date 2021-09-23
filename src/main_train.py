@@ -99,7 +99,7 @@ class Train(Main):
         self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
-        imputed_data = self.impute(loaded_data=data, train=True)
+        imputed_data = self.impute(loaded_data=data)
         self.annotation_features = self.manager.annotation_features
         processed_data = self.preprocess(
             loaded_data=imputed_data, train=True
@@ -376,7 +376,8 @@ class Train(Main):
                 reg_alpha=0, reg_lambda=1,
                 scale_pos_weight=1,
                 base_score=0.5,
-                random_state=self.model_random_state
+                random_state=self.model_random_state,
+                use_label_encoder=False
             )
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,

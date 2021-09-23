@@ -142,19 +142,8 @@ class TemplateSetup(metaclass=ABCMeta):
         dataset = self._duplicate_chr_pos_ref_alt(dataset=dataset)
         self._get_categorical_columns(dataset=dataset)
         processed_dataset = self._process_objects(dataset=dataset)
-        if not self.train:
-            processed_dataset = self._check_all_model_features_present(
-                processed_dataset
-            )
         self.log.info('Successfully preprocessed data.')
         return processed_dataset
-
-    @deprecated
-    def _check_all_model_features_present(self, dataset: pd.DataFrame):
-        for feature in self.model_features:
-            if feature not in dataset.columns:
-                dataset[feature] = 0
-        return dataset
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):
         """

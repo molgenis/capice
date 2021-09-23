@@ -14,8 +14,7 @@ class CapiceImputing:
     suitable for the run's use case.
     """
 
-    def __init__(self, train: bool):
-        self.train = train
+    def __init__(self):
         self.manager = CapiceManager()
         self.vep_version = self.manager.vep_version
         self.grch_build = self.manager.grch_build
@@ -133,10 +132,10 @@ class CapiceImputing:
         for col in self.columns:
             if col in dataset.columns:
                 self.annotation_columns_present.append(col)
-        if not self.train:
-            self.manager.annotation_features = self.columns
-        else:
-            self.manager.annotation_features = self.annotation_columns_present
+            else:
+                self.log.debug(f'Annotation feature {col} not present within '
+                               f'input data!')
+        self.manager.annotation_features = self.annotation_columns_present
         self.impute_values = self.module.impute_values
 
     def impute(self, datafile: pd.DataFrame):
@@ -155,16 +154,7 @@ class CapiceImputing:
         datafile.fillna(self.impute_values, inplace=True)
         datafile = datafile.astype(dtype=self.pre_dtypes, copy=False)
         datafile = datafile.astype(dtype=self.dtypes, copy=False)
-        if not self.train:
-            datafile = self._add_missing_columns(datafile)
         self.log.info('Imputing successfully performed.')
-        return datafile
-
-    @deprecated
-    def _add_missing_columns(self, datafile: pd.DataFrame):
-        for key, value in self.impute_values.items():
-            if key not in datafile.columns:
-                datafile[key] = value
         return datafile
 
     def _correct_dtypes(self, datafile: pd.DataFrame):

@@ -130,11 +130,11 @@ class Main:
         return annotated_data
 
     @staticmethod
-    def impute(loaded_data, train=False):
+    def impute(loaded_data):
         """
         Function to perform imputing and converting of categorical features
         """
-        capice_imputer = CapiceImputing(train=train)
+        capice_imputer = CapiceImputing()
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
