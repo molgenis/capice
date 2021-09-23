@@ -1,10 +1,10 @@
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 import pandas as pd
 
 
 class InputParser:
     def __init__(self):
+        self.log = Logger().logger
         self.sep = '\t'
 
     def set_separator(self, sep: str):
@@ -31,11 +31,10 @@ class InputParser:
             used_sep = 'Tab'
         else:
             used_sep = self.sep
-        logger.info(
-            'Reading VEP file from: %s using separator: %s',
-                input_file_loc,
-                used_sep
-            )
+        self.log.info(
+            f'Reading VEP file from: {input_file_loc} '
+            f'using separator: {used_sep}'
+        )
         input_file = pd.read_csv(
             input_file_loc,
             sep=self.sep,
@@ -45,8 +44,8 @@ class InputParser:
         )
         input_file.dropna(how='all', inplace=True)
         input_file.drop_duplicates(inplace=True)
-        logger.info('Input file at %s loaded with %s samples.',
-            input_file_loc,
-            input_file.shape[0]
+        self.log.info(
+            f'Input file at {input_file_loc} loaded with '
+            f'{input_file.shape[0]} samples.'
         )
         return input_file

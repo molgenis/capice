@@ -2,8 +2,7 @@ from src.main.python.resources.utilities.utilities import check_file_exists, \
     get_filename_and_extension
 from src.main.python.resources.enums.sections import Column
 from src.main.python.core.global_manager import CapiceManager
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 import os
 import pandas as pd
 import pickle
@@ -15,6 +14,7 @@ class Exporter:
     """
 
     def __init__(self, file_path):
+        self.log = Logger().logger
         self.force = CapiceManager().force
         self.now = CapiceManager().now
         self.capice_filename = CapiceManager().output_filename
@@ -46,9 +46,8 @@ class Exporter:
             compression='gzip',
             index=False
         )
-        logger.info(
-            'Successfully exported CAPICE datafile to: %s', filename
-        )
+        self.log.info(
+            f'Successfully exported CAPICE datafile to: {filename}')
 
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):
@@ -75,12 +74,8 @@ class Exporter:
         """
         filename = self._export_filename_ready(file_name=name)
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
-        logger.info(
-            'Exported %s with shape %s to: %s',
-                feature,
-                datafile.shape,
-                filename
-        )
+        self.log.info(
+            f'Exported {feature} with shape {datafile.shape} to: {filename}')
 
     def export_capice_model(self, model, model_type):
         """
@@ -125,22 +120,20 @@ class Exporter:
         full_path = os.path.join(self.file_path, file_name)
         export_path = None
         if not check_file_exists(full_path):
-            logger.info(
-                'No file found at %s, save to create.', full_path
-            )
+            self.log.info(
+                f'No file found at {full_path}, save to create.')
             export_path = full_path
         elif self.force and check_file_exists(full_path):
-            logger.warning(
-                'Found existing file at %s, '
-                'removing file for overwriting.', full_path
+            self.log.warning(
+                f'Found existing file at {full_path}, '
+                f'removing file for overwriting.'
             )
             os.remove(full_path)
             export_path = full_path
         else:
-            logger.info('Found existing file at %s, '
-                         'not able to overwrite. '
-                         'Creating new filename.', full_path
-                         )
+            self.log.info(
+                f'Found existing file at {full_path}, '
+                f'not able to overwrite. Creating new filename.')
             filename, extension = get_filename_and_extension(full_path)
             basedir = os.path.dirname(path_and_filename)
             export_exists = True
@@ -151,7 +144,7 @@ class Exporter:
                     filename + "_{}.".format(extension_counter) + extension
                 )
                 if not check_file_exists(attempted_file):
-                    logger.info('Able to create %s', attempted_file)
+                    self.log.info(f'Able to create {attempted_file}')
                     export_exists = False
                     export_path = attempted_file
                 extension_counter += 1

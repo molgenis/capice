@@ -1,10 +1,10 @@
 import pandas as pd
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 
 
 class LoadFilePostProcessor:
     def __init__(self, dataset: pd.DataFrame):
+        self.log = Logger().logger
         self.dataset = dataset
 
     def process(self):
@@ -18,12 +18,12 @@ class LoadFilePostProcessor:
         dataset :   pandas.DataFrame
                     Processed dataset with corrected % sign and renamed columns.
         """
-        logger.debug('Starting correcting % sign.')
+        self.log.debug('Starting correcting % sign.')
         self._correct_percentage_sign()
-        logger.debug('% sign corrected, starting renaming of columns.')
+        self.log.debug('% sign corrected, starting renaming of columns.')
         self._col_renamer()
         self._correct_dtypes()
-        logger.info('LoadFilePostProcessor successful.')
+        self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
 
     def _correct_percentage_sign(self):

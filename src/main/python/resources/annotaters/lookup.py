@@ -1,20 +1,20 @@
 import pysam
 from src.main.python.core.global_manager import CapiceManager
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 
 
 class FastaLookupAnnotator:
     def __init__(self):
+        self.log = Logger().logger
         self.manager = CapiceManager()
         self.fasta_loc = self.manager.reference_genome
         self.fasta = None
         # self._load_fasta()
 
     def _load_fasta(self):
-        logger.info('Loading in Fasta file, this may take a moment.')
+        self.log.info('Loading in Fasta file, this may take a moment.')
         self.fasta = pysam.FastaFile(self.fasta_loc)
-        logger.info(f'Succesfully loaded Fasta file at: {self.fasta_loc}')
+        self.log.info(f'Succesfully loaded Fasta file at: {self.fasta_loc}')
 
     def get_reference_sequence(self, chromosome: str, start: int, end: int):
         """
@@ -31,7 +31,7 @@ class FastaLookupAnnotator:
         :return: string, obtained reference sequence.
         """
         try:
-            logger.debug(
+            self.log.debug(
                 'Obtaining reference sequence for: '
                 f'[Chromosome: {chromosome}], [start: {start}], [stop: {end}]'
             )
@@ -46,10 +46,11 @@ class FastaLookupAnnotator:
                 )
             return return_sequence
         except KeyError:
-            logger.warning(
-                'Unable to obtain sequence for: '
-                '[Chromosome: {}], [start: {}], [stop: {}],'
-                'did you supply a reference with contigs 1-22 + x,y,mt?',chromosome, start, end
+            self.log.warning(
+                f'Unable to obtain sequence for: [Chromosome: {chromosome}], '
+                f'[start: {start}], '
+                f'[stop: {end}], '
+                f'did you supply a reference with contigs 1-22 + x,y,mt?'
             )
             return None
 

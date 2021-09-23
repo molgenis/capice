@@ -18,7 +18,6 @@ class CapiceManager:
             self.config_grch_build = False
             self.force = False
             self.loglevel = None
-            self._loglevel_meaning = {}
             self.critical_logging_only = False
             self.annotation_features = []
             self.output_filename = ''
@@ -106,10 +105,6 @@ class CapiceManager:
                                                  expected_type=int,
                                                  include_none=True)
             self._loglevel = value
-
-        @property
-        def loglevel_meaning(self):
-            return self._loglevel_meaning
 
         @property
         def critical_logging_only(self):
@@ -335,14 +330,6 @@ class CapiceManager:
         :param value: int or None
         """
         pass
-
-    @property
-    def loglevel_meaning(self):
-        """
-        Getter for the dictionary that contains the int of the loglevel and
-        it's string level (for instance {0, 'NOTSET'})
-        """
-        return self._loglevel_meaning
 
     @property
     def critical_logging_only(self):

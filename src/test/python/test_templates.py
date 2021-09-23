@@ -1,8 +1,6 @@
 import os
-from datetime import datetime
 from src.main_capice import Main
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 from src.main.python.core.config_reader import ConfigReader
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir

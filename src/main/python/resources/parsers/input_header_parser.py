@@ -1,5 +1,4 @@
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
 import warnings
 import gzip
@@ -12,8 +11,9 @@ class InputHeaderParser:
     """
 
     def __init__(self, is_gzipped: bool, input_file_loc: str):
+        self.log = Logger().logger
         self.manager = CapiceManager()
-        logger.info('Starting to parse input file header.')
+        self.log.info('Starting to parse input file header.')
         self.is_gzipped = is_gzipped
         self.input_file_loc = input_file_loc
         self.header = ''
@@ -24,12 +24,13 @@ class InputHeaderParser:
         self.skip_rows = 0
         self._parse_header()
         if self.header_present:
-            logger.info(
-                "Input file header successfully identified: %s",self.header.strip()
+            self.log.info(
+                f"Input file header successfully identified: "
+                f"{self.header.strip()}"
             )
             self._get_file_type()
         else:
-            logger.warning(
+            self.log.warning(
                 'Unable to parse input file header, header not located. '
                 'Does the header start with "##"?'
             )
@@ -68,19 +69,19 @@ class InputHeaderParser:
                 self.header_version = float(
                     annotation.split('v')[1].split('"')[0]
                 )
-                logger.info(
-                    'Header VEP version identified: %s', self.header_version
+                self.log.info(
+                    f'Header VEP version identified: {self.header_version}'
                 )
             elif annotation.startswith('assembly'):
                 self.header_build = int(annotation.split('h')[1].split('.')[0])
-                logger.info(
-                    'Header GRCh build identified: %s', self.header_build
+                self.log.info(
+                    f'Header GRCh build identified: {self.header_build}'
                 )
 
     def _get_file_type(self):
         if not self.header.startswith('## VEP VCF to CAPICE tsv converter'):
             warning_message = 'Unable to recognize origin of input file.'
-            logger.warning(warning_message)
+            self.log.warning(warning_message)
             warnings.warn(warning_message)
 
     def get_skip_rows(self):

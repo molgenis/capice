@@ -1,5 +1,4 @@
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 from src.main.python.resources.errors.errors import InputError
 from src.main.python.core.global_manager import CapiceManager
 import warnings
@@ -29,6 +28,7 @@ class InputVersionChecker:
         :param file_grch_build: int,
             GRCh build according to parsed input file
         """
+        self.log = Logger().logger
         self.config_vep_version = config_vep_version
         self.file_vep_version = file_vep_version
         self.config_grch_build = config_grch_build
@@ -39,7 +39,6 @@ class InputVersionChecker:
         self.check_match = []
         self.unable_check = []
         self.check_overrule = False
-
         self._run()
 
     def _run(self):
@@ -59,7 +58,7 @@ class InputVersionChecker:
         globally later on in CAPICE.
         """
         self.manager.vep_version = self.export_vep_version
-        logger.info('VEP version set to: %s', self.export_vep_version)
+        self.log.info(f'VEP version set to: {self.export_vep_version}')
 
     def _set_global_grch_build(self):
         """
@@ -67,7 +66,7 @@ class InputVersionChecker:
         be used globally later on in CAPICE.
         """
         self.manager.grch_build = self.export_grch_build
-        logger.info('GRCh build set to: %s', self.export_grch_build)
+        self.log.info(f'GRCh build set to: {self.export_grch_build}')
 
     def _check_overrule(self):
         """
@@ -82,10 +81,11 @@ class InputVersionChecker:
         if self.manager.overwrite_impute is False and \
                 self.manager.overwrite_model is False:
             error_message = (
-                'VEP version or GRCh build not specified and both overwrites are not\n' 
-                'set! Not able to find a correct impute or processing file!'
+                'VEP version or GRCh build not specified and both '
+                'overwrites are not set! '
+                'Not able to find a correct impute or processing file!'
             )
-            logger.critical(error_message)
+            self.log.critical(error_message)
             raise InputError(error_message)
 
     def _check_all_present(self):
@@ -125,8 +125,9 @@ class InputVersionChecker:
         Function to turn on the overrule check if no VEP or GRCh arguments are
         passed.
         """
-        logger.warning(
-            f'Unable to obtain {type_of_check} version from file or config file!'
+        self.log.warning(
+            f'Unable to obtain {type_of_check} '
+            f'version from file or config file!'
         )
         self.check_overrule = True
 
@@ -177,17 +178,14 @@ class InputVersionChecker:
     def _raise_version_mismatch(self, type_of_mismatch, version_cla=None,
                                 version_file=None, match_successful=False):
         if match_successful:
-            logger.info(
-                'Successfully matched CLA and file versions for %s.',type_of_mismatch
+            self.log.info(
+                f'Successfully matched CLA and file versions for '
+                f'{type_of_mismatch}.'
             )
         else:
-            warning_message = """
-            Warning matching {} versions. 
-            CLA version supplied: 
-            {} does not match file version: {} !""".format(
-                type_of_mismatch,
-                version_cla,
-                version_file
-            ).strip()
+            warning_message = f'Warning matching {type_of_mismatch} ' \
+                              f'versions. ' \
+                              f'CLA version supplied: {version_cla} ' \
+                              f'does not match file version: {version_file} !'
             warnings.warn(warning_message)
-            logger.warning(warning_message)
+            self.log.warning(warning_message)
