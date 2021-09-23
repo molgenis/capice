@@ -99,7 +99,7 @@ class Train(Main):
         self.load_defaults()
         if self.early_exit:
             exit('Early exit command was called, exiting.')
-        imputed_data = self.impute(loaded_data=data, train=True)
+        imputed_data = self.impute(loaded_data=data)
         self.annotation_features = self.manager.annotation_features
         processed_data = self.preprocess(
             loaded_data=imputed_data, train=True
