@@ -1,5 +1,4 @@
-import logging
-logger = logging.getLogger(__name__)
+from src.main.python.core.logger import Logger
 import inspect
 import numpy as np
 from src.main.python.resources.utilities.utilities import \
@@ -19,7 +18,8 @@ class CapiceImputing:
         self.manager = CapiceManager()
         self.vep_version = self.manager.vep_version
         self.grch_build = self.manager.grch_build
-        logger.info('Imputer started.')
+        self.log = Logger().logger
+        self.log.info('Imputer started.')
         self.overrule = self.manager.overwrite_impute
         self.modules = []
         self.module = None
@@ -41,7 +41,7 @@ class CapiceImputing:
         If at the end of this function, the list of impute files is empty,
         will throw the module not found error.
         """
-        logger.info('Identifying imputing files.')
+        self.log.info('Identifying imputing files.')
         directory = os.path.join(get_project_root_dir(),
                                  'src',
                                  'main',
@@ -58,8 +58,10 @@ class CapiceImputing:
                 self.modules.append(module)
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
-        logger.info(
-            'Identified %s files available for usage in imputing.', len(self.modules)
+        self.log.info(
+            'Identified {} files available for usage in imputing.'.format(
+                len(self.modules)
+            )
         )
 
     def _raise_no_module_found_error(self):
@@ -70,7 +72,7 @@ class CapiceImputing:
         """
         error_message = 'No usable python files are found ' \
                         'within the imputing directory!'
-        logger.critical(error_message)
+        self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
     def _is_correct_datafile_present(self):
@@ -81,8 +83,11 @@ class CapiceImputing:
         """
         for module in self.modules:
             if self.overrule and module.name == self.overrule:
-                logger.info(
-                    'Overrule successful for: %s , located at: %s', self.overrule, inspect.getfile(module.__class__)
+                self.log.info(
+                    'Overrule successful for: {} , located at: {}'.format(
+                        self.overrule,
+                        inspect.getfile(module.__class__)
+                    )
                 )
                 self.module = module
                 break
@@ -91,9 +96,12 @@ class CapiceImputing:
                 module_grch_build = module.supported_grch_build
                 if module_vep_version == self.vep_version and \
                         module_grch_build == self.grch_build:
-                    logger.info(
-                        'Impute data file successfully found: %s , '
-                        'located at: %s', module.name, inspect.getfile(module.__class__)
+                    self.log.info(
+                        'Impute data file successfully found: {} , '
+                        'located at: {}'.format(
+                            module.name,
+                            inspect.getfile(module.__class__)
+                        )
                     )
                     self.module = module
                     break
@@ -110,7 +118,7 @@ class CapiceImputing:
                                 'GRCh build: {}'.format(self.vep_version,
                                                         self.grch_build
                                                         )
-            logger.critical(error_message)
+            self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 
     def _load_values(self, dataset: pd.DataFrame):
@@ -124,7 +132,10 @@ class CapiceImputing:
         for col in self.columns:
             if col in dataset.columns:
                 self.annotation_columns_present.append(col)
-        self.manager.annotation_features = self.columns
+            else:
+                self.log.debug(f'Annotation feature {col} not present within '
+                               f'input data!')
+        self.manager.annotation_features = self.annotation_columns_present
         self.impute_values = self.module.impute_values
 
     def impute(self, datafile: pd.DataFrame):
@@ -143,15 +154,7 @@ class CapiceImputing:
         datafile.fillna(self.impute_values, inplace=True)
         datafile = datafile.astype(dtype=self.pre_dtypes, copy=False)
         datafile = datafile.astype(dtype=self.dtypes, copy=False)
-        datafile = self._add_missing_columns(datafile)
-        logger.info('Imputing successfully performed.')
-        return datafile
-
-    @deprecated
-    def _add_missing_columns(self, datafile: pd.DataFrame):
-        for key, value in self.impute_values.items():
-            if key not in datafile.columns:
-                datafile[key] = value
+        self.log.info('Imputing successfully performed.')
         return datafile
 
     def _correct_dtypes(self, datafile: pd.DataFrame):
@@ -182,15 +185,15 @@ class CapiceImputing:
             if dataset.dtypes['Chr'] == np.float64:
                 chrom_is_float = True
             n_delete = dataset['Chr'].isnull().values.sum()
-            logger.warning(
+            self.log.warning(
                 'Detected NaN in the Chromosome column! '
-                'Deleting %s row(s).', n_delete)
+                'Deleting {} row(s).'.format(n_delete))
             dataset = dataset[~dataset['Chr'].isnull()]
         if dataset['Pos'].isnull().values.any():
             n_delete = dataset['Pos'].isnull().values.sum()
-            logger.warning(
+            self.log.warning(
                 'Detected NaN is the Position column! '
-                'Deleting %s row(s).', n_delete)
+                'Deleting {} row(s).'.format(n_delete))
             dataset = dataset[~dataset['Pos'].isnull()]
         dataset.index = range(0, dataset.shape[0])
         if chrom_is_float:
@@ -213,7 +216,10 @@ class CapiceImputing:
         if n_nan > 0:
             n_samples = column.size
             p_nan = round((n_nan / n_samples) * 100, ndigits=2)
-            logger.debug('NaN detected in column %s, percentage: %s%%.', column.name, p_nan)
+            self.log.debug('NaN detected in column {}, percentage: {}%.'.format(
+                column.name,
+                p_nan
+            ))
 
     def _get_full_nan_row(self, dataset: pd.DataFrame):
         """
@@ -228,11 +234,13 @@ class CapiceImputing:
             axis=1)
         samples_dropped_out = dataset[dataset['CAPICE_drop_out']]
         if samples_dropped_out.shape[0] > 0:
-            logger.warning(
+            self.log.warning(
                 'The following samples are filtered out due to missing values: '
                 '(indexing is python based, '
-                'so the index starts at 0). \n %s', samples_dropped_out[['Chr', 'Pos', 'Ref', 'Alt', 'FeatureID']]
+                'so the index starts at 0). \n {}'.format(
+                    samples_dropped_out[
+                        ['Chr', 'Pos', 'Ref', 'Alt', 'FeatureID']])
             )
         else:
-            logger.info(
+            self.log.info(
                 'No samples are filtered out due to too many NaN values.')

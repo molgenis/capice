@@ -1,5 +1,6 @@
 from src.main.python.resources.annotaters.vep.template import Template
 import pandas as pd
+import numpy as np
 
 
 class TemplateSiftPolyPhen(Template):
@@ -18,13 +19,16 @@ class TemplateSiftPolyPhen(Template):
         return self.columns[1]
 
     def process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split(
-            '(',
-            expand=True
-        )
-        dataframe[self.val_col] = dataframe[self.val_col].str.split(
-            ')',
-            expand=True
-        )[0]
-        dataframe[self.val_col] = dataframe[self.val_col].astype(float)
+        if not dataframe[self.name].isnull().all():
+            dataframe[self.columns] = dataframe[self.name].str.split(
+                '(',
+                expand=True
+            )
+            dataframe[self.val_col] = dataframe[self.val_col].str.split(
+                ')',
+                expand=True
+            )[0]
+            dataframe[self.val_col] = dataframe[self.val_col].astype(float)
+        else:
+            dataframe[self.columns] = np.nan
         return dataframe

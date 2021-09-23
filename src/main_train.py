@@ -1,13 +1,11 @@
-import logging
-logger = logging.getLogger(__name__)
-
 from src.main_capice import Main
 from src.main.python.resources.checkers.train_checker import TrainChecker
+from src.main.python.resources.enums.sections import Train as EnumsTrain
 from src.main.python.core.exporter import Exporter
 import pandas as pd
 import numpy as np
 import xgboost as xgb
-import scipy
+from scipy import stats
 import json
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
@@ -32,32 +30,33 @@ class Train(Main):
 
         # Argument logging
         self.balance = self.config.get_train_value('makebalanced')
-        logger.debug(
-            'Make input dataset balanced confirmed: %s', self.balance
+        self.log.debug(
+            'Make input dataset balanced confirmed: {}'.format(self.balance)
         )
         self.default = self.config.get_train_value('default')
-        logger.debug(
+        self.log.debug(
             'The use of the default Python 3.6 hyperparameters set to: '
-            '%s', self.default
+            '{}'.format(self.default)
         )
         self.specified_default = self.config.get_train_value(
             'specifieddefaults'
         )
-        logger.debug(
+        self.log.debug(
             'The use of specified default hyperparameters set to: '
-            '%s', self.specified_default
+            '{}'.format(self.specified_default)
         )
         self.n_split = self.config.get_train_value('split')
-        logger.debug(
-            'Split has been confirmed, set to: %s', self.n_split
+        self.log.debug(
+            'Split has been confirmed, set to: {}'.format(self.n_split)
         )
         self.early_exit = self.config.get_train_value('earlyexit')
         if self.early_exit:
-            logger.debug('Early exit flag confirmed.')
+            self.log.debug('Early exit flag confirmed.')
         self.train_test_size = self.config.get_train_value('traintestsize')
-        logger.debug(
+        self.log.debug(
             'The percentage of data used for the '
-            'testing dataset within training: %s', self.train_test_size
+            'testing dataset within training: {}'.format(
+                self.train_test_size)
         )
 
         # Global variables
@@ -67,7 +66,7 @@ class Train(Main):
         self.defaults = {}
         self.annotation_features = []
         self.processed_features = []
-        self.verbose = self.manager.verbose
+        self.loglevel = self.manager.loglevel
         self.model_type = None
         self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
@@ -82,8 +81,9 @@ class Train(Main):
         train_checker.check_labels(dataset=data, include_balancing=self.balance)
         if self.balance:
             data = self.process_balance_in_the_force(dataset=data)
+        data = self.annotate(loaded_data=data)
         if self.n_split > 0.0:
-            logger.info(
+            self.log.info(
                 'Splitting input dataset before any preprocessing happens.'
             )
             data, _ = self.split_data(
@@ -160,15 +160,17 @@ class Train(Main):
             with open(self.specified_default) as json_file:
                 defaults = json.load(json_file)
             train_checker.check_specified_defaults(loaded_defaults=defaults)
-            logger.debug(
-                'Specified defaults located at %s successfully loaded.', self.specified_default
+            self.log.debug(
+                'Specified defaults located at {} successfully loaded.'.format(
+                    self.specified_default
+                )
             )
             self.default = True
         else:
             defaults = {
-                'learning_rate': 0.10495845238185281,
-                'max_depth': 422,
-                'n_estimators': 15
+                EnumsTrain.learning_rate.value: 0.10495845238185281,
+                EnumsTrain.max_depth.value: 422,
+                EnumsTrain.n_estimators.value: 15
             }
         self.defaults = defaults
 
@@ -180,12 +182,12 @@ class Train(Main):
         :param dataset: pandas.DataFrame
         :return: balanced pandas.DataFrame
         """
-        logger.info('Balancing out the input dataset, please hold.')
-        palpatine = dataset[dataset['binarized_label'] == 1]
-        yoda = dataset[dataset['binarized_label'] == 0]
+        self.log.info('Balancing out the input dataset, please hold.')
+        palpatine = dataset[dataset[EnumsTrain.binarized_label.value] == 1]
+        yoda = dataset[dataset[EnumsTrain.binarized_label.value] == 0]
         anakin = pd.DataFrame(columns=dataset.columns)
         bins = [0, 0.01, 0.05, 0.1, 0.5, 1]
-        for consequence in palpatine['Consequence'].unique():
+        for consequence in palpatine[EnumsTrain.Consequence.value].unique():
             processed_consequence = self._process_consequence(
                 pathogenic_dataframe=palpatine,
                 benign_dataframe=yoda,
@@ -194,20 +196,20 @@ class Train(Main):
                 consequence=consequence
             )
             anakin = anakin.append(processed_consequence)
-        logger.info('Balancing complete.')
+        self.log.info('Balancing complete.')
         return anakin
 
     def _process_consequence(self,
                              pathogenic_dataframe: pd.DataFrame,
                              benign_dataframe: pd.DataFrame,
-                             return_df_columns: list,
+                             return_df_columns,
                              consequence: str,
                              bins: list):
-        logger.debug("Processsing: %s", consequence)
+        self.log.debug("Processsing: {}".format(consequence))
         selected_pathogenic = pathogenic_dataframe[
-            pathogenic_dataframe['Consequence'] == consequence]
+            pathogenic_dataframe[EnumsTrain.Consequence.value] == consequence]
         selected_neutral = benign_dataframe[
-            benign_dataframe['Consequence'] == consequence
+            benign_dataframe[EnumsTrain.Consequence.value] == consequence
             ]
         if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
             selected_pathogenic = selected_pathogenic.sample(
@@ -215,13 +217,13 @@ class Train(Main):
                 random_state=self.random_state
             )
         selected_pathogenic_histogram, bins = np.histogram(
-            selected_pathogenic['MAX_AF'],
+            selected_pathogenic[EnumsTrain.max_AF.value],
             bins=bins
         )
         return_df = pd.DataFrame(columns=return_df_columns)
         for ind in range(len(bins) - 1):
-            upper_bound = bins[ind]
-            lower_bound = bins[ind + 1]
+            lower_bound = bins[ind]
+            upper_bound = bins[ind + 1]
             sample_number = selected_pathogenic_histogram[ind]
             processed_bins = self._process_bins(
                 selected_pathogenic=selected_pathogenic,
@@ -261,19 +263,19 @@ class Train(Main):
                 selected_pnv_all.shape[0],
                 random_state=self.random_state
             )
-        logger.debug(
-            "Sampled %s variants from Possibly Neutral Variants in range of: "
-            "%s - %s",
+        self.log.debug(
+            "Sampled {} variants from Possibly Neutral Variants in range of: "
+            "{} - {}".format(
                 selected_pnv_currange.shape[0],
                 lower_bound,
-                upper_bound
+                upper_bound)
         )
-        logger.debug(
-            "Sampled %s variants from Possibly Pathogenic Variants in range "
-            "of: %s - %s",
+        self.log.debug(
+            "Sampled {} variants from Possibly Pathogenic Variants in range "
+            "of: {} - {}".format(
                 selected_pathogenic_currange.shape[0],
                 lower_bound,
-                upper_bound
+                upper_bound)
         )
         return selected_pathogenic_currange.append(selected_pnv_currange)
 
@@ -287,10 +289,10 @@ class Train(Main):
         :param lower: float
         :return: pandas.DataFrame
         """
-        vars_in_range = variants.where(
-            (variants['MAX_AF'] < upper) &
-            (variants['MAX_AF'] >= lower)
-        ).dropna(how='all')
+        vars_in_range = variants[
+            (variants[EnumsTrain.max_AF.value] >= lower) &
+            (variants[EnumsTrain.max_AF.value] < upper)
+            ].dropna(how='all')
         return vars_in_range
 
     def _get_processed_features(self, dataset: pd.DataFrame):
@@ -316,18 +318,24 @@ class Train(Main):
             the training dataset on which the model will be created on
         """
         param_dist = {
-            'max_depth': scipy.stats.randint(1, 20),
+            'max_depth': stats.randint(1, 20),
             # (random integer from 1 to 20)
-            'learning_rate': scipy.stats.expon(scale=0.06),
+            'learning_rate': stats.expon(scale=0.06),
             # (random double from an exponential with scale 0.06)
-            'n_estimators': scipy.stats.randint(100, 600),
+            'n_estimators': stats.randint(100, 600),
             # (random integer from 10 to 600)
         }
-        if self.verbose:
-            verbosity = 1
-        else:
-            verbosity = 0
-        logger.debug('Preparing the estimator model.')
+
+        verbosity = 0
+        xgb_verbosity = False
+
+        # First checking if it is not None
+        if self.loglevel:
+            if self.loglevel < 20:
+                verbosity = 1
+                xgb_verbosity = True
+
+        self.log.debug('Preparing the estimator model.')
 
         if self._integration_test:
             early_stopping_rounds = 1
@@ -355,9 +363,9 @@ class Train(Main):
                 scale_pos_weight=1,
                 base_score=0.5,
                 random_state=self.model_random_state,
-                learning_rate=self.defaults['learning_rate'],
-                n_estimators=self.defaults['n_estimators'],
-                max_depth=self.defaults['max_depth']
+                learning_rate=self.defaults[EnumsTrain.learning_rate.value],
+                n_estimators=self.defaults[EnumsTrain.n_estimators.value],
+                max_depth=self.defaults[EnumsTrain.max_depth.value]
             )
             ransearch1 = model_estimator
             self.model_type = 'XGBClassifier'
@@ -374,7 +382,8 @@ class Train(Main):
                 reg_alpha=0, reg_lambda=1,
                 scale_pos_weight=1,
                 base_score=0.5,
-                random_state=self.model_random_state
+                random_state=self.model_random_state,
+                use_label_encoder=False
             )
             ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                             param_distributions=param_dist,
@@ -386,21 +395,21 @@ class Train(Main):
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label']
+                test_set[EnumsTrain.binarized_label.value]
             )]
         else:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set['binarized_label'],
+                test_set[EnumsTrain.binarized_label.value],
                 'test'
             )]
-        logger.info('Random search starting, please hold.')
+        self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
-                       train_set['binarized_label'],
+                       train_set[EnumsTrain.binarized_label.value],
                        early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
-                       verbose=True,
-                       sample_weight=train_set['sample_weight'])
+                       verbose=xgb_verbosity,
+                       sample_weight=train_set[EnumsTrain.sample_weight.value])
 
         return ransearch1

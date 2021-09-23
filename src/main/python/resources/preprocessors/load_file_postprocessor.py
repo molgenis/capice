@@ -56,6 +56,7 @@ class LoadFilePostProcessor:
                 'Feature': 'transcript',
                 'SYMBOL': 'gene_name',
                 'INTRON': 'Intron',
-                'EXON': 'Exon'
+                'EXON': 'Exon',
+                'MAX_AF': 'max_AF'
             }, inplace=True
         )

@@ -3,6 +3,7 @@ import os
 import pickle
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.main.python.resources.enums.sections import Train as enums_train
 from src.main.python.core.config_reader import ConfigReader
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
@@ -112,9 +113,18 @@ class TestMainTrain(unittest.TestCase):
         print('Load_defaults (component)')
         self.main.load_defaults()
         defaults = self.main.defaults
-        self.assertEqual(defaults['learning_rate'], 0.10495845238185281)
-        self.assertEqual(defaults['max_depth'], 422)
-        self.assertEqual(defaults['n_estimators'], 15)
+        self.assertEqual(
+            defaults[enums_train.learning_rate.value],
+            0.10495845238185281
+        )
+        self.assertEqual(
+            defaults[enums_train.max_depth.value],
+            422
+        )
+        self.assertEqual(
+            defaults[enums_train.n_estimators.value],
+            15
+        )
 
     def test_component_load_specified_defaults(self):
         """
@@ -129,9 +139,9 @@ class TestMainTrain(unittest.TestCase):
         )
         self.main.load_defaults()
         defaults = self.main.defaults
-        self.assertEqual(defaults['learning_rate'], 0.5)
-        self.assertEqual(defaults['max_depth'], 10)
-        self.assertEqual(defaults['n_estimators'], 10)
+        self.assertEqual(defaults[enums_train.learning_rate.value], 0.5)
+        self.assertEqual(defaults[enums_train.max_depth.value], 10)
+        self.assertEqual(defaults[enums_train.n_estimators.value], 10)
 
     def test_unit_balancing(self):
         """
@@ -149,8 +159,11 @@ class TestMainTrain(unittest.TestCase):
         balanced_file = self.main.process_balance_in_the_force(
             dataset=self.main.load_file()
         )
-        n_zero = balanced_file[balanced_file['binarized_label'] == 0].shape[0]
-        n_one = balanced_file[balanced_file['binarized_label'] == 1].shape[0]
+        self.assertGreater(balanced_file.shape[0], 1)
+        n_zero = balanced_file[
+            balanced_file[enums_train.binarized_label.value] == 0].shape[0]
+        n_one = balanced_file[
+            balanced_file[enums_train.binarized_label.value] == 1].shape[0]
         self.assertEqual(n_zero, n_one)
 
 
