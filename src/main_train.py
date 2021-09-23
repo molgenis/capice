@@ -326,14 +326,15 @@ class Train(Main):
             # (random integer from 10 to 600)
         }
 
+        verbosity = 0
+        xgb_verbosity = False
+
         # First checking if it is not None
         if self.loglevel:
             if self.loglevel < 20:
                 verbosity = 1
                 xgb_verbosity = True
-        else:
-            verbosity = 0
-            xgb_verbosity = False
+
         self.log.debug('Preparing the estimator model.')
 
         if self._integration_test:
