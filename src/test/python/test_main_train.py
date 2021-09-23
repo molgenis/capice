@@ -159,6 +159,7 @@ class TestMainTrain(unittest.TestCase):
         balanced_file = self.main.process_balance_in_the_force(
             dataset=self.main.load_file()
         )
+        self.assertGreater(balanced_file.shape[0], 1)
         n_zero = balanced_file[
             balanced_file[enums_train.binarized_label.value] == 0].shape[0]
         n_one = balanced_file[
