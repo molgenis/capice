@@ -14,11 +14,15 @@ class PropertyChecker:
         if not isinstance(value, expected_type):
             if include_none:
                 if value is not None:
-                    error_message = """
-                    Expected variable type {} but got {}
-                    """.format(expected_type, type(value)).strip()
-                    self._talk_to_logger(error_message=error_message)
-                    raise TypeError(error_message)
+                    self._raise_type_error(expected_type, value)
+            else:
+                self._raise_type_error(expected_type, value)
+
+    def _raise_type_error(self, expected_type, value):
+        error_message = f"Expected variable type " \
+                        f"{expected_type} but got {type(value)}"
+        self._talk_to_logger(error_message)
+        raise TypeError(error_message)
 
     @abstractmethod
     def _talk_to_logger(self, error_message):

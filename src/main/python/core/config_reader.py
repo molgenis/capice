@@ -112,7 +112,7 @@ class ConfigReader:
             default = 'missing'
             if isinstance(value, str):
                 if value.lower() == default:
-                    value = False
+                    value = None
                 else:
                     value = else_type(value)
             return value

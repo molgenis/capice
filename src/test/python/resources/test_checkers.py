@@ -75,10 +75,10 @@ class TestInputVersionChecker(unittest.TestCase):
         print('Overrule error')
         with self.assertRaises(InputError):
             InputVersionChecker(
-                config_vep_version=False,
-                file_vep_version=False,
-                config_grch_build=False,
-                file_grch_build=False
+                config_vep_version=None,
+                file_vep_version=None,
+                config_grch_build=None,
+                file_grch_build=None
             )
 
     def test_file_config_mismatch_vep(self):

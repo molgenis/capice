@@ -32,9 +32,9 @@ class TestImputer(unittest.TestCase):
 
     def tearDown(self):
         print('Resetting arguments.')
-        self.manager.overwrite_impute = False
-        self.manager.vep_version = False
-        self.manager.grch_build = False
+        self.manager.overwrite_impute = None
+        self.manager.vep_version = None
+        self.manager.grch_build = None
         print('Arguments reset.')
 
     def test_unit_imputation_config(self):

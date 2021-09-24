@@ -12,18 +12,18 @@ class CapiceManager:
         def __init__(self):
             self.property_checker = PropertyChecker()
             self._now = datetime.now()
-            self.overwrite_impute = False
-            self.overwrite_model = False
-            self.grch_build = False
-            self.config_grch_build = False
+            self.overwrite_impute = None
+            self.overwrite_model = None
+            self.grch_build = None
+            self.config_grch_build = None
             self.force = False
             self.verbose = False
             self.critical_logging_only = False
             self.annotation_features = []
             self.output_filename = ''
-            self.reference_genome = False
-            self.vep_version = False
-            self.config_vep_version = False
+            self.reference_genome = None
+            self.vep_version = None
+            self.config_vep_version = None
             self.config_loc = None
 
         @property
@@ -37,7 +37,8 @@ class CapiceManager:
         @overwrite_impute.setter
         def overwrite_impute(self, value=None):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(str, bool))
+                                                 expected_type=str,
+                                                 include_none=True)
             self._overwrite_impute = value
 
         @property
@@ -47,7 +48,8 @@ class CapiceManager:
         @overwrite_model.setter
         def overwrite_model(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(str, bool))
+                                                 expected_type=str,
+                                                 include_none=True)
             self._overwrite_model = value
 
         @property
@@ -57,7 +59,8 @@ class CapiceManager:
         @grch_build.setter
         def grch_build(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(int, bool))
+                                                 expected_type=int,
+                                                 include_none=True)
             self._grch_build = value
 
         @property
@@ -72,7 +75,8 @@ class CapiceManager:
         @config_grch_build.setter
         def config_grch_build(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(int, bool))
+                                                 expected_type=int,
+                                                 include_none=True)
             self._config_grch_build = value
 
         @property
@@ -131,7 +135,8 @@ class CapiceManager:
         @reference_genome.setter
         def reference_genome(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(bool, str))
+                                                 expected_type=str,
+                                                 include_none=True)
             self._reference_genome = value
 
         @property
@@ -141,7 +146,8 @@ class CapiceManager:
         @vep_version.setter
         def vep_version(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=float)
+                                                 expected_type=float,
+                                                 include_none=True)
             self._vep_version = value
 
         @property
@@ -151,7 +157,8 @@ class CapiceManager:
         @config_vep_version.setter
         def config_vep_version(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=(float, bool))
+                                                 expected_type=float,
+                                                 include_none=True)
             self._config_vep_version = value
 
         @property
