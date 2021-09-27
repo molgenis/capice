@@ -17,7 +17,6 @@ class VerbosityChecker:
         corresponding to the Standard Python Library logging Logging levels.
         :param info: bool, the -v flag
         :param debug: bool, the -vv flag
-        :param trace: bool, the -vvv flag
         :return: loglevel, None or int, loglevel corresponding to the input.
         """
         loglevel = None
