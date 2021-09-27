@@ -1,3 +1,4 @@
+import logging
 import sys
 import unittest
 from src.main.python.core.logger import Logger
@@ -50,6 +51,38 @@ class TestLogger(unittest.TestCase):
         Logger.instance = None
         self.manager.critical_logging_only = False
         self.manager.loglevel = None
+
+    def test_isenbaled_false_debug(self):
+        print('isEnabledFor(logging.DEBUG) is False')
+        self.manager.loglevel = 20
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.DEBUG))
+
+    def test_isenabled_true_debug(self):
+        print('isEnabledFor(logging.DEBUG) is True')
+        self.manager.loglevel = 10
+        log = Logger().logger
+        self.assertTrue(log.isEnabledFor(logging.DEBUG))
+
+    def test_isenabled_false_warning(self):
+        print('isEnabledFor(logging.WARNING) is False')
+        self.manager.critical_logging_only = True
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.WARNING))
+
+    def test_isenabled_true_warning(self):
+        print('isEnabledFor(logging.WARNING) is True')
+        log = Logger().logger
+        self.assertTrue(log.isEnabledFor(logging.WARNING))
+        self.assertFalse(log.isEnabledFor(logging.INFO))
+
+    def test_set_multiple_loglevels(self):
+        print('isEnabledFor(logging.DEBUG) is False with '
+              'CapiceManager().critical_logging_only set to True')
+        self.manager.critical_logging_only = True
+        self.manager.loglevel = 10
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.DEBUG))
 
     def test_loglevel_nonverbose(self):
         """

@@ -39,6 +39,7 @@ class Logger:
             self.stdout = False
             self.stdout_filter = []
             self.stderr_loglevel = 50
+            self.min_loglevel = 50
             self.set_stderr_loglevel()
             self.logger = None
             if self.logger is None:
@@ -53,6 +54,7 @@ class Logger:
             """
             if not self.global_settings.critical_logging_only:
                 self.stderr_loglevel = 30
+                self.min_loglevel = 30
             if self.global_settings.loglevel and self.stderr_loglevel < 50:
                 self.stdout = True
                 self._set_stdout_filter()
@@ -71,6 +73,7 @@ class Logger:
                 20: logging_info
             }
             self.stdout_filter = dict_of_levels[self.global_settings.loglevel]
+            self.min_loglevel = self.global_settings.loglevel
 
         def load_logger(self):
             """
@@ -95,7 +98,7 @@ class Logger:
             )
 
             # Setting the log level to debug, but with an applied filter
-            logger.setLevel(logging.NOTSET)
+            logger.setLevel(self.min_loglevel)
 
             # sys.stdout (if critical logging only isn't called and one of
             # the verbose flags is called.
