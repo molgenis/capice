@@ -56,6 +56,13 @@ class TestExporter(unittest.TestCase):
         self.exporter.export_capice_prediction(
             datafile=self.prediction_output_dataframe
         )
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    self.output_loc, 'test_output.tsv'
+                )
+            )
+        )
         exported_data = pd.read_csv(
             os.path.join(self.output_loc, 'test_output.tsv'),
             compression='gzip',

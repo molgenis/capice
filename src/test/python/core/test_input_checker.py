@@ -22,6 +22,12 @@ class TestInputChecker(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print('Tearing down.')
+        dir_to_be_created = os.path.join(
+            get_project_root_dir(),
+            '.another_test_output'
+        )
+        if os.path.isdir(dir_to_be_created):
+            os.rmdir(dir_to_be_created)
         teardown()
 
     def setUp(self):
@@ -67,7 +73,8 @@ class TestInputChecker(unittest.TestCase):
         expected_output_directory = self.call_dir
         self.input_checker.check_input_output_directories(
             input_path=test_input,
-            output_path=test_output
+            output_path=test_output,
+            force=False
         )
         self.assertEqual(
             self.input_checker.get_output_filename(),
@@ -92,7 +99,8 @@ class TestInputChecker(unittest.TestCase):
         expected_output_directory = os.path.join('.', 'test_output')
         self.input_checker.check_input_output_directories(
             input_path=test_input,
-            output_path=test_output
+            output_path=test_output,
+            force=False
         )
         self.assertEqual(
             self.input_checker.get_output_filename(),
@@ -116,7 +124,8 @@ class TestInputChecker(unittest.TestCase):
         expected_output_directory = os.path.join('.', 'test_output')
         self.input_checker.check_input_output_directories(
             input_path=test_input,
-            output_path=test_output
+            output_path=test_output,
+            force=False
         )
         self.assertEqual(
             self.input_checker.get_output_filename(),
@@ -135,7 +144,8 @@ class TestInputChecker(unittest.TestCase):
         expected_output_directory = self.call_dir
         self.input_checker.check_input_output_directories(
             input_path=test_input,
-            output_path=test_output
+            output_path=test_output,
+            force=False
         )
         self.assertEqual(
             self.input_checker.get_output_filename(),
@@ -145,6 +155,51 @@ class TestInputChecker(unittest.TestCase):
             self.input_checker.get_output_directory(),
             expected_output_directory
         )
+
+    def test_input_output_conversion_output_already_present(self):
+        print('Input output conversion with output already there')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
+        test_output = None
+        with open(
+                os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'),
+                'wt'
+        ) as already_present_file:
+            already_present_file.write('Some whitty comment')
+        self.assertRaises(
+            FileExistsError,
+            self.input_checker.check_input_output_directories,
+            test_input,
+            test_output,
+            False
+        )
+        os.remove(os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'))
+
+    def test_input_output_conversion_output_present_force_true(self):
+        print('Input output conversion with output already present but '
+              'force set to true')
+        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
+        test_output = None
+        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
+        expected_output_directory = self.call_dir
+        with open(
+                os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'),
+                'wt'
+        ) as already_present_file:
+            already_present_file.write('Some whitty comment')
+        self.input_checker.check_input_output_directories(
+            input_path=test_input,
+            output_path=test_output,
+            force=True
+        )
+        self.assertEqual(
+            self.input_checker.get_output_filename(),
+            expected_output_filename
+        )
+        self.assertEqual(
+            self.input_checker.get_output_directory(),
+            expected_output_directory
+        )
+        os.remove(os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'))
 
 
 if __name__ == '__main__':
