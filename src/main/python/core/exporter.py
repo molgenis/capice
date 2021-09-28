@@ -44,7 +44,7 @@ class Exporter:
             index=False
         )
         self.log.info(
-            f'Successfully exported CAPICE datafile to: {export_loc}'
+            'Successfully exported CAPICE datafile to: %s', export_loc
         )
 
     @staticmethod
