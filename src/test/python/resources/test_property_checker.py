@@ -49,6 +49,30 @@ class TestPropertyChecker(unittest.TestCase):
             expected_type
         )
 
+    def test_property_checker_int_bool(self):
+        print('Property checker with expected int and value is False')
+        value = False
+        expected_type = int
+        self.assertRaises(
+            TypeError,
+            self.property_checker.check_property,
+            value,
+            expected_type
+        )
+
+    def test_property_checker_int_bool_include_none(self):
+        print('Property checker with expected int, value is False and '
+              'include_none is True')
+        value = False
+        expected_type = int
+        self.assertRaises(
+            TypeError,
+            self.property_checker.check_property,
+            value,
+            expected_type,
+            True
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

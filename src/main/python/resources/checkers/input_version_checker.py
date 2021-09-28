@@ -79,8 +79,10 @@ class InputVersionChecker:
         since it can not determine what file to use without VEP or
         GRCh argument.
         """
-        if not self.manager.overwrite_impute and \
-                not self.manager.overwrite_model:
+        impute = self.manager.overwrite_impute
+        model = self.manager.overwrite_model
+        if impute is None or len(impute) == 0 and \
+                model is None or len(model) == 0:
             error_message = (
                 'VEP version or GRCh build not specified and both overwrites are not\n' 
                 'set! Not able to find a correct impute or processing file!'
@@ -136,10 +138,15 @@ class InputVersionChecker:
         :param argument: int or float
         """
         if argument:
-            if type_of_check == 'VEP':
+            if type_of_check == 'VEP' and argument > 0:
                 self.export_vep_version = argument
-            else:
+            elif type_of_check == 'GRCh' and argument > 0:
                 self.export_grch_build = argument
+            else:
+                self.log.warning(
+                    f'Encountered an incorrect value for: {type_of_check} '
+                    f'({argument})'
+                )
 
     def _check_version_match(self):
         """

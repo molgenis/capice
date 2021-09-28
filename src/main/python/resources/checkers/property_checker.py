@@ -11,12 +11,19 @@ class PropertyChecker:
         :param expected_type: type the value should match
         :param include_none: whenever None should be allowed
         """
-        if not isinstance(value, expected_type):
-            if include_none:
-                if value is not None:
-                    self._raise_type_error(expected_type, value)
-            else:
+        if isinstance(value, bool):
+            if type(value) != expected_type:
+                self._check_none(expected_type, value, include_none)
+
+        elif not isinstance(value, expected_type):
+            self._check_none(expected_type, value, include_none)
+
+    def _check_none(self, expected_type, value, include_none):
+        if include_none:
+            if value is not None:
                 self._raise_type_error(expected_type, value)
+        else:
+            self._raise_type_error(expected_type, value)
 
     def _raise_type_error(self, expected_type, value):
         error_message = f"Expected variable type " \
