@@ -26,11 +26,10 @@ class PropertyChecker:
             self._raise_type_error(expected_type, value)
 
     def _raise_type_error(self, expected_type, value):
-        error_message = f"Expected variable type " \
-                        f"{expected_type} but got {type(value)}"
-        self._talk_to_logger(error_message)
-        raise TypeError(error_message)
+        error_message = "Expected variable type %s but got %s"
+        self._talk_to_logger(error_message, expected_type, value)
+        raise TypeError(error_message % (expected_type, value))
 
     @abstractmethod
-    def _talk_to_logger(self, error_message):
+    def _talk_to_logger(self, msg, *args, **kwargs):
         pass
