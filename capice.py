@@ -69,7 +69,8 @@ def main():
 
     input_loc = input_checker.check_input_loc(input_loc=input_loc)
     input_checker.check_input_output_directories(input_path=input_loc,
-                                                 output_path=output_loc)
+                                                 output_path=output_loc,
+                                                 force=force)
     output_loc = input_checker.get_output_directory()
     output_filename = input_checker.get_output_filename()
     input_checker.check_output_loc(output_loc=output_loc)

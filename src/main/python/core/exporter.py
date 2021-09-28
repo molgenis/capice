@@ -35,18 +35,17 @@ class Exporter:
         pathway.
         :param datafile: prediction pandas DataFrame
         """
-        filename = self._export_filename_ready(
-            file_name=self.capice_filename,
-            check_extension=False
-        )
+        export_loc = os.path.join(self.file_path, self.capice_filename)
         datafile = self._post_process_split_cols(datafile)
         datafile[self.export_cols].to_csv(
-            filename,
+            export_loc,
             sep='\t',
             compression='gzip',
             index=False
         )
-        self.log.info('Successfully exported CAPICE datafile to: %s', filename)
+        self.log.info(
+            'Successfully exported CAPICE datafile to: %s', export_loc
+        )
 
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):

@@ -57,7 +57,7 @@ class InputChecker:
             warnings.warn("Output directory does not exist, creating.")
             prepare_dir(output_loc)
 
-    def check_input_output_directories(self, input_path, output_path):
+    def check_input_output_directories(self, input_path, output_path, force):
         """
         Function to check the input location, output location and filename to
         tell the exporter where to place what file.
@@ -85,6 +85,15 @@ class InputChecker:
                 self.output_directory = self._call_loc
                 self.output_filename = output_path
         self._check_gzip_extension()
+        self._check_force(force)
+
+    def _check_force(self, force):
+        full_ouput_path = os.path.join(self.output_directory,
+                                       self.output_filename)
+        if not force and os.path.isfile(full_ouput_path):
+            raise FileExistsError(
+                f'Output file {full_ouput_path} already exists! '
+                f'Use -f / --force to overwrite.')
 
     def _create_capice_output_filename(self, input_path, output_path=None,
                                        append_capice=True, ispath=False,
