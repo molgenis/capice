@@ -33,30 +33,28 @@ class Main:
 
         # Welcome message
 
-        self.log.info(
-            f'Thank you for using {__program__}, '
-            f'version: {__version__}, '
-            f'created by: {__author__}.'
-        )
+        self.log.info('Thank you for using %s, ', __program__)
+        self.log.info('version: %s, ', __version__)
+        self.log.info('created by: %s, ', __author__)
 
         # Order is less important here
 
         self.log.info('Arguments passed. Starting program.')
         self.infile = input_loc
-        self.log.debug(f'Input argument -i / --input confirmed: {self.infile}')
+        self.log.debug('Input argument -i / --input confirmed: %s', self.infile)
         self.output = output_loc
         self.log.debug(
-            f'Output directory -o / --output confirmed: {self.output}'
+            'Output directory -o / --output confirmed: %s', self.output
         )
         config_vep_version = self.config.get_default_value('vepversion')
         self.log.debug(
-            f'Config VEP version confirmed: {config_vep_version}'
+            'Config VEP version confirmed: %s', config_vep_version
         )
         config_genome_build = self.config.get_default_value('genomebuild')
         self.log.debug(
-            f'Config Genome build confirmed: {config_genome_build}'
+            'Config Genome build confirmed: %s', config_genome_build
         )
-        self.log.debug(f'Force flag confirmed: {self.manager.force}')
+        self.log.debug('Force flag confirmed: %s', self.manager.force)
 
     def run(self):
         """

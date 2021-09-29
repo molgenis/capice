@@ -38,13 +38,12 @@ class ManualAnnotator:
     def process(self, dataset: pd.DataFrame):
         for processor in self.vep_annotators:
             if processor.name in dataset.columns and processor.usable:
-                self.log.debug('Processing: {}'.format(processor.name))
+                self.log.debug('Processing: %s', processor.name)
                 dataset = processor.process(dataset)
                 if processor.drop:
                     dataset.drop(columns=processor.name, inplace=True)
             else:
                 self.log.warning(
-                    f'Could not use processor '
-                    f'{processor.name} on input dataset!'
+                    'Could not use processor %s on input dataset!', processor.name
                 )
         return dataset

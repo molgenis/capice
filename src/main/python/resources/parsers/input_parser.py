@@ -1,5 +1,6 @@
-from src.main.python.core.logger import Logger
 import pandas as pd
+
+from src.main.python.core.logger import Logger
 
 
 class InputParser:
@@ -32,8 +33,7 @@ class InputParser:
         else:
             used_sep = self.sep
         self.log.info(
-            f'Reading VEP file from: {input_file_loc} '
-            f'using separator: {used_sep}'
+            'Reading VEP file from: %s using separator: %s', input_file_loc, used_sep
         )
         input_file = pd.read_csv(
             input_file_loc,
@@ -45,7 +45,6 @@ class InputParser:
         input_file.dropna(how='all', inplace=True)
         input_file.drop_duplicates(inplace=True)
         self.log.info(
-            f'Input file at {input_file_loc} loaded with '
-            f'{input_file.shape[0]} samples.'
+            'Input file at %s loaded with %s samples.', input_file_loc, input_file.shape[0]
         )
         return input_file

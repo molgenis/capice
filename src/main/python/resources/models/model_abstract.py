@@ -1,13 +1,14 @@
+import pickle
 from abc import ABCMeta, abstractmethod
-from src.main.python.core.logger import Logger
+
+import numpy as np
+import pandas as pd
+
 from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
 from src.main.python.resources.checkers.property_checker_logger import \
     PropertyCheckerLogger
-from src.main.python.resources.utilities.utilities import deprecated
 from src.main.python.resources.enums.sections import Column
-import pandas as pd
-import numpy as np
-import pickle
 
 
 class TemplateSetup(metaclass=ABCMeta):
@@ -155,9 +156,8 @@ class TemplateSetup(metaclass=ABCMeta):
             if feature in self.annotation_features:
                 self.annotation_object.append(feature)
         self.log.debug(
-            'Converting the categorical columns: {}.'.format(
-                ", ".join(self.annotation_object)
-            )
+            'Converting the categorical columns: %s.',
+            ", ".join(self.annotation_object)
         )
 
     @staticmethod
@@ -261,11 +261,11 @@ class TemplateSetup(metaclass=ABCMeta):
         else:
             for annotation_feature in annotation_feats_dict.keys():
                 feature_names = annotation_feats_dict[annotation_feature]
-                self.log.debug('For feature: {} loaded {} levels: {}'.format(
-                    annotation_feature,
-                    len(feature_names),
-                    feature_names
-                ))
+                self.log.debug('For feature: %s loaded %s levels: %s',
+                               annotation_feature,
+                               len(feature_names),
+                               feature_names
+                               )
                 dataset[annotation_feature] = np.where(
                     dataset[annotation_feature].isin(feature_names),
                     dataset[annotation_feature],
@@ -298,9 +298,9 @@ class TemplateSetup(metaclass=ABCMeta):
                     [current_annotation_feature, processed_feature])
                 if col_be_present not in dataset.columns:
                     self.log.debug(
-                        'Of annotation feature {},'
-                        ' detected {} not present in columns.'.format(
-                            current_annotation_feature, processed_feature))
+                        'Of annotation feature %s,'
+                        ' detected %s not present in columns.',
+                        current_annotation_feature, processed_feature)
                     dataset[col_be_present] = 0
         return dataset
 
@@ -319,10 +319,10 @@ class TemplateSetup(metaclass=ABCMeta):
             if not isinstance(value, str):
                 value = str(value)
             printable_value_counts.append(value)
-        self.log.info('For feature: {} saved the following values: {}'.format(
-            column.name,
-            ', '.join(printable_value_counts)
-        ))
+        self.log.info('For feature: %s saved the following values: %s',
+                      column.name,
+                      ', '.join(printable_value_counts)
+                      )
         return value_counts
 
     # Model stuff
@@ -333,7 +333,7 @@ class TemplateSetup(metaclass=ABCMeta):
         Can be overwritten in case of legacy support.
         :return: pandas DataFrame
         """
-        self.log.info('Predicting for {} samples.'.format(data.shape[0]))
+        self.log.info('Predicting for %s samples.', data.shape[0])
         self._load_model()
         self._load_model_features()
         data[Column.score.value] = self._predict(
@@ -368,8 +368,8 @@ class TemplateSetup(metaclass=ABCMeta):
         if not self.train:
             with open(self._get_model_loc(), 'rb') as model_file:
                 model = pickle.load(model_file)
-            self.log.info('Successfully loaded model at: {}'.format(
-                self._get_model_loc()))
+            self.log.info('Successfully loaded model at: %s',
+                          self._get_model_loc())
         self.model = model
 
     @staticmethod

@@ -58,7 +58,7 @@ class InputVersionChecker:
         globally later on in CAPICE.
         """
         self.manager.vep_version = self.export_vep_version
-        self.log.info(f'VEP version set to: {self.export_vep_version}')
+        self.log.info('VEP version set to: %s', self.export_vep_version)
 
     def _set_global_grch_build(self):
         """
@@ -66,7 +66,7 @@ class InputVersionChecker:
         be used globally later on in CAPICE.
         """
         self.manager.grch_build = self.export_grch_build
-        self.log.info(f'GRCh build set to: {self.export_grch_build}')
+        self.log.info('GRCh build set to: %s', self.export_grch_build)
 
     def _check_overrule(self):
         """
@@ -126,8 +126,8 @@ class InputVersionChecker:
         passed.
         """
         self.log.warning(
-            f'Unable to obtain {type_of_check} '
-            f'version from file or config file!'
+            'Unable to obtain %s '
+            'version from file or config file!', type_of_check
         )
         self.check_overrule = True
 
@@ -179,8 +179,7 @@ class InputVersionChecker:
                                 version_file=None, match_successful=False):
         if match_successful:
             self.log.info(
-                f'Successfully matched CLA and file versions for '
-                f'{type_of_mismatch}.'
+                'Successfully matched CLA and file versions for %s.', type_of_mismatch
             )
         else:
             warning_message = f'Warning matching {type_of_mismatch} ' \

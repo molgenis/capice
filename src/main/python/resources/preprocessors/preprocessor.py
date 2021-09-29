@@ -1,11 +1,13 @@
+import inspect
+import os
+
+import pandas as pd
+
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
+from src.main.python.resources.errors.errors import InitializationError
 from src.main.python.resources.utilities.utilities import \
     get_project_root_dir, load_modules, importer
-from src.main.python.resources.errors.errors import InitializationError
-import inspect
-from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
-import pandas as pd
-import os
 
 
 class PreProcessor:
@@ -69,7 +71,7 @@ class PreProcessor:
         if len(self.preprocessors) < 1:
             self._raise_no_module_found_error()
         self.log.info(
-            f'Successfully loaded {len(self.preprocessors)} preprocessors.'
+            'Successfully loaded %s preprocessors.', len(self.preprocessors)
         )
 
     def _raise_no_module_found_error(self):
@@ -92,8 +94,8 @@ class PreProcessor:
         for preprocessor in self.preprocessors:
             if self.overrule and preprocessor.name == self.overrule:
                 self.log.info(
-                    f'Overrule successful for: {self.overrule} , '
-                    f'located at: {inspect.getfile(preprocessor.__class__)}'
+                    'Overrule successful for: %s , '
+                    'located at: %s', self.overrule, inspect.getfile(preprocessor.__class__)
                 )
                 self.preprocessor = preprocessor
                 break
@@ -103,9 +105,9 @@ class PreProcessor:
                 if module_vep == self.vep_version and \
                         module_grch == self.grch_build:
                     self.log.info(
-                        f'Preprocessing and model file successfully found: '
-                        f'{preprocessor.name}, '
-                        f'Located at: {inspect.getfile(preprocessor.__class__)}'
+                        'Preprocessing and model file successfully found: %s, Located at: %s',
+                        preprocessor.name,
+                        inspect.getfile(preprocessor.__class__)
                     )
                     self.preprocessor = preprocessor
                     break

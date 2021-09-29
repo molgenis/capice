@@ -59,9 +59,7 @@ class CapiceImputing:
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
         self.log.info(
-            'Identified {} files available for usage in imputing.'.format(
-                len(self.modules)
-            )
+            'Identified %s files available for usage in imputing.', len(self.modules)
         )
 
     def _raise_no_module_found_error(self):
@@ -84,10 +82,9 @@ class CapiceImputing:
         for module in self.modules:
             if self.overrule and module.name == self.overrule:
                 self.log.info(
-                    'Overrule successful for: {} , located at: {}'.format(
-                        self.overrule,
-                        inspect.getfile(module.__class__)
-                    )
+                    'Overrule successful for: %s, located at: %s',
+                    self.overrule,
+                    inspect.getfile(module.__class__)
                 )
                 self.module = module
                 break
@@ -97,11 +94,8 @@ class CapiceImputing:
                 if module_vep_version == self.vep_version and \
                         module_grch_build == self.grch_build:
                     self.log.info(
-                        'Impute data file successfully found: {} , '
-                        'located at: {}'.format(
-                            module.name,
-                            inspect.getfile(module.__class__)
-                        )
+                        'Impute data file successfully found: %s, '
+                        'located at: %s', module.name, inspect.getfile(module.__class__)
                     )
                     self.module = module
                     break
@@ -133,8 +127,8 @@ class CapiceImputing:
             if col in dataset.columns:
                 self.annotation_columns_present.append(col)
             else:
-                self.log.debug(f'Annotation feature {col} not present within '
-                               f'input data!')
+                self.log.debug('Annotation feature %s not present within '
+                               'input data!', col)
         self.manager.annotation_features = self.annotation_columns_present
         self.impute_values = self.module.impute_values
 
@@ -187,13 +181,13 @@ class CapiceImputing:
             n_delete = dataset['Chr'].isnull().values.sum()
             self.log.warning(
                 'Detected NaN in the Chromosome column! '
-                'Deleting {} row(s).'.format(n_delete))
+                'Deleting %s row(s).', n_delete)
             dataset = dataset[~dataset['Chr'].isnull()]
         if dataset['Pos'].isnull().values.any():
             n_delete = dataset['Pos'].isnull().values.sum()
             self.log.warning(
                 'Detected NaN is the Position column! '
-                'Deleting {} row(s).'.format(n_delete))
+                'Deleting %s row(s).', n_delete)
             dataset = dataset[~dataset['Pos'].isnull()]
         dataset.index = range(0, dataset.shape[0])
         if chrom_is_float:
@@ -216,10 +210,10 @@ class CapiceImputing:
         if n_nan > 0:
             n_samples = column.size
             p_nan = round((n_nan / n_samples) * 100, ndigits=2)
-            self.log.debug('NaN detected in column {}, percentage: {}%.'.format(
-                column.name,
-                p_nan
-            ))
+            self.log.debug('NaN detected in column %s, percentage: %s%%.',
+                           column.name,
+                           p_nan
+                           )
 
     def _get_full_nan_row(self, dataset: pd.DataFrame):
         """
@@ -237,9 +231,9 @@ class CapiceImputing:
             self.log.warning(
                 'The following samples are filtered out due to missing values: '
                 '(indexing is python based, '
-                'so the index starts at 0). \n {}'.format(
-                    samples_dropped_out[
-                        ['Chr', 'Pos', 'Ref', 'Alt', 'FeatureID']])
+                'so the index starts at 0). \n %s',
+                samples_dropped_out[
+                    ['Chr', 'Pos', 'Ref', 'Alt', 'FeatureID']]
             )
         else:
             self.log.info(

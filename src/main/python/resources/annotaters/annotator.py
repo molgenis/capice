@@ -23,7 +23,7 @@ class Annotator:
         self.dataset = self.manual_annotater.process(dataset=self.dataset)
         self.log.info('Annotation successful.')
         self.log.debug(
-            f'Final shape of the annotated data: {self.dataset.shape}')
+            'Final shape of the annotated data: %s', self.dataset.shape)
         return self.dataset
 
     def _add_sequence(self):
