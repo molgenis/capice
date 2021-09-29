@@ -92,7 +92,7 @@ class Logger:
 
             formatter = logging.Formatter(
                 "%(asctime)s "
-                "[%(levelname)s] "
+                "%(levelname)8s: "
                 "%(message)s",
                 datefmt='%Y-%m-%d %H:%M:%S'
             )
