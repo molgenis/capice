@@ -59,7 +59,7 @@ class InputVersionChecker:
         globally later on in CAPICE.
         """
         self.manager.vep_version = self.export_vep_version
-        self.log.info('VEP version set to: {}'.format(self.export_vep_version))
+        self.log.info('VEP version set to: %s', self.export_vep_version)
 
     def _set_global_grch_build(self):
         """
@@ -67,7 +67,7 @@ class InputVersionChecker:
         be used globally later on in CAPICE.
         """
         self.manager.grch_build = self.export_grch_build
-        self.log.info('GRCh build set to: {}'.format(self.export_grch_build))
+        self.log.info('GRCh build set to: %s', self.export_grch_build)
 
     def _check_overrule(self):
         """
@@ -79,13 +79,14 @@ class InputVersionChecker:
         since it can not determine what file to use without VEP or
         GRCh argument.
         """
+
         impute = self.manager.overwrite_impute
         model = self.manager.overwrite_model
-        if impute is None or len(impute) == 0 and \
-                model is None or len(model) == 0:
+        if not impute and not model:  # Intended: empty string is also invalid
             error_message = (
-                'VEP version or GRCh build not specified and both overwrites are not\n' 
-                'set! Not able to find a correct impute or processing file!'
+                'VEP version or GRCh build not specified and both overwrites '
+                'are not set! '
+                'Not able to find a correct impute or processing file!'
             )
             self.log.critical(error_message)
             raise InputError(error_message)
@@ -128,7 +129,8 @@ class InputVersionChecker:
         passed.
         """
         self.log.warning(
-            f'Unable to obtain {type_of_check} version from file or config file!'
+            'Unable to obtain %s version from file or config file!',
+            type_of_check
         )
         self.check_overrule = True
 
@@ -144,8 +146,9 @@ class InputVersionChecker:
                 self.export_grch_build = argument
             else:
                 self.log.warning(
-                    f'Encountered an incorrect value for: {type_of_check} '
-                    f'({argument})'
+                    'Encountered an incorrect value for: %s (%s)',
+                    type_of_check,
+                    argument
                 )
 
     def _check_version_match(self):
@@ -185,18 +188,13 @@ class InputVersionChecker:
                                 version_file=None, match_successful=False):
         if match_successful:
             self.log.info(
-                'Successfully matched CLA and file versions for {}.'.format(
-                    type_of_mismatch
-                )
+                'Successfully matched CLA and file versions for %s.',
+                type_of_mismatch
             )
         else:
-            warning_message = """
-            Warning matching {} versions. 
-            CLA version supplied: 
-            {} does not match file version: {} !""".format(
-                type_of_mismatch,
-                version_cla,
-                version_file
-            ).strip()
+            warning_message = f"Warning matching {type_of_mismatch} " \
+                              f"versions. CLA version supplied: " \
+                              f"{version_cla} does not match file version: " \
+                              f"{version_file} !"
             warnings.warn(warning_message)
             self.log.warning(warning_message)
