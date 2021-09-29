@@ -19,8 +19,7 @@ class TestLogger(unittest.TestCase):
         print('Tearing down.')
         teardown()
 
-    @staticmethod
-    def capture_stdout_call():
+    def capture_stdout_call(self):
         old_stdout = sys.stdout
         listener = io.StringIO()
         sys.stdout = listener
@@ -29,10 +28,10 @@ class TestLogger(unittest.TestCase):
         log.debug('SomeString')
         out = listener.getvalue()
         sys.stdout = old_stdout
+        self.assertGreater(len(out), 0)
         return out
 
-    @staticmethod
-    def capture_stderr_call():
+    def capture_stderr_call(self):
         old_stderr = sys.stderr
         listener = io.StringIO()
         sys.stderr = listener
@@ -41,6 +40,7 @@ class TestLogger(unittest.TestCase):
         log.error('SomeString')
         out = listener.getvalue()
         sys.stderr = old_stderr
+        self.assertGreater(len(out), 0)
         return out
 
     def setUp(self):

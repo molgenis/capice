@@ -179,7 +179,8 @@ class InputVersionChecker:
                                 version_file=None, match_successful=False):
         if match_successful:
             self.log.info(
-                'Successfully matched CLA and file versions for %s.', type_of_mismatch
+                'Successfully matched CLA and file versions for %s.',
+                type_of_mismatch
             )
         else:
             warning_message = f'Warning matching {type_of_mismatch} ' \

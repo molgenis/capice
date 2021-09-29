@@ -59,7 +59,8 @@ class CapiceImputing:
         if len(self.modules) < 1:
             self._raise_no_module_found_error()
         self.log.info(
-            'Identified %s files available for usage in imputing.', len(self.modules)
+            'Identified %s files available for usage in imputing.',
+            len(self.modules)
         )
 
     def _raise_no_module_found_error(self):
@@ -95,7 +96,8 @@ class CapiceImputing:
                         module_grch_build == self.grch_build:
                     self.log.info(
                         'Impute data file successfully found: %s, '
-                        'located at: %s', module.name, inspect.getfile(module.__class__)
+                        'located at: %s', module.name,
+                        inspect.getfile(module.__class__)
                     )
                     self.module = module
                     break

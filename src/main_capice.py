@@ -33,9 +33,12 @@ class Main:
 
         # Welcome message
 
-        self.log.info('Thank you for using %s, ', __program__)
-        self.log.info('version: %s, ', __version__)
-        self.log.info('created by: %s, ', __author__)
+        self.log.info(
+            'Thank you for using %s, version: %s, created by: %s',
+            __program__,
+            __version__,
+            __author__
+        )
 
         # Order is less important here
 

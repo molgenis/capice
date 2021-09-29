@@ -22,6 +22,12 @@ class TestInputChecker(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         print('Tearing down.')
+        dir_to_be_deleted = os.path.join(
+            get_project_root_dir(),
+            '.another_test_output'
+        )
+        if os.path.isdir(dir_to_be_deleted):
+            os.rmdir(dir_to_be_deleted)
         teardown()
 
     def setUp(self):

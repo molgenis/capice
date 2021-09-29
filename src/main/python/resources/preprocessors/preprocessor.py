@@ -95,7 +95,8 @@ class PreProcessor:
             if self.overrule and preprocessor.name == self.overrule:
                 self.log.info(
                     'Overrule successful for: %s , '
-                    'located at: %s', self.overrule, inspect.getfile(preprocessor.__class__)
+                    'located at: %s', self.overrule,
+                    inspect.getfile(preprocessor.__class__)
                 )
                 self.preprocessor = preprocessor
                 break
@@ -105,7 +106,8 @@ class PreProcessor:
                 if module_vep == self.vep_version and \
                         module_grch == self.grch_build:
                     self.log.info(
-                        'Preprocessing and model file successfully found: %s, Located at: %s',
+                        'Preprocessing and model file successfully found: %s, '
+                        'Located at: %s',
                         preprocessor.name,
                         inspect.getfile(preprocessor.__class__)
                     )

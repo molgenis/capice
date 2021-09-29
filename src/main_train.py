@@ -34,14 +34,18 @@ class Train(Main):
             'Make input dataset balanced confirmed: %s', self.balance
         )
         self.default = self.config.get_train_value('default')
-        self.log.debug('The use of the default Python 3.6 hyperparameters set to: ')
-        self.log.debug('%s', self.default)
+        self.log.debug(
+            'The use of the default Python 3.6 hyperparameters set to: %s',
+            self.default
+        )
 
         self.specified_default = self.config.get_train_value(
             'specifieddefaults'
         )
-        self.log.debug('The use of specified default hyperparameters set to: ')
-        self.log.debug('%s', self.specified_default)
+        self.log.debug(
+            'The use of specified default hyperparameters set to: %s',
+            self.specified_default
+        )
         self.n_split = self.config.get_train_value('split')
         self.log.debug(
             'Split has been confirmed, set to: %s', self.n_split
@@ -51,7 +55,8 @@ class Train(Main):
             self.log.debug('Early exit flag confirmed.')
         self.train_test_size = self.config.get_train_value('traintestsize')
         self.log.debug(
-            'The percentage of data used for the testing dataset within training: %s', self.train_test_size
+            'The percentage of data used for the testing dataset within '
+            'training: %s', self.train_test_size
         )
 
         # Global variables
@@ -258,7 +263,8 @@ class Train(Main):
                 random_state=self.random_state
             )
         self.log.debug(
-            "Sampled %s variants from Possibly Neutral Variants in range of: %s - %s",
+            "Sampled %s variants from Possibly Neutral Variants in range "
+            "of: %s - %s",
             selected_pnv_currange.shape[0],
             lower_bound,
             upper_bound

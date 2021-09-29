@@ -74,7 +74,11 @@ class Exporter:
         filename = self._export_filename_ready(file_name=name)
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
         self.log.info(
-            'Exported %s with shape %s to: %s', feature, datafile.shape, filename)
+            'Exported %s with shape %s to: %s',
+            feature,
+            datafile.shape,
+            filename
+        )
 
     def export_capice_model(self, model, model_type):
         """
@@ -124,13 +128,17 @@ class Exporter:
             export_path = full_path
         elif self.force and check_file_exists(full_path):
             self.log.warning(
-                'Found existing file at %s, removing file for overwriting.', full_path
+                'Found existing file at %s, removing file for overwriting.',
+                full_path
             )
             os.remove(full_path)
             export_path = full_path
         else:
             self.log.info(
-                'Found existing file at %s, not able to overwrite. Creating new filename.', full_path)
+                'Found existing file at %s, not able to overwrite. '
+                'Creating new filename.',
+                full_path
+            )
             filename, extension = get_filename_and_extension(full_path)
             basedir = os.path.dirname(path_and_filename)
             export_exists = True

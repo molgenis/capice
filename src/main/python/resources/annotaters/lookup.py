@@ -31,9 +31,15 @@ class FastaLookupAnnotator:
         :return: string, obtained reference sequence.
         """
         try:
-            self.log.debug('Obtaining reference sequence for: [Chromosome: %s], [start: %s], [stop: %s]',
-                           chromosome, start, end
-                           )
+            self.log.debug(
+                'Obtaining reference sequence for: '
+                '[Chromosome: %s], '
+                '[start: %s], '
+                '[stop: %s]',
+                chromosome,
+                start,
+                end
+            )
             append_ns = False
             if start < 0:
                 append_ns = abs(start)
@@ -46,8 +52,11 @@ class FastaLookupAnnotator:
             return return_sequence
         except KeyError:
             self.log.warning(
-                'Unable to obtain sequence for: [Chromosome: %s], [start: %s], [stop: %s], did you supply a reference '
-                'with contigs 1-22 + x,y,mt?',
+                'Unable to obtain sequence for: '
+                '[Chromosome: %s], '
+                '[start: %s], '
+                '[stop: %s], '
+                'did you supply a reference with contigs 1-22 + x,y,mt?',
                 chromosome,
                 start,
                 end

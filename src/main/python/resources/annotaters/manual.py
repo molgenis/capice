@@ -44,6 +44,7 @@ class ManualAnnotator:
                     dataset.drop(columns=processor.name, inplace=True)
             else:
                 self.log.warning(
-                    'Could not use processor %s on input dataset!', processor.name
+                    'Could not use processor %s on input dataset!',
+                    processor.name
                 )
         return dataset
