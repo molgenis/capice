@@ -62,7 +62,13 @@ class ArgumentParser:
         optional.add_argument('-v',
                               '--verbose',
                               action='store_true',
-                              help='When called, will print verbose messages.')
+                              help='When called, '
+                                   'will print informative messages.')
+
+        optional.add_argument('-vv',
+                              '--debug',
+                              action='store_true',
+                              help='When called, will print debug messages.')
 
         optional.add_argument('-f',
                               '--force',

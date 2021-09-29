@@ -25,8 +25,8 @@ class InputHeaderParser:
         self._parse_header()
         if self.header_present:
             self.log.info(
-                "Input file header successfully identified: {}".format(
-                    self.header.strip())
+                'Input file header successfully identified: %s',
+                self.header.strip()
             )
             self._get_file_type()
         else:
@@ -70,16 +70,12 @@ class InputHeaderParser:
                     annotation.split('v')[1].split('"')[0]
                 )
                 self.log.info(
-                    'Header VEP version identified: {}'.format(
-                        self.header_version
-                    )
+                    'Header VEP version identified: %s', self.header_version
                 )
             elif annotation.startswith('assembly'):
                 self.header_build = int(annotation.split('h')[1].split('.')[0])
                 self.log.info(
-                    'Header GRCh build identified: {}'.format(
-                        self.header_build
-                    )
+                    'Header GRCh build identified: %s', self.header_build
                 )
 
     def _get_file_type(self):

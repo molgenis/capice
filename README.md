@@ -112,11 +112,13 @@ _For instance:_
 
 `-i input.txt -o path/to/output` becomes `path/to/output/input_capice.txt.gz`
 
+- -c / --config: Set the location of a custom config file similar to `default.cfg` in the project root folder.
 - -v / --verbose: Display more in depth messages within the progress of CAPICE.
+- -vv / --debug: Display more in depth and debug messages within the progress of CAPICE.
 - -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
 - --train: Activates the 'train new CAPICE-like models' within CAPICE.
 
-_Alternatively, further setup can be performed in the `config.cfg`_
+_Alternatively, further setup can be performed in the `default.cfg`_
 
 #### Output of CAPICE prediction files
 

@@ -28,6 +28,7 @@ class InputVersionChecker:
         :param file_grch_build: int,
             GRCh build according to parsed input file
         """
+        self.log = Logger().logger
         self.config_vep_version = config_vep_version
         self.file_vep_version = file_vep_version
         self.config_grch_build = config_grch_build
@@ -38,8 +39,6 @@ class InputVersionChecker:
         self.check_match = []
         self.unable_check = []
         self.check_overrule = False
-        self.log = Logger().logger
-
         self._run()
 
     def _run(self):
@@ -59,7 +58,7 @@ class InputVersionChecker:
         globally later on in CAPICE.
         """
         self.manager.vep_version = self.export_vep_version
-        self.log.info('VEP version set to: {}'.format(self.export_vep_version))
+        self.log.info('VEP version set to: %s', self.export_vep_version)
 
     def _set_global_grch_build(self):
         """
@@ -67,7 +66,7 @@ class InputVersionChecker:
         be used globally later on in CAPICE.
         """
         self.manager.grch_build = self.export_grch_build
-        self.log.info('GRCh build set to: {}'.format(self.export_grch_build))
+        self.log.info('GRCh build set to: %s', self.export_grch_build)
 
     def _check_overrule(self):
         """
@@ -82,8 +81,9 @@ class InputVersionChecker:
         if self.manager.overwrite_impute is False and \
                 self.manager.overwrite_model is False:
             error_message = (
-                'VEP version or GRCh build not specified and both overwrites are not\n' 
-                'set! Not able to find a correct impute or processing file!'
+                'VEP version or GRCh build not specified and both '
+                'overwrites are not set! '
+                'Not able to find a correct impute or processing file!'
             )
             self.log.critical(error_message)
             raise InputError(error_message)
@@ -126,7 +126,8 @@ class InputVersionChecker:
         passed.
         """
         self.log.warning(
-            f'Unable to obtain {type_of_check} version from file or config file!'
+            'Unable to obtain %s '
+            'version from file or config file!', type_of_check
         )
         self.check_overrule = True
 
@@ -178,18 +179,13 @@ class InputVersionChecker:
                                 version_file=None, match_successful=False):
         if match_successful:
             self.log.info(
-                'Successfully matched CLA and file versions for {}.'.format(
-                    type_of_mismatch
-                )
+                'Successfully matched CLA and file versions for %s.',
+                type_of_mismatch
             )
         else:
-            warning_message = """
-            Warning matching {} versions. 
-            CLA version supplied: 
-            {} does not match file version: {} !""".format(
-                type_of_mismatch,
-                version_cla,
-                version_file
-            ).strip()
+            warning_message = f'Warning matching {type_of_mismatch} ' \
+                              f'versions. ' \
+                              f'CLA version supplied: {version_cla} ' \
+                              f'does not match file version: {version_file} !'
             warnings.warn(warning_message)
             self.log.warning(warning_message)

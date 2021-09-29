@@ -46,9 +46,7 @@ class Exporter:
             compression='gzip',
             index=False
         )
-        self.log.info(
-            'Successfully exported CAPICE datafile to: {}'.format(filename)
-        )
+        self.log.info('Successfully exported CAPICE datafile to: %s', filename)
 
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):
@@ -76,11 +74,10 @@ class Exporter:
         filename = self._export_filename_ready(file_name=name)
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
         self.log.info(
-            'Exported {} with shape {} to: {}'.format(
-                feature,
-                datafile.shape,
-                filename
-            )
+            'Exported %s with shape %s to: %s',
+            feature,
+            datafile.shape,
+            filename
         )
 
     def export_capice_model(self, model, model_type):
@@ -127,22 +124,21 @@ class Exporter:
         export_path = None
         if not check_file_exists(full_path):
             self.log.info(
-                'No file found at {}, save to create.'.format(full_path)
-            )
+                'No file found at %s, save to create.', full_path)
             export_path = full_path
         elif self.force and check_file_exists(full_path):
             self.log.warning(
-                'Found existing file at {}, '
-                'removing file for overwriting.'.format(full_path)
+                'Found existing file at %s, removing file for overwriting.',
+                full_path
             )
             os.remove(full_path)
             export_path = full_path
         else:
-            self.log.info('Found existing file at {}, '
-                          'not able to overwrite. '
-                          'Creating new filename.'.format(full_path
-                                                          )
-                          )
+            self.log.info(
+                'Found existing file at %s, not able to overwrite. '
+                'Creating new filename.',
+                full_path
+            )
             filename, extension = get_filename_and_extension(full_path)
             basedir = os.path.dirname(path_and_filename)
             export_exists = True
@@ -153,7 +149,7 @@ class Exporter:
                     filename + "_{}.".format(extension_counter) + extension
                 )
                 if not check_file_exists(attempted_file):
-                    self.log.info('Able to create {}'.format(attempted_file))
+                    self.log.info('Able to create %s', attempted_file)
                     export_exists = False
                     export_path = attempted_file
                 extension_counter += 1

@@ -31,32 +31,32 @@ class Train(Main):
         # Argument logging
         self.balance = self.config.get_train_value('makebalanced')
         self.log.debug(
-            'Make input dataset balanced confirmed: {}'.format(self.balance)
+            'Make input dataset balanced confirmed: %s', self.balance
         )
         self.default = self.config.get_train_value('default')
         self.log.debug(
-            'The use of the default Python 3.6 hyperparameters set to: '
-            '{}'.format(self.default)
+            'The use of the default Python 3.6 hyperparameters set to: %s',
+            self.default
         )
+
         self.specified_default = self.config.get_train_value(
             'specifieddefaults'
         )
         self.log.debug(
-            'The use of specified default hyperparameters set to: '
-            '{}'.format(self.specified_default)
+            'The use of specified default hyperparameters set to: %s',
+            self.specified_default
         )
         self.n_split = self.config.get_train_value('split')
         self.log.debug(
-            'Split has been confirmed, set to: {}'.format(self.n_split)
+            'Split has been confirmed, set to: %s', self.n_split
         )
         self.early_exit = self.config.get_train_value('earlyexit')
         if self.early_exit:
             self.log.debug('Early exit flag confirmed.')
         self.train_test_size = self.config.get_train_value('traintestsize')
         self.log.debug(
-            'The percentage of data used for the '
-            'testing dataset within training: {}'.format(
-                self.train_test_size)
+            'The percentage of data used for the testing dataset within '
+            'training: %s', self.train_test_size
         )
 
         # Global variables
@@ -66,7 +66,7 @@ class Train(Main):
         self.defaults = {}
         self.annotation_features = []
         self.processed_features = []
-        self.verbose = self.manager.verbose
+        self.loglevel = self.manager.loglevel
         self.model_type = None
         self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
@@ -161,9 +161,8 @@ class Train(Main):
                 defaults = json.load(json_file)
             train_checker.check_specified_defaults(loaded_defaults=defaults)
             self.log.debug(
-                'Specified defaults located at {} successfully loaded.'.format(
+                'Specified defaults located at %s successfully loaded.',
                     self.specified_default
-                )
             )
             self.default = True
         else:
@@ -205,7 +204,7 @@ class Train(Main):
                              return_df_columns,
                              consequence: str,
                              bins: list):
-        self.log.debug("Processsing: {}".format(consequence))
+        self.log.debug('Processing: %s', consequence)
         selected_pathogenic = pathogenic_dataframe[
             pathogenic_dataframe[EnumsTrain.Consequence.value] == consequence]
         selected_neutral = benign_dataframe[
@@ -264,18 +263,18 @@ class Train(Main):
                 random_state=self.random_state
             )
         self.log.debug(
-            "Sampled {} variants from Possibly Neutral Variants in range of: "
-            "{} - {}".format(
-                selected_pnv_currange.shape[0],
-                lower_bound,
-                upper_bound)
+            "Sampled %s variants from Possibly Neutral Variants in range "
+            "of: %s - %s",
+            selected_pnv_currange.shape[0],
+            lower_bound,
+            upper_bound
         )
         self.log.debug(
-            "Sampled {} variants from Possibly Pathogenic Variants in range "
-            "of: {} - {}".format(
-                selected_pathogenic_currange.shape[0],
-                lower_bound,
-                upper_bound)
+            "Sampled %s variants from Possibly Pathogenic Variants in range "
+            "of: %s - %s",
+            selected_pathogenic_currange.shape[0],
+            lower_bound,
+            upper_bound
         )
         return selected_pathogenic_currange.append(selected_pnv_currange)
 
@@ -325,10 +324,16 @@ class Train(Main):
             'n_estimators': stats.randint(100, 600),
             # (random integer from 10 to 600)
         }
-        if self.verbose:
-            verbosity = 1
-        else:
-            verbosity = 0
+
+        verbosity = 0
+        xgb_verbosity = False
+
+        # First checking if it is not None
+        if self.loglevel:
+            if self.loglevel < 20:
+                verbosity = 1
+                xgb_verbosity = True
+
         self.log.debug('Preparing the estimator model.')
 
         if self._integration_test:
@@ -403,7 +408,7 @@ class Train(Main):
                        early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
-                       verbose=True,
+                       verbose=xgb_verbosity,
                        sample_weight=train_set[EnumsTrain.sample_weight.value])
 
         return ransearch1

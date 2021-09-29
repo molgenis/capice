@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 from src.main_capice import Main
 from src.main.python.core.logger import Logger
 from src.main.python.core.config_reader import ConfigReader
@@ -14,7 +13,6 @@ def set_up_manager_and_loc():
     """
     manager = CapiceManager()
     manager.critical_logging_only = True
-    manager.verbose = False
     root_dir = get_project_root_dir()
     output_directory = os.path.join(root_dir, '.test_output')
     if not os.path.exists(output_directory):
