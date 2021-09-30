@@ -86,21 +86,37 @@ class PreProcessor:
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
+    def _raise_module_not_found_error(self, module_name):
+        """
+        Specialized function to be used into
+            _load_preprocessors() and
+            _load_correct_preprocessor()
+        to be raised when specific preprocessing file can not be found.
+        """
+        error_message = f'The module "{module_name}" could not be found ' \
+                        f'within the model directory!'
+        self.log.critical(error_message)
+        raise FileNotFoundError(error_message)
+
     def _load_correct_preprocessor(self):
         """
         Function to check the dynamically loaded preprocessors to match either
         the overrule argument or the vep version and genome build.
         """
-        for preprocessor in self.preprocessors:
-            if self.overrule and preprocessor.name == self.overrule:
-                self.log.info(
-                    'Overrule successful for: %s , '
-                    'located at: %s', self.overrule,
-                    inspect.getfile(preprocessor.__class__)
-                )
-                self.preprocessor = preprocessor
-                break
-            else:
+        if self.overrule:
+            for preprocessor in self.preprocessors:
+                if preprocessor.name == self.overrule:
+                    self.log.info(
+                        'Overrule successful for: %s , '
+                        'located at: %s', self.overrule,
+                        inspect.getfile(preprocessor.__class__)
+                    )
+                    self.preprocessor = preprocessor
+                    return
+            # If no match found, triggers error.
+            self._raise_module_not_found_error(self.overrule)
+        else:
+            for preprocessor in self.preprocessors:
                 module_vep = preprocessor.supported_vep_version
                 module_grch = preprocessor.supported_grch_build
                 if module_vep == self.vep_version and \
@@ -112,7 +128,9 @@ class PreProcessor:
                         inspect.getfile(preprocessor.__class__)
                     )
                     self.preprocessor = preprocessor
-                    break
+                    return
+            # If no match found, triggers error.
+            self._raise_no_module_found_error()
 
     def _check_preprocessor_is_applied(self):
         if self.preprocessor is None:
