@@ -37,6 +37,7 @@ class Exporter:
         """
         export_loc = os.path.join(self.file_path, self.capice_filename)
         datafile = self._post_process_split_cols(datafile)
+        datafile = self._post_process_set_correct_dtypes(datafile)
         datafile[self.export_cols].to_csv(
             export_loc,
             sep='\t',
@@ -58,6 +59,14 @@ class Exporter:
         ] = datafile[Column.chr_pos_ref_alt.value].str.split(
             '_',
             expand=True
+        )
+        return datafile
+
+    @staticmethod
+    def _post_process_set_correct_dtypes(datafile: pd.DataFrame):
+        datafile[Column.gene_id.value] = pd.Series(
+            datafile[Column.gene_id.value],
+            dtype='Int64'
         )
         return datafile
 

@@ -4,6 +4,7 @@ import pandas as pd
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Column
+import numpy as np
 
 
 class TestExporter(unittest.TestCase):
@@ -127,6 +128,23 @@ class TestExporter(unittest.TestCase):
         pd.testing.assert_frame_equal(
             forced_file,
             self.expected_prediction_output_dataframe
+        )
+
+    def test_post_process_set_correct_dtypes(self):
+        print('Test post process set correct dtypes')
+        some_data = pd.DataFrame(
+            {
+                'foo': [1, 2, 3],
+                Column.gene_id.value: [1, np.nan, 3]
+            }
+        )
+        expected_output = some_data.copy(deep=True)
+        expected_output[Column.gene_id.value] = pd.Series(expected_output[
+            Column.gene_id.value], dtype='Int64')
+        out_data = self.exporter._post_process_set_correct_dtypes(some_data)
+        pd.testing.assert_frame_equal(
+            out_data.sort_index(axis=1),
+            expected_output.sort_index(axis=1)
         )
 
 
