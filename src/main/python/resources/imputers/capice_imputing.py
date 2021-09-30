@@ -74,22 +74,35 @@ class CapiceImputing:
         self.log.critical(error_message)
         raise FileNotFoundError(error_message)
 
+    def _raise_module_not_found_error(self, module_name):
+        """
+        Function to raise when specific imputer could not be found.
+        """
+        error_message = f'The imputer "{module_name}" could not be found ' \
+                        f'within the imputing directory!'
+        self.log.critical(error_message)
+        raise FileNotFoundError(error_message)
+
     def _is_correct_datafile_present(self):
         """
         Function to check the VEP version and GRCh build
         (or --overwrite_impute_file)
         match the impute file.
         """
-        for module in self.modules:
-            if self.overrule and module.name == self.overrule:
-                self.log.info(
-                    'Overrule successful for: %s, located at: %s',
-                    self.overrule,
-                    inspect.getfile(module.__class__)
-                )
-                self.module = module
-                break
-            else:
+        if self.overrule:
+            for module in self.modules:
+                if module.name == self.overrule:
+                    self.log.info(
+                        'Overrule successful for: %s, located at: %s',
+                        self.overrule,
+                        inspect.getfile(module.__class__)
+                    )
+                    self.module = module
+                    return
+            # If no match found, triggers error.
+            self._raise_module_not_found_error(self.overrule)
+        else:
+            for module in self.modules:
                 module_vep_version = module.supported_vep_version
                 module_grch_build = module.supported_grch_build
                 if module_vep_version == self.vep_version and \
@@ -100,7 +113,9 @@ class CapiceImputing:
                         inspect.getfile(module.__class__)
                     )
                     self.module = module
-                    break
+                    return
+            # If no match found, triggers error.
+            self._raise_no_module_found_error()
 
     def _check_if_imputer_is_applied(self):
         # Checking if self.data_file is assigned
