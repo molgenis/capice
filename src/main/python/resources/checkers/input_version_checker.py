@@ -28,6 +28,7 @@ class InputVersionChecker:
         :param file_grch_build: int or None,
             GRCh build according to parsed input file
         """
+        self.log = Logger().logger
         self.config_vep_version = config_vep_version
         self.file_vep_version = file_vep_version
         self.config_grch_build = config_grch_build
@@ -38,8 +39,6 @@ class InputVersionChecker:
         self.check_match = []
         self.unable_check = []
         self.check_overrule = False
-        self.log = Logger().logger
-
         self._run()
 
     def _run(self):
@@ -84,8 +83,8 @@ class InputVersionChecker:
         model = self.manager.overwrite_model
         if not impute and not model:  # Intended: empty string is also invalid
             error_message = (
-                'VEP version or GRCh build not specified and both overwrites '
-                'are not set! '
+                'VEP version or GRCh build not specified and both '
+                'overwrites are not set! '
                 'Not able to find a correct impute or processing file!'
             )
             self.log.critical(error_message)
@@ -129,8 +128,8 @@ class InputVersionChecker:
         passed.
         """
         self.log.warning(
-            'Unable to obtain %s version from file or config file!',
-            type_of_check
+            'Unable to obtain %s '
+            'version from file or config file!', type_of_check
         )
         self.check_overrule = True
 
@@ -192,9 +191,9 @@ class InputVersionChecker:
                 type_of_mismatch
             )
         else:
-            warning_message = f"Warning matching {type_of_mismatch} " \
-                              f"versions. CLA version supplied: " \
-                              f"{version_cla} does not match file version: " \
-                              f"{version_file} !"
+            warning_message = f'Warning matching {type_of_mismatch} ' \
+                              f'versions. ' \
+                              f'CLA version supplied: {version_cla} ' \
+                              f'does not match file version: {version_file} !'
             warnings.warn(warning_message)
             self.log.warning(warning_message)

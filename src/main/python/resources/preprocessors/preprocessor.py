@@ -1,11 +1,13 @@
+import inspect
+import os
+
+import pandas as pd
+
+from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.logger import Logger
+from src.main.python.resources.errors.errors import InitializationError
 from src.main.python.resources.utilities.utilities import \
     get_project_root_dir, load_modules, importer
-from src.main.python.resources.errors.errors import InitializationError
-import inspect
-from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
-import pandas as pd
-import os
 
 
 class PreProcessor:
@@ -15,8 +17,8 @@ class PreProcessor:
     parsed VEP file header. (or the --overwrite_model_file argument)
     """
     def __init__(self, is_train: bool = False):
-        self.manager = CapiceManager()
         self.log = Logger().logger
+        self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
         self.overrule = self.manager.overwrite_model
         self.vep_version = self.manager.vep_version
@@ -69,9 +71,7 @@ class PreProcessor:
         if len(self.preprocessors) < 1:
             self._raise_no_module_found_error()
         self.log.info(
-            'Succesfully loaded {} preprocessors.'.format(
-                len(self.preprocessors)
-            )
+            'Successfully loaded %s preprocessors.', len(self.preprocessors)
         )
 
     def _raise_no_module_found_error(self):
@@ -94,10 +94,9 @@ class PreProcessor:
         for preprocessor in self.preprocessors:
             if self.overrule and preprocessor.name == self.overrule:
                 self.log.info(
-                    'Overrule successful for: {} , located at: {}'.format(
-                        self.overrule,
-                        inspect.getfile(preprocessor.__class__)
-                    )
+                    'Overrule successful for: %s , '
+                    'located at: %s', self.overrule,
+                    inspect.getfile(preprocessor.__class__)
                 )
                 self.preprocessor = preprocessor
                 break
@@ -106,13 +105,11 @@ class PreProcessor:
                 module_grch = preprocessor.supported_grch_build
                 if module_vep == self.vep_version and \
                         module_grch == self.grch_build:
-                    self.log.info("""
-                    Preprocessing and model file successfully found: {} , 
-                    Located at: {}
-                    """.format(
+                    self.log.info(
+                        'Preprocessing and model file successfully found: %s, '
+                        'Located at: %s',
                         preprocessor.name,
                         inspect.getfile(preprocessor.__class__)
-                    ).strip()
                     )
                     self.preprocessor = preprocessor
                     break
@@ -123,13 +120,9 @@ class PreProcessor:
                 error_message = 'No model data file found for overrule: ' \
                                 '{}'.format(self.overrule)
             else:
-                error_message = """
-                No model data file found for 
-                VEP version: {} and 
-                genome build: {}""".format(
-                    self.vep_version,
-                    self.grch_build
-                ).strip()
+                error_message = f'No model data file found for VEP version: ' \
+                                f'{self.vep_version} and genome build: ' \
+                                f'{self.grch_build}'
             self.log.critical(error_message)
             raise FileNotFoundError(error_message)
 

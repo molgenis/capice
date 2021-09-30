@@ -4,8 +4,8 @@ from src.main.python.core.logger import Logger
 
 class LoadFilePostProcessor:
     def __init__(self, dataset: pd.DataFrame):
-        self.dataset = dataset
         self.log = Logger().logger
+        self.dataset = dataset
 
     def process(self):
         """

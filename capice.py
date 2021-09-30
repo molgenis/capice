@@ -9,13 +9,12 @@ modules and provide ./src/main_capice.py with it's wanted arguments.
 """
 
 from src.main.python.core.command_line_parser import ArgumentParser
-from src.main.python.core.input_checker import InputChecker
+from src.main.python.core.input_checker import InputChecker, VerbosityChecker
 from src.main.python.resources.utilities.utilities import convert_cla_to_str
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.config_reader import ConfigReader
 from src.main_capice import Main
 from src.main_train import Train
-from datetime import datetime
 
 __program__ = 'CAPICE'
 __author__ = 'Shuang Li, Robert Sietsma and Molgenis'
@@ -44,16 +43,19 @@ def main():
 
     input_loc = convert_cla_to_str(cla.get_argument('input'))
     output_loc = convert_cla_to_str(cla.get_argument('output'))
-    verbose = cla.get_argument('verbose')
+    info = cla.get_argument('verbose')
+    debug = cla.get_argument('debug')
     force = cla.get_argument('force')
     train = cla.get_argument('train')
     config_argument = convert_cla_to_str(cla.get_argument('config'))
+
+    loglevel = VerbosityChecker().process_verbosity(info, debug)
 
     # Initializing manager
 
     manager = CapiceManager()
     manager.config_loc = config_argument
-    manager.verbose = verbose
+    manager.loglevel = loglevel
     manager.force = force
 
     # Getting all config settings.

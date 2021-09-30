@@ -17,7 +17,7 @@ class CapiceManager:
             self.grch_build = None
             self.config_grch_build = None
             self.force = False
-            self.verbose = False
+            self.loglevel = None
             self.critical_logging_only = False
             self.annotation_features = []
             self.output_filename = ''
@@ -100,14 +100,15 @@ class CapiceManager:
             self._force = value
 
         @property
-        def verbose(self):
-            return self._verbose
+        def loglevel(self):
+            return self._loglevel
 
-        @verbose.setter
-        def verbose(self, value):
+        @loglevel.setter
+        def loglevel(self, value):
             self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
-            self._verbose = value
+                                                 expected_type=int,
+                                                 include_none=True)
+            self._loglevel = value
 
         @property
         def critical_logging_only(self):
@@ -317,22 +318,23 @@ class CapiceManager:
         pass
 
     @property
-    def verbose(self):
+    def loglevel(self):
         """
-        Getter for setter verbose
+        Getter for setter loglevel
 
-        :return: boolean
+        :return: None or int
         """
-        return self._verbose
+        return self._loglevel
 
-    @verbose.setter
-    def verbose(self, value):
+    @loglevel.setter
+    def loglevel(self, value):
         """
-        Singleton property verbose, to print more (debug) messages during the
-        process.
-        Raises TypeError if not supplied with a boolean.
+        Singleton property loglevel, to set the loglevel in int that will be
+        used in the session of CAPICE.
 
-        :param value: boolean
+        Raises TypeError if not supplied with int or None
+
+        :param value: int or None
         """
         pass
 
