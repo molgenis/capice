@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import sys
-from importlib import import_module
+from importlib import util
 import warnings
 import functools
 import logging
@@ -73,39 +73,46 @@ def load_modules(path):
     """
     modules = []
     for module in os.listdir(path):
-        if module.endswith('.py'):
-            if not module.endswith('__.py') and not module.endswith(
-                    'abstract.py'):
-                modules.append(module)
+        if module.endswith('.py') and \
+                not module.endswith('__.py') and \
+                not module.endswith('abstract.py'):
+            modules.append(module)
     return modules
 
 
-def importer(usable_modules: list, path):
+def importer(usable_modules: list):
     """
     Utilitarian function for the imputer and preprocessor to dynamically load
     in the modules using the import_module library.
-    :param usable_modules: list of modules present within a certain directory
-    :param path: path of said directory
+    :param usable_modules: list of absolute paths to potential modules
     :return: list of usable modules
     """
     return_modules = []
-    sys.path.append(path)
     for module in usable_modules:
-        module = module.split('.py')[0]
-        imported_module = import_module(module)
-        return_modules.append(_importer(imported_module=imported_module))
-    sys.path.remove(path)
+        name = os.path.basename(module).split('.py')[0]
+        spec = util.spec_from_file_location(
+            name=name,
+            location=module
+        )
+        loaded_module = _process_spec(spec)
+        if loaded_module:
+            return_modules.append(loaded_module)
     return return_modules
 
 
-def _importer(imported_module):
-    for attribute in dir(imported_module):
+def _process_spec(spec):
+    return_spec = None
+    loaded_spec = util.module_from_spec(spec)
+    spec.loader.exec_module(loaded_spec)
+    for attribute in dir(loaded_spec):
         if not attribute.startswith('Template') and \
                 not attribute.startswith('__'):
-            get_attribute = getattr(imported_module, attribute)
-            if 'name' in dir(get_attribute) and 'usable' in dir(get_attribute):
-                if get_attribute().usable is True:
-                    return get_attribute()
+            get_attribute = getattr(loaded_spec, attribute)
+            if 'name' in dir(get_attribute) and \
+                    'usable' in dir(get_attribute) and \
+                    get_attribute().usable is True:
+                return_spec = get_attribute()
+    return return_spec
 
 
 def get_filename_and_extension(path):
