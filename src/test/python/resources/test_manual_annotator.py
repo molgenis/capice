@@ -97,7 +97,7 @@ class TestAnnotator(unittest.TestCase):
         )
         outcome = self.annotator.annotate()
         pd.testing.assert_frame_equal(
-            expected_outcome, outcome
+            expected_outcome.sort_index(axis=1), outcome.sort_index(axis=1)
         )
 
     def test_bug_attributeerror_template_sift_polyphen(self):

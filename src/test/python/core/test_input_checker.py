@@ -54,7 +54,8 @@ class TestInputChecker(unittest.TestCase):
             get_project_root_dir(),
             '.another_test_output'
         )
-        self.input_checker.check_output_loc(dir_to_be_created)
+        with self.assertWarns(Warning):
+            self.input_checker.check_output_loc(dir_to_be_created)
         self.assertTrue(
             '.another_test_output' in os.listdir(get_project_root_dir())
         )

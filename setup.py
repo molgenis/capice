@@ -34,7 +34,7 @@ setup(
         'pandas==1.2.4',
         'scipy==1.6.2',
         'scikit-learn==0.24.2',
-        'xgboost==0.90',
+        'xgboost==1.4.2',
         'pysam==0.16.0.1'
     ],
     entry_points={
