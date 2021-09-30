@@ -12,20 +12,20 @@ class InputVersionChecker:
     """
 
     def __init__(self,
-                 config_vep_version: float,
-                 file_vep_version: float,
-                 config_grch_build: int,
-                 file_grch_build: int):
+                 config_vep_version,
+                 file_vep_version,
+                 config_grch_build,
+                 file_grch_build):
         """
         Class to check the given VEP config argument and
         the header of the VEP file match.
-        :param config_vep_version: float,
+        :param config_vep_version: float or None,
             config argument for the used VEP version
-        :param file_vep_version: float,
+        :param file_vep_version: float or None,
             VEP version according to parsed input file
-        :param config_grch_build: int,
+        :param config_grch_build: int or None,
             config argument for the used GRCh build
-        :param file_grch_build: int,
+        :param file_grch_build: int or None,
             GRCh build according to parsed input file
         """
         self.log = Logger().logger
@@ -78,8 +78,10 @@ class InputVersionChecker:
         since it can not determine what file to use without VEP or
         GRCh argument.
         """
-        if self.manager.overwrite_impute is False and \
-                self.manager.overwrite_model is False:
+
+        impute = self.manager.overwrite_impute
+        model = self.manager.overwrite_model
+        if not impute and not model:  # Intended: empty string is also invalid
             error_message = (
                 'VEP version or GRCh build not specified and both '
                 'overwrites are not set! '
@@ -111,8 +113,8 @@ class InputVersionChecker:
         :param to_check: list
         :param type_of_check: string
         """
-        if False in to_check:
-            if to_check.count(False) == len(to_check):
+        if None in to_check:
+            if to_check.count(None) == len(to_check):
                 self._turn_on_check_overrule(type_of_check=type_of_check)
             for argument in to_check:
                 self._apply_export_version(argument=argument,
@@ -136,11 +138,17 @@ class InputVersionChecker:
         Function to set the global VEP version or GRCh build.
         :param argument: int or float
         """
-        if argument is not False:
-            if type_of_check == 'VEP':
+        if argument:
+            if type_of_check == 'VEP' and argument > 0:
                 self.export_vep_version = argument
-            else:
+            elif type_of_check == 'GRCh' and argument > 0:
                 self.export_grch_build = argument
+            else:
+                self.log.warning(
+                    'Encountered an incorrect value for: %s (%s)',
+                    type_of_check,
+                    argument
+                )
 
     def _check_version_match(self):
         """

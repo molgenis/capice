@@ -7,5 +7,5 @@ class PropertyCheckerLogger(PropertyChecker):
         super().__init__()
         self.log = Logger().logger
 
-    def _talk_to_logger(self, error_message):
-        self.log.critical(error_message)
+    def _talk_to_logger(self, msg, *args, **kwargs):
+        self.log.critical(msg, *args, **kwargs)

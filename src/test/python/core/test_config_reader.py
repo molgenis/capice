@@ -68,17 +68,22 @@ class TestConfigReader(unittest.TestCase):
     def test_get_default_key(self):
         print('Get default key')
         value = self.config.get_default_value(key='vepversion')
-        self.assertTrue(value is False or isinstance(value, int))
+        self.assertTrue(value is None or isinstance(value, int))
 
     def test_get_overwrite_key(self):
         print('Get overwrite key')
         value = self.config.get_overwrite_value(key='imputefile')
-        self.assertTrue(isinstance(value, str) or value is False)
+        self.assertTrue(isinstance(value, str) or value is None)
 
     def test_get_datafiles_key(self):
         print('Get CADD key')
         value = self.config.get_datafiles_value(key='reference')
-        self.assertTrue(os.path.exists(value) or value is False)
+        # Value can be either None or a path, but os.path.exists() will
+        # throw an TypeError if supplied with None.
+        try:
+            self.assertTrue(os.path.exists(value))
+        except TypeError:
+            self.assertIsNone(value)
 
     def test_get_training_key(self):
         print('Get training key')
