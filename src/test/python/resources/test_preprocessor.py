@@ -19,8 +19,8 @@ class TestPreprocessing(unittest.TestCase):
         cls.vep_version = 104.0
         cls.grch_build = 37
         cls.impute_overwrite = 'VEP104'
-        cls.model_overwrite = 'CAPICE using XGBoost 0.72.1,' \
-                              ' CADD 1.4 and genome build 37.'
+        cls.model_overwrite = 'CAPICE POC using XGBoost 1.4.2, ' \
+                              'VEP104 and genome build 37.'
 
     @classmethod
     def tearDownClass(cls):

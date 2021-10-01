@@ -1,8 +1,7 @@
 from src.main.python.core.logger import Logger
-import inspect
 import numpy as np
-from src.main.python.resources.utilities.utilities import \
-    get_project_root_dir, load_modules, importer, deprecated
+from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.main.python.resources.utilities.dynamic_loader import DynamicLoader
 from src.main.python.core.global_manager import CapiceManager
 import pandas as pd
 import os
@@ -20,12 +19,8 @@ class CapiceImputing:
         self.grch_build = self.manager.grch_build
         self.log = Logger().logger
         self.log.info('Imputer started.')
-        self.overrule = self.manager.overwrite_impute
-        self.modules = []
+        self.overwrite = self.manager.overwrite_impute
         self.module = None
-        self._load_modules()
-        self._is_correct_datafile_present()
-        self._check_if_imputer_is_applied()
         self.columns = []
         self.annotation_columns_present = []
         self.impute_values = {}
@@ -38,8 +33,8 @@ class CapiceImputing:
         contains the properties
             name and
             _json_name.
-        If at the end of this function, the list of impute files is empty,
-        will throw the module not found error.
+        within the imputing files directory and set self.module according to
+        overwrite, VEP version and GRCh build.
         """
         self.log.info('Identifying imputing files.')
         directory = os.path.join(get_project_root_dir(),
@@ -49,88 +44,15 @@ class CapiceImputing:
                                  'resources',
                                  'data_files',
                                  'imputing')
-        usable_modules = load_modules(directory)
-        if len(usable_modules) < 1:
-            self._raise_no_module_found_error()
-        loaded_modules = importer(usable_modules=usable_modules, path=directory)
-        for module in loaded_modules:
-            if "name" in dir(module) and "_json_name" in dir(module):
-                self.modules.append(module)
-        if len(self.modules) < 1:
-            self._raise_no_module_found_error()
-        self.log.info(
-            'Identified %s files available for usage in imputing.',
-            len(self.modules)
+        dynamic_loader = DynamicLoader(
+            required_attributes=['_json_name', 'name'],
+            path=directory
         )
-
-    def _raise_no_module_found_error(self):
-        """
-        Function to raise when no suitable impute files are found.
-        Put into a function since 2 other functions within this module will use
-        it.
-        """
-        error_message = 'No usable python files are found ' \
-                        'within the imputing directory!'
-        self.log.critical(error_message)
-        raise FileNotFoundError(error_message)
-
-    def _raise_module_not_found_error(self, module_name):
-        """
-        Function to raise when specific imputer could not be found.
-        """
-        error_message = f'The imputer "{module_name}" could not be found ' \
-                        f'within the imputing directory!'
-        self.log.critical(error_message)
-        raise FileNotFoundError(error_message)
-
-    def _is_correct_datafile_present(self):
-        """
-        Function to check the VEP version and GRCh build
-        (or --overwrite_impute_file)
-        match the impute file.
-        """
-        if self.overrule:
-            for module in self.modules:
-                if module.name == self.overrule:
-                    self.log.info(
-                        'Overrule successful for: %s, located at: %s',
-                        self.overrule,
-                        inspect.getfile(module.__class__)
-                    )
-                    self.module = module
-                    return
-            # If no match found, triggers error.
-            self._raise_module_not_found_error(self.overrule)
-        else:
-            for module in self.modules:
-                module_vep_version = module.supported_vep_version
-                module_grch_build = module.supported_grch_build
-                if module_vep_version == self.vep_version and \
-                        module_grch_build == self.grch_build:
-                    self.log.info(
-                        'Impute data file successfully found: %s, '
-                        'located at: %s', module.name,
-                        inspect.getfile(module.__class__)
-                    )
-                    self.module = module
-                    return
-            # If no match found, triggers error.
-            self._raise_no_module_found_error()
-
-    def _check_if_imputer_is_applied(self):
-        # Checking if self.data_file is assigned
-        if self.module is None:
-            if self.overrule:
-                error_message = 'No imputing data file found for overrule: ' \
-                                '{}'.format(self.overrule)
-            else:
-                error_message = 'No imputing data file found for ' \
-                                'VEP version: {} and ' \
-                                'GRCh build: {}'.format(self.vep_version,
-                                                        self.grch_build
-                                                        )
-            self.log.critical(error_message)
-            raise FileNotFoundError(error_message)
+        self.module = dynamic_loader.load_impute_preprocess_modules(
+            vep_version=self.vep_version,
+            grch_build=self.grch_build,
+            overwrite=self.overwrite
+        )
 
     def _load_values(self, dataset: pd.DataFrame):
         """
@@ -154,6 +76,7 @@ class CapiceImputing:
         Function to call the CapiceImputing to start imputing.
         :return: pandas DataFrame
         """
+        self._load_modules()
         self._load_values(datafile)
         datafile = self._check_chrom_pos(datafile)
         self._get_nan_ratio_per_column(dataset=datafile)

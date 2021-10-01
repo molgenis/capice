@@ -15,8 +15,8 @@ class TestModel(unittest.TestCase):
         cls.main.infile = os.path.join(get_project_root_dir(),
                                        'CAPICE_example',
                                        'CAPICE_input.tsv.gz')
-        manager.overwrite_model = 'CAPICE using XGBoost 0.72.1,' \
-                                  ' CADD 1.4 and genome build 37.'
+        manager.overwrite_model = 'CAPICE POC using XGBoost 1.4.2, ' \
+                                  'VEP104 and genome build 37.'
 
     @classmethod
     def tearDownClass(cls):

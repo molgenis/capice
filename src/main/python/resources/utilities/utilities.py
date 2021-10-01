@@ -73,6 +73,7 @@ def load_modules(path):
     """
     modules = []
     for module in os.listdir(path):
+        module = os.path.join(path, module)
         if module.endswith('.py') and \
                 not module.endswith('__.py') and \
                 not module.endswith('abstract.py'):
@@ -87,7 +88,7 @@ def importer(usable_modules: list):
     :param usable_modules: list of absolute paths to potential modules
     :return: list of usable modules
     """
-    return_modules = []
+    return_modules = {}
     for module in usable_modules:
         name = os.path.basename(module).split('.py')[0]
         spec = util.spec_from_file_location(
@@ -95,8 +96,8 @@ def importer(usable_modules: list):
             location=module
         )
         loaded_module = _process_spec(spec)
-        if loaded_module:
-            return_modules.append(loaded_module)
+        if loaded_module and module not in return_modules.keys():
+            return_modules[module] = loaded_module
     return return_modules
 
 
