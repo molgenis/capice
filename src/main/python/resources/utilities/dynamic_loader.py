@@ -24,6 +24,7 @@ class DynamicLoader:
         self.required_attributes = required_attributes
         self.modules = {}
         self.module = None
+        self.module_path = None
 
     def load_impute_preprocess_modules(self, vep_version, grch_build,
                                        overwrite, train=False):
@@ -63,33 +64,55 @@ class DynamicLoader:
 
     def _load_correct_module(self, overwrite, vep_version, grch_build):
         if overwrite:
+            # Loop through ALL modules in case multiple matches are found
+            # Throw warning if multiple matches are found.
             for path, module in self.modules.items():
                 if module.name == overwrite:
-                    self.log.info(
-                        'Overwrite successful for: %s, '
-                        'located at: %s', overwrite, path
-                    )
-                    self.module = module
-                    return
-            # If no match is found, trigger error.
-            self._raise_module_not_found_error(overwrite)
+                    self._apply_module(path, module, overwrite=overwrite)
+
         else:
             for path, module in self.modules.items():
                 module_vep = module.supported_vep_version
                 module_grch = module.supported_grch_build
                 if module_vep == vep_version and module_grch == grch_build:
-                    self.log.info(
-                        'Module containing VEP version %s and GRCh build %s '
-                        'successfully identified: %s, located at: %s',
-                        vep_version,
-                        grch_build,
-                        module.name,
-                        path
-                    )
-                    self.module = module
-                    return
-            # If no match is found, trigger error.
+                    self._apply_module(path, module,
+                                       vep_version=vep_version,
+                                       grch_build=grch_build)
+
+        # If no match is found, trigger error.
+        if not self.module:
             self._raise_no_module_found_error()
+
+    def _apply_module(self, path, module, overwrite=None, vep_version=None,
+                      grch_build=None):
+        if overwrite:
+            match_format = "overwrite %s" % overwrite
+        else:
+            match_format = "VEP version %s and GRCh build %s" % (
+                vep_version, grch_build
+            )
+
+        if not self.module:
+            self.module = module
+            self.module_path = path
+            self.log.info(
+                'Module matching %s successful. Module %s at %s loaded.',
+                match_format,
+                module.name,
+                path
+            )
+        else:
+            self.log.warning(
+                "Found multiple matches for %s! "
+                "Current applied module: %s (at %s). "
+                "New module: %s (at %s). "
+                "Will NOT overwrite currently applied module!",
+                match_format,
+                self.module,
+                self.module_path,
+                module,
+                path
+            )
 
     def load_manual_annotators(self):
         """
