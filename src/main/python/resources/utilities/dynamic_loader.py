@@ -108,9 +108,9 @@ class DynamicLoader:
                 "New module: %s (at %s). "
                 "Will NOT overwrite currently applied module!",
                 match_format,
-                self.module,
+                self.module.name,
                 self.module_path,
-                module,
+                module.name,
                 path
             )
 

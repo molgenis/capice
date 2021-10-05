@@ -30,3 +30,12 @@ class Train(Enum):
     learning_rate = 'learning_rate'
     max_depth = 'max_depth'
     n_estimators = 'n_estimators'
+
+
+class Domains(Enum):
+    ncoils = 0
+    signalp = 1
+    lowcomplex = 2
+    ndomain = 3
+    panther = 4
+    other = 5

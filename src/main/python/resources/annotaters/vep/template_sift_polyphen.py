@@ -1,4 +1,5 @@
 from src.main.python.resources.annotaters.vep.template import Template
+from abc import abstractmethod
 import pandas as pd
 import numpy as np
 
@@ -11,6 +12,7 @@ class TemplateSiftPolyPhen(Template):
         )
 
     @property
+    @abstractmethod
     def columns(self):
         return [None, None]
 
