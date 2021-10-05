@@ -1,5 +1,6 @@
 import pandas as pd
 from src.main.python.resources.annotaters.vep.template import Template
+from src.main.python.resources.enums.sections import Domains
 import numpy as np
 
 
@@ -41,13 +42,22 @@ class Domain(Template):
 
     @property
     def levels_dict(self):
-        return {'PANTHER': 4, 'ndomain': 3, 'Low_complexity_(Seg)': 2,
-                'Cleavage_site_(Signalp)': 1, 'Coiled-coils_(Ncoils)': 0}
+        return {'PANTHER': Domains.panther.value,
+                'ndomain': Domains.ndomain.value,
+                'Low_complexity_(Seg)': Domains.lowcomplex.value,
+                'Cleavage_site_(Signalp)': Domains.signalp.value,
+                'Coiled-coils_(Ncoils)': Domains.ncoils.value
+                }
 
     @property
     def output_dict(self):
-        return {0.0: 'ncoils', 1.0: 'sigp', 2.0: 'lcompl', 3.0: 'ndomain',
-                4.0: 'hmmpanther', 5.0: 'other'}
+        return {Domains.ncoils.value: 'ncoils',
+                Domains.signalp.value: 'sigp',
+                Domains.lowcomplex.value: 'lcompl',
+                Domains.ndomain.value: 'ndomain',
+                Domains.panther.value: 'hmmpanther',
+                Domains.other.value: 'other'
+                }
 
     def process(self, dataframe: pd.DataFrame):
         subset = dataframe[self.name].str.split('&', expand=True)
@@ -65,12 +75,12 @@ class Domain(Template):
     def _process_ndomain(subset: pd.DataFrame):
         for col in subset.columns:
             subset[col] = np.where(
-                subset[col].str.contains('_domain') & subset[col].notnull(),
+                subset[col].str.contains('_domain', na=False),
                 3,
                 subset[col]
             )
             subset[col] = np.where(
-                subset[col].str.contains('_profile') & subset[col].notnull(),
+                subset[col].str.contains('_profile', na=False),
                 3,
                 subset[col]
             )

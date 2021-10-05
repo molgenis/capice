@@ -85,7 +85,7 @@ class TestAnnotator(unittest.TestCase):
              # 'GC': {0: 0.41, 1: 0.46},
              # 'CpG': {0: 0.020134228187919462, 1: 0.08053691275167785},
              'motifEName': {0: np.nan, 1: np.nan},
-             'motifECount': {0: None, 1: None},
+             'motifECount': {0: 0, 1: 0},
              'Type': {0: 'SNV', 1: 'SNV'},
              'cDNApos': {0: 763.0, 1: np.nan},
              'relcDNApos': {0: 3781.0, 1: np.nan},

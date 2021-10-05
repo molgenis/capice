@@ -12,6 +12,5 @@ class MotifName(Template):
 
     def process(self, dataframe: pd.DataFrame):
         dataframe['motifEName'] = dataframe[self.name]
-        dataframe['motifECount'] = np.where(dataframe[self.name].isna(), None,
-                                            '1')
+        dataframe['motifECount'] = np.where(dataframe[self.name].isna(), 0, 1)
         return dataframe
