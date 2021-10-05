@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='capice',
-    version='2.0.0',
+    version='2.0.1',
     packages=['src', 'src.main', 'src.main.python', 'src.main.python.core', 'src.main.python.resources',
               'src.main.python.resources.errors', 'src.main.python.resources.models',
               'src.main.python.resources.parsers', 'src.main.python.resources.checkers',
