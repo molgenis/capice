@@ -1,9 +1,0 @@
-##fileformat=VCFv4.2
-##CAP=test
-##INFO=<ID=CAP,Number=A,Type=Float,Description="CAPICE pathogenicity prediction">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
-1	10001	.	T	TC	.	.	CAP=5.9470744E-6
-1	10009	.	A	AC	.	.	CAP=6.5539552E-6
-1	10012	.	C	CT	.	.	CAP=6.2366526E-6
-1	10013	.	T	TA	.	.	CAP=5.9470744E-6
-1	10015	.	A	AC	.	.	CAP=6.501402E-6
