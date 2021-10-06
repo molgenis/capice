@@ -68,7 +68,8 @@ class TestConfigReader(unittest.TestCase):
     def test_get_default_key(self):
         print('Get default key')
         value = self.config.get_default_value(key='vepversion')
-        self.assertTrue(value is None or isinstance(value, int))
+        print(value)
+        self.assertTrue(value is None or isinstance(value, float))
 
     def test_get_overwrite_key(self):
         print('Get overwrite key')

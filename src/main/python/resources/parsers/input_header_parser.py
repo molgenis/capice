@@ -17,8 +17,8 @@ class InputHeaderParser:
         self.is_gzipped = is_gzipped
         self.input_file_loc = input_file_loc
         self.header = ''
-        self.header_build = False
-        self.header_version = False
+        self.header_build = None
+        self.header_version = None
         self.header_present = False
         self.file_type = None
         self.skip_rows = 0
