@@ -21,27 +21,33 @@ class TemplatePosition(Template):
         return self.columns[0]
 
     def process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split(
-            '/',
-            expand=True
-        )
-        dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
-            '?-',
-            '',
-            regex=False
-        )
-        dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
-            '-?',
-            '',
-            regex=False
-        )
-        dataframe[self.pos_col] = dataframe[self.pos_col].str.split(
-            '-', expand=True)[0]
+        if self.name in dataframe.select_dtypes(include='O'):
+            dataframe[self.columns] = dataframe[self.name].str.split(
+                '/',
+                expand=True
+            )
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
+                '?-',
+                '',
+                regex=False
+            )
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
+                '-?',
+                '',
+                regex=False
+            )
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.split(
+                '-', expand=True)[0]
 
-        for column in self.columns:
-            dataframe.loc[
-                dataframe[dataframe[column] == ''].index,
-                column
-            ] = np.nan
-            dataframe[column] = dataframe[column].astype(float)
+            for column in self.columns:
+                dataframe.loc[
+                    dataframe[dataframe[column] == ''].index,
+                    column
+                ] = np.nan
+                dataframe[column] = dataframe[column].astype(float)
+        else:
+            dataframe[self.pos_col] = dataframe[self.name]
+            for col in self.columns:
+                if col not in dataframe.columns:
+                    dataframe[col] = np.nan
         return dataframe
