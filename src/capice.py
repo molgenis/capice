@@ -1,4 +1,4 @@
-from src.args_handler import ArgsHandler
+from args_handler import ArgsHandler
 
 
 def main():

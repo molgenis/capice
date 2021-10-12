@@ -7,6 +7,9 @@ logger = logging.getLogger(__name__)
 class ArgsHandlerUtils:
     @staticmethod
     def validate_input_tsv(parser, input_path):
+        """
+        Method to validate the input on existence and extension.
+        """
         if not os.path.exists(input_path):
             parser.error(f"input '{input_path}' does not exist.")
         if not (input_path.endswith(".tsv") or input_path.endswith(".tsv.gz")):
@@ -16,9 +19,14 @@ class ArgsHandlerUtils:
 
     @staticmethod
     def handle_output_path(parser, output_path, force):
+        """
+        Method to handle the output path.
+        """
         if os.path.exists(output_path):
             if not force:
-                parser.error(f"output '{output_path}' already exist, use -f/--force to overwrite.")
+                parser.error(
+                    f"output '{output_path}' already exist, "
+                    f"use -f/--force to overwrite.")
             elif not os.path.isfile(output_path):
                 parser.error(f"output '{output_path}' is not a file.")
             else:
