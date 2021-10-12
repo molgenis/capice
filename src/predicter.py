@@ -1,6 +1,7 @@
 from src.main_capice import Main
 from src.__version__ import __version__
 from src.main.python.core.config_reader import ConfigReader
+from src.main.python.core.global_manager import CapiceManager
 
 
 class Predicter:
@@ -12,6 +13,20 @@ class Predicter:
     def predict(self):
         config_reader = ConfigReader()
         config_reader.parse()
+        manager = CapiceManager()
+        manager.overwrite_impute = config_reader.get_overwrite_value(
+            key='imputefile'
+        )
+        manager.overwrite_model = config_reader.get_overwrite_value(
+            key='modelfile'
+        )
+        manager.config_vep_version = config_reader.get_default_value(
+            key='vepversion'
+        )
+        manager.config_grch_build = config_reader.get_default_value(
+            key='genomebuild'
+        )
+
         Main(
             __program__='PoC',
             __version__=__version__,
