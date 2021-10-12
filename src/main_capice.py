@@ -10,7 +10,6 @@ from src.main.python.resources.checkers.input_version_checker import \
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.annotaters.annotator import Annotator
-from src.main.python.core.input_checker import InputChecker
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
 
@@ -89,9 +88,6 @@ class Main:
             input_file_loc=self.infile
         )
         skip_rows = input_header_parser.get_skip_rows()
-        # InputChecker().check_reference(
-        #     reference=self.manager.reference_genome
-        # )
         file_vep_version = input_header_parser.get_vep_version()
         file_grch_build = input_header_parser.get_grch_build()
         InputVersionChecker(
