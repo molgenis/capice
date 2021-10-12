@@ -1,7 +1,9 @@
-import argparse
 import logging
-from args_handler_predict import ArgsHandlerPredict
-from args_handler_train import ArgsHandlerTrain
+import argparse
+from src.__version__ import __version__
+from src.args_handler_train import ArgsHandlerTrain
+from src.args_handler_predict import ArgsHandlerPredict
+from src.main.python.core.global_manager import CapiceManager
 
 
 class ArgsHandler:
@@ -10,13 +12,14 @@ class ArgsHandler:
     Parses, validates and executes functions for sub-commands.
     """
 
-    __version__ = '3.0.0-SNAPSHOT'
-    __description__ = "CAPICE, a machine-learning-based method for " \
-                      "prioritizing pathogenic variants " \
-                      "https://doi.org/10.1186/s13073-020-00775-w"
-
-    def __init__(self, parser):
-        self.parser = parser
+    def __init__(self):
+        self.version = __version__
+        self.parser = argparse.ArgumentParser(
+            description="CAPICE, a machine-learning-based method for "
+                        "prioritizing pathogenic variants "
+                        "https://doi.org/10.1186/s13073-020-00775-w"
+        )
+        self.manager = CapiceManager()
 
     def handle(self):
         """
@@ -31,45 +34,39 @@ class ArgsHandler:
             self.parser.print_help()
             self.parser.exit(2)
 
-    @classmethod
-    def create(cls):
+    def create(self):
         """
         Classmethod to create the ArgsHandler ArgumentParser instance
         and adds the subparsers to ArgsHandler. Does not automatically handle
         the input arguments, please use ArgsHandler.create().handle() for that.
         """
-        parser = argparse.ArgumentParser(description=cls.__description__)
-        cls._add_arguments(parser)
+        self._add_arguments()
+        subparsers = self.parser.add_subparsers()
+        predictor = ArgsHandlerPredict(subparsers.add_parser('predict'))
+        predictor.create()
+        predictor.handle()
+        trainer = ArgsHandlerTrain(subparsers.add_parser('train'))
+        trainer.create()
+        trainer.handle()
 
-        subparsers = parser.add_subparsers()
-        ArgsHandlerPredict.create(subparsers.add_parser('predict'))
-        ArgsHandlerTrain.create(subparsers.add_parser('train'))
-
-        return cls(parser)
-
-    @classmethod
-    def _add_arguments(cls, parser):
-        parser.add_argument(
+    def _add_arguments(self):
+        self.parser.add_argument(
             '-v',
             '--verbose',
             action='count',
             default=0,
             help='verbose mode. multiple -v options increase the verbosity')
 
-        parser.add_argument(
+        self.parser.add_argument(
             '--version',
             action='version',
-            version=f'%(prog)s {cls.__version__}'
+            version=f'%(prog)s {self.version}'
         )
 
-    @staticmethod
-    def _handle_args(args):
-        if args.verbose == 0:
-            level = logging.WARN
-        elif args.verbose == 1:
+    def _handle_args(self, args):
+        level = None
+        if args.verbose == 1:
             level = logging.INFO
-        elif args.verbose == 2:
+        elif args.verbose >= 2:
             level = logging.DEBUG
-        else:
-            level = logging.DEBUG
-        logging.basicConfig(level=level)
+        self.manager.loglevel = level
