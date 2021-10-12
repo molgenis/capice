@@ -1,11 +1,6 @@
-import logging
 import os
 import re
-
-from args_handler_utils import ArgsHandlerUtils
-from trainer import Trainer
-
-logger = logging.getLogger(__name__)
+from src.trainer import Trainer
 
 
 class ArgsHandlerTrain:
@@ -16,12 +11,9 @@ class ArgsHandlerTrain:
 
     def __init__(self, parser):
         self.parser = parser
-        self.utils = ArgsHandlerUtils()
-        self.parser.set_defaults(func=self._handle_args)
 
-    @classmethod
-    def create(cls, parser):
-        parser.add_argument(
+    def create(self):
+        self.parser.add_argument(
             '-i',
             '--input',
             nargs=1,
@@ -29,7 +21,7 @@ class ArgsHandlerTrain:
             required=True,
             help='path to classified annotated variants file (.tsv or .tsv.gz)'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             '-m',
             '--impute',
             nargs=1,
@@ -37,7 +29,7 @@ class ArgsHandlerTrain:
             required=True,
             help='path to impute values file (.json)'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             '-s',
             '--split',
             nargs=1,
@@ -46,21 +38,22 @@ class ArgsHandlerTrain:
             help='proportion of the input data to include '
                  'in the test split (default: %(default)s)'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             '-o',
             '--output',
             nargs=1,
             type=str,
             help='path to model file (.dat)'
         )
-        parser.add_argument(
+        self.parser.add_argument(
             '-f',
             '--force',
             action='store_true',
             help='overwrites output if it already exists'
         )
 
-        return cls(parser)
+    def handle(self):
+        self.parser.set_defaults(func=self._handle_args)
 
     def _handle_args(self, args):
         self._validate_args(args)
@@ -74,7 +67,7 @@ class ArgsHandlerTrain:
         else:
             output_path = re.sub(r"(\.tsv|\.tsv\.gz)$", "_capice.dat",
                                  input_path)
-        self.utils.handle_output_path(self.parser, output_path, args.force)
+        # self.utils.handle_output_path(self.parser, output_path, args.force)
 
         Trainer(input_path, impute_path, test_split, output_path).train()
 
