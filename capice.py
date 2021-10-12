@@ -9,8 +9,10 @@ modules and provide ./src/main_capice.py with it's wanted arguments.
 """
 
 from src.main.python.core.command_line_parser import ArgumentParser
-from src.main.python.core.input_checker import InputChecker, VerbosityChecker
-from src.main.python.resources.utilities.utilities import convert_cla_to_str
+from src.main.python.resources.Validators import InputValidator
+from src.main.python.core.input_checker import VerbosityChecker
+from src.main.python.resources.utilities.utilities import convert_cla_to_str, \
+    deprecated
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.config_reader import ConfigReader
 from src.main_capice import Main
@@ -31,6 +33,7 @@ without any warranty or indemnification of any kind.""".format(
 )
 
 
+@deprecated
 def main():
     """
     Gathering of Command Line Arguments (CLAs), checking the log location,
@@ -65,15 +68,15 @@ def main():
 
     # Checking the input arguments.
 
-    input_checker = InputChecker()
+    input_checker = InputValidator()
 
-    input_loc = input_checker.check_input_loc(input_loc=input_loc)
-    input_checker.check_input_output_directories(input_path=input_loc,
-                                                 output_path=output_loc,
-                                                 force=force)
+    input_loc = input_checker.validate_input_loc(input_loc=input_loc)
+    input_checker.validate_input_output_directories(input_path=input_loc,
+                                                    output_path=output_loc,
+                                                    force=force)
     output_loc = input_checker.get_output_directory()
     output_filename = input_checker.get_output_filename()
-    input_checker.check_output_loc(output_loc=output_loc)
+    input_checker.validate_output_loc(output_loc=output_loc)
 
     # Setting the remaining manager variables.
 
