@@ -1,10 +1,9 @@
-from pathlib import Path
 import os
-import sys
-from importlib import util
+import logging
 import warnings
 import functools
-import logging
+from pathlib import Path
+from importlib import util
 
 
 def is_gzipped(file_path: str):
@@ -50,19 +49,6 @@ def prepare_dir(path: str):
     """
     if not check_dir_exists(path):
         os.makedirs(path)
-
-
-def convert_cla_to_str(cla: any):
-    """
-    Function to convert a Command Line Argument to string.
-    Will return the given argument if not a list.
-    :param cla: any
-    :return: any
-    """
-    if isinstance(cla, list):
-        return str(cla[0])
-    else:
-        return cla
 
 
 def load_modules(path):

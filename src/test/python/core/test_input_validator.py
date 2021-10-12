@@ -2,12 +2,18 @@ import os
 import unittest
 from pathlib import Path
 from src.test.python.test_templates import teardown
-from src.main.python.core.input_checker import InputChecker
+from src.main.python.resources.Validators import InputValidator
 from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 
-class TestInputChecker(unittest.TestCase):
+class TestInputValidator(unittest.TestCase):
+    temp_test_directory_name = '.another_test_output'
+    temp_test_output = os.path.join(
+        get_project_root_dir(),
+        temp_test_directory_name
+    )
+
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
@@ -16,18 +22,22 @@ class TestInputChecker(unittest.TestCase):
         cls.output_directory = os.path.join(root_dir, '.test_output')
         if not os.path.exists(cls.output_directory):
             os.makedirs(cls.output_directory)
-        cls.input_checker = InputChecker()
+        cls.input_validator = InputValidator()
         cls.call_dir = str(Path('.').absolute())
+        cls.another_test_output = cls.temp_test_output
+        cls.test_output_name = cls.temp_test_directory_name
+        cls.input_file = os.path.join(
+            '.',
+            'CAPICE_example',
+            'CAPICE_input.tsv.gz'
+        )
+        cls.expected_output_filename = 'CAPICE_input_capice.tsv.gz'
 
     @classmethod
     def tearDownClass(cls):
         print('Tearing down.')
-        dir_to_be_deleted = os.path.join(
-            get_project_root_dir(),
-            '.another_test_output'
-        )
-        if os.path.isdir(dir_to_be_deleted):
-            os.rmdir(dir_to_be_deleted)
+        if os.path.isdir(cls.temp_test_output):
+            os.rmdir(cls.temp_test_output)
         teardown()
 
     def setUp(self):
@@ -35,141 +45,130 @@ class TestInputChecker(unittest.TestCase):
 
     def tearDown(self):
         print('Resetting arguments.')
-        self.input_checker.output_filename = ''
-        self.input_checker.output_directory = ''
+        self.input_validator.output_filename = ''
+        self.input_validator.output_directory = ''
         print('Arguments reset.')
 
     def test_input_error(self):
         print('Input file error')
         fake_input_file = os.path.join(self.input_loc, 'fakefile.tsv')
         with self.assertRaises(InputError) as context:
-            self.input_checker.check_input_loc(fake_input_file)
+            self.input_validator.validate_input_loc(fake_input_file)
         self.assertTrue(
             'Input file does not exist!'.startswith(str(context.exception))
         )
 
     def test_create_output_loc(self):
         print('Creating output location')
-        dir_to_be_created = os.path.join(
-            get_project_root_dir(),
-            '.another_test_output'
-        )
         with self.assertWarns(Warning):
-            self.input_checker.check_output_loc(dir_to_be_created)
+            self.input_validator.validate_output_loc(self.another_test_output)
         self.assertTrue(
-            '.another_test_output' in os.listdir(get_project_root_dir())
+            self.test_output_name in os.listdir(get_project_root_dir())
         )
 
     def test_input_output_conversion_case1(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with only an input
         """
         print('Input output conversion (input only)')
 
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = None
-        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
         expected_output_directory = self.call_dir
-        self.input_checker.check_input_output_directories(
-            input_path=test_input,
+        self.input_validator.validate_input_output_directories(
+            input_path=self.input_file,
             output_path=test_output,
             force=False
         )
         self.assertEqual(
-            self.input_checker.get_output_filename(),
-            expected_output_filename
+            self.input_validator.get_output_filename(),
+            self.expected_output_filename
         )
         self.assertEqual(
-            self.input_checker.get_output_directory(),
+            self.input_validator.get_output_directory(),
             expected_output_directory
         )
 
     def test_input_output_conversion_case2(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with input and an output directory.
         """
         print('Input output conversion (input + output directory)')
 
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = os.path.join('.', 'test_output')
-        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
         expected_output_directory = os.path.join('.', 'test_output')
-        self.input_checker.check_input_output_directories(
-            input_path=test_input,
+        self.input_validator.validate_input_output_directories(
+            input_path=self.input_file,
             output_path=test_output,
             force=False
         )
         self.assertEqual(
-            self.input_checker.get_output_filename(),
-            expected_output_filename
+            self.input_validator.get_output_filename(),
+            self.expected_output_filename
         )
         self.assertEqual(
-            self.input_checker.get_output_directory(),
+            self.input_validator.get_output_directory(),
             expected_output_directory
         )
 
     def test_input_output_conversion_case3(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with input, output directory AND filename.
         """
         print('Input output conversion (input + output directory + filename)')
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = os.path.join('.', 'test_output', 'test.txt')
         expected_output_filename = 'test.txt.gz'
         expected_output_directory = os.path.join('.', 'test_output')
-        self.input_checker.check_input_output_directories(
-            input_path=test_input,
+        self.input_validator.validate_input_output_directories(
+            input_path=self.input_file,
             output_path=test_output,
             force=False
         )
         self.assertEqual(
-            self.input_checker.get_output_filename(),
+            self.input_validator.get_output_filename(),
             expected_output_filename
         )
         self.assertEqual(
-            self.input_checker.get_output_directory(),
+            self.input_validator.get_output_directory(),
             expected_output_directory
         )
 
     def test_input_output_conversion_case4(self):
         print('Input output conversion (input + filename)')
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = 'test.txt'
         expected_output_filename = 'test.txt.gz'
         expected_output_directory = self.call_dir
-        self.input_checker.check_input_output_directories(
-            input_path=test_input,
+        self.input_validator.validate_input_output_directories(
+            input_path=self.input_file,
             output_path=test_output,
             force=False
         )
         self.assertEqual(
-            self.input_checker.get_output_filename(),
+            self.input_validator.get_output_filename(),
             expected_output_filename
         )
         self.assertEqual(
-            self.input_checker.get_output_directory(),
+            self.input_validator.get_output_directory(),
             expected_output_directory
         )
 
     def test_input_output_conversion_output_already_present(self):
         print('Input output conversion with output already there')
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = None
         with open(
-                os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'),
+                os.path.join(self.call_dir, self.expected_output_filename),
                 'wt'
         ) as already_present_file:
             already_present_file.write('Some whitty comment')
         self.assertRaises(
             FileExistsError,
-            self.input_checker.check_input_output_directories,
-            test_input,
+            self.input_validator.validate_input_output_directories,
+            self.input_file,
             test_output,
             False
         )
@@ -178,29 +177,27 @@ class TestInputChecker(unittest.TestCase):
     def test_input_output_conversion_output_present_force_true(self):
         print('Input output conversion with output already present but '
               'force set to true')
-        test_input = os.path.join('.', 'CAPICE_example', 'CAPICE_input.tsv.gz')
         test_output = None
-        expected_output_filename = 'CAPICE_input_capice.tsv.gz'
         expected_output_directory = self.call_dir
         with open(
-                os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'),
+                os.path.join(self.call_dir, self.expected_output_filename),
                 'wt'
         ) as already_present_file:
             already_present_file.write('Some whitty comment')
-        self.input_checker.check_input_output_directories(
-            input_path=test_input,
+        self.input_validator.validate_input_output_directories(
+            input_path=self.input_file,
             output_path=test_output,
             force=True
         )
         self.assertEqual(
-            self.input_checker.get_output_filename(),
-            expected_output_filename
+            self.input_validator.get_output_filename(),
+            self.expected_output_filename
         )
         self.assertEqual(
-            self.input_checker.get_output_directory(),
+            self.input_validator.get_output_directory(),
             expected_output_directory
         )
-        os.remove(os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'))
+        os.remove(os.path.join(self.call_dir, self.expected_output_filename))
 
 
 if __name__ == '__main__':

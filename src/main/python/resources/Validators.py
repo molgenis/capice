@@ -1,35 +1,14 @@
-from src.main.python.resources.errors.errors import InputError
-from src.main.python.resources.utilities.utilities import prepare_dir,\
-    check_dir_exists, check_file_exists, get_filename_and_extension
-import warnings
 import os
+import warnings
 from pathlib import Path
+from src.main.python.resources.errors.errors import InputError
+from src.main.python.resources.utilities.utilities import check_dir_exists, \
+    check_file_exists, prepare_dir, get_filename_and_extension
 
 
-class VerbosityChecker:
+class InputValidator:
     """
-    Class to process -v, -vv and -vvv to set the correct loglevel in the logger.
-    """
-    @staticmethod
-    def process_verbosity(info: bool, debug: bool):
-        """
-        Process the verbosity levels info, debug and trace to return a integer
-        corresponding to the Standard Python Library logging Logging levels.
-        :param info: bool, the -v flag
-        :param debug: bool, the -vv flag
-        :return: loglevel, None or int, loglevel corresponding to the input.
-        """
-        loglevel = None
-        if info:
-            loglevel = 20
-        if debug:
-            loglevel = 10
-        return loglevel
-
-
-class InputChecker:
-    """
-    Checker for the remaining supplied arguments
+    Validator for the CLI arguments
     """
 
     def __init__(self):
@@ -38,9 +17,9 @@ class InputChecker:
         self._call_loc = str(Path('.').absolute())
 
     @staticmethod
-    def check_input_loc(input_loc):
+    def validate_input_loc(input_loc):
         """
-        Function to check if there is a file at the input location
+        Function to validate if there is a file at the input location
         :param input_loc: full path to input file
         """
         if not check_file_exists(input_loc):
@@ -48,21 +27,28 @@ class InputChecker:
         return input_loc
 
     @staticmethod
-    def check_output_loc(output_loc):
+    def validate_output_loc(output_loc):
         """
-        Function to check if the output directory exists and, if not, make it.
+        Function to validate if the output directory exists and,
+        if not, make it.
         :param output_loc: path to output folder
         """
         if not check_dir_exists(output_loc):
             warnings.warn("Output directory does not exist, creating.")
             prepare_dir(output_loc)
 
-    def check_input_output_directories(self, input_path, output_path, force):
+    def validate_input_output_directories(self,
+                                          input_path,
+                                          output_path,
+                                          force,
+                                          train=False):
         """
-        Function to check the input location, output location and filename to
+        Function to validate the input location, output location and filename to
         tell the exporter where to place what file.
         :param input_path: str, path-like
         :param output_path: str, path-like (if missing: supply None)
+        :param force: bool, force flag present or not
+        :param train: bool, whenever the CLI train protocol is called or not
         """
         if output_path is None:
             self._create_capice_output_filename(input_path=input_path,
@@ -84,7 +70,8 @@ class InputChecker:
                 # Then I know it's an output filename
                 self.output_directory = self._call_loc
                 self.output_filename = output_path
-        self._check_gzip_extension()
+        if not train:
+            self._check_gzip_extension()
         self._check_force(force)
 
     def _check_force(self, force):
@@ -119,9 +106,9 @@ class InputChecker:
             self.output_filename = self.output_filename + '.gz'
 
     @staticmethod
-    def check_reference(reference):
+    def validate_reference(reference):
         """
-        Function to check if the reference files exist
+        Function to validate if the reference files exist
         """
         locs = [reference, f'{reference}.fai']
         for loc in locs:
