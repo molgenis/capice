@@ -8,7 +8,7 @@ from src.main.python.resources.utilities.utilities import check_dir_exists, \
 
 class InputValidator:
     """
-    Checker for the remaining supplied arguments
+    Validator for the CLI arguments
     """
 
     def __init__(self):
@@ -19,7 +19,7 @@ class InputValidator:
     @staticmethod
     def validate_input_loc(input_loc):
         """
-        Function to check if there is a file at the input location
+        Function to validate if there is a file at the input location
         :param input_loc: full path to input file
         """
         if not check_file_exists(input_loc):
@@ -29,7 +29,8 @@ class InputValidator:
     @staticmethod
     def validate_output_loc(output_loc):
         """
-        Function to check if the output directory exists and, if not, make it.
+        Function to validate if the output directory exists and,
+        if not, make it.
         :param output_loc: path to output folder
         """
         if not check_dir_exists(output_loc):
@@ -42,7 +43,7 @@ class InputValidator:
                                           force,
                                           train=False):
         """
-        Function to check the input location, output location and filename to
+        Function to validate the input location, output location and filename to
         tell the exporter where to place what file.
         :param input_path: str, path-like
         :param output_path: str, path-like (if missing: supply None)
@@ -107,7 +108,7 @@ class InputValidator:
     @staticmethod
     def validate_reference(reference):
         """
-        Function to check if the reference files exist
+        Function to validate if the reference files exist
         """
         locs = [reference, f'{reference}.fai']
         for loc in locs:

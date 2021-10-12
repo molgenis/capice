@@ -7,7 +7,7 @@ from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 
-class TestInputChecker(unittest.TestCase):
+class TestInputValidator(unittest.TestCase):
     temp_test_directory_name = '.another_test_output'
     temp_test_output = os.path.join(
         get_project_root_dir(),
@@ -68,7 +68,7 @@ class TestInputChecker(unittest.TestCase):
 
     def test_input_output_conversion_case1(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with only an input
         """
@@ -92,7 +92,7 @@ class TestInputChecker(unittest.TestCase):
 
     def test_input_output_conversion_case2(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with input and an output directory.
         """
@@ -116,7 +116,7 @@ class TestInputChecker(unittest.TestCase):
 
     def test_input_output_conversion_case3(self):
         """
-        Test for the input checker if the correct input, output directory and
+        Test for the input validator if the correct input, output directory and
         output filename are set.
         Testing with input, output directory AND filename.
         """
