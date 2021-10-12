@@ -16,7 +16,7 @@ class ArgsHandlerTrain:
 
     def __init__(self, parser):
         self.parser = parser
-        self.parser.set_defaults(func=self.__handle_args)
+        self.parser.set_defaults(func=self._handle_args)
 
     @staticmethod
     def create(parser):
@@ -50,8 +50,8 @@ class ArgsHandlerTrain:
 
         return ArgsHandlerTrain(parser)
 
-    def __handle_args(self, args):
-        self.__validate_args(args)
+    def _handle_args(self, args):
+        self._validate_args(args)
 
         input_path = os.path.abspath(args.input[0])
         impute_path = os.path.abspath(args.impute[0])
@@ -65,7 +65,7 @@ class ArgsHandlerTrain:
 
         Trainer(input_path, impute_path, test_split, output_path).train()
 
-    def __validate_args(self, args):
+    def _validate_args(self, args):
         input_path = args.input[0]
 
         if not os.path.exists(input_path):

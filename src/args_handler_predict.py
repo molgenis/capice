@@ -16,7 +16,7 @@ class ArgsHandlerPredict:
 
     def __init__(self, parser):
         self.parser = parser
-        self.parser.set_defaults(func=self.__handle_args)
+        self.parser.set_defaults(func=self._handle_args)
 
     @staticmethod
     def create(parser):
@@ -43,8 +43,8 @@ class ArgsHandlerPredict:
                             help='overwrites output if it already exists')
         return ArgsHandlerPredict(parser)
 
-    def __handle_args(self, args):
-        self.__validate_args(args)
+    def _handle_args(self, args):
+        self._validate_args(args)
 
         input_path = os.path.abspath(args.input[0])
         model_path = os.path.abspath(args.model[0])
@@ -57,7 +57,7 @@ class ArgsHandlerPredict:
 
         Predicter(input_path, model_path, output_path).predict()
 
-    def __validate_args(self, args):
+    def _validate_args(self, args):
         ArgsHandlerUtils.validate_input_tsv(self.parser, args.input[0])
 
         if args.output:

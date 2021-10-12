@@ -20,7 +20,7 @@ class ArgsHandler:
 
     def handle(self):
         args = self.parser.parse_args()
-        self.__handle_args(args)
+        self._handle_args(args)
         if 'func' in args:
             args.func(args)
         else:
@@ -30,7 +30,7 @@ class ArgsHandler:
     @staticmethod
     def create():
         parser = argparse.ArgumentParser(description=ArgsHandler.__description__)
-        ArgsHandler.__add_arguments(parser)
+        ArgsHandler._add_arguments(parser)
 
         subparsers = parser.add_subparsers()
         ArgsHandlerPredict.create(subparsers.add_parser('predict'))
@@ -39,7 +39,7 @@ class ArgsHandler:
         return ArgsHandler(parser)
 
     @staticmethod
-    def __add_arguments(parser):
+    def _add_arguments(parser):
         parser.add_argument(
             '-v',
             '--verbose',
@@ -50,7 +50,7 @@ class ArgsHandler:
         parser.add_argument('--version', action='version', version=f'%(prog)s {ArgsHandler.__version__}')
 
     @staticmethod
-    def __handle_args(args):
+    def _handle_args(args):
         if args.verbose == 0:
             level = logging.WARN
         elif args.verbose == 1:
