@@ -1,103 +1,92 @@
-import os
-import re
+from args_handler_subparser import ArgsHandlerSubparser
 from src.trainer import Trainer
 
 
-class ArgsHandlerTrain:
+class ArgsHandlerTrain(ArgsHandlerSubparser):
     """
     Command-line argument handler for train sub-command.
     Parses, validates and executes function.
     """
+    KEYWORDS_INPUT = ('-i', '--input')
+    KEYWORDS_IMPUTE = ('-m', '--impute')
+    KEYWORDS_SPLIT = ('-s', '--split')
+    KEYWORDS_OUTPUT = ('-o', '--output')
+    KEYWORDS_FORCE = ('-f', '--force')
 
-    def __init__(self, parser):
-        self.parser = parser
+    ACCEPTED_EXTENSION_OUTPUT = ('.pickle.dat',)
+    SPLIT_DEFAULT = 0.2
 
     def create(self):
         self.parser.add_argument(
-            '-i',
-            '--input',
-            nargs=1,
+            self.KEYWORDS_INPUT[0],
+            self.KEYWORDS_INPUT[1],
+            action='append',
             type=str,
             required=True,
             help='path to classified annotated variants file (.tsv or .tsv.gz)'
         )
         self.parser.add_argument(
-            '-m',
-            '--impute',
-            nargs=1,
+            self.KEYWORDS_IMPUTE[0],
+            self.KEYWORDS_IMPUTE[1],
+            action='append',
             type=str,
             required=True,
             help='path to impute values file (.json)'
         )
         self.parser.add_argument(
-            '-s',
-            '--split',
-            nargs=1,
+            self.KEYWORDS_SPLIT[0],
+            self.KEYWORDS_SPLIT[1],
+            action='append',
             type=float,
-            default=0.2,
             help='proportion of the input data to include '
                  'in the test split (default: %(default)s)'
         )
         self.parser.add_argument(
-            '-o',
-            '--output',
-            nargs=1,
+            self.KEYWORDS_OUTPUT[0],
+            self.KEYWORDS_OUTPUT[1],
+            action='append',
             type=str,
             help='path to model file (.dat)'
         )
         self.parser.add_argument(
-            '-f',
-            '--force',
+            self.KEYWORDS_FORCE[0],
+            self.KEYWORDS_FORCE[1],
             action='store_true',
             help='overwrites output if it already exists'
         )
 
-    def handle(self):
-        self.parser.set_defaults(func=self._handle_args)
-
     def _handle_args(self, args):
-        self._validate_args(args)
+        # Digest input path.
+        input_path = self._validate_argument_max_once(self.KEYWORDS_INPUT,
+                                                      args.input)
+        input_path = self._validate_file(input_path, ['.tsv', '.tsv.gz'])
 
-        input_path = os.path.abspath(args.input[0])
-        impute_path = os.path.abspath(args.impute[0])
-        test_split = args.split[0]
+        # Digest impute path.
+        impute_path = self._validate_argument_max_once(self.KEYWORDS_IMPUTE,
+                                                       args.impute)
+        impute_path = self._validate_file(impute_path, ['.json'])
 
-        if args.output:
-            output_path = os.path.abspath(args.output[0])
+        # Digest split.
+        test_split = self._validate_argument_max_once(self.KEYWORDS_SPLIT,
+                                                      args.split)
+        if test_split is None:
+            test_split = self.SPLIT_DEFAULT
         else:
-            output_path = re.sub(r"(\.tsv|\.tsv\.gz)$", "_capice.dat",
-                                 input_path)
-        # self.utils.handle_output_path(self.parser, output_path, args.force)
+            test_split = self._validate_range(self.KEYWORDS_SPLIT, test_split,
+                                              (0, 1))
 
-        Trainer(input_path, impute_path, test_split, output_path).train()
+        # Digest output path.
+        output_path = self._validate_argument_max_once(self.KEYWORDS_OUTPUT,
+                                                       args.output)
+        output_path = self.\
+            _generate_path_dynamically(output_path, input_path,
+                                       self.ACCEPTED_EXTENSION_OUTPUT,
+                                       self.ACCEPTED_EXTENSION_OUTPUT[0])
+        self._validate_force_exists(output_path, args.force)
 
-    def _validate_args(self, args):
-        input_path = args.input[0]
-
-        if not os.path.exists(input_path):
-            self.parser.error(f"input '{input_path}' does not exist")
-        if not (input_path.endswith(".tsv") or input_path.endswith(".tsv.gz")):
-            self.parser.error(
-                f"input '{input_path}' is not a .tsv or .tsv.gz file")
-        if not os.path.isfile(input_path):
-            self.parser.error(f"input '{input_path}' is not a file")
-
-        impute_path = args.impute[0]
-        if not os.path.exists(impute_path):
-            self.parser.error(f"impute file '{impute_path}' does not exist")
-        if not impute_path.endswith(".json"):
-            self.parser.error(
-                f"impute file '{impute_path}' is not a .json file")
-        if not os.path.isfile(impute_path):
-            self.parser.error(f"impute file '{impute_path}' is not a file")
-
-        test_split = args.split[0]
-        if test_split < 0 or test_split > 1:
-            self.parser.error(
-                f"test split '{test_split}' is not between 0 and 1")
-
-        if args.output:
-            output_path = args.output[0]
-            if not (output_path.endswith(".tsv") or output_path.endswith(
-                    ".dat")):
-                self.parser.error(f"output '{output_path}' is not a .dat file")
+        # Run trainer.
+        print(input_path)
+        print(impute_path)
+        print(test_split)
+        print(output_path)
+        # Trainer(input_path, impute_path, test_split, output_path).train()

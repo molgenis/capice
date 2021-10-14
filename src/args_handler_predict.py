@@ -1,18 +1,21 @@
+from args_handler_subparser import ArgsHandlerSubparser
 from src.predicter import Predicter
-from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.Validators import InputValidator
 
 
-class ArgsHandlerPredict:
+class ArgsHandlerPredict(ArgsHandlerSubparser):
     """
     Command-line argument handler for predict sub-command.
     Parses, validates and executes function.
     """
+    KEYWORDS_INPUT = ('-i', '--input')
+    KEYWORDS_MODEL = ('-m', '--model')
+    KEYWORDS_OUTPUT = ('-o', '--output')
+    KEYWORDS_FORCE = ('-f', '--force')
+
+    ACCEPTED_EXTENSIONS_TSV = ('.tsv', '.tsv.gz')
 
     def __init__(self, parser):
-        self.parser = parser
-        self.validator = InputValidator()
-        self.manager = CapiceManager()
+        super().__init__(parser)
 
     def create(self):
         """
@@ -21,53 +24,58 @@ class ArgsHandlerPredict:
         of itself.
         """
         self.parser.add_argument(
-            '-i',
-            '--input',
-            nargs=1,
+            self.KEYWORDS_INPUT[0],
+            self.KEYWORDS_INPUT[1],
+            action='append',
             type=str,
             required=True,
             help='path to annotated variants file (.tsv or .tsv.gz)'
         )
         self.parser.add_argument(
-            '-m',
-            '--model',
-            nargs=1,
+            self.KEYWORDS_MODEL[0],
+            self.KEYWORDS_MODEL[1],
+            action='append',
             type=str,
             required=True,
             help='path to trained model (.dat)'
         )
         self.parser.add_argument(
-            '-o',
-            '--output',
-            nargs=1,
+            self.KEYWORDS_OUTPUT[0],
+            self.KEYWORDS_OUTPUT[1],
+            action='append',
             type=str,
             help='path to variant predictions file (.tsv or .tsv.gz)'
         )
         self.parser.add_argument(
-            '-f',
-            '--force',
+            self.KEYWORDS_FORCE[0],
+            self.KEYWORDS_FORCE[1],
             action='store_true',
             help='overwrites output if it already exists'
         )
 
-    def handle(self):
-        self.parser.set_defaults(func=self._handle_args)
-
     def _handle_args(self, args):
-        input_path = args.input[0]
-        model_path = args.model[0]
-        output_path = args.output
-        if args.output is not None:
-            output_path = args.output[0]
-            self.validator.validate_output_loc(output_path)
+        # Digest input path.
+        input_path = self._validate_argument_max_once(self.KEYWORDS_INPUT,
+                                                      args.input)
+        input_path = self._validate_file(input_path,
+                                         self.ACCEPTED_EXTENSIONS_TSV)
 
-        self.validator.validate_input_loc(input_path)
-        self.validator.validate_input_output_directories(
-            input_path=input_path,
-            output_path=output_path,
-            force=args.force
-        )
-        validated_output_path = self.validator.get_output_directory()
-        self.manager.output_filename = self.validator.get_output_filename()
+        # Digest model path.
+        model_path = self._validate_argument_max_once(self.KEYWORDS_MODEL,
+                                                      args.model)
+        model_path = self._validate_file(model_path, ('.pickle.dat',))
 
-        Predicter(input_path, model_path, validated_output_path).predict()
+        # Digest output path.
+        output_path = self._validate_argument_max_once(self.KEYWORDS_OUTPUT,
+                                                       args.output)
+        output_path = self.\
+            _generate_path_dynamically(output_path, input_path,
+                                       self.ACCEPTED_EXTENSIONS_TSV,
+                                       self.ACCEPTED_EXTENSIONS_TSV[1])
+        self._validate_force_exists(output_path, args.force)
+
+        # Run predicter.
+        print(input_path)
+        print(model_path)
+        print(output_path)
+        # Predicter(input_path, model_path, output_path).predict()
