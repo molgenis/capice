@@ -22,7 +22,8 @@ class TestFilePostProcessor(unittest.TestCase):
     def test_load_file_pre_processor(self):
         """
         Test to see if the post file loading processor outputs according to
-        expectation.
+        expectation. Note: chromosome stays an integer un till the imputer,
+        that's why I don't mark them as string.
         """
         print('Load file preprocessor.')
         data = pd.DataFrame(
@@ -41,10 +42,10 @@ class TestFilePostProcessor(unittest.TestCase):
 
         expected_output = pd.DataFrame(
             {
-                "Chr": ['1', '2', '3'],
-                "Pos": [100, 200, 300],
-                "Ref": ['A', 'T', 'G'],
-                "Alt": ['T', 'G', 'A'],
+                "chr": [1, 2, 3],
+                "pos": [100, 200, 300],
+                "ref": ['A', 'T', 'G'],
+                "alt": ['T', 'G', 'A'],
                 "id_source": ['foo', 'foo', 'bar'],
                 "transcript": ['bar', 'bar', 'buz'],
                 "gene_name": ['g1', 'g2', 'g3'],

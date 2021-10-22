@@ -1,7 +1,6 @@
 import os
 from src.main_capice import Main
 from src.main.python.core.logger import Logger
-from src.main.python.core.config_reader import ConfigReader
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
@@ -17,9 +16,6 @@ def set_up_manager_and_loc():
     output_directory = os.path.join(root_dir, '.test_output')
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    config_reader = ConfigReader()
-    config_reader.parse()
-    manager.reference_genome = config_reader.get_datafiles_value('reference')
     return manager, output_directory
 
 
@@ -39,10 +35,7 @@ def teardown():
 
 
 def set_up_main():
-    ConfigReader().parse()
-    main = Main(__program__='testing',
-                __author__='R.J. Sietma',
-                __version__='Testing',
-                input_loc=None,
+    main = Main(input_loc=None,
+                model=None,
                 output_loc=None)
     return main

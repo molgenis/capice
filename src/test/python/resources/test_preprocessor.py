@@ -1,4 +1,5 @@
 import os
+import pickle
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
@@ -16,11 +17,17 @@ class TestPreprocessing(unittest.TestCase):
             'CAPICE_example',
             'CAPICE_input.tsv.gz'
         )
-        cls.vep_version = 104.0
-        cls.grch_build = 37
-        cls.impute_overwrite = 'VEP104'
-        cls.model_overwrite = 'CAPICE POC using XGBoost 1.4.2, ' \
-                              'VEP104 and genome build 37.'
+        with open(
+                os.path.join(
+                    get_project_root_dir(),
+                    'CAPICE_model',
+                    'GRCh37',
+                    'POC',
+                    'xgb_booster_poc.pickle.dat'
+                ), 'rb'
+        ) as model_file:
+            cls.model = pickle.load(model_file)
+        cls.main.model = cls.model
 
     @classmethod
     def tearDownClass(cls):
@@ -30,13 +37,6 @@ class TestPreprocessing(unittest.TestCase):
     def setUp(self):
         print('Testing case:')
 
-    def tearDown(self):
-        print('Resetting arguments.')
-        self.manager.overwrite_impute = None
-        self.manager.overwrite_model = None
-        self.manager.vep_version = None
-        self.manager.grch_build = None
-
     def test_unit_preprocessing_file(self):
         """
         Unit test for the preprocessor to see if the preprocessor works just
@@ -44,31 +44,7 @@ class TestPreprocessing(unittest.TestCase):
         """
         print('Preprocessing (unit) (file)')
         self.main.preprocess(loaded_data=self.main.impute(
-            loaded_data=self.main.annotate(self.main.load_file())
-        ), train=False)
-
-    def test_unit_preprocessing_config(self):
-        """
-        Unit test for the preprocessor to see if the preprocessor works with
-        config variables.
-        """
-        print('Preprocessing (unit) (config)')
-        self.manager.vep_version = self.vep_version
-        self.manager.grch_build = self.grch_build
-        self.main.preprocess(loaded_data=self.main.impute(
-            loaded_data=self.main.annotate(self.main.load_file())
-        ), train=False)
-
-    def test_unit_preprocessing_overwrite(self):
-        """
-        Unit test for the preprocessor to see if the preprocessor works with
-        the config overwrite variables.
-        """
-        print('Preprocessing (unit) (overwrite)')
-        self.manager.overwrite_impute = self.impute_overwrite
-        self.manager.overwrite_model = self.model_overwrite
-        self.main.preprocess(loaded_data=self.main.impute(
-            loaded_data=self.main.annotate(self.main.load_file())
+            loaded_data=self.main.process(self.main.load_file())
         ), train=False)
 
     def test_component_preprocessing(self):
@@ -80,13 +56,14 @@ class TestPreprocessing(unittest.TestCase):
         considered categorical.
         """
         print('Preprocessing (component)')
-        imputed_data = self.main.impute(
-            loaded_data=self.main.annotate(self.main.load_file()))
-        preprocessor, processed_file = self.main.preprocess(
-            loaded_data=imputed_data,
-            train=False
+        processed_file = self.main.preprocess(
+            self.main.impute(
+                self.main.process(
+                    self.main.load_file()
+                )
+            ), train=False
         )
-        model_features = preprocessor.get_model_features()
+        model_features = self.model.get_booster().feature_names
         processed_columns = processed_file.columns
         for feature in model_features:
             # Check if all model features are present before predicting
@@ -104,22 +81,18 @@ class TestPreprocessing(unittest.TestCase):
         Component test for the preprocessing part with train=True.
         """
         print('Preprocessing (train) (component)')
-        self.manager.overwrite_impute = self.impute_overwrite
-        loaded_file = self.main.annotate(self.main.load_file())
-        imputed_file = self.main.impute(loaded_data=loaded_file)
-        preprocessor, preprocessed_file = self.main.preprocess(
-            loaded_data=imputed_file,
-            train=True
+        preprocessed_file = self.main.preprocess(
+            self.main.impute(
+                self.main.process(
+                    self.main.load_file()
+                )
+            ), train=True
         )
-
-        # Since the init states that the model features are None by default,
-        # test if it is still None.
-        self.assertIsNone(preprocessor.get_model_features())
 
         # Test if all columns matching,
         # or starting with features within the imputing
         # file are not classified objects.
-        impute_features = self.manager.annotation_features
+        impute_features = self.model.impute_values.keys()
         processed_columns = preprocessed_file.columns
         present_features = 1
         # Should be one, since the for loop quits before

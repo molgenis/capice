@@ -24,3 +24,10 @@ class InitializationError(Exception):
     Raised when a function is called before the class is initialized
     """
     pass
+
+
+class ExtensionError(Exception):
+    """
+    Raised when a type of file is called when the extension is wrong.
+    """
+    pass

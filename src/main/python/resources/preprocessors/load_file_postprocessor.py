@@ -1,5 +1,6 @@
 import pandas as pd
 from src.main.python.core.logger import Logger
+from src.main.python.resources.enums.sections import Column
 
 
 class LoadFilePostProcessor:
@@ -22,7 +23,6 @@ class LoadFilePostProcessor:
         self._correct_percentage_sign()
         self.log.debug('% sign corrected, starting renaming of columns.')
         self._col_renamer()
-        self._correct_dtypes()
         self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
 
@@ -37,9 +37,6 @@ class LoadFilePostProcessor:
                 new_columns.append(column)
         self.dataset.columns = new_columns
 
-    def _correct_dtypes(self):
-        self.dataset['Chr'] = self.dataset['Chr'].astype(str)
-
     def _col_renamer(self):
         """
         Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
@@ -47,14 +44,14 @@ class LoadFilePostProcessor:
         """
         self.dataset.rename(
             columns={
-                'CHROM': 'Chr',
-                'POS': 'Pos',
-                'REF': 'Ref',
-                'ALT': 'Alt',
-                'HGNC_ID': 'gene_id',
-                'SYMBOL_SOURCE': 'id_source',
-                'Feature': 'transcript',
-                'SYMBOL': 'gene_name',
+                'CHROM': Column.chr.value,
+                'POS': Column.pos.value,
+                'REF': Column.ref.value,
+                'ALT': Column.alt.value,
+                'HGNC_ID': Column.gene_id.value,
+                'SYMBOL_SOURCE': Column.id_source.value,
+                'Feature': Column.transcript.value,
+                'SYMBOL': Column.gene_name.value,
                 'INTRON': 'Intron',
                 'EXON': 'Exon',
                 'MAX_AF': 'max_AF'

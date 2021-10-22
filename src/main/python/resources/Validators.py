@@ -1,124 +1,139 @@
 import os
 import warnings
+import pandas as pd
 from pathlib import Path
-from src.main.python.resources.errors.errors import InputError
-from src.main.python.resources.utilities.utilities import check_dir_exists, \
-    check_file_exists, prepare_dir, get_filename_and_extension
+from src.main.python.core.logger import Logger
+from src.main.python.resources.enums.sections import Column
 
 
 class InputValidator:
     """
     Validator for the CLI arguments
     """
+    def __init__(self, parser):
+        self.parser = parser
 
-    def __init__(self):
-        self.output_filename = ''
-        self.output_directory = ''
-        self._call_loc = str(Path('.').absolute())
-
-    @staticmethod
-    def validate_input_loc(input_loc):
+    def validate_input_loc(self, input_loc, extension: tuple):
         """
         Function to validate if there is a file at the input location
         :param input_loc: full path to input file
+        :param extension: string of what the input file should end with.
         """
-        if not check_file_exists(input_loc):
-            raise InputError("Input file does not exist!")
-        return input_loc
+        if not os.path.exists(input_loc):
+            self.parser.error("Input file does not exist!")
+        if not (input_loc.endswith(extension)):
+            self.parser.error(
+                'Given input file does not match required extension!'
+            )
 
-    @staticmethod
-    def validate_output_loc(output_loc):
+    def validate_output_loc(self, output_loc):
         """
         Function to validate if the output directory exists and,
         if not, make it.
         :param output_loc: path to output folder
         """
-        if not check_dir_exists(output_loc):
+        # If the output directory is not present and
+        # the parent directory is also not writeable, throw OSError
+        if not os.path.isdir(output_loc) and not os.access(
+                Path(output_loc).parent, os.W_OK):
+            self.parser.error(
+                "New output directory cannot be made in a "
+                "read/execute only directory!"
+            )
+        # If the output directory is present but not writeable, throw OSError
+        elif os.path.isdir(output_loc) and not os.access(output_loc, os.W_OK):
+            self.parser.error(
+                "Output directory is not writable!"
+            )
+        # If the output directory is not yet present,
+        # but passed the check that it is in a writable parent directory,
+        # only warn
+        elif not os.path.isdir(output_loc):
             warnings.warn("Output directory does not exist, creating.")
-            prepare_dir(output_loc)
+            os.makedirs(output_loc)
 
-    def validate_input_output_directories(self,
-                                          input_path,
-                                          output_path,
-                                          force,
-                                          train=False):
+        # No else is required, since the else would be to place the output file
+        # in a writeable output directory that is already present.
+
+
+class PostFileParseValidator:
+    def __init__(self):
+        self.log = Logger().logger
+
+    def validate_n_columns(self, dataset):
         """
-        Function to validate the input location, output location and filename to
-        tell the exporter where to place what file.
-        :param input_path: str, path-like
-        :param output_path: str, path-like (if missing: supply None)
-        :param force: bool, force flag present or not
-        :param train: bool, whenever the CLI train protocol is called or not
+        Validator to make sure that at least 4 columns are loaded
+        (chr, pos, ref, alt). Does NOT check for the names of these columns!
         """
-        if output_path is None:
-            self._create_capice_output_filename(input_path=input_path,
-                                                export_to_call=True)
-        else:
-            # Check if it is a path or else just a filename
-            if len(os.path.dirname(output_path)) > 0:
-                # Then I know it's an output filepath + possibly name
-                if os.path.splitext(output_path)[1] != '':
-                    # Then I know it is a full path + filename
-                    self._create_capice_output_filename(input_path=output_path,
-                                                        append_capice=False)
-                else:
-                    # Then I know it's a full path
-                    self._create_capice_output_filename(input_path=input_path,
-                                                        output_path=output_path,
-                                                        ispath=True)
-            else:
-                # Then I know it's an output filename
-                self.output_directory = self._call_loc
-                self.output_filename = output_path
-        if not train:
-            self._check_gzip_extension()
-        self._check_force(force)
+        if isinstance(dataset, pd.Series) or not dataset.shape[1] >= 4:
+            error_message = 'Loaded dataset does NOT have enough features! ' \
+                            'Is there a header present that does not start ' \
+                            'with ##?'
+            self.log.critical(error_message)
+            raise KeyError(error_message)
 
-    def _check_force(self, force):
-        full_ouput_path = os.path.join(self.output_directory,
-                                       self.output_filename)
-        if not force and os.path.isfile(full_ouput_path):
-            raise FileExistsError(
-                f'Output file {full_ouput_path} already exists! '
-                f'Use -f / --force to overwrite.')
-
-    def _create_capice_output_filename(self, input_path, output_path=None,
-                                       append_capice=True, ispath=False,
-                                       export_to_call=False):
-        if output_path is None and not export_to_call:
-            output_path = input_path
-        elif output_path is None and export_to_call:
-            output_path = self._call_loc
-            ispath = True
-        input_filename, extension = get_filename_and_extension(input_path)
-        if append_capice:
-            self.output_filename = '{}_capice.{}'.format(input_filename,
-                                                         extension)
-        else:
-            self.output_filename = '{}.{}'.format(input_filename, extension)
-        if ispath:
-            self.output_directory = output_path
-        else:
-            self.output_directory = os.path.dirname(output_path)
-
-    def _check_gzip_extension(self):
-        if not self.output_filename.endswith('.gz'):
-            self.output_filename = self.output_filename + '.gz'
-
-    @staticmethod
-    def validate_reference(reference):
+    def validate_minimally_required_columns(self,
+                                            dataset,
+                                            additional_required_features=()):
         """
-        Function to validate if the reference files exist
+        Validator for both predict and train to check if the very least columns
+        are present (chr, pos, ref, alt) and additionally the additional
+        required columns.
         """
-        locs = [reference, f'{reference}.fai']
-        for loc in locs:
-            if loc is False or not check_file_exists(loc):
-                raise FileNotFoundError(
-                    'Unable to locate all required files to annotate.'
-                )
+        required_columns = (
+            Column.chr.value,
+            Column.pos.value,
+            Column.ref.value,
+            Column.alt.value,
+        )
+        if len(additional_required_features) > 0 and not isinstance(
+                additional_required_features, tuple):
+            required_columns += (additional_required_features,)
+        elif len(additional_required_features) > 0 and isinstance(
+                additional_required_features, tuple):
+            required_columns += additional_required_features
+        columns_not_present = []
+        for col in required_columns:
+            if col not in dataset.columns:
+                columns_not_present.append(col)
+        if len(columns_not_present) > 0:
+            error_message = 'Detected required columns %s not ' \
+                            'present within input dataset!'
+            self.log.critical(error_message, ', '.join(columns_not_present))
+            raise KeyError(error_message % ', '.join(columns_not_present))
 
-    def get_output_filename(self):
-        return self.output_filename
+    def validate_chrom_pos(self, dataset):
+        """
+        Function to check if all values of the columns Chr and Pos are present.
+        """
+        if dataset[Column.chr.value].isnull().values.any():
+            error_message = 'Detected gap in Chromosome column! ' \
+                            'Please supply a valid dataset.'
+            self.log.critical(error_message)
+            raise ValueError(error_message)
+        if dataset[Column.pos.value].isnull().values.any():
+            error_message = 'Detected gap in Position column! ' \
+                            'Please supply a valid dataset.'
+            self.log.critical(error_message)
+            raise ValueError(error_message)
 
-    def get_output_directory(self):
-        return self.output_directory
+
+class PostVEPProcessingValidator:
+    def __init__(self, model):
+        self.model = model
+        self.log = Logger().logger
+
+    def validate_features_present(self, datafile):
+        """
+        Validator to see if all features within the model impute values are
+        presently processed.
+        """
+        features_not_present = []
+        for feature in self.model.impute_values.keys():
+            if feature not in datafile.columns:
+                features_not_present.append(feature)
+        if len(features_not_present) > 0:
+            error_message = 'Detected required feature(s) %s not ' \
+                            'present within VEP processed input file!'
+            self.log.critical(error_message, ', '.join(features_not_present))
+            raise KeyError(error_message % ', '.join(features_not_present))

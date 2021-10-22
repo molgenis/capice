@@ -1,10 +1,10 @@
 import os
 import unittest
+import numpy as np
 import pandas as pd
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Column
-import numpy as np
+from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
 
 class TestExporter(unittest.TestCase):
@@ -53,19 +53,19 @@ class TestExporter(unittest.TestCase):
 
     def test_prediction_output(self):
         print('Prediction output')
-        self.exporter.capice_filename = 'test_output.tsv'
+        filename = 'test_output.tsv'
+        filename_loc = os.path.join(self.output_loc, filename)
+        self.exporter.capice_filename = filename
         self.exporter.export_capice_prediction(
             datafile=self.prediction_output_dataframe
         )
         self.assertTrue(
             os.path.isfile(
-                os.path.join(
-                    self.output_loc, 'test_output.tsv'
-                )
+                filename_loc
             )
         )
         exported_data = pd.read_csv(
-            os.path.join(self.output_loc, 'test_output.tsv'),
+            filename_loc,
             compression='gzip',
             sep='\t'
         )
@@ -92,33 +92,25 @@ class TestExporter(unittest.TestCase):
             self.export_dataset
         )
 
-    def test_exporter_filename_generator_dataset_extension(self):
-        print('Filename generator (with dataset and extension=True)')
-        with open(
-                os.path.join(self.output_loc, 'filename.tsv.gz'),
-                'wt') as fake_file:
-            fake_file.write('This is a fake file')
-        new_filename = self.exporter._export_filename_ready(
-            file_name='filename'
-        )
-        self.assertEqual(
-            new_filename,
-            os.path.join(self.output_loc, 'filename_1.tsv.gz')
-        )
-
     def test_exporter_force(self):
+        """
+        Since force is dealt with at the very start of CAPICE and raises an
+        error if the output file is already present unless the force flag is
+        True, this test just makes sure that the overwritten file is correct.
+        """
         print('Filename generator (with force=True)')
+        present_file = 'already_present_file.tsv'
+        present_file_loc = os.path.join(self.output_loc,
+                                        present_file)
         with open(
-                os.path.join(self.output_loc, 'already_present_file.tsv'),
-                'wt') as present_file:
-            present_file.write('This file is already present')
-        self.exporter.force = True
-        self.exporter.capice_filename = 'already_present_file.tsv'
+                present_file_loc, 'wt') as present_file_conn:
+            present_file_conn.write('This file is already present')
+        self.exporter.capice_filename = present_file
         self.exporter.export_capice_prediction(
             datafile=self.prediction_output_dataframe
         )
         forced_file = pd.read_csv(
-            os.path.join(self.output_loc, 'already_present_file.tsv'),
+            present_file_loc,
             compression='gzip',
             sep='\t'
         )

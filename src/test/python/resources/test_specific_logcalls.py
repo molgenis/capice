@@ -1,11 +1,13 @@
+import io
+import os
+import sys
+import pickle
 import unittest
 import pandas as pd
-from datetime import datetime
-from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.test.python.test_templates import teardown
 from src.main.python.core.global_manager import CapiceManager
-import sys
-import io
+from src.main.python.resources.imputers.capice_imputing import CapiceImputing
+from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 
 class TestSpecificLogCalls(unittest.TestCase):
@@ -14,6 +16,16 @@ class TestSpecificLogCalls(unittest.TestCase):
         print('Setting up.')
         cls.manager = CapiceManager()
         cls.manager.loglevel = 10
+        with open(
+                os.path.join(
+                    get_project_root_dir(),
+                    'CAPICE_model',
+                    'GRCh37',
+                    'POC',
+                    'xgb_booster_poc.pickle.dat'
+                ), 'rb'
+        ) as model_file:
+            cls.model = pickle.load(model_file)
 
     @classmethod
     def tearDownClass(cls):
@@ -41,7 +53,7 @@ class TestSpecificLogCalls(unittest.TestCase):
         ]
         self.manager.vep_version = 104.0
         self.manager.grch_build = 37
-        imputer = CapiceImputing()
+        imputer = CapiceImputing(self.model)
         imputer._get_nan_ratio_per_column(dataset=nan_dataframe)
         log_messages = new_stdout.getvalue().splitlines()
         sys.stdout = old_stdout

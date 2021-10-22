@@ -1,8 +1,6 @@
 import os
 from src.main.python.core.logger import Logger
 from src.main.python.resources.utilities.utilities import importer, load_modules
-from src.main.python.resources.models.training_preprocessor import \
-    TrainPreprocessor
 
 
 class DynamicLoader:
@@ -23,96 +21,6 @@ class DynamicLoader:
         self._check_dir_exists()
         self.required_attributes = required_attributes
         self.modules = {}
-        self.module = None
-        self.module_path = None
-
-    def load_impute_preprocess_modules(self, vep_version, grch_build,
-                                       overwrite, train=False):
-        """
-        Load the modules within path and match the (if set) overwrite or the
-        supplied VEP version and GRCh build for the Imputer or Preprocessor.
-
-        :param vep_version: float, the VEP version used to create the input data
-        :param grch_build: int, the GRCh build used
-        :param overwrite: str or None, overwrite argument for either the
-        imputer of preprocessor
-        :param train: bool, returns the TrainPreprocessor() immediately if True
-
-        :return: dict(path, obj), dictionary of the path and initialized class
-        in path.
-
-        :raises: FileNotFoundError, if no match can be found.
-        """
-        if train:
-            return TrainPreprocessor()
-        else:
-            # 2 more attributes are required if not present in
-            # required_attributes
-            extra_required_attributes = [
-                'supported_vep_version',
-                'supported_grch_build'
-            ]
-            # Required to preserve the original list of required attributes
-            copy_required_attributes = self.required_attributes[:]
-            for attribute in extra_required_attributes:
-                if attribute not in copy_required_attributes:
-                    copy_required_attributes.append(attribute)
-
-            self._load_modules(copy_required_attributes)
-            self._load_correct_module(overwrite, vep_version, grch_build)
-            return self.module
-
-    def _load_correct_module(self, overwrite, vep_version, grch_build):
-        if overwrite:
-            # Loop through ALL modules in case multiple matches are found
-            # Throw warning if multiple matches are found.
-            for path, module in self.modules.items():
-                if module.name == overwrite:
-                    self._apply_module(path, module, overwrite=overwrite)
-
-        else:
-            for path, module in self.modules.items():
-                module_vep = module.supported_vep_version
-                module_grch = module.supported_grch_build
-                if module_vep == vep_version and module_grch == grch_build:
-                    self._apply_module(path, module,
-                                       vep_version=vep_version,
-                                       grch_build=grch_build)
-
-        # If no match is found, trigger error.
-        if not self.module:
-            self._raise_no_module_found_error()
-
-    def _apply_module(self, path, module, overwrite=None, vep_version=None,
-                      grch_build=None):
-        if overwrite:
-            match_format = "overwrite %s" % overwrite
-        else:
-            match_format = "VEP version %s and GRCh build %s" % (
-                vep_version, grch_build
-            )
-
-        if not self.module:
-            self.module = module
-            self.module_path = path
-            self.log.info(
-                'Module matching %s successful. Module %s at %s loaded.',
-                match_format,
-                module.name,
-                path
-            )
-        else:
-            self.log.warning(
-                "Found multiple matches for %s! "
-                "Current applied module: %s (at %s). "
-                "New module: %s (at %s). "
-                "Will NOT overwrite currently applied module!",
-                match_format,
-                self.module.name,
-                self.module_path,
-                module.name,
-                path
-            )
 
     def load_manual_annotators(self):
         """
