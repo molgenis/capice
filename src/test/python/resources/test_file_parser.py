@@ -23,12 +23,6 @@ class TestFileParser(unittest.TestCase):
     def setUp(self):
         print('Testing case:')
 
-    def tearDown(self):
-        print('Resetting arguments.')
-        self.manager.cadd_version = None
-        self.manager.grch_build = None
-        print('Arguments reset.')
-
     def test_unit_loadfile(self):
         """
         Testing class for loading in files.

@@ -19,14 +19,12 @@ class InputParser:
         """
         self.sep = sep
 
-    def parse(self, input_file_loc: str, skip_rows: int):
+    def parse(self, input_file_loc: str):
         """
         Class to start the parsing of additional information from the input
         file.
 
         :param input_file_loc: str, direction to the input file
-        :param skip_rows: int,
-            the amount of comment strings pandas has to skip first
         """
         if self.sep == '\t':
             used_sep = 'Tab'
@@ -40,12 +38,9 @@ class InputParser:
         input_file = pd.read_csv(
             input_file_loc,
             sep=self.sep,
-            skiprows=skip_rows,
             na_values='.',
             low_memory=False
         )
-        input_file.dropna(how='all', inplace=True)
-        input_file.drop_duplicates(inplace=True)
         self.log.info(
             'Input file at %s loaded with %s samples.',
             input_file_loc,

@@ -1,10 +1,11 @@
 import os
 import unittest
+import argparse
 from pathlib import Path
 from src.test.python.test_templates import teardown
 from src.main.python.resources.Validators import InputValidator
-from src.main.python.resources.errors.errors import InputError
 from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.main.python.resources.processors.input_processor import InputProcessor
 
 
 class TestInputValidator(unittest.TestCase):
@@ -22,8 +23,8 @@ class TestInputValidator(unittest.TestCase):
         cls.output_directory = os.path.join(root_dir, '.test_output')
         if not os.path.exists(cls.output_directory):
             os.makedirs(cls.output_directory)
-        cls.input_validator = InputValidator()
         cls.call_dir = str(Path('.').absolute())
+        cls.input_validator = InputValidator(argparse.ArgumentParser())
         cls.another_test_output = cls.temp_test_output
         cls.test_output_name = cls.temp_test_directory_name
         cls.input_file = os.path.join(
@@ -32,6 +33,7 @@ class TestInputValidator(unittest.TestCase):
             'CAPICE_input.tsv.gz'
         )
         cls.expected_output_filename = 'CAPICE_input_capice.tsv.gz'
+        cls.test_filename = 'test.txt'
 
     @classmethod
     def tearDownClass(cls):
@@ -52,10 +54,11 @@ class TestInputValidator(unittest.TestCase):
     def test_input_error(self):
         print('Input file error')
         fake_input_file = os.path.join(self.input_loc, 'fakefile.tsv')
-        with self.assertRaises(InputError) as context:
-            self.input_validator.validate_input_loc(fake_input_file)
-        self.assertTrue(
-            'Input file does not exist!'.startswith(str(context.exception))
+        self.assertRaises(
+            SystemExit,
+            self.input_validator.validate_input_loc,
+            fake_input_file,
+            'tsv'
         )
 
     def test_create_output_loc(self):
@@ -73,20 +76,20 @@ class TestInputValidator(unittest.TestCase):
         Testing with only an input
         """
         print('Input output conversion (input only)')
-
         test_output = None
-        expected_output_directory = self.call_dir
-        self.input_validator.validate_input_output_directories(
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
             input_path=self.input_file,
             output_path=test_output,
             force=False
         )
+        expected_output_directory = self.call_dir
         self.assertEqual(
-            self.input_validator.get_output_filename(),
+            input_processor.get_output_filename(),
             self.expected_output_filename
         )
         self.assertEqual(
-            self.input_validator.get_output_directory(),
+            input_processor.get_output_directory(),
             expected_output_directory
         )
 
@@ -96,21 +99,21 @@ class TestInputValidator(unittest.TestCase):
         output filename are set.
         Testing with input and an output directory.
         """
-        print('Input output conversion (input + output directory)')
-
+        print('Input output conversion (input + output directory) (case2)')
         test_output = os.path.join('.', 'test_output')
-        expected_output_directory = os.path.join('.', 'test_output')
-        self.input_validator.validate_input_output_directories(
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
             input_path=self.input_file,
             output_path=test_output,
             force=False
         )
+        expected_output_directory = os.path.join('.', 'test_output')
         self.assertEqual(
-            self.input_validator.get_output_filename(),
+            input_processor.get_output_filename(),
             self.expected_output_filename
         )
         self.assertEqual(
-            self.input_validator.get_output_directory(),
+            input_processor.get_output_directory(),
             expected_output_directory
         )
 
@@ -121,39 +124,38 @@ class TestInputValidator(unittest.TestCase):
         Testing with input, output directory AND filename.
         """
         print('Input output conversion (input + output directory + filename)')
-        test_output = os.path.join('.', 'test_output', 'test.txt')
-        expected_output_filename = 'test.txt.gz'
-        expected_output_directory = os.path.join('.', 'test_output')
-        self.input_validator.validate_input_output_directories(
+        test_output = os.path.join('.', 'test_output', self.test_filename)
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
             input_path=self.input_file,
             output_path=test_output,
             force=False
         )
+        expected_output_directory = os.path.join('.', 'test_output')
         self.assertEqual(
-            self.input_validator.get_output_filename(),
-            expected_output_filename
+            input_processor.get_output_filename(),
+            self.test_filename
         )
         self.assertEqual(
-            self.input_validator.get_output_directory(),
+            input_processor.get_output_directory(),
             expected_output_directory
         )
 
     def test_input_output_conversion_case4(self):
         print('Input output conversion (input + filename)')
-        test_output = 'test.txt'
-        expected_output_filename = 'test.txt.gz'
-        expected_output_directory = self.call_dir
-        self.input_validator.validate_input_output_directories(
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
             input_path=self.input_file,
-            output_path=test_output,
+            output_path=self.test_filename,
             force=False
         )
+        expected_output_directory = self.call_dir
         self.assertEqual(
-            self.input_validator.get_output_filename(),
-            expected_output_filename
+            input_processor.get_output_filename(),
+            self.test_filename
         )
         self.assertEqual(
-            self.input_validator.get_output_directory(),
+            input_processor.get_output_directory(),
             expected_output_directory
         )
 
@@ -167,7 +169,8 @@ class TestInputValidator(unittest.TestCase):
             already_present_file.write('Some whitty comment')
         self.assertRaises(
             FileExistsError,
-            self.input_validator.validate_input_output_directories,
+            InputProcessor,
+            self.call_dir,
             self.input_file,
             test_output,
             False
@@ -178,23 +181,24 @@ class TestInputValidator(unittest.TestCase):
         print('Input output conversion with output already present but '
               'force set to true')
         test_output = None
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
+            input_path=self.input_file,
+            output_path=test_output,
+            force=True
+        )
         expected_output_directory = self.call_dir
         with open(
                 os.path.join(self.call_dir, self.expected_output_filename),
                 'wt'
         ) as already_present_file:
             already_present_file.write('Some whitty comment')
-        self.input_validator.validate_input_output_directories(
-            input_path=self.input_file,
-            output_path=test_output,
-            force=True
-        )
         self.assertEqual(
-            self.input_validator.get_output_filename(),
+            input_processor.get_output_filename(),
             self.expected_output_filename
         )
         self.assertEqual(
-            self.input_validator.get_output_directory(),
+            input_processor.get_output_directory(),
             expected_output_directory
         )
         os.remove(os.path.join(self.call_dir, self.expected_output_filename))

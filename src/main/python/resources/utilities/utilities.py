@@ -6,15 +6,6 @@ from pathlib import Path
 from importlib import util
 
 
-def is_gzipped(file_path: str):
-    """
-    Function to check if the given file path is gzipped
-    :param file_path: str
-    :return: bool
-    """
-    return file_path.endswith('.gz')
-
-
 def get_project_root_dir():
     """
     Function to get the project root directory
@@ -22,33 +13,6 @@ def get_project_root_dir():
     """
     #  This script is 4 directories deep into the project.
     return Path(__file__).parent.parent.parent.parent.parent.parent
-
-
-def check_file_exists(file_path: str):
-    """
-    Function to check if a file exists
-    :param file_path: str
-    :return: bool
-    """
-    return os.path.exists(file_path)
-
-
-def check_dir_exists(path: str):
-    """
-    Function to check if a path exists
-    :param path: str
-    :return: bool
-    """
-    return os.path.isdir(path)
-
-
-def prepare_dir(path: str):
-    """
-    Function to make a path if does not exist
-    :param path: str
-    """
-    if not check_dir_exists(path):
-        os.makedirs(path)
 
 
 def load_modules(path):

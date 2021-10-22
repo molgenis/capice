@@ -1,13 +1,13 @@
-from src.main_capice import Main
-from src.main.python.resources.checkers.train_checker import TrainChecker
-from src.main.python.resources.enums.sections import Train as EnumsTrain
-from src.main.python.core.exporter import Exporter
-import pandas as pd
+import json
 import numpy as np
+import pandas as pd
 import xgboost as xgb
 from scipy import stats
-import json
+from src.main_capice import Main
+from src.main.python.core.exporter import Exporter
+from src.main.python.resources.enums.sections import Train as EnumsTrain
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from src.main.python.resources.checkers.train_checker import TrainChecker
 
 
 class Train(Main):
@@ -17,18 +17,19 @@ class Train(Main):
     """
 
     def __init__(self,
-                 __program__,
-                 __author__,
-                 __version__,
                  input_loc,
+                 json_loc,
+                 test_split,
                  output_loc):
-        super().__init__(__program__=__program__,
-                         __author__=__author__,
-                         __version__=__version__,
-                         input_loc=input_loc,
+        super().__init__(input_loc=input_loc,
+                         model=None,
                          output_loc=output_loc)
 
         # Argument logging
+        self.json_loc = json_loc
+        self.log.debug(
+            'Input impute JSON confirmed: %s', self.json_loc
+        )
         self.balance = self.config.get_train_value('makebalanced')
         self.log.debug(
             'Make input dataset balanced confirmed: %s', self.balance
@@ -53,7 +54,7 @@ class Train(Main):
         self.early_exit = self.config.get_train_value('earlyexit')
         if self.early_exit:
             self.log.debug('Early exit flag confirmed.')
-        self.train_test_size = self.config.get_train_value('traintestsize')
+        self.train_test_size = test_split
         self.log.debug(
             'The percentage of data used for the testing dataset within '
             'training: %s', self.train_test_size

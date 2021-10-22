@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import unittest
-from src.main.python.resources.annotaters.annotator import Annotator
+from src.main.python.resources.processors.processor import Processor
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
 
@@ -13,10 +13,10 @@ class TestAnnotator(unittest.TestCase):
         # return N append function within lookup.py.
         dataset = pd.DataFrame(
             {
-                'Chr': {0: '1', 1: '1'},
-                'Pos': {0: 1, 1: 10042538},
-                'Ref': {0: 'C', 1: 'C'},
-                'Alt': {0: 'T', 1: 'T'},
+                'chr': {0: '1', 1: '1'},
+                'pos': {0: 1, 1: 10042538},
+                'ref': {0: 'C', 1: 'C'},
+                'alt': {0: 'T', 1: 'T'},
                 'Consequence': {0: 'missense_variant',
                                 1: 'downstream_gene_variant'
                                 },
@@ -47,7 +47,7 @@ class TestAnnotator(unittest.TestCase):
                 'Intron': {0: np.nan, 1: np.nan}
             }
         )
-        cls.annotator = Annotator(dataset)
+        cls.annotator = Processor(dataset)
 
     def setUp(self) -> None:
         print('Testing case:')
@@ -58,10 +58,10 @@ class TestAnnotator(unittest.TestCase):
         teardown()
 
     def test_component_annotator(self):
-        print('Annotator (component)')
+        print('Processor (component)')
         expected_outcome = pd.DataFrame(
-            {'Chr': {0: '1', 1: '1'}, 'Pos': {0: 1, 1: 10042538},
-             'Ref': {0: 'C', 1: 'C'}, 'Alt': {0: 'T', 1: 'T'},
+            {'chr': {0: '1', 1: '1'}, 'pos': {0: 1, 1: 10042538},
+             'ref': {0: 'C', 1: 'C'}, 'alt': {0: 'T', 1: 'T'},
              'Consequence': {0: 'missense_variant',
                              1: 'downstream_gene_variant'},
              'GeneName': {0: 'NMNAT1', 1: 'NMNAT1'},
@@ -95,7 +95,7 @@ class TestAnnotator(unittest.TestCase):
              'ConsDetail': {0: 'missense', 1: 'downstream'}
              }
         )
-        outcome = self.annotator.annotate()
+        outcome = self.annotator.process()
         pd.testing.assert_frame_equal(
             expected_outcome.sort_index(axis=1), outcome.sort_index(axis=1)
         )
@@ -105,10 +105,10 @@ class TestAnnotator(unittest.TestCase):
               'string values!" within template_sift_polyphen manual annotator.')
         bugged_dataframe = pd.DataFrame(
             {
-                'Chr': ['1', '2'],
-                'Pos': [100, 200],
-                'Ref': ['A', 'GCC'],
-                'Alt': ['C', 'C'],
+                'chr': ['1', '2'],
+                'pos': [100, 200],
+                'ref': ['A', 'GCC'],
+                'alt': ['C', 'C'],
                 'SIFT': [np.nan, np.nan],
                 'PolyPhen': [np.nan, np.nan]
             }
@@ -116,18 +116,18 @@ class TestAnnotator(unittest.TestCase):
 
         expected_dataframe = pd.DataFrame(
             {
-                'Chr': ['1', '2'],
-                'Pos': [100, 200],
-                'Ref': ['A', 'GCC'],
-                'Alt': ['C', 'C'],
+                'chr': ['1', '2'],
+                'pos': [100, 200],
+                'ref': ['A', 'GCC'],
+                'alt': ['C', 'C'],
                 'SIFTcat': [np.nan, np.nan],
                 'SIFTval': [np.nan, np.nan],
                 'PolyPhenCat': [np.nan, np.nan],
                 'PolyPhenVal': [np.nan, np.nan]
             }
         )
-        annotator = Annotator(bugged_dataframe)
-        out_dataframe = annotator.annotate()
+        annotator = Processor(bugged_dataframe)
+        out_dataframe = annotator.process()
         # Testing for expected dataframe columns, since it processes more.
         pd.testing.assert_frame_equal(
             expected_dataframe,

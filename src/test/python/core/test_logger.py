@@ -1,10 +1,10 @@
-import logging
+import io
 import sys
+import logging
 import unittest
 from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
 from src.test.python.test_templates import teardown
-import io
+from src.main.python.core.global_manager import CapiceManager
 
 
 class TestLogger(unittest.TestCase):
@@ -51,6 +51,7 @@ class TestLogger(unittest.TestCase):
         Logger.instance = None
         self.manager.critical_logging_only = False
         self.manager.loglevel = None
+        print('Arguments reset.')
 
     def test_isenbaled_false_debug(self):
         print('isEnabledFor(logging.DEBUG) is False')
@@ -91,14 +92,14 @@ class TestLogger(unittest.TestCase):
         the messages itself, specially the stdout StreamHandler.
         """
         print('Loglevel info')
-        self.manager.loglevel = 20  # 20 = logging.INFO
+        self.manager.loglevel = 20
         out = self.capture_stdout_call()
         self.assertIn('INFO', out)
         self.assertNotIn('DEBUG', out)
 
     def test_loglevel_verbose(self):
         print('Loglevel verbose')
-        self.manager.loglevel = 10  # 10 = logging.DEBUG
+        self.manager.loglevel = 10
         out = self.capture_stdout_call()
         self.assertIn('INFO', out)
         self.assertIn('DEBUG', out)

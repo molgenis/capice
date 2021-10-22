@@ -4,7 +4,6 @@ import pickle
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.resources.enums.sections import Train as enums_train
-from src.main.python.core.config_reader import ConfigReader
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 
@@ -18,16 +17,13 @@ class TestMainTrain(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager, cls.output_dir = set_up_manager_and_loc()
-        cls.manager.overwrite_impute = 'VEP104'
         train_file = os.path.join(get_project_root_dir(),
                                   'CAPICE_example',
                                   'train_dataset.tsv.gz'
                                   )
-        ConfigReader().parse()
-        cls.main = Train(__program__=__program__,
-                         __author__=__author__,
-                         __version__=__version__,
-                         input_loc=train_file,
+        cls.main = Train(input_loc=train_file,
+                         json_loc=None,
+                         test_split=0.2,
                          output_loc=cls.output_dir)
 
     @classmethod
