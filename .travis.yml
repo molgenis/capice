@@ -7,7 +7,11 @@ cache: pip
 branches:
   only:
     - master
+before_install:
+  - pip install -U pip
+  - pip install -U pytest
+  - pip install pytest-cov
 install:
   - pip install -r requirements.txt
 script:
-  - pytest
+  - pytest --cov-report xml
