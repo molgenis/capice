@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 
-from main.python.resources.predictors.Predictor import Predictor
-from main.python.resources.processors.processor import Processor
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
 from src.main.python.core.global_manager import CapiceManager
+from src.main.python.resources.processors.processor import Processor
+from src.main.python.resources.predictors.Predictor import Predictor
 from src.main.python.resources.parsers.input_parser import InputParser
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
