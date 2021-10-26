@@ -1,3 +1,4 @@
+import json
 import os
 import logging
 import warnings
@@ -107,3 +108,8 @@ class SetCustomLoggingFilter(logging.Filter):
 
     def filter(self, record) -> bool:
         return record.levelno in self.custom_loglevels
+
+
+def load_json_as_dict(path):
+    with open(path, 'rt') as impute_values_file:
+        return json.load(impute_values_file)
