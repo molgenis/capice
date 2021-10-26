@@ -3,6 +3,7 @@ import xgboost as xgb
 from scipy import stats
 
 from main.python.resources.processors.processor import Processor
+from main.python.resources.utilities.utilities import load_json_as_dict
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Train as EnumsTrain
@@ -70,10 +71,11 @@ class Train(Main):
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data)
         data = self.process(loaded_data=data)
+        json_dict = load_json_as_dict(self.json_loc)
         imputed_data = self.impute(loaded_data=data,
-                                   impute_json=self.json_loc)
+                                   impute_values=json_dict)
         self.annotation_features = self.manager.annotation_features
-        processed_data = self.preprocess(loaded_data=imputed_data)[1]
+        processed_data = self.preprocess(loaded_data=imputed_data)
         self._get_processed_features(dataset=processed_data)
         processed_train, processed_test = self.split_data(
             dataset=processed_data,
@@ -188,50 +190,29 @@ class Train(Main):
             cv = 5
             n_iter = 20
 
-        if self.default:
-            model_estimator = xgb.XGBClassifier(
-                verbosity=verbosity,
-                objective='binary:logistic',
-                booster='gbtree', n_jobs=n_jobs,
-                min_child_weight=1,
-                max_delta_step=0,
-                subsample=1,
-                colsample_bytree=1,
-                colsample_bylevel=1,
-                colsample_bynode=1,
-                reg_alpha=0, reg_lambda=1,
-                scale_pos_weight=1,
-                base_score=0.5,
-                random_state=self.model_random_state,
-                learning_rate=self.defaults[EnumsTrain.learning_rate.value],
-                n_estimators=self.defaults[EnumsTrain.n_estimators.value],
-                max_depth=self.defaults[EnumsTrain.max_depth.value]
-            )
-            ransearch1 = model_estimator
-            self.model_type = 'XGBClassifier'
-        else:
-            model_estimator = xgb.XGBClassifier(
-                verbosity=verbosity,
-                objective='binary:logistic',
-                booster='gbtree', n_jobs=n_jobs,
-                min_child_weight=1,
-                max_delta_step=0,
-                subsample=1, colsample_bytree=1,
-                colsample_bylevel=1,
-                colsample_bynode=1,
-                reg_alpha=0, reg_lambda=1,
-                scale_pos_weight=1,
-                base_score=0.5,
-                random_state=self.model_random_state,
-                use_label_encoder=False
-            )
-            ransearch1 = RandomizedSearchCV(estimator=model_estimator,
-                                            param_distributions=param_dist,
-                                            scoring='roc_auc', n_jobs=8,
-                                            cv=cv,
-                                            n_iter=n_iter,
-                                            verbose=verbosity)
-            self.model_type = 'RandomizedSearchCV'
+        model_estimator = xgb.XGBClassifier(
+            verbosity=verbosity,
+            objective='binary:logistic',
+            booster='gbtree', n_jobs=n_jobs,
+            min_child_weight=1,
+            max_delta_step=0,
+            subsample=1, colsample_bytree=1,
+            colsample_bylevel=1,
+            colsample_bynode=1,
+            reg_alpha=0, reg_lambda=1,
+            scale_pos_weight=1,
+            base_score=0.5,
+            random_state=self.model_random_state,
+            use_label_encoder=False
+        )
+        ransearch1 = RandomizedSearchCV(estimator=model_estimator,
+                                        param_distributions=param_dist,
+                                        scoring='roc_auc', n_jobs=8,
+                                        cv=cv,
+                                        n_iter=n_iter,
+                                        verbose=verbosity)
+        self.model_type = 'RandomizedSearchCV'
+        
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
