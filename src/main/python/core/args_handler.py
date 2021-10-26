@@ -8,8 +8,9 @@ from src.main.python.core.cli.args_handler_predict import ArgsHandlerPredict
 
 class ArgsHandler:
     """
-    Command-line argument handler for all sub-commands (e.g. predict, train).
-    Parses, validates and executes functions for sub-commands.
+    Command-line argument handler.
+    Creates, initializes and calls the specific (predict, train etc.) module
+    sub-parser.
     """
 
     def __init__(self):
@@ -23,8 +24,8 @@ class ArgsHandler:
 
     def handle(self):
         """
-        Method to handle the non module specific command line arguments. Also
-        calls the argument handlers of the subparsers.
+        Method to handle the non module specific command line arguments. After
+        argument handling, calls the module
         """
         args = self.parser.parse_args()
         self._handle_args(args)

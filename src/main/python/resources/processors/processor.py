@@ -6,7 +6,15 @@ import pandas as pd
 
 
 class Processor:
+    """
+    Overseer class Processor to call the ManualProcessor and possibly future
+    additions to processing.
+    """
     def __init__(self, dataset: pd.DataFrame):
+        """
+        :param dataset: pandas.DataFrame, the loaded user provided input TSV of
+        VEP-like origin.
+        """
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.fasta_lookup = FastaLookupAnnotator()
@@ -27,6 +35,9 @@ class Processor:
         return self.dataset
 
     def _add_sequence(self):
+        """
+        Deprecated
+        """
         self.log.debug('Annotation addition: sequence')
         self.dataset['Seq'] = self.dataset.apply(
             lambda x: self.fasta_lookup.get_reference_sequence(

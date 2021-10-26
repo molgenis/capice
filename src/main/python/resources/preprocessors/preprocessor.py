@@ -7,12 +7,18 @@ from src.main.python.core.global_manager import CapiceManager
 
 class PreProcessor:
     """
-    Class to dynamically load in all model files for preprocessing and choosing
-    the correct preprocessing file according to the given config arguments or
-    parsed VEP file header. (or the --overwrite_model_file argument)
+    Class to preprocess the data before predicting or training to separate
+    categorical columns.
     """
 
     def __init__(self, model, is_train: bool = False):
+        """
+        :param model: XGBClassifier, loaded custom pickled instance of a CAPICE
+        model. Can be left None in case of training, but is_train must be
+        set to True.
+        :param is_train: bool, set to True if the training module is used.
+        """
+        # TODO: remove is_train and make check on model if is None. If model is None, run train. If not, run normal.
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
@@ -27,8 +33,7 @@ class PreProcessor:
 
     def preprocess(self, dataset: pd.DataFrame):
         """
-        Callable function for external modules to start call the preprocessor
-        of the correctly chosen module.
+        Callable function for the preprocessor to start preprocessing.
         :param dataset: unprocessed pandas DataFrame
         :return: processed pandas Dataframe
         """

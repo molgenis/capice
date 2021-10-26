@@ -93,7 +93,15 @@ def deprecated(func):
 
 
 class SetCustomLoggingFilter(logging.Filter):
+    """
+    Custom logging filter class to make sure that stdout only contains
+    INFO or DEBUG calls.
+    """
     def __init__(self, custom_loglevels):
+        """
+        :param custom_loglevels: str or iterable: the loglevels that should pass
+        this logging filter.
+        """
         super(SetCustomLoggingFilter, self).__init__()
         self.custom_loglevels = custom_loglevels
 

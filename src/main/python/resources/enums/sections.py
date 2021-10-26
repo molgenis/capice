@@ -2,6 +2,9 @@ from enum import Enum
 
 
 class Sections(Enum):
+    """
+    Deprecated
+    """
     DEFAULTS = 'DEFAULTS'
     OVERWRITES = 'OVERWRITES'
     MISC = 'MISC'
@@ -10,6 +13,9 @@ class Sections(Enum):
 
 
 class Column(Enum):
+    """
+    Enums to use that are specific to the column names after .
+    """
     chr_pos_ref_alt = 'chr_pos_ref_alt'
     chr = 'chr'
     pos = 'pos'
@@ -23,6 +29,9 @@ class Column(Enum):
 
 
 class Train(Enum):
+    """
+    Enums to use within the training module of CAPICE.
+    """
     Consequence = 'Consequence'
     max_AF = 'max_AF'
     sample_weight = 'sample_weight'
@@ -33,6 +42,9 @@ class Train(Enum):
 
 
 class Domains(Enum):
+    """
+    Enums specific to the VEP processor that does the processing for Domains.
+    """
     ncoils = 0
     signalp = 1
     lowcomplex = 2

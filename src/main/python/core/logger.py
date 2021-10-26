@@ -77,10 +77,9 @@ class Logger:
 
         def load_logger(self):
             """
-            Function to set up the logger instance with the correct format and
-            filename.
-
-            :return: logger instance
+            Function to set up the logger instance with the stdout and stderr
+            StreamHandlers (stdout assuming verbose flag is called) and the
+            formatter.
             """
             # Making a root logger to make sure the level is set correctly.
             logger = logging.getLogger()

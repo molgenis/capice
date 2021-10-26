@@ -7,11 +7,18 @@ from src.main.python.resources.enums.sections import Column
 
 class CapiceImputing:
     """
-    Class to dynamically load in all imputing files and identify the file
-    suitable for the run's use case.
+    Class to perform the imputing on a fully VEP processed pandas dataframe.
     """
 
     def __init__(self, model, impute_json=None):
+        """
+        :param model: XGBClassifier, loaded custom pickle of the XGBooster model
+        containing the attribute impute_values. Can be None, but impute_json
+        must be defined in that case.
+        impute_json: Path-like, path to the impute values JSON. Define when
+        model is not available in case of training.
+        """
+        # TODO: replace model and impute_json for single required argument impute_dictionary and set to self.impute_values
         self.log = Logger().logger
         self.log.info('Imputer started.')
         self.model = model

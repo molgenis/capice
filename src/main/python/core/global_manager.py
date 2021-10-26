@@ -28,14 +28,23 @@ class CapiceManager:
 
         @property
         def now(self):
+            """
+            Deprecated
+            """
             return self._now
 
         @property
         def overwrite_impute(self):
+            """
+            Deprecated
+            """
             return self._overwrite_impute
 
         @overwrite_impute.setter
         def overwrite_impute(self, value=None):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=str,
                                                  include_none=True)
@@ -43,10 +52,16 @@ class CapiceManager:
 
         @property
         def overwrite_model(self):
+            """
+            Deprecated
+            """
             return self._overwrite_model
 
         @overwrite_model.setter
         def overwrite_model(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=str,
                                                  include_none=True)
@@ -54,10 +69,16 @@ class CapiceManager:
 
         @property
         def grch_build(self):
+            """
+            Deprecated
+            """
             return self._grch_build
 
         @grch_build.setter
         def grch_build(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=int,
                                                  include_none=True)
@@ -66,14 +87,15 @@ class CapiceManager:
         @property
         def config_grch_build(self):
             """
-            Getter for setter config_grch_build
-
-            :return: int
+            Deprecated
             """
             return self._config_grch_build
 
         @config_grch_build.setter
         def config_grch_build(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=int,
                                                  include_none=True)
@@ -81,20 +103,32 @@ class CapiceManager:
 
         @property
         def annotation_features(self):
+            """
+            Deprecated
+            """
             return self._annotation_features
 
         @annotation_features.setter
         def annotation_features(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=list)
             self._annotation_features = value
 
         @property
         def force(self):
+            """
+            Deprecated
+            """
             return self._force
 
         @force.setter
         def force(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=bool)
             self._force = value
@@ -131,10 +165,16 @@ class CapiceManager:
 
         @property
         def reference_genome(self):
+            """
+            Deprecated
+            """
             return self._reference_genome
 
         @reference_genome.setter
         def reference_genome(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=str,
                                                  include_none=True)
@@ -142,10 +182,16 @@ class CapiceManager:
 
         @property
         def vep_version(self):
+            """
+            Deprecated
+            """
             return self._vep_version
 
         @vep_version.setter
         def vep_version(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=float,
                                                  include_none=True)
@@ -153,10 +199,16 @@ class CapiceManager:
 
         @property
         def config_vep_version(self):
+            """
+            Deprecated
+            """
             return self._config_vep_version
 
         @config_vep_version.setter
         def config_vep_version(self, value):
+            """
+            Deprecated
+            """
             self.property_checker.check_property(value=value,
                                                  expected_type=float,
                                                  include_none=True)
@@ -164,15 +216,18 @@ class CapiceManager:
 
         @property
         def config_loc(self):
+            """
+            Deprecated
+            """
             return self._config_loc
 
         @config_loc.setter
         def config_loc(self, value):
-            if value is not None:
-                if not os.path.isfile(value):
-                    raise FileNotFoundError(
-                        'Given config location is not a file!'
-                    )
+            """
+            Deprecated
+            """
+            if value is not None and not os.path.isfile(value):
+                raise FileNotFoundError('Given config location is not a file!')
             self._config_loc = value
 
     instance = None
@@ -180,140 +235,98 @@ class CapiceManager:
     @property
     def now(self):
         """
-        Getter for setter now
-
-        :return: datetime instance
+        Deprecated
         """
         return self._now
 
     @now.setter
     def now(self, value):
         """
-        Singleton property now, to set a datetime instance of when program
-        instance started.
-
-        :param value: datetime instance
+        Deprecated
         """
         pass
 
     @property
     def overwrite_impute(self):
         """
-        Getter for setter overwrite_impute
-
-        :return: False or string
+        Deprecated
         """
         return self._overwrite_impute
 
     @overwrite_impute.setter
     def overwrite_impute(self, value=None):
         """
-        Singleton property overwrite_impute, to set a string for the imputer to
-        overwrite the VEP version and genome
-        build. Raises a TypeError if not supplied with a string or False.
-
-        :param value: False or string
+        Deprecated
         """
         pass
 
     @property
     def overwrite_model(self):
         """
-        Getter for setter overwrite_model
-
-        :return: False or string
+        Deprecated
         """
         return self._overwrite_model
 
     @overwrite_model.setter
     def overwrite_model(self, value):
         """
-        Singleton property overwrite_model, to set a string for the
-        preprocessor and predictor to overwrite the
-        VEP version and genome build. Raises a TypeError if not supplied with a
-        string or False.
-
-        :param value: False or string
+        Deprecated
         """
         pass
 
     @property
     def grch_build(self):
         """
-        Getter for setter grch_build
-
-        :return: int
+        Deprecated
         """
         return self._grch_build
 
     @grch_build.setter
     def grch_build(self, value):
         """
-        Singleton property grch_build, to set the definitive GRCh build to be used.
-        Raises TypeError if not supplied with an integer or None.
-
-        :param value: int
+        Deprecated
         """
         pass
 
     @property
     def config_grch_build(self):
         """
-        Getter for setter config_grch_build
-
-        :return: int
+        Deprecated
         """
         return self._config_vep_version
 
     @config_grch_build.setter
     def config_grch_build(self, value):
         """
-        Singleton property config_grch_build,
-        to set the GRCh build present in the config.
-        Raises TypeError if not supplied with an integer or False.
-
-        :param value: int
+        Deprecated
         """
         pass
 
     @property
     def annotation_features(self):
         """
-        Getter for setter annotation_features
-
-        :return: list
+        Deprecated
         """
         return self._annotation_features
 
     @annotation_features.setter
     def annotation_features(self, value):
         """
-        Singleton property annotation_features, to set the globally available
-        annotation features parsed in the imputer for the
-        preprocessor and predictor. Raises TypeError if not supplied with a
-        list.
-
-        :param value: list
+        Deprecated
         """
         pass
 
     @property
     def force(self):
         """
-        Getter for setter force
-
-        :return: boolean
+        Deprecated
         """
         return self._force
 
     @force.setter
     def force(self, value):
         """
-        Singleton property force, to tell the exporter to overwrite an already
-        existing output file.
-        Raises TypeError if not supplied with a boolean.
-
-        :param value: boolean
+        Deprecated
         """
         pass
 
@@ -381,75 +394,56 @@ class CapiceManager:
     @property
     def reference_genome(self):
         """
-        Getter for setter reference_genome
-
-        :return: False or path-like
+        Deprecated
         """
         return self._reference_genome
 
     @reference_genome.setter
     def reference_genome(self, value):
         """
-        Singleton property reference_genome,
-        to set the location of the GRCh37 reference genome.
-
-        :param value: False or path-like
+        Deprecated
         """
         pass
 
     @property
     def vep_version(self):
         """
-        Getter for setter vep_version
-
-        :return: float
+        Deprecated
         """
         return self._vep_version
 
     @vep_version.setter
     def vep_version(self, value):
         """
-        Singleton property vep_version, to set the definitive VEP version to be used.
-
-        :param value: float
+        Deprecated
         """
         pass
 
     @property
     def config_vep_version(self):
         """
-        Getter for setter config_vep_version
-
-        :return: float
+        Deprecated
         """
         return self._config_vep_version
 
     @config_vep_version.setter
     def config_vep_version(self, value):
         """
-        Singleton property config_vep_version,
-        to set the VEP version present in the config.
-        Raises TypeError if not supplied with an integer or False.
-
-        :param value: float
+        Deprecated
         """
         pass
 
     @property
     def config_loc(self):
         """
-        Getter for seter config_loc
-
-        return: str, path-like
+        Deprecated
         """
         return self._config_loc
 
     @config_loc.setter
     def config_loc(self, value):
         """
-        Singleton property config_loc,
-        to set the location of a custom config used in a CAPICE run.
-        Raises FileNotFoundError if custom config does not exist
+        Deprecated
         """
         pass
 

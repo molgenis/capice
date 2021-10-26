@@ -48,7 +48,7 @@ class Main:
 
     def load_file(self, additional_required_features=()):
         """
-        Function to load the input file into main
+        Function to load the input TSV file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
@@ -69,7 +69,7 @@ class Main:
 
     def process(self, loaded_data):
         """
-        Function to process the VEP file to a CAPICE file
+        Function to process the VEP features to CAPICE features.
         """
         processor = Processor(dataset=loaded_data)
         processed_data = processor.process()
@@ -79,7 +79,8 @@ class Main:
 
     def impute(self, loaded_data, impute_json=None):
         """
-        Function to perform imputing and converting of categorical features
+        Function to perform imputing over the loaded data.
+        self.model can be None, but impute_json has to be defined in that case.
         """
         capice_imputer = CapiceImputing(
             model=self.model,
@@ -90,8 +91,8 @@ class Main:
 
     def preprocess(self, loaded_data, train: bool):
         """
-        Function to perform the preprocessing of a datafile to be ready for
-        CAPICE imputing.
+        Function to perform the preprocessing of the loaded data to convert
+        categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
         :param train: bool
         """
@@ -101,7 +102,7 @@ class Main:
 
     def predict(self, loaded_data):
         """
-        Function to call the correct model to predict CAPICE scores
+        Function to call model to predict CAPICE scores
         :return: pandas DataFrame
         """
         predictor = Predictor(self.model)

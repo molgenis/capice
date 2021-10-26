@@ -3,6 +3,10 @@ from src.main.python.core.logger import Logger
 
 
 class PropertyCheckerLogger(PropertyChecker):
+    """
+    Same as parent PropertyChecker,
+    but logs the Error raised in PropertyChecker to loglevel CRITICAL.
+    """
     def __init__(self):
         super().__init__()
         self.log = Logger().logger
