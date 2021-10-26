@@ -5,8 +5,7 @@ import pandas as pd
 
 class TrainChecker:
     """
-    Class specific to the train_model.py to check certain parts within it's
-    process.
+    Deprecated.
     """
     def __init__(self):
         self.log = Logger().logger

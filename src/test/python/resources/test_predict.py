@@ -25,7 +25,8 @@ class TestPredict(unittest.TestCase):
                     'xgb_booster_poc.pickle.dat'
                 ), 'rb'
         ) as model_file:
-            cls.main.model = pickle.load(model_file)
+            cls.model = pickle.load(model_file)
+        cls.main.model = cls.model
 
     @classmethod
     def tearDownClass(cls):
@@ -45,8 +46,8 @@ class TestPredict(unittest.TestCase):
                 self.main.impute(
                     self.main.process(
                         self.main.load_file()
-                    )
-                ), train=False
+                    ), impute_values=self.model.impute_values
+                ), model=self.model
             )
         )
 
@@ -61,8 +62,8 @@ class TestPredict(unittest.TestCase):
                 self.main.impute(
                     self.main.process(
                         self.main.load_file()
-                    )
-                ), train=False
+                    ), impute_values=self.model.impute_values
+                ), model=self.model
             )
         )
         # Combined sum of the prediction score should be higher than 0

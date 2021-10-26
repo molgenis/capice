@@ -43,9 +43,13 @@ class TestPreprocessing(unittest.TestCase):
         the file header information.
         """
         print('Preprocessing (unit) (file)')
-        self.main.preprocess(loaded_data=self.main.impute(
-            loaded_data=self.main.process(self.main.load_file())
-        ), train=False)
+        self.main.preprocess(
+            loaded_data=self.main.impute(
+                loaded_data=self.main.process(
+                    self.main.load_file()
+                ), impute_values=self.model.impute_values
+            ), model=self.model
+        )
 
     def test_component_preprocessing(self):
         """
@@ -60,8 +64,8 @@ class TestPreprocessing(unittest.TestCase):
             self.main.impute(
                 self.main.process(
                     self.main.load_file()
-                )
-            ), train=False
+                ), impute_values=self.model.impute_values
+            ), model=self.model
         )
         model_features = self.model.get_booster().feature_names
         processed_columns = processed_file.columns
@@ -85,8 +89,8 @@ class TestPreprocessing(unittest.TestCase):
             self.main.impute(
                 self.main.process(
                     self.main.load_file()
-                )
-            ), train=True
+                ), impute_values=self.model.impute_values
+            )
         )
 
         # Test if all columns matching,

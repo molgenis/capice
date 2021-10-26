@@ -49,7 +49,7 @@ class TestImputer(unittest.TestCase):
         self.main.impute(
             loaded_data=self.main.process(
                 self.main.load_file()
-            )
+            ), impute_values=self.model.impute_values
         )
 
     def test_component_imputation(self):
@@ -61,7 +61,7 @@ class TestImputer(unittest.TestCase):
         imputed_file = self.main.impute(
             loaded_data=self.main.process(
                 self.main.load_file()
-            )
+            ), impute_values=self.model.impute_values
         )
         self.assertFalse(
             imputed_file[self.model.impute_values.keys()].isnull().values.any()

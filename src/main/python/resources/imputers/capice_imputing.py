@@ -1,5 +1,3 @@
-import json
-import numpy as np
 import pandas as pd
 from src.main.python.core.logger import Logger
 from src.main.python.resources.enums.sections import Column
@@ -7,40 +5,26 @@ from src.main.python.resources.enums.sections import Column
 
 class CapiceImputing:
     """
-    Class to dynamically load in all imputing files and identify the file
-    suitable for the run's use case.
+    Class to perform the imputing on a fully VEP processed pandas dataframe.
     """
 
-    def __init__(self, model, impute_json=None):
+    def __init__(self, impute_values: dict):
+        """
+        :param impute_values: dict, Dictionary containing all features to be
+        imputed as keys and the fill value as value. Can come from either the
+        model or a loaded json.
+        """
         self.log = Logger().logger
         self.log.info('Imputer started.')
-        self.model = model
-        self.impute_json = impute_json
-        self.impute_values = {}
+        self.impute_values = impute_values
         self.pre_dtypes = {}
         self.dtypes = {}
-
-    def _load_impute_values(self):
-        if self.impute_json is not None:
-            self.log.debug(
-                'Loading impute values from impute json at: %s',
-                self.impute_json
-            )
-            with open(self.impute_json, 'rt') as impute_values_file:
-                self.impute_values = json.load(impute_values_file)
-        else:
-            self.log.debug(
-                'Using impute values defined within the model.'
-            )
-            self.impute_values = self.model.impute_values
 
     def impute(self, datafile: pd.DataFrame):
         """
         Function to call the CapiceImputing to start imputing.
         :return: pandas DataFrame
         """
-        self._load_impute_values()
-
         # Get the amount of NaN per column
         self._get_nan_ratio_per_column(dataset=datafile)
 

@@ -4,6 +4,9 @@ from src.main.python.core.logger import Logger
 
 
 class FastaLookupAnnotator:
+    """
+    Deprecated
+    """
     def __init__(self):
         self.log = Logger().logger
         self.manager = CapiceManager()

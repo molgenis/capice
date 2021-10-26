@@ -10,7 +10,7 @@ import pickle
 
 class Exporter:
     """
-    Class specifically export files and create unique filenames.
+    Class specifically exporting files
     """
 
     def __init__(self, file_path):
@@ -72,11 +72,7 @@ class Exporter:
     def export_capice_training_dataset(self, datafile: pd.DataFrame, name: str,
                                        feature: str):
         """
-        Function specific to export a (splitted) dataset comming from the
-        training pathway.
-        :param datafile: pandas DataFrame
-        :param name: Name of the export file
-        :param feature: Name of what is exported
+        Deprecated
         """
         filename = self._export_filename_ready(file_name=name)
         datafile.to_csv(filename, sep='\t', compression='gzip', index=False)
@@ -90,8 +86,7 @@ class Exporter:
     def export_capice_model(self, model, model_type):
         """
         Function specific to export a newly created CAPICE model
-        :param model: RandomizedSearchCV or XGBClassifier instance
-        :param model_type: either "XGBClassifier" or "RandomizedSearchCV"
+        :param model: XGBClassifier instance
         """
         export_name = ""
         if model_type == 'XGBClassifier':
