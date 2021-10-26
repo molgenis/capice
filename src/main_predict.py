@@ -28,11 +28,14 @@ class Predict(Main):
         # Force flag.
         self.log.debug('Force flag confirmed: %s', self.manager.force)
 
+    def load_file(self, additional_required_features=()):
+        return self._load_file(self.infile, additional_required_features)
+
     def run(self):
         """
         Function to make CAPICE run in a prediction matter.
         """
-        capice_data = self.load_file(infile=self.infile)
+        capice_data = self.load_file()
         capice_data = self.process(loaded_data=capice_data)
         capice_data = self.impute(
             loaded_data=capice_data,

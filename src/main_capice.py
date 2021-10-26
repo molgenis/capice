@@ -30,7 +30,7 @@ class Main(ABC):
         pass
 
     @staticmethod
-    def load_file(infile, additional_required_features=()):
+    def _load_file(infile, additional_required_features=()):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
