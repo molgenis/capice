@@ -3,7 +3,7 @@ import pickle
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
-    set_up_main
+    set_up_predict
 
 
 class TestImputer(unittest.TestCase):
@@ -14,7 +14,7 @@ class TestImputer(unittest.TestCase):
         cls.vep_version = 104.0
         cls.grch_build = 37
         cls.impute_overwrite = 'VEP104'
-        cls.main = set_up_main()
+        cls.main = set_up_predict()
         cls.main.infile = os.path.join(
             get_project_root_dir(),
             'CAPICE_example',

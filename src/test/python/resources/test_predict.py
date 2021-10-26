@@ -3,7 +3,7 @@ import pickle
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
-    set_up_main
+    set_up_predict
 from src.main.python.resources.enums.sections import Column
 
 
@@ -12,7 +12,7 @@ class TestPredict(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, output_loc = set_up_manager_and_loc()
-        cls.main = set_up_main()
+        cls.main = set_up_predict()
         cls.main.infile = os.path.join(get_project_root_dir(),
                                        'CAPICE_example',
                                        'CAPICE_input.tsv.gz')

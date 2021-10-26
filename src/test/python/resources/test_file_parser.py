@@ -2,7 +2,7 @@ import os
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown,\
-    set_up_main
+    set_up_predict
 
 
 class TestFileParser(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestFileParser(unittest.TestCase):
         cls.manager, output_loc = set_up_manager_and_loc()
         input_file = os.path.join(get_project_root_dir(), 'CAPICE_example',
                                   'CAPICE_input.tsv.gz')
-        cls.main = set_up_main()
+        cls.main = set_up_predict()
         cls.main.infile = input_file
 
     @classmethod

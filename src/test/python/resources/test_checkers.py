@@ -45,8 +45,7 @@ class TestTrainChecker(unittest.TestCase):
                                         'foo', 'max_AF'])
         with self.assertRaises(KeyError):
             self.train_checker.check_labels(
-                dataset=dataset,
-                include_balancing=True
+                dataset=dataset
             )
 
 

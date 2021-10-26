@@ -62,12 +62,15 @@ class Train(Main):
         self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
 
+    def load_file(self, additional_required_features=()):
+        return self._load_file(self.infile, additional_required_features)
+
     def run(self):
         """
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self.load_file(infile=self.infile)
+        data = self.load_file()
         train_checker = TrainChecker()
         train_checker.check_labels(dataset=data)
         data = self.process(loaded_data=data)
