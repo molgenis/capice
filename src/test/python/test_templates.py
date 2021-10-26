@@ -1,5 +1,7 @@
 import os
+
 from src.main_capice import Main
+from src.main_predict import Predict
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.utilities.utilities import get_project_root_dir
@@ -34,8 +36,5 @@ def teardown():
     CapiceManager.instance = None
 
 
-def set_up_main():
-    main = Main(input_loc=None,
-                model=None,
-                output_loc=None)
-    return main
+def set_up_predict():
+    return Predict(input_loc=None, model=None, output_loc=None)

@@ -17,7 +17,7 @@ class Column(Enum):
     score = 'score'
 
 
-class Train(Enum):
+class TrainEnums(Enum):
     """
     Enums to use within the training module of CAPICE.
     """

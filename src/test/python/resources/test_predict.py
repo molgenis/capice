@@ -3,7 +3,7 @@ import pickle
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
-    set_up_main
+    set_up_predict
 from src.main.python.resources.enums.sections import Column
 
 
@@ -12,7 +12,7 @@ class TestPredict(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, output_loc = set_up_manager_and_loc()
-        cls.main = set_up_main()
+        cls.main = set_up_predict()
         cls.main.infile = os.path.join(get_project_root_dir(),
                                        'CAPICE_example',
                                        'CAPICE_input.tsv.gz')
@@ -45,9 +45,9 @@ class TestPredict(unittest.TestCase):
             self.main.preprocess(
                 self.main.impute(
                     self.main.process(
-                        self.main.load_file()
+                        self.main._load_file()
                     ), impute_values=self.model.impute_values
-                ), model=self.model
+                ), model_features=self.model.get_booster().feature_names
             )
         )
 
@@ -61,9 +61,9 @@ class TestPredict(unittest.TestCase):
             self.main.preprocess(
                 self.main.impute(
                     self.main.process(
-                        self.main.load_file()
+                        self.main._load_file()
                     ), impute_values=self.model.impute_values
-                ), model=self.model
+                ), model_features=self.model.get_booster().feature_names
             )
         )
         # Combined sum of the prediction score should be higher than 0

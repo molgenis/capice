@@ -1,54 +1,53 @@
+from abc import ABC, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
+from src.main.python.resources.enums.sections import Column
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.processors.processor import Processor
-from src.main.python.resources.predictors.Predictor import Predictor
 from src.main.python.resources.parsers.input_parser import InputParser
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
+from src.main.python.resources.validators import PostFileParseValidator
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
-from src.main.python.resources.validators import PostFileParseValidator, \
-    PostVEPProcessingValidator
 
 
-class Main:
+class Main(ABC):
     """
-    Main class of CAPICE to call the different modules to impute,
-    preprocess and eventually predict a score over a CAPICE annotated file.
+    Main class of CAPICE that contains methods to help the different modes to
+    function.
     """
-    def __init__(self, input_loc, model, output_loc):
 
-        # Order is important here
+    def __init__(self, input_loc, output_loc):
+        # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
 
-        # Order is less important here
+        self.log.info('Initiating selected mode.')
 
-        self.log.info('Arguments passed. Starting program.')
+        # Input file.
         self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: %s', self.infile)
-        self.model = model
+        self.log.debug('Input argument -i / --input confirmed: %s',
+                       self.infile)
+
+        # Output file.
         self.output = output_loc
         self.log.debug(
             'Output directory -o / --output confirmed: %s', self.output
         )
 
-    def run(self):
-        """
-        Function to make CAPICE run in a prediction matter.
-        """
-        capice_data = self.load_file()
-        capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(
-            loaded_data=capice_data,
-            impute_values=self.model.impute_values
-        )
-        capice_data = self.preprocess(loaded_data=capice_data, model=self.model)
-        capice_data = self.predict(loaded_data=capice_data)
-        self._export(dataset=capice_data)
+        # Preprocessor global exclusion features
+        # Overwrite in specific module if features are incorrect
+        self.exclude_features = [Column.gene_name.value,
+                                 Column.gene_id.value,
+                                 Column.id_source.value,
+                                 Column.transcript.value]
 
-    def load_file(self, additional_required_features=()):
+    @abstractmethod
+    def run(self):
+        pass
+
+    def _load_file(self, additional_required_features: list = None):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
@@ -69,14 +68,13 @@ class Main:
         )
         return input_file
 
-    def process(self, loaded_data):
+    @staticmethod
+    def process(loaded_data):
         """
         Function to process the VEP features to CAPICE features.
         """
         processor = Processor(dataset=loaded_data)
         processed_data = processor.process()
-        validator = PostVEPProcessingValidator(self.model)
-        validator.validate_features_present(processed_data)
         return processed_data
 
     @staticmethod
@@ -91,32 +89,32 @@ class Main:
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
-    @staticmethod
-    def preprocess(loaded_data, model=None):
+    def preprocess(self, loaded_data, model_features=None):
         """
         Function to perform the preprocessing of the loaded data to convert
         categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param model: None or XGBClassifier, None for training or loaded custom
-        XGBClassifier instance.
+        :param model_features: list (default None), a list containing all
+        the features present within a model file. When set to None,
+        PreProcessor will activate the train protocol.
+
+        Note: please adjust self.exclude_features: to include all of the
+        features that the preprocessor should NOT process.
+        Features chr_pos_ref_alt, chr and pos are hardcoded and
+        thus do not have to be included.
         """
-        preprocessor = PreProcessor(model=model)
+        preprocessor = PreProcessor(
+            exclude_features=self.exclude_features,
+            model_features=model_features
+        )
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 
-    def predict(self, loaded_data):
-        """
-        Function to call model to predict CAPICE scores
-        :return: pandas DataFrame
-        """
-        predictor = Predictor(self.model)
-        capice_data = predictor.predict(loaded_data)
-        return capice_data
-
-    def _export(self, dataset):
+    @staticmethod
+    def _export(dataset, output):
         """
         Function to prepare the data to be exported
         """
-        Exporter(file_path=self.output).export_capice_prediction(
+        Exporter(file_path=output).export_capice_prediction(
             datafile=dataset
         )
