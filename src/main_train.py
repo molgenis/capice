@@ -8,7 +8,6 @@ from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Train as EnumsTrain
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
-from src.main.python.resources.checkers.train_checker import TrainChecker
 
 
 class Train(Main):
@@ -62,8 +61,9 @@ class Train(Main):
         self.exporter = Exporter(file_path=self.output)
         self._integration_test = False
 
-    def load_file(self, additional_required_features=()):
-        return self._load_file(self.infile, additional_required_features)
+    def load_file(self):
+        return self._load_file(self.infile,
+                               ('binarized_label', 'sample_weight'))
 
     def run(self):
         """
@@ -71,8 +71,6 @@ class Train(Main):
         order to create new CAPICE models.
         """
         data = self.load_file()
-        train_checker = TrainChecker()
-        train_checker.check_labels(dataset=data)
         data = self.process(loaded_data=data)
         json_dict = load_json_as_dict(self.json_loc)
         imputed_data = self.impute(loaded_data=data,
