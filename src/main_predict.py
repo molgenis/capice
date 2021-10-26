@@ -34,8 +34,10 @@ class Predict(Main):
         """
         capice_data = self.load_file(infile=self.infile)
         capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(loaded_data=capice_data,
-                                  model=self.model)
+        capice_data = self.impute(
+            loaded_data=capice_data,
+            impute_values=self.model.impute_values
+        )
         capice_data = self.preprocess(loaded_data=capice_data,
                                       model=self.model)
         capice_data = self.predict(loaded_data=capice_data)

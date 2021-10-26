@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from main.python.resources.predictors.Predictor import Predictor
 from main.python.resources.processors.processor import Processor
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
@@ -84,6 +85,7 @@ class Main(ABC):
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 
+    @staticmethod
     def predict(loaded_data, model=None):
         """
         Function to call model to predict CAPICE scores
@@ -93,6 +95,7 @@ class Main(ABC):
         capice_data = predictor.predict(loaded_data)
         return capice_data
 
+    @staticmethod
     def _export(dataset, output):
         """
         Function to prepare the data to be exported
