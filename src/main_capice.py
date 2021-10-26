@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from main.python.resources.predictors.Predictor import Predictor
 from main.python.resources.processors.processor import Processor
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
@@ -31,7 +32,7 @@ class Main(ABC):
     @staticmethod
     def load_file(infile, additional_required_features=()):
         """
-        Function to load the input file into main
+        Function to load the input TSV file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
@@ -53,39 +54,45 @@ class Main(ABC):
     @staticmethod
     def process(loaded_data):
         """
-        Function to process the VEP file to a CAPICE file
+        Function to process the VEP features to CAPICE features.
         """
         processor = Processor(dataset=loaded_data)
         processed_data = processor.process()
         return processed_data
 
     @staticmethod
-    def impute(loaded_data, model=None, impute_json=None):
+    def impute(loaded_data, impute_values):
         """
-        Function to perform imputing and converting of categorical features
+        Function to perform imputing over the loaded data.
+        self.model can be None, but impute_json has to be defined in that case.
         """
         capice_imputer = CapiceImputing(
-            model=model,
-            impute_json=impute_json
+            impute_values=impute_values
         )
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
     @staticmethod
     def preprocess(loaded_data, model=None):
-        pass
         """
-        Function to perform the preprocessing of a datafile to be ready for
-        CAPICE imputing.
+        Function to perform the preprocessing of the loaded data to convert
+        categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param train: bool
-        :param model:
+        :param model: None or XGBClassifier, None for training or loaded custom
+        XGBClassifier instance.
         """
-        if model is None:
-            preprocessor = PreProcessor(model=model, is_train=True)
-        else:
-            preprocessor = PreProcessor(model=model, is_train=False)
+        preprocessor = PreProcessor(model=model)
         capice_data = preprocessor.preprocess(loaded_data)
+        return capice_data
+
+    @staticmethod
+    def predict(loaded_data, model=None):
+        """
+        Function to call model to predict CAPICE scores
+        :return: pandas DataFrame
+        """
+        predictor = Predictor(model)
+        capice_data = predictor.predict(loaded_data)
         return capice_data
 
     @staticmethod
