@@ -1,8 +1,8 @@
-import json
-import numpy as np
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
+
+from main.python.resources.processors.processor import Processor
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Train as EnumsTrain
@@ -21,50 +21,39 @@ class Train(Main):
                  json_loc,
                  test_split,
                  output_loc):
-        super().__init__(input_loc=input_loc,
-                         model=None,
-                         output_loc=output_loc)
+        super().__init__()
 
-        # Argument logging
+        # Input file.
+        self.infile = input_loc
+        self.log.debug('Input argument -i / --input confirmed: %s',
+                       self.infile)
+
+        # Output file.
+        self.output = output_loc
+        self.log.debug(
+            'Output directory -o / --output confirmed: %s', self.output
+        )
+
+        # Force flag.
+        self.log.debug('Force flag confirmed: %s', self.manager.force)
+
+        # Impute JSON.
         self.json_loc = json_loc
         self.log.debug(
             'Input impute JSON confirmed: %s', self.json_loc
         )
-        self.balance = self.config.get_train_value('makebalanced')
-        self.log.debug(
-            'Make input dataset balanced confirmed: %s', self.balance
-        )
-        self.default = self.config.get_train_value('default')
-        self.log.debug(
-            'The use of the default Python 3.6 hyperparameters set to: %s',
-            self.default
-        )
 
-        self.specified_default = self.config.get_train_value(
-            'specifieddefaults'
-        )
-        self.log.debug(
-            'The use of specified default hyperparameters set to: %s',
-            self.specified_default
-        )
-        self.n_split = self.config.get_train_value('split')
-        self.log.debug(
-            'Split has been confirmed, set to: %s', self.n_split
-        )
-        self.early_exit = self.config.get_train_value('earlyexit')
-        if self.early_exit:
-            self.log.debug('Early exit flag confirmed.')
+        # Train test size.
         self.train_test_size = test_split
         self.log.debug(
             'The percentage of data used for the testing dataset within '
             'training: %s', self.train_test_size
         )
 
-        # Global variables
+        # (Other) global variables
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
-        self.defaults = {}
         self.annotation_features = []
         self.processed_features = []
         self.loglevel = self.manager.loglevel
@@ -77,34 +66,14 @@ class Train(Main):
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self._rename_chrom_col(self.load_file())
+        data = self.load_file(infile=self.infile)
         train_checker = TrainChecker()
-        train_checker.check_labels(dataset=data, include_balancing=self.balance)
-        if self.balance:
-            data = self.process_balance_in_the_force(dataset=data)
-        data = self.annotate(loaded_data=data)
-        if self.n_split > 0.0:
-            self.log.info(
-                'Splitting input dataset before any preprocessing happens.'
-            )
-            data, _ = self.split_data(
-                dataset=data, test_size=self.n_split,
-                export=True
-            )
-        if self.balance:
-            self.exporter.export_capice_training_dataset(
-                datafile=data,
-                feature='balanced dataset',
-                name='balanced_dataset'
-            )
-        self.load_defaults()
-        if self.early_exit:
-            exit('Early exit command was called, exiting.')
-        imputed_data = self.impute(loaded_data=data)
+        train_checker.check_labels(dataset=data)
+        data = self.process(loaded_data=data)
+        imputed_data = self.impute(loaded_data=data,
+                                   impute_json=self.json_loc)
         self.annotation_features = self.manager.annotation_features
-        processed_data = self.preprocess(
-            loaded_data=imputed_data, train=True
-        )[1]
+        processed_data = self.preprocess(loaded_data=imputed_data)[1]
         self._get_processed_features(dataset=processed_data)
         processed_train, processed_test = self.split_data(
             dataset=processed_data,
@@ -115,10 +84,13 @@ class Train(Main):
             model=model, model_type=self.model_type
         )
 
-    @staticmethod
-    def _rename_chrom_col(dataset):
-        dataset.rename(columns={'#Chrom': 'Chr'}, inplace=True)
-        return dataset
+    def process(self, loaded_data):
+        """
+        Function to process the VEP file to a CAPICE file
+        """
+        processor = Processor(dataset=loaded_data)
+        processed_data = processor.process()
+        return processed_data
 
     def split_data(self, dataset, test_size: float, export: bool = False):
         """
@@ -146,138 +118,6 @@ class Train(Main):
                 feature='splitted test'
             )
         return train, test
-
-    def load_defaults(self):
-        """
-        Function to load in specified default hyper parameters.
-        If no specified default is supplied, but -d flag is used,
-        load in the original hyper parameters.
-        Note: in any case the original hyper parameters will be loaded,
-        but due to the absence of the -d or -sd flag,
-        the self.defaults will not be used.
-        """
-        if self.specified_default:
-            train_checker = TrainChecker()
-            with open(self.specified_default) as json_file:
-                defaults = json.load(json_file)
-            train_checker.check_specified_defaults(loaded_defaults=defaults)
-            self.log.debug(
-                'Specified defaults located at %s successfully loaded.',
-                    self.specified_default
-            )
-            self.default = True
-        else:
-            defaults = {
-                EnumsTrain.learning_rate.value: 0.10495845238185281,
-                EnumsTrain.max_depth.value: 422,
-                EnumsTrain.n_estimators.value: 15
-            }
-        self.defaults = defaults
-
-    def process_balance_in_the_force(self, dataset: pd.DataFrame):
-        """
-        Balancing function as first used by Li et al. in the original
-        CAPICE paper. Balances baced on Consequence,
-        allele frequency and benign/pathogenic samples.
-        :param dataset: pandas.DataFrame
-        :return: balanced pandas.DataFrame
-        """
-        self.log.info('Balancing out the input dataset, please hold.')
-        palpatine = dataset[dataset[EnumsTrain.binarized_label.value] == 1]
-        yoda = dataset[dataset[EnumsTrain.binarized_label.value] == 0]
-        anakin = pd.DataFrame(columns=dataset.columns)
-        bins = [0, 0.01, 0.05, 0.1, 0.5, 1]
-        for consequence in palpatine[EnumsTrain.Consequence.value].unique():
-            processed_consequence = self._process_consequence(
-                pathogenic_dataframe=palpatine,
-                benign_dataframe=yoda,
-                return_df_columns=anakin.columns,
-                bins=bins,
-                consequence=consequence
-            )
-            anakin = anakin.append(processed_consequence)
-        self.log.info('Balancing complete.')
-        return anakin
-
-    def _process_consequence(self,
-                             pathogenic_dataframe: pd.DataFrame,
-                             benign_dataframe: pd.DataFrame,
-                             return_df_columns,
-                             consequence: str,
-                             bins: list):
-        self.log.debug('Processing: %s', consequence)
-        selected_pathogenic = pathogenic_dataframe[
-            pathogenic_dataframe[EnumsTrain.Consequence.value] == consequence]
-        selected_neutral = benign_dataframe[
-            benign_dataframe[EnumsTrain.Consequence.value] == consequence
-            ]
-        if selected_pathogenic.shape[0] > selected_neutral.shape[0]:
-            selected_pathogenic = selected_pathogenic.sample(
-                selected_neutral.shape[0],
-                random_state=self.random_state
-            )
-        selected_pathogenic_histogram, bins = np.histogram(
-            selected_pathogenic[EnumsTrain.max_AF.value],
-            bins=bins
-        )
-        return_df = pd.DataFrame(columns=return_df_columns)
-        for ind in range(len(bins) - 1):
-            lower_bound = bins[ind]
-            upper_bound = bins[ind + 1]
-            sample_number = selected_pathogenic_histogram[ind]
-            processed_bins = self._process_bins(
-                selected_pathogenic=selected_pathogenic,
-                selected_neutral=selected_neutral,
-                upper_bound=upper_bound,
-                lower_bound=lower_bound,
-                sample_num=sample_number
-            )
-            return_df = return_df.append(processed_bins)
-        return return_df
-
-    def _process_bins(self,
-                      selected_pathogenic: pd.DataFrame,
-                      selected_neutral: pd.DataFrame,
-                      upper_bound: int,
-                      lower_bound: int,
-                      sample_num: int):
-        selected_pathogenic_all = self._get_vars_in_range(
-            variants=selected_pathogenic,
-            upper=upper_bound,
-            lower=lower_bound
-        )
-        selected_pnv_all = self._get_vars_in_range(
-            variants=selected_neutral,
-            upper=upper_bound,
-            lower=lower_bound
-        )
-        if sample_num < selected_pnv_all.shape[0]:
-            selected_pnv_currange = selected_pnv_all.sample(
-                sample_num,
-                random_state=self.random_state
-            )
-            selected_pathogenic_currange = selected_pathogenic_all
-        else:
-            selected_pnv_currange = selected_pnv_all
-            selected_pathogenic_currange = selected_pathogenic_all.sample(
-                selected_pnv_all.shape[0],
-                random_state=self.random_state
-            )
-        self.log.debug(
-            "Sampled %s variants from Possibly Neutral Variants in range "
-            "of: %s - %s",
-            selected_pnv_currange.shape[0],
-            lower_bound,
-            upper_bound
-        )
-        self.log.debug(
-            "Sampled %s variants from Possibly Pathogenic Variants in range "
-            "of: %s - %s",
-            selected_pathogenic_currange.shape[0],
-            lower_bound,
-            upper_bound
-        )
-        return selected_pathogenic_currange.append(selected_pnv_currange)
 
     @staticmethod
     def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):

@@ -46,7 +46,7 @@ class TrainChecker:
                 self.log.critical(error_message)
                 raise TypeError(error_message)
 
-    def check_labels(self, dataset: pd.DataFrame, include_balancing=False):
+    def check_labels(self, dataset: pd.DataFrame):
         """
         Function to check if
             "binarized_label" and
@@ -55,17 +55,11 @@ class TrainChecker:
         Set include_balancing to true if user wants to perform balancing
         algorithm.
         :param dataset: pandas DataFrame
-        :param include_balancing: bool
         """
         required_columns = [
             Train.binarized_label.value,
             Train.sample_weight.value
         ]
-        if include_balancing:
-            required_columns += [
-                Train.Consequence.value,
-                Train.max_AF.value
-            ]
         for col_name in required_columns:
             if col_name not in dataset.columns:
                 error_message = \

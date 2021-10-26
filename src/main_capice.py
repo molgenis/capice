@@ -1,59 +1,42 @@
+from abc import ABC, abstractmethod
+
+from main.python.resources.processors.processor import Processor
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.processors.processor import Processor
-from src.main.python.resources.predictors.Predictor import Predictor
 from src.main.python.resources.parsers.input_parser import InputParser
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
-from src.main.python.resources.Validators import PostFileParseValidator, \
-    PostVEPProcessingValidator
+from src.main.python.resources.Validators import PostFileParseValidator
 
 
-class Main:
+class Main(ABC):
     """
-    Main class of CAPICE to call the different modules to impute,
-    preprocess and eventually predict a score over a CAPICE annotated file.
+    Main class of CAPICE that contains methods to help the different modes to
+    function.
     """
-    def __init__(self, input_loc, model, output_loc):
-
-        # Order is important here
+    def __init__(self):
+        # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
 
-        # Order is less important here
+        self.log.info('Initiating selected mode.')
 
-        self.log.info('Arguments passed. Starting program.')
-        self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: %s', self.infile)
-        self.model = model
-        self.output = output_loc
-        self.log.debug(
-            'Output directory -o / --output confirmed: %s', self.output
-        )
-        self.log.debug('Force flag confirmed: %s', self.manager.force)
-
+    @abstractmethod
     def run(self):
-        """
-        Function to make CAPICE run in a prediction matter.
-        """
-        capice_data = self.load_file()
-        capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(loaded_data=capice_data)
-        capice_data = self.preprocess(loaded_data=capice_data, train=False)
-        capice_data = self.predict(loaded_data=capice_data)
-        self._export(dataset=capice_data)
+        pass
 
-    def load_file(self, additional_required_features=()):
+    @staticmethod
+    def load_file(infile, additional_required_features=()):
         """
         Function to load the input file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
         input_file = input_parser.parse(
-            input_file_loc=self.infile
+            input_file_loc=infile
         )
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()
@@ -67,51 +50,49 @@ class Main:
         )
         return input_file
 
-    def process(self, loaded_data):
+    @staticmethod
+    def process(loaded_data):
         """
         Function to process the VEP file to a CAPICE file
         """
         processor = Processor(dataset=loaded_data)
         processed_data = processor.process()
-        validator = PostVEPProcessingValidator(self.model)
-        validator.validate_features_present(processed_data)
         return processed_data
 
-    def impute(self, loaded_data, impute_json=None):
+    @staticmethod
+    def impute(loaded_data, model=None, impute_json=None):
         """
         Function to perform imputing and converting of categorical features
         """
         capice_imputer = CapiceImputing(
-            model=self.model,
+            model=model,
             impute_json=impute_json
         )
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
-    def preprocess(self, loaded_data, train: bool):
+    @staticmethod
+    def preprocess(loaded_data, model=None):
+        pass
         """
         Function to perform the preprocessing of a datafile to be ready for
         CAPICE imputing.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
         :param train: bool
+        :param model:
         """
-        preprocessor = PreProcessor(model=self.model, is_train=train)
+        if model is None:
+            preprocessor = PreProcessor(model=model, is_train=True)
+        else:
+            preprocessor = PreProcessor(model=model, is_train=False)
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 
-    def predict(self, loaded_data):
-        """
-        Function to call the correct model to predict CAPICE scores
-        :return: pandas DataFrame
-        """
-        predictor = Predictor(self.model)
-        capice_data = predictor.predict(loaded_data)
-        return capice_data
-
-    def _export(self, dataset):
+    @staticmethod
+    def _export(dataset, output):
         """
         Function to prepare the data to be exported
         """
-        Exporter(file_path=self.output).export_capice_prediction(
+        Exporter(file_path=output).export_capice_prediction(
             datafile=dataset
         )

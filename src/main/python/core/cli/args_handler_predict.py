@@ -1,7 +1,8 @@
 import os
 import pickle
 import xgboost as xgb
-from src.main_capice import Main
+
+from src.main_predict import Predict
 from src.main.python.resources.__version__ import __version__
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.cli.args_handler_parent import ArgsHandlerParent
@@ -57,7 +58,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         if not output_filename.endswith('.gz'):
             output_filename = output_filename + '.gz'
         CapiceManager().output_filename = output_filename
-        Main(input_loc, model, output_loc).run()
+        Predict(input_loc, model, output_loc).run()
 
     def validate_model(self, model_loc):
         """
