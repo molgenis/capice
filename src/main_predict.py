@@ -28,8 +28,8 @@ class Predict(Main):
         # Force flag.
         self.log.debug('Force flag confirmed: %s', self.manager.force)
 
-    def load_file(self, additional_required_features=()):
-        return self._load_file(self.infile, additional_required_features)
+    def load_file(self):
+        return self._load_file(self.infile)
 
     def run(self):
         """
