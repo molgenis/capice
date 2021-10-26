@@ -41,8 +41,11 @@ class Main:
         """
         capice_data = self.load_file()
         capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(loaded_data=capice_data)
-        capice_data = self.preprocess(loaded_data=capice_data, train=False)
+        capice_data = self.impute(
+            loaded_data=capice_data,
+            impute_values=self.model.impute_values
+        )
+        capice_data = self.preprocess(loaded_data=capice_data, model=self.model)
         capice_data = self.predict(loaded_data=capice_data)
         self._export(dataset=capice_data)
 
@@ -77,26 +80,28 @@ class Main:
         validator.validate_features_present(processed_data)
         return processed_data
 
-    def impute(self, loaded_data, impute_json=None):
+    @staticmethod
+    def impute(loaded_data, impute_values):
         """
         Function to perform imputing over the loaded data.
         self.model can be None, but impute_json has to be defined in that case.
         """
         capice_imputer = CapiceImputing(
-            model=self.model,
-            impute_json=impute_json
+            impute_values=impute_values
         )
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
-    def preprocess(self, loaded_data, train: bool):
+    @staticmethod
+    def preprocess(loaded_data, model=None):
         """
         Function to perform the preprocessing of the loaded data to convert
         categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param train: bool
+        :param model: None or XGBClassifier, None for training or loaded custom
+        XGBClassifier instance.
         """
-        preprocessor = PreProcessor(model=self.model, is_train=train)
+        preprocessor = PreProcessor(model=model)
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 

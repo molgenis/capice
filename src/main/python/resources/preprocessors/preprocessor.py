@@ -11,18 +11,16 @@ class PreProcessor:
     categorical columns.
     """
 
-    def __init__(self, model, is_train: bool = False):
+    def __init__(self, model):
         """
         :param model: XGBClassifier, loaded custom pickled instance of a CAPICE
         model. Can be left None in case of training, but is_train must be
         set to True.
-        :param is_train: bool, set to True if the training module is used.
         """
-        # TODO: remove is_train and make check on model if is None. If model is None, run train. If not, run normal.
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
-        self.train = is_train
+        self.train = False
         self.model = model
         self.model_features = []
         self.objects = []
@@ -30,6 +28,8 @@ class PreProcessor:
     def _get_model_features(self):
         if self.model is not None:
             self.model_features = self.model.get_booster().feature_names
+        else:
+            self.train = True
 
     def preprocess(self, dataset: pd.DataFrame):
         """
@@ -41,9 +41,10 @@ class PreProcessor:
         dataset = self._duplicate_chr_pos_ref_alt(dataset)
         self._get_categorical_columns(dataset)
         processed_dataset = self._process_objects(dataset)
-        processed_dataset = self._make_sure_all_predict_columns_present(
-            processed_dataset
-        )
+        if not self.train:
+            processed_dataset = self._make_sure_all_predict_columns_present(
+                processed_dataset
+            )
         self.log.info('Successfully preprocessed data.')
         return processed_dataset
 
@@ -72,8 +73,12 @@ class PreProcessor:
         annotation features of the imputing file.
         :param dataset: pandas DataFrame
         """
-        for feature in dataset.select_dtypes(include=["O"]).columns:
-            if feature in self.model.impute_values.keys():
+        if not self.train:
+            for feature in dataset.select_dtypes(include=["O"]).columns:
+                if feature in self.model.impute_values.keys():
+                    self.objects.append(feature)
+        else:
+            for feature in dataset.select_dtypes(include=["O"]).columns:
                 self.objects.append(feature)
         self.log.debug(
             'Converting the categorical columns: %s.',
