@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
+
+from main.python.resources.processors.processor import Processor
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
-from src.main.python.resources.enums.sections import Column
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.processors.processor import Processor
 from src.main.python.resources.parsers.input_parser import InputParser
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
-from src.main.python.resources.validators import PostFileParseValidator
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
+from src.main.python.resources.Validators import PostFileParseValidator
 
 
 class Main(ABC):
@@ -17,44 +17,26 @@ class Main(ABC):
     Main class of CAPICE that contains methods to help the different modes to
     function.
     """
-
-    def __init__(self, input_loc, output_loc):
+    def __init__(self):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
 
         self.log.info('Initiating selected mode.')
 
-        # Input file.
-        self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: %s',
-                       self.infile)
-
-        # Output file.
-        self.output = output_loc
-        self.log.debug(
-            'Output directory -o / --output confirmed: %s', self.output
-        )
-
-        # Preprocessor global exclusion features
-        # Overwrite in specific module if features are incorrect
-        self.exclude_features = [Column.gene_name.value,
-                                 Column.gene_id.value,
-                                 Column.id_source.value,
-                                 Column.transcript.value]
-
     @abstractmethod
     def run(self):
         pass
 
-    def _load_file(self, additional_required_features: list = None):
+    @staticmethod
+    def load_file(infile, additional_required_features=()):
         """
-        Function to load the input TSV file into main
+        Function to load the input file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
         input_file = input_parser.parse(
-            input_file_loc=self.infile
+            input_file_loc=infile
         )
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()
@@ -71,42 +53,38 @@ class Main(ABC):
     @staticmethod
     def process(loaded_data):
         """
-        Function to process the VEP features to CAPICE features.
+        Function to process the VEP file to a CAPICE file
         """
         processor = Processor(dataset=loaded_data)
         processed_data = processor.process()
         return processed_data
 
     @staticmethod
-    def impute(loaded_data, impute_values):
+    def impute(loaded_data, model=None, impute_json=None):
         """
-        Function to perform imputing over the loaded data.
-        self.model can be None, but impute_json has to be defined in that case.
+        Function to perform imputing and converting of categorical features
         """
         capice_imputer = CapiceImputing(
-            impute_values=impute_values
+            model=model,
+            impute_json=impute_json
         )
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
-    def preprocess(self, loaded_data, model_features=None):
+    @staticmethod
+    def preprocess(loaded_data, model=None):
+        pass
         """
-        Function to perform the preprocessing of the loaded data to convert
-        categorical columns.
+        Function to perform the preprocessing of a datafile to be ready for
+        CAPICE imputing.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param model_features: list (default None), a list containing all
-        the features present within a model file. When set to None,
-        PreProcessor will activate the train protocol.
-
-        Note: please adjust self.exclude_features: to include all of the
-        features that the preprocessor should NOT process.
-        Features chr_pos_ref_alt, chr and pos are hardcoded and
-        thus do not have to be included.
+        :param train: bool
+        :param model:
         """
-        preprocessor = PreProcessor(
-            exclude_features=self.exclude_features,
-            model_features=model_features
-        )
+        if model is None:
+            preprocessor = PreProcessor(model=model, is_train=True)
+        else:
+            preprocessor = PreProcessor(model=model, is_train=False)
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 

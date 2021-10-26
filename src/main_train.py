@@ -1,12 +1,13 @@
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
-from src.main.python.resources.enums.sections import Column, TrainEnums
-from src.main.python.resources.__version__ import __version__
-from src.main.python.resources.utilities.utilities import load_json_as_dict
+
+from main.python.resources.processors.processor import Processor
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
+from src.main.python.resources.enums.sections import Train as EnumsTrain
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from src.main.python.resources.checkers.train_checker import TrainChecker
 
 
 class Train(Main):
@@ -14,12 +15,27 @@ class Train(Main):
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
+
     def __init__(self,
                  input_loc,
                  json_loc,
                  test_split,
                  output_loc):
-        super().__init__(input_loc, output_loc)
+        super().__init__()
+
+        # Input file.
+        self.infile = input_loc
+        self.log.debug('Input argument -i / --input confirmed: %s',
+                       self.infile)
+
+        # Output file.
+        self.output = output_loc
+        self.log.debug(
+            'Output directory -o / --output confirmed: %s', self.output
+        )
+
+        # Force flag.
+        self.log.debug('Force flag confirmed: %s', self.manager.force)
 
         # Impute JSON.
         self.json_loc = json_loc
@@ -34,79 +50,55 @@ class Train(Main):
             'training: %s', self.train_test_size
         )
 
-        # Required features when file is loaded
-        self.additional_required = ['binarized_label', 'sample_weight']
-        self.exclude_features += self.additional_required
-
-        # Variables that can be edited in testing to speed up the train testing
-
-        self.esr = 15
-        self.n_jobs = 8
-        self.cross_validate = 5
-        self.n_iterations = 20
-
         # (Other) global variables
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
+        self.annotation_features = []
         self.processed_features = []
         self.loglevel = self.manager.loglevel
+        self.model_type = None
         self.exporter = Exporter(file_path=self.output)
+        self._integration_test = False
 
     def run(self):
         """
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self._load_file(
-            additional_required_features=self.additional_required
-        )
+        data = self.load_file(infile=self.infile)
+        train_checker = TrainChecker()
+        train_checker.check_labels(dataset=data)
         data = self.process(loaded_data=data)
-        json_dict = load_json_as_dict(self.json_loc)
-        self._validate_impute_complete(data, json_dict)
-
         imputed_data = self.impute(loaded_data=data,
-                                   impute_values=json_dict)
-        processed_data = self.preprocess(
-            loaded_data=imputed_data
-        )
-        self._get_processed_features(dataset=processed_data,
-                                     impute_keys=json_dict.keys())
+                                   impute_json=self.json_loc)
+        self.annotation_features = self.manager.annotation_features
+        processed_data = self.preprocess(loaded_data=imputed_data)[1]
+        self._get_processed_features(dataset=processed_data)
         processed_train, processed_test = self.split_data(
             dataset=processed_data,
             test_size=self.train_test_size
         )
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "impute_values", json_dict)
-        setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(
-            model=model
+            model=model, model_type=self.model_type
         )
 
-    def _validate_impute_complete(self, dataset, json_dict):
+    def process(self, loaded_data):
         """
-
-        :param pd.DataFrame dataset:
-        :param dict json_dict:
-        :return:
+        Function to process the VEP file to a CAPICE file
         """
-        missing = []
-        for key in json_dict.keys():
-            if key not in dataset.columns:
-                missing.append(key)
+        processor = Processor(dataset=loaded_data)
+        processed_data = processor.process()
+        return processed_data
 
-        if len(missing) > 0:
-            error_message = 'Impute file missing needed columns for ' \
-                            'input file: %s'
-            self.log.critical(error_message, missing)
-            raise ValueError(error_message % missing)
-
-    def split_data(self, dataset, test_size: float):
+    def split_data(self, dataset, test_size: float, export: bool = False):
         """
         Function to split any given dataset into 2 datasets using the test_size
         argument. Can export both if export flag is enabled.
         :param dataset: pandas.DataFrame
         :param test_size: float, ranging 0-1
+        :param export: boolean
         :return: train, test (1-test_size, test_size)
         """
         train, test = train_test_split(
@@ -114,19 +106,46 @@ class Train(Main):
             test_size=test_size,
             random_state=self.split_random_state
         )
+        if export:
+            self.exporter.export_capice_training_dataset(
+                datafile=train,
+                name='splitted_train_dataset',
+                feature='splitted train'
+            )
+            self.exporter.export_capice_training_dataset(
+                datafile=test,
+                name='splitted_test_dataset',
+                feature='splitted test'
+            )
         return train, test
 
-    def _get_processed_features(self, dataset: pd.DataFrame, impute_keys):
+    @staticmethod
+    def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
+        """
+        Sub-function of the balancing function to get variants within a certain
+        allele frequency threshold.
+        :param variants: pandas.DataFrame
+        :param upper: float
+        :param lower: float
+        :return: pandas.DataFrame
+        """
+        vars_in_range = variants[
+            (variants[EnumsTrain.max_AF.value] >= lower) &
+            (variants[EnumsTrain.max_AF.value] < upper)
+            ].dropna(how='all')
+        return vars_in_range
+
+    def _get_processed_features(self, dataset: pd.DataFrame):
         """
         Function to save the columns of a dataset that have been processed and
         thus are an output column of the CADD annotation.
         :param dataset: pandas.DataFrame
         """
         for column in dataset.columns:
-            for feature in impute_keys:
-                if (column == feature or column.startswith(feature)) and \
-                        column not in self.processed_features:
-                    self.processed_features.append(column)
+            for feature in self.annotation_features:
+                if column == feature or column.startswith(feature):
+                    if column not in self.processed_features:
+                        self.processed_features.append(column)
 
     def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """
@@ -151,56 +170,86 @@ class Train(Main):
         xgb_verbosity = False
 
         # First checking if it is not None
-        if self.loglevel and self.loglevel < 20:
-            verbosity = 1
-            xgb_verbosity = True
+        if self.loglevel:
+            if self.loglevel < 20:
+                verbosity = 1
+                xgb_verbosity = True
 
         self.log.debug('Preparing the estimator model.')
 
-        model_estimator = xgb.XGBClassifier(
-            verbosity=verbosity,
-            objective='binary:logistic',
-            booster='gbtree', n_jobs=self.n_jobs,
-            min_child_weight=1,
-            max_delta_step=0,
-            subsample=1, colsample_bytree=1,
-            colsample_bylevel=1,
-            colsample_bynode=1,
-            reg_alpha=0, reg_lambda=1,
-            scale_pos_weight=1,
-            base_score=0.5,
-            random_state=self.model_random_state,
-            use_label_encoder=False
-        )
-        ransearch1 = RandomizedSearchCV(estimator=model_estimator,
-                                        param_distributions=param_dist,
-                                        scoring='roc_auc', n_jobs=8,
-                                        cv=self.cross_validate,
-                                        n_iter=self.n_iterations,
-                                        verbose=verbosity)
+        if self._integration_test:
+            early_stopping_rounds = 1
+            n_jobs = 2
+            cv = 2
+            n_iter = 2
+        else:
+            early_stopping_rounds = 15
+            n_jobs = 8
+            cv = 5
+            n_iter = 20
 
+        if self.default:
+            model_estimator = xgb.XGBClassifier(
+                verbosity=verbosity,
+                objective='binary:logistic',
+                booster='gbtree', n_jobs=n_jobs,
+                min_child_weight=1,
+                max_delta_step=0,
+                subsample=1,
+                colsample_bytree=1,
+                colsample_bylevel=1,
+                colsample_bynode=1,
+                reg_alpha=0, reg_lambda=1,
+                scale_pos_weight=1,
+                base_score=0.5,
+                random_state=self.model_random_state,
+                learning_rate=self.defaults[EnumsTrain.learning_rate.value],
+                n_estimators=self.defaults[EnumsTrain.n_estimators.value],
+                max_depth=self.defaults[EnumsTrain.max_depth.value]
+            )
+            ransearch1 = model_estimator
+            self.model_type = 'XGBClassifier'
+        else:
+            model_estimator = xgb.XGBClassifier(
+                verbosity=verbosity,
+                objective='binary:logistic',
+                booster='gbtree', n_jobs=n_jobs,
+                min_child_weight=1,
+                max_delta_step=0,
+                subsample=1, colsample_bytree=1,
+                colsample_bylevel=1,
+                colsample_bynode=1,
+                reg_alpha=0, reg_lambda=1,
+                scale_pos_weight=1,
+                base_score=0.5,
+                random_state=self.model_random_state,
+                use_label_encoder=False
+            )
+            ransearch1 = RandomizedSearchCV(estimator=model_estimator,
+                                            param_distributions=param_dist,
+                                            scoring='roc_auc', n_jobs=8,
+                                            cv=cv,
+                                            n_iter=n_iter,
+                                            verbose=verbosity)
+            self.model_type = 'RandomizedSearchCV'
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set[TrainEnums.binarized_label.value]
+                test_set[EnumsTrain.binarized_label.value]
             )]
         else:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set[TrainEnums.binarized_label.value],
+                test_set[EnumsTrain.binarized_label.value],
                 'test'
             )]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
-                       train_set[TrainEnums.binarized_label.value],
-                       early_stopping_rounds=self.esr,
+                       train_set[EnumsTrain.binarized_label.value],
+                       early_stopping_rounds=early_stopping_rounds,
                        eval_metric=["auc"],
                        eval_set=eval_set,
                        verbose=xgb_verbosity,
-                       sample_weight=train_set[TrainEnums.sample_weight.value])
-        self.log.info(
-            'Training successful, '
-            'average CV AUC of best performing model: %.4f',
-            ransearch1.best_score_)
+                       sample_weight=train_set[EnumsTrain.sample_weight.value])
 
-        return ransearch1.best_estimator_
+        return ransearch1
