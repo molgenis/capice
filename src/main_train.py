@@ -2,7 +2,6 @@ import pandas as pd
 import xgboost as xgb
 from scipy import stats
 
-from main.python.resources.processors.processor import Processor
 from main.python.resources.utilities.utilities import load_json_as_dict
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
@@ -86,14 +85,6 @@ class Train(Main):
         self.exporter.export_capice_model(
             model=model, model_type=self.model_type
         )
-
-    def process(self, loaded_data):
-        """
-        Function to process the VEP file to a CAPICE file
-        """
-        processor = Processor(dataset=loaded_data)
-        processed_data = processor.process()
-        return processed_data
 
     def split_data(self, dataset, test_size: float, export: bool = False):
         """
