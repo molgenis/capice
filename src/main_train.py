@@ -212,7 +212,7 @@ class Train(Main):
                                         n_iter=n_iter,
                                         verbose=verbosity)
         self.model_type = 'RandomizedSearchCV'
-        
+
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
