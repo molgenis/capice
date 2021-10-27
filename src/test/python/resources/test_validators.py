@@ -3,7 +3,7 @@ import pickle
 import unittest
 import pandas as pd
 from src.test.python.test_templates import teardown
-from src.main.python.resources.Validators import PostFileParseValidator, \
+from src.main.python.resources.validators import PostFileParseValidator, \
     PostVEPProcessingValidator
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 

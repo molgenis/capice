@@ -1,6 +1,6 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
-from src.main.python.resources.Validators import InputValidator
+from src.main.python.resources.validators import InputValidator
 from src.main.python.resources.processors.input_processor import InputProcessor
 
 

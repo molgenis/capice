@@ -8,7 +8,7 @@ from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
-from src.main.python.resources.Validators import PostFileParseValidator, \
+from src.main.python.resources.validators import PostFileParseValidator, \
     PostVEPProcessingValidator
 
 
@@ -33,7 +33,6 @@ class Main:
         self.log.debug(
             'Output directory -o / --output confirmed: %s', self.output
         )
-        self.log.debug('Force flag confirmed: %s', self.manager.force)
 
     def run(self):
         """
