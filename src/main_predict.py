@@ -1,4 +1,4 @@
-from src.main.python.resources.Validators import PostVEPProcessingValidator
+from src.main.python.resources.validators import PostVEPProcessingValidator
 from src.main.python.resources.predictors.Predictor import Predictor
 from src.main_capice import Main
 
