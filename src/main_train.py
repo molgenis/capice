@@ -15,6 +15,9 @@ class Train(Main):
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
+    INPUT_ADDITIONAL_REQUIRED = ('binarized_label', 'sample_weight')
+    IMPUTE_SKIP_LIST = INPUT_ADDITIONAL_REQUIRED + (
+        'chr', 'pos', 'gene_name', 'gene_id', 'id_source', 'transcript')
 
     def __init__(self,
                  input_loc,
@@ -53,12 +56,11 @@ class Train(Main):
         order to create new CAPICE models.
         """
         data = self._load_file(
-            additional_required_features=('binarized_label', 'sample_weight')
+            additional_required_features=self.INPUT_ADDITIONAL_REQUIRED
         )
         data = self.process(loaded_data=data)
         json_dict = load_json_as_dict(self.json_loc)
-        # validate columns, skip: [chr, pos, gene_name, gene_id, id_source, transcript]
-        # validate_data(data, json_dict, skip_list)
+        self._validate_impute_complete(data, json_dict, self.IMPUTE_SKIP_LIST)
 
         imputed_data = self.impute(loaded_data=data,
                                    impute_values=json_dict)
@@ -75,6 +77,24 @@ class Train(Main):
         self.exporter.export_capice_model(
             model=model, model_type=self.model_type
         )
+
+    @staticmethod
+    def _validate_impute_complete(dataset, json_dict, impute_skip_list):
+        """
+
+        :param pd.DataFrame dataset:
+        :param dict json_dict:
+        :param array impute_skip_list:
+        :return:
+        """
+        missing = []
+        for column in dataset.columns:
+            if column not in impute_skip_list and column not in json_dict:
+                missing.append(column)
+
+        if len(missing) > 0:
+            raise ValueError(f'Impute file missing needed columns for input '
+                             f'file: {missing}')
 
     def split_data(self, dataset, test_size: float, export: bool = False):
         """
