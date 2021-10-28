@@ -11,24 +11,23 @@ class PreProcessor:
     categorical columns.
     """
 
-    def __init__(self, model):
+    def __init__(self, impute_keys: list, model_features: list = None):
         """
-        :param model: XGBClassifier, loaded custom pickled instance of a CAPICE
-        model. Can be left None in case of training, but is_train must be
-        set to True.
+        :param impute_keys: list, all the keys of the impute values that could
+        potentially contain a "O" dtype within Pandas (string, categorical etc.)
+        :param model_features: list (default None), a list containing all
+        the features present within a model file.
         """
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
         self.train = False
-        self.model = model
-        self.model_features = []
+        self.impute_keys = impute_keys
+        self.model_features = model_features
         self.objects = []
 
-    def _get_model_features(self):
-        if self.model is not None:
-            self.model_features = self.model.get_booster().feature_names
-        else:
+    def _is_train(self):
+        if self.model_features is None:
             self.train = True
 
     def preprocess(self, dataset: pd.DataFrame):
@@ -37,7 +36,7 @@ class PreProcessor:
         :param dataset: unprocessed pandas DataFrame
         :return: processed pandas Dataframe
         """
-        self._get_model_features()
+        self._is_train()
         dataset = self._duplicate_chr_pos_ref_alt(dataset)
         self._get_categorical_columns(dataset)
         processed_dataset = self._process_objects(dataset)
@@ -75,7 +74,7 @@ class PreProcessor:
         """
         if not self.train:
             for feature in dataset.select_dtypes(include=["O"]).columns:
-                if feature in self.model.impute_values.keys():
+                if feature in self.impute_keys:
                     self.objects.append(feature)
         else:
             for feature in dataset.select_dtypes(include=["O"]).columns:
@@ -197,7 +196,7 @@ class PreProcessor:
         return value_counts
 
     def _make_sure_all_predict_columns_present(self, dataset):
-        for feature in self.model.get_booster().feature_names:
+        for feature in self.model_features:
             if feature not in dataset.columns:
                 self.log.debug('Detected column %s not present in columns. '
                                'Adding full column of NaN', feature)
