@@ -39,16 +39,20 @@ class Train(Main):
             'training: %s', self.train_test_size
         )
 
+        # Variables that can be edited in testing to speed up the train testing
+
+        self.esr = 15
+        self.n_jobs = 8
+        self.cross_validate = 5
+        self.n_iterations = 20
+
         # (Other) global variables
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
-        self.annotation_features = []
         self.processed_features = []
         self.loglevel = self.manager.loglevel
-        self.model_type = None
         self.exporter = Exporter(file_path=self.output)
-        self._integration_test = False  # Class should not have this knowledge!
 
     def run(self):
         """
@@ -64,7 +68,10 @@ class Train(Main):
 
         imputed_data = self.impute(loaded_data=data,
                                    impute_values=json_dict)
-        processed_data = self.preprocess(loaded_data=imputed_data)
+        processed_data = self.preprocess(
+            loaded_data=imputed_data,
+            impute_keys=json_dict.keys()
+        )
         self._get_processed_features(dataset=processed_data,
                                      impute_keys=json_dict.keys())
         processed_train, processed_test = self.split_data(
@@ -75,11 +82,10 @@ class Train(Main):
         setattr(model, "impute_values", json_dict)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(
-            model=model, model_type=self.model_type
+            model=model
         )
 
-    @staticmethod
-    def _validate_impute_complete(dataset, json_dict, impute_skip_list):
+    def _validate_impute_complete(self, dataset, json_dict, impute_skip_list):
         """
 
         :param pd.DataFrame dataset:
@@ -93,16 +99,17 @@ class Train(Main):
                 missing.append(column)
 
         if len(missing) > 0:
-            raise ValueError(f'Impute file missing needed columns for input '
-                             f'file: {missing}')
+            error_message = 'Impute file missing needed columns for ' \
+                            'input file: %s'
+            self.log.critical(error_message, missing)
+            raise ValueError(error_message % missing)
 
-    def split_data(self, dataset, test_size: float, export: bool = False):
+    def split_data(self, dataset, test_size: float):
         """
         Function to split any given dataset into 2 datasets using the test_size
         argument. Can export both if export flag is enabled.
         :param dataset: pandas.DataFrame
         :param test_size: float, ranging 0-1
-        :param export: boolean
         :return: train, test (1-test_size, test_size)
         """
         train, test = train_test_split(
@@ -110,34 +117,7 @@ class Train(Main):
             test_size=test_size,
             random_state=self.split_random_state
         )
-        if export:
-            self.exporter.export_capice_training_dataset(
-                datafile=train,
-                name='splitted_train_dataset',
-                feature='splitted train'
-            )
-            self.exporter.export_capice_training_dataset(
-                datafile=test,
-                name='splitted_test_dataset',
-                feature='splitted test'
-            )
         return train, test
-
-    @staticmethod
-    def _get_vars_in_range(variants: pd.DataFrame, upper: float, lower: float):
-        """
-        Sub-function of the balancing function to get variants within a certain
-        allele frequency threshold.
-        :param variants: pandas.DataFrame
-        :param upper: float
-        :param lower: float
-        :return: pandas.DataFrame
-        """
-        vars_in_range = variants[
-            (variants[EnumsTrain.max_AF.value] >= lower) &
-            (variants[EnumsTrain.max_AF.value] < upper)
-            ].dropna(how='all')
-        return vars_in_range
 
     def _get_processed_features(self, dataset: pd.DataFrame, impute_keys):
         """
@@ -174,28 +154,16 @@ class Train(Main):
         xgb_verbosity = False
 
         # First checking if it is not None
-        if self.loglevel:
-            if self.loglevel < 20:
-                verbosity = 1
-                xgb_verbosity = True
+        if self.loglevel and self.loglevel < 20:
+            verbosity = 1
+            xgb_verbosity = True
 
         self.log.debug('Preparing the estimator model.')
-
-        if self._integration_test:
-            early_stopping_rounds = 1
-            n_jobs = 2
-            cv = 2
-            n_iter = 2
-        else:
-            early_stopping_rounds = 15
-            n_jobs = 8
-            cv = 5
-            n_iter = 20
 
         model_estimator = xgb.XGBClassifier(
             verbosity=verbosity,
             objective='binary:logistic',
-            booster='gbtree', n_jobs=n_jobs,
+            booster='gbtree', n_jobs=self.n_jobs,
             min_child_weight=1,
             max_delta_step=0,
             subsample=1, colsample_bytree=1,
@@ -210,10 +178,9 @@ class Train(Main):
         ransearch1 = RandomizedSearchCV(estimator=model_estimator,
                                         param_distributions=param_dist,
                                         scoring='roc_auc', n_jobs=8,
-                                        cv=cv,
-                                        n_iter=n_iter,
+                                        cv=self.cross_validate,
+                                        n_iter=self.n_iterations,
                                         verbose=verbosity)
-        self.model_type = 'RandomizedSearchCV'
 
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
@@ -229,7 +196,7 @@ class Train(Main):
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set[EnumsTrain.binarized_label.value],
-                       early_stopping_rounds=early_stopping_rounds,
+                       early_stopping_rounds=self.esr,
                        eval_metric=["auc"],
                        eval_set=eval_set,
                        verbose=xgb_verbosity,

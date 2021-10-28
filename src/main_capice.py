@@ -83,26 +83,22 @@ class Main(ABC):
         return capice_data
 
     @staticmethod
-    def preprocess(loaded_data, model=None):
+    def preprocess(loaded_data, impute_keys, model_features=None):
         """
         Function to perform the preprocessing of the loaded data to convert
         categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param model: None or XGBClassifier, None for training or loaded custom
-        XGBClassifier instance.
+        :param impute_keys: list, all the keys of the impute values that could
+        potentially contain a "O" dtype within Pandas (string, categorical etc.)
+        :param model_features: list (default None), a list containing all
+        the features present within a model file. When set to None,
+        PreProcessor will activate the train protocol.
         """
-        preprocessor = PreProcessor(model=model)
+        preprocessor = PreProcessor(
+            impute_keys=impute_keys,
+            model_features=model_features
+        )
         capice_data = preprocessor.preprocess(loaded_data)
-        return capice_data
-
-    @staticmethod
-    def predict(loaded_data, model=None):
-        """
-        Function to call model to predict CAPICE scores
-        :return: pandas DataFrame
-        """
-        predictor = Predictor(model)
-        capice_data = predictor.predict(loaded_data)
         return capice_data
 
     @staticmethod
