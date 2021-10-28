@@ -1,6 +1,6 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
-from src.main.python.resources.Validators import InputValidator
+from src.main.python.resources.validators import InputValidator
 from src.main.python.resources.processors.input_processor import InputProcessor
 
 
@@ -20,6 +20,24 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         each module parser.
         """
         return ()
+
+    @property
+    @abstractmethod
+    def _required_output_extensions(self):
+        """
+        Property to define what the output file extensions are required for each
+        module parser.
+        """
+        return ""
+
+    @property
+    @abstractmethod
+    def _empty_output_extension(self):
+        """
+        Property to define what extension an output file should get if no
+        output file extension was given
+        """
+        return ""
 
     @abstractmethod
     def create(self):
@@ -57,9 +75,10 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             output_path=output_path,
             force=args.force
         )
+        output_filename = processor.get_output_filename()
+        output_filename = self._handle_output_filename(output_filename)
         output_loc = processor.get_output_directory()
         validator.validate_output_loc(output_loc)
-        output_filename = processor.get_output_filename()
         self._handle_module_specific_args(
             input_loc, output_loc, output_filename, args
         )
@@ -76,3 +95,21 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         the module to continue the module.
         """
         pass
+
+    def _handle_output_filename(self, output_filename: str):
+        """
+        Method to validate that an output filename complies with the
+        required output extension.
+        """
+        if '.' in output_filename and not output_filename.endswith(
+                self._required_output_extensions):
+            self.parser.error(
+                f'Output file extension is incorrect. '
+                f'Expected output extensions: '
+                f'{self._required_output_extensions}'
+            )
+        elif '.' not in output_filename:
+            output_filename = output_filename + self._empty_output_extension
+            return output_filename
+        else:
+            return output_filename

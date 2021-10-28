@@ -76,22 +76,6 @@ class TestExporter(unittest.TestCase):
             self.expected_prediction_output_dataframe
         )
 
-    def test_dataset_export(self):
-        print('Dataset export')
-        self.exporter.export_capice_training_dataset(
-            datafile=self.export_dataset,
-            name='test',
-            feature='Testing dataset'
-        )
-        exported_dataset = pd.read_csv(
-            os.path.join(self.output_loc, 'test.tsv.gz'),
-            sep='\t'
-        )
-        pd.testing.assert_frame_equal(
-            exported_dataset,
-            self.export_dataset
-        )
-
     def test_exporter_force(self):
         """
         Since force is dealt with at the very start of CAPICE and raises an

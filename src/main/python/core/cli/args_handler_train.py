@@ -16,6 +16,14 @@ class ArgsHandlerTrain(ArgsHandlerParent):
     def _extension(self):
         return '.tsv.gz', '.tsv'
 
+    @property
+    def _required_output_extensions(self):
+        return '.pickle.dat'
+
+    @property
+    def _empty_output_extension(self):
+        return self._required_output_extensions
+
     def create(self):
         self.parser.add_argument(
             '-i',

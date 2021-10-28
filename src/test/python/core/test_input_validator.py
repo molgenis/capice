@@ -3,7 +3,7 @@ import unittest
 import argparse
 from pathlib import Path
 from src.test.python.test_templates import teardown
-from src.main.python.resources.Validators import InputValidator
+from src.main.python.resources.validators import InputValidator
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.main.python.resources.processors.input_processor import InputProcessor
 
@@ -32,7 +32,7 @@ class TestInputValidator(unittest.TestCase):
             'CAPICE_example',
             'CAPICE_input.tsv.gz'
         )
-        cls.expected_output_filename = 'CAPICE_input_capice.tsv.gz'
+        cls.expected_output_filename = 'CAPICE_input_capice'
         cls.test_filename = 'test.txt'
 
     @classmethod
@@ -159,6 +159,20 @@ class TestInputValidator(unittest.TestCase):
             expected_output_directory
         )
 
+    def test_input_output_conversion_train(self):
+        print('Input output conversion for a train file')
+        out_in_and_expected_out = 'foo.pickle.dat'
+        input_processor = InputProcessor(
+            call_dir=self.call_dir,
+            input_path=self.input_file,
+            output_path=out_in_and_expected_out,
+            force=False
+        )
+        self.assertEqual(
+            input_processor.get_output_filename(),
+            out_in_and_expected_out
+        )
+
     def test_input_output_conversion_output_already_present(self):
         print('Input output conversion with output already there')
         test_output = None
@@ -175,7 +189,7 @@ class TestInputValidator(unittest.TestCase):
             test_output,
             False
         )
-        os.remove(os.path.join(self.call_dir, 'CAPICE_input_capice.tsv.gz'))
+        os.remove(os.path.join(self.call_dir, self.expected_output_filename))
 
     def test_input_output_conversion_output_present_force_true(self):
         print('Input output conversion with output already present but '

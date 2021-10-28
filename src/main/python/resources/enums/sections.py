@@ -1,17 +1,6 @@
 from enum import Enum
 
 
-class Sections(Enum):
-    """
-    Deprecated
-    """
-    DEFAULTS = 'DEFAULTS'
-    OVERWRITES = 'OVERWRITES'
-    MISC = 'MISC'
-    DATAFILES = 'DATAFILES'
-    TRAINING = 'TRAINING'
-
-
 class Column(Enum):
     """
     Enums to use that are specific to the column names after .
