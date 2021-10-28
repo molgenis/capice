@@ -18,26 +18,36 @@ class Main(ABC):
     Main class of CAPICE that contains methods to help the different modes to
     function.
     """
-    def __init__(self):
+    def __init__(self, input_loc, output_loc):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
 
         self.log.info('Initiating selected mode.')
 
+        # Input file.
+        self.infile = input_loc
+        self.log.debug('Input argument -i / --input confirmed: %s',
+                       self.infile)
+
+        # Output file.
+        self.output = output_loc
+        self.log.debug(
+            'Output directory -o / --output confirmed: %s', self.output
+        )
+
     @abstractmethod
     def run(self):
         pass
 
-    @staticmethod
-    def _load_file(infile, additional_required_features=()):
+    def _load_file(self, additional_required_features=()):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
         input_file = input_parser.parse(
-            input_file_loc=infile
+            input_file_loc=self.infile
         )
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()

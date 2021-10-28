@@ -2,7 +2,8 @@ import pandas as pd
 import xgboost as xgb
 from scipy import stats
 
-from main.python.resources.utilities.utilities import load_json_as_dict
+from src.main.python.resources.__version__ import __version__
+from src.main.python.resources.utilities.utilities import load_json_as_dict
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
 from src.main.python.resources.enums.sections import Train as EnumsTrain
@@ -20,21 +21,7 @@ class Train(Main):
                  json_loc,
                  test_split,
                  output_loc):
-        super().__init__()
-
-        # Input file.
-        self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: %s',
-                       self.infile)
-
-        # Output file.
-        self.output = output_loc
-        self.log.debug(
-            'Output directory -o / --output confirmed: %s', self.output
-        )
-
-        # Force flag.
-        self.log.debug('Force flag confirmed: %s', self.manager.force)
+        super().__init__(input_loc, output_loc)
 
         # Impute JSON.
         self.json_loc = json_loc
@@ -58,30 +45,33 @@ class Train(Main):
         self.loglevel = self.manager.loglevel
         self.model_type = None
         self.exporter = Exporter(file_path=self.output)
-        self._integration_test = False
-
-    def load_file(self):
-        return self._load_file(self.infile,
-                               ('binarized_label', 'sample_weight'))
+        self._integration_test = False  # Class should not have this knowledge!
 
     def run(self):
         """
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self.load_file()
+        data = self._load_file(
+            additional_required_features=('binarized_label', 'sample_weight')
+        )
         data = self.process(loaded_data=data)
         json_dict = load_json_as_dict(self.json_loc)
+        # validate columns, skip: [chr, pos, gene_name, gene_id, id_source, transcript]
+        # validate_data(data, json_dict, skip_list)
+
         imputed_data = self.impute(loaded_data=data,
                                    impute_values=json_dict)
-        self.annotation_features = self.manager.annotation_features
         processed_data = self.preprocess(loaded_data=imputed_data)
-        self._get_processed_features(dataset=processed_data)
+        self._get_processed_features(dataset=processed_data,
+                                     impute_keys=json_dict.keys())
         processed_train, processed_test = self.split_data(
             dataset=processed_data,
             test_size=self.train_test_size
         )
         model = self.train(test_set=processed_test, train_set=processed_train)
+        setattr(model, "impute_values", json_dict)
+        setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(
             model=model, model_type=self.model_type
         )
@@ -129,17 +119,17 @@ class Train(Main):
             ].dropna(how='all')
         return vars_in_range
 
-    def _get_processed_features(self, dataset: pd.DataFrame):
+    def _get_processed_features(self, dataset: pd.DataFrame, impute_keys):
         """
         Function to save the columns of a dataset that have been processed and
         thus are an output column of the CADD annotation.
         :param dataset: pandas.DataFrame
         """
         for column in dataset.columns:
-            for feature in self.annotation_features:
-                if column == feature or column.startswith(feature):
-                    if column not in self.processed_features:
-                        self.processed_features.append(column)
+            for feature in impute_keys:
+                if (column == feature or column.startswith(feature)) and \
+                        column not in self.processed_features:
+                    self.processed_features.append(column)
 
     def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """
