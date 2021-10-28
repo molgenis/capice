@@ -46,7 +46,7 @@ class TestPreprocessing(unittest.TestCase):
         self.main.preprocess(
             loaded_data=self.main.impute(
                 loaded_data=self.main.process(
-                    self.main.load_file()
+                    self.main._load_file()
                 ), impute_values=self.model.impute_values
             ), model=self.model
         )
@@ -63,7 +63,7 @@ class TestPreprocessing(unittest.TestCase):
         processed_file = self.main.preprocess(
             self.main.impute(
                 self.main.process(
-                    self.main.load_file()
+                    self.main._load_file()
                 ), impute_values=self.model.impute_values
             ), model=self.model
         )
@@ -88,7 +88,7 @@ class TestPreprocessing(unittest.TestCase):
         preprocessed_file = self.main.preprocess(
             self.main.impute(
                 self.main.process(
-                    self.main.load_file()
+                    self.main._load_file()
                 ), impute_values=self.model.impute_values
             )
         )

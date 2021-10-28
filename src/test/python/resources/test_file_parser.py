@@ -28,7 +28,7 @@ class TestFileParser(unittest.TestCase):
         Testing class for loading in files.
         """
         print('Load file (unit)')
-        self.main.load_file()
+        self.main._load_file()
 
     def test_component_loadfile(self):
         """
@@ -36,7 +36,7 @@ class TestFileParser(unittest.TestCase):
         least desired dimensions.
         """
         required_shape = (20, 22)
-        file = self.main.load_file()
+        file = self.main._load_file()
         self.assertEqual(file.shape, required_shape)
 
 

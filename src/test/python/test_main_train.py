@@ -66,7 +66,7 @@ class TestMainTrain(unittest.TestCase):
         Unit test to see if split works.
         """
         print('Split (unit)')
-        input_file = self.main.load_file()
+        input_file = self.main._load_file()
         self.main.split_data(dataset=input_file, test_size=0.2)
 
     def test_component_split(self):
@@ -75,7 +75,7 @@ class TestMainTrain(unittest.TestCase):
         created.
         """
         print('Split (component)')
-        input_file = self.main.load_file()
+        input_file = self.main._load_file()
         train, test = self.main.split_data(dataset=input_file, test_size=0.2)
         total_size = input_file.shape[0]
         self.assertAlmostEqual(train.shape[0], total_size*0.8)
