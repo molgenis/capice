@@ -3,7 +3,6 @@ import os
 import pickle
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
-from src.main.python.resources.enums.sections import Train as enums_train
 from src.main.python.resources.utilities.utilities import get_project_root_dir
 
 
