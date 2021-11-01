@@ -21,12 +21,12 @@ class Predict(Main):
         Function to make CAPICE run in a prediction matter.
         """
         capice_data = self._load_file(
-            additional_required_features=(
+            additional_required_features=[
                 Column.gene_name.value,
                 Column.gene_id.value,
                 Column.id_source.value,
                 Column.transcript.value
-            )
+            ]
         )
         capice_data = self.process(loaded_data=capice_data)
         capice_data = self.impute(
@@ -35,7 +35,6 @@ class Predict(Main):
         )
         capice_data = self.preprocess(
             loaded_data=capice_data,
-            impute_keys=self.model.impute_values,
             model_features=self.model.get_booster().feature_names
         )
         capice_data = self.predict(loaded_data=capice_data)

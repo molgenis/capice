@@ -1,12 +1,11 @@
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
-
+from src.main.python.resources.enums.sections import Column, TrainEnums
 from src.main.python.resources.__version__ import __version__
 from src.main.python.resources.utilities.utilities import load_json_as_dict
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
-from src.main.python.resources.enums.sections import Train as EnumsTrain
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
@@ -15,10 +14,6 @@ class Train(Main):
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
-    INPUT_ADDITIONAL_REQUIRED = ('binarized_label', 'sample_weight')
-    IMPUTE_SKIP_LIST = INPUT_ADDITIONAL_REQUIRED + (
-        'chr', 'pos', 'gene_name', 'gene_id', 'id_source', 'transcript')
-
     def __init__(self,
                  input_loc,
                  json_loc,
@@ -38,6 +33,10 @@ class Train(Main):
             'The percentage of data used for the testing dataset within '
             'training: %s', self.train_test_size
         )
+
+        # Required features when file is loaded
+        self.additional_required = ['binarized_label', 'sample_weight']
+        self.exclude_features += self.additional_required
 
         # Variables that can be edited in testing to speed up the train testing
 
@@ -60,17 +59,16 @@ class Train(Main):
         order to create new CAPICE models.
         """
         data = self._load_file(
-            additional_required_features=self.INPUT_ADDITIONAL_REQUIRED
+            additional_required_features=self.additional_required
         )
         data = self.process(loaded_data=data)
         json_dict = load_json_as_dict(self.json_loc)
-        self._validate_impute_complete(data, json_dict, self.IMPUTE_SKIP_LIST)
+        self._validate_impute_complete(data, json_dict)
 
         imputed_data = self.impute(loaded_data=data,
                                    impute_values=json_dict)
         processed_data = self.preprocess(
-            loaded_data=imputed_data,
-            impute_keys=json_dict.keys()
+            loaded_data=imputed_data
         )
         self._get_processed_features(dataset=processed_data,
                                      impute_keys=json_dict.keys())
@@ -85,18 +83,17 @@ class Train(Main):
             model=model
         )
 
-    def _validate_impute_complete(self, dataset, json_dict, impute_skip_list):
+    def _validate_impute_complete(self, dataset, json_dict):
         """
 
         :param pd.DataFrame dataset:
         :param dict json_dict:
-        :param array impute_skip_list:
         :return:
         """
         missing = []
-        for column in dataset.columns:
-            if column not in impute_skip_list and column not in json_dict:
-                missing.append(column)
+        for key in json_dict.keys():
+            if key not in dataset.columns:
+                missing.append(key)
 
         if len(missing) > 0:
             error_message = 'Impute file missing needed columns for ' \
@@ -185,21 +182,25 @@ class Train(Main):
         if int(xgb.__version__.split('.')[0]) > 0:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set[EnumsTrain.binarized_label.value]
+                test_set[TrainEnums.binarized_label.value]
             )]
         else:
             eval_set = [(
                 test_set[self.processed_features],
-                test_set[EnumsTrain.binarized_label.value],
+                test_set[TrainEnums.binarized_label.value],
                 'test'
             )]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
-                       train_set[EnumsTrain.binarized_label.value],
+                       train_set[TrainEnums.binarized_label.value],
                        early_stopping_rounds=self.esr,
                        eval_metric=["auc"],
                        eval_set=eval_set,
                        verbose=xgb_verbosity,
-                       sample_weight=train_set[EnumsTrain.sample_weight.value])
+                       sample_weight=train_set[TrainEnums.sample_weight.value])
+        self.log.info(
+            'Training successful, '
+            'average CV AUC of best performing model: %.4f',
+            ransearch1.best_score_)
 
-        return ransearch1
+        return ransearch1.best_estimator_
