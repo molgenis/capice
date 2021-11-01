@@ -10,6 +10,7 @@ class InputValidator:
     """
     Validator for the CLI arguments
     """
+
     def __init__(self, parser):
         self.parser = parser
 
@@ -72,26 +73,26 @@ class PostFileParseValidator:
             self.log.critical(error_message)
             raise KeyError(error_message)
 
-    def validate_minimally_required_columns(self,
-                                            dataset,
-                                            additional_required_features=()):
+    def validate_minimally_required_columns(
+            self,
+            dataset,
+            additional_required_features: list = None
+    ):
         """
         Validator for both predict and train to check if the very least columns
         are present (chr, pos, ref, alt) and additionally the additional
         required columns.
         """
-        required_columns = (
+        required_columns = [
             Column.chr.value,
             Column.pos.value,
             Column.ref.value,
             Column.alt.value,
-        )
-        if len(additional_required_features) > 0 and not isinstance(
-                additional_required_features, tuple):
-            required_columns += (additional_required_features,)
-        elif len(additional_required_features) > 0 and isinstance(
-                additional_required_features, tuple):
-            required_columns += additional_required_features
+        ]
+        if additional_required_features is not None:
+            for feature in additional_required_features:
+                if feature not in required_columns:
+                    required_columns.append(feature)
         columns_not_present = []
         for col in required_columns:
             if col not in dataset.columns:

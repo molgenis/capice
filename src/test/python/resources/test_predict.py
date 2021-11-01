@@ -47,7 +47,7 @@ class TestPredict(unittest.TestCase):
                     self.main.process(
                         self.main._load_file()
                     ), impute_values=self.model.impute_values
-                ), model=self.model
+                ), model_features=self.model.get_booster().feature_names
             )
         )
 
@@ -63,7 +63,7 @@ class TestPredict(unittest.TestCase):
                     self.main.process(
                         self.main._load_file()
                     ), impute_values=self.model.impute_values
-                ), model=self.model
+                ), model_features=self.model.get_booster().feature_names
             )
         )
         # Combined sum of the prediction score should be higher than 0

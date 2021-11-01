@@ -1,16 +1,15 @@
 from abc import ABC, abstractmethod
-
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
+from src.main.python.resources.enums.sections import Column
 from src.main.python.core.global_manager import CapiceManager
 from src.main.python.resources.processors.processor import Processor
-from src.main.python.resources.predictors.Predictor import Predictor
 from src.main.python.resources.parsers.input_parser import InputParser
 from src.main.python.resources.imputers.capice_imputing import CapiceImputing
 from src.main.python.resources.preprocessors.preprocessor import PreProcessor
+from src.main.python.resources.validators import PostFileParseValidator
 from src.main.python.resources.preprocessors.load_file_postprocessor import \
     LoadFilePostProcessor
-from src.main.python.resources.validators import PostFileParseValidator
 
 
 class Main(ABC):
@@ -18,6 +17,7 @@ class Main(ABC):
     Main class of CAPICE that contains methods to help the different modes to
     function.
     """
+
     def __init__(self, input_loc, output_loc):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
@@ -36,11 +36,18 @@ class Main(ABC):
             'Output directory -o / --output confirmed: %s', self.output
         )
 
+        # Preprocessor global exclusion features
+        # Overwrite in specific module if features are incorrect
+        self.exclude_features = [Column.gene_name.value,
+                                 Column.gene_id.value,
+                                 Column.id_source.value,
+                                 Column.transcript.value]
+
     @abstractmethod
     def run(self):
         pass
 
-    def _load_file(self, additional_required_features=()):
+    def _load_file(self, additional_required_features: list = None):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
@@ -82,20 +89,22 @@ class Main(ABC):
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
-    @staticmethod
-    def preprocess(loaded_data, impute_keys, model_features=None):
+    def preprocess(self, loaded_data, model_features=None):
         """
         Function to perform the preprocessing of the loaded data to convert
         categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param impute_keys: list, all the keys of the impute values that could
-        potentially contain a "O" dtype within Pandas (string, categorical etc.)
         :param model_features: list (default None), a list containing all
         the features present within a model file. When set to None,
         PreProcessor will activate the train protocol.
+
+        Note: please adjust self.exclude_features: to include all of the
+        features that the preprocessor should NOT process.
+        Features chr_pos_ref_alt, chr and pos are hardcoded and
+        thus do not have to be included.
         """
         preprocessor = PreProcessor(
-            impute_keys=impute_keys,
+            exclude_features=self.exclude_features,
             model_features=model_features
         )
         capice_data = preprocessor.preprocess(loaded_data)

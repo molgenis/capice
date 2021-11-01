@@ -48,7 +48,7 @@ class TestPreprocessing(unittest.TestCase):
                 loaded_data=self.main.process(
                     self.main._load_file()
                 ), impute_values=self.model.impute_values
-            ), model=self.model
+            ), model_features=self.model.get_booster().feature_names
         )
 
     def test_component_preprocessing(self):
@@ -65,7 +65,7 @@ class TestPreprocessing(unittest.TestCase):
                 self.main.process(
                     self.main._load_file()
                 ), impute_values=self.model.impute_values
-            ), model=self.model
+            ), model_features=self.model.get_booster().feature_names
         )
         model_features = self.model.get_booster().feature_names
         processed_columns = processed_file.columns

@@ -1,6 +1,7 @@
 import unittest
 import os
 import pickle
+import json
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.resources.utilities.utilities import get_project_root_dir
@@ -15,15 +16,24 @@ class TestMainTrain(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        cls.manager, cls.output_dir = set_up_manager_and_loc()
+        manager, cls.output_dir = set_up_manager_and_loc()
+        cls.output_filename = 'train_example_capice.pickle.dat'
+        manager.output_filename = cls.output_filename
         train_file = os.path.join(get_project_root_dir(),
                                   'CAPICE_example',
-                                  'train_dataset.tsv.gz'
+                                  'train_example.tsv.gz'
                                   )
+        impute_json = os.path.join(get_project_root_dir(),
+                                   'CAPICE_example',
+                                   'example_impute_values.json')
         cls.main = Train(input_loc=train_file,
-                         json_loc=None,
+                         json_loc=impute_json,
                          test_split=0.2,
                          output_loc=cls.output_dir)
+        cls.main.esr = 1
+        cls.main.n_jobs = 2
+        cls.main.cross_validate = 2
+        cls.main.n_iterations = 2
 
     @classmethod
     def tearDownClass(cls):
@@ -32,10 +42,6 @@ class TestMainTrain(unittest.TestCase):
 
     def tearDown(self):
         print('Resetting arguments.')
-        self.main.default = False
-        self.main.balance = False
-        self.main.specified_default = False
-        self.main._integration_test = False
 
     def setUp(self):
         print('Performing test:')
@@ -46,18 +52,11 @@ class TestMainTrain(unittest.TestCase):
         With check if the correct class is exported.
         """
         print('Training (integration)')
-        self.main._integration_test = True
         self.main.run()
-        output_filename = "randomized_search_cv_" + \
-                          self.manager.now.strftime("%H%M%S%f_%d%m%Y") + \
-                          '.pickle.dat'
-        output_loc = os.path.join(self.output_dir, output_filename)
+        output_loc = os.path.join(self.output_dir, self.output_filename)
         with open(output_loc, 'rb') as model_dat:
             model = pickle.load(model_dat)
-        class_used = str(model.__class__).split("'")[1]
-        self.assertEqual(
-            'sklearn.model_selection._search.RandomizedSearchCV', class_used)
-        best_model = str(model.best_estimator_.__class__).split("'")[1]
+        best_model = str(model.__class__).split("'")[1]
         self.assertEqual('xgboost.sklearn.XGBClassifier', best_model)
 
     def test_unit_split(self):

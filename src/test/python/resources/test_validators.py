@@ -47,7 +47,7 @@ class TestPostFileParseValidator(unittest.TestCase):
         print('Correct validation required_columns')
         self.validator.validate_minimally_required_columns(
             self.dataset,
-            additional_required_features='feat1'
+            additional_required_features=['feat1']
         )
 
     def test_validation_incorrect_required_columns_preset_required(self):

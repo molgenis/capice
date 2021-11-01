@@ -1,5 +1,6 @@
 import os
 from src.main_train import Train
+from src.main.python.core.global_manager import CapiceManager
 from src.main.python.core.cli.args_handler_parent import ArgsHandlerParent
 
 
@@ -74,7 +75,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         if isinstance(test_split, list):
             test_split = test_split[0]
         self.validate_test_split(test_split)
-
+        CapiceManager().output_filename = output_filename
         Train(input_loc, impute, test_split, output_loc).run()
 
     def validate_input_json(self, json_loc):

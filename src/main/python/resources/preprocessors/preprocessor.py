@@ -11,10 +11,12 @@ class PreProcessor:
     categorical columns.
     """
 
-    def __init__(self, impute_keys: list, model_features: list = None):
+    def __init__(self, exclude_features: list, model_features: list = None):
         """
-        :param impute_keys: list, all the keys of the impute values that could
-        potentially contain a "O" dtype within Pandas (string, categorical etc.)
+        :param exclude_features: list,
+            all the features that the preprocessor should not process.
+        Features that are already excluded include:
+            chr_pos_ref_alt, chr and pos.
         :param model_features: list (default None), a list containing all
         the features present within a model file.
         """
@@ -22,7 +24,10 @@ class PreProcessor:
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
         self.train = False
-        self.impute_keys = impute_keys
+        self.exclude_features = [Column.chr_pos_ref_alt.value,
+                                 Column.chr.value,
+                                 Column.pos.value
+                                 ] + exclude_features
         self.model_features = model_features
         self.objects = []
 
@@ -72,12 +77,8 @@ class PreProcessor:
         annotation features of the imputing file.
         :param dataset: pandas DataFrame
         """
-        if not self.train:
-            for feature in dataset.select_dtypes(include=["O"]).columns:
-                if feature in self.impute_keys:
-                    self.objects.append(feature)
-        else:
-            for feature in dataset.select_dtypes(include=["O"]).columns:
+        for feature in dataset.select_dtypes(include=["O"]).columns:
+            if feature not in self.exclude_features:
                 self.objects.append(feature)
         self.log.debug(
             'Converting the categorical columns: %s.',
