@@ -2,32 +2,14 @@ import os
 import pickle
 import unittest
 from src.main.python.resources.utilities.utilities import get_project_root_dir
-from src.test.python.test_templates import set_up_manager_and_loc, teardown, \
-    set_up_predict
+from src.test.python.test_templates import set_up_impute_preprocess, teardown
 
 
 class TestPreprocessing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        cls.manager, output_loc = set_up_manager_and_loc()
-        cls.main = set_up_predict()
-        cls.main.infile = os.path.join(
-            get_project_root_dir(),
-            'CAPICE_example',
-            'CAPICE_input.tsv.gz'
-        )
-        with open(
-                os.path.join(
-                    get_project_root_dir(),
-                    'CAPICE_model',
-                    'GRCh37',
-                    'POC',
-                    'xgb_booster_poc.pickle.dat'
-                ), 'rb'
-        ) as model_file:
-            cls.model = pickle.load(model_file)
-        cls.main.model = cls.model
+        cls.main, cls.model = set_up_impute_preprocess()
 
     @classmethod
     def tearDownClass(cls):

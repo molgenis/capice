@@ -1,6 +1,5 @@
 import os
-
-from src.main_capice import Main
+import pickle
 from src.main_predict import Predict
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
@@ -38,3 +37,25 @@ def teardown():
 
 def set_up_predict():
     return Predict(input_loc=None, model=None, output_loc=None)
+
+
+def set_up_impute_preprocess():
+    set_up_manager_and_loc()
+    main = set_up_predict()
+    main.infile = os.path.join(
+            get_project_root_dir(),
+            'CAPICE_example',
+            'CAPICE_input.tsv.gz'
+        )
+    with open(
+            os.path.join(
+                get_project_root_dir(),
+                'CAPICE_model',
+                'GRCh37',
+                'POC',
+                'xgb_booster_poc.pickle.dat'
+            ), 'rb'
+    ) as model_file:
+        model = pickle.load(model_file)
+    main.model = model
+    return main, model
