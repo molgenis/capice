@@ -74,3 +74,6 @@ class Exporter:
         export_loc = os.path.join(self.file_path, self.capice_filename)
         with open(export_loc, 'wb') as model_dump:
             pickle.dump(model, model_dump)
+        self.log.info(
+            'Successfully exported CAPICE model to: %s', export_loc
+        )
