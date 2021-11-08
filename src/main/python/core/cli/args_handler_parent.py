@@ -1,5 +1,7 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
+
+from main.python.resources.utilities.utilities import validate_list_length_one
 from src.main.python.resources.validators import InputValidator
 from src.main.python.resources.processors.input_processor import InputProcessor
 
@@ -61,14 +63,14 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         arguments. Also parses the output filename.
         """
         validator = InputValidator(self.parser)
-        input_loc = args.input[0]
+        input_loc = self.validate_length_one(args.input, '-i/--input')
         validator.validate_input_loc(
             input_loc,
             extension=self._extension
         )
         output_path = None
         if args.output is not None:
-            output_path = args.output[0]
+            output_path = self.validate_length_one(args.output, '-o/--output')
         processor = InputProcessor(
             call_dir=self._call_loc,
             input_path=input_loc,
@@ -82,6 +84,12 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         self._handle_module_specific_args(
             input_loc, output_loc, output_filename, args
         )
+
+    def validate_length_one(self, arg, arg_name):
+        try:
+            return validate_list_length_one(arg)
+        except ValueError:
+            self.parser.error(f'Invalid number of {arg_name} arguments.')
 
     @abstractmethod
     def _handle_module_specific_args(self,

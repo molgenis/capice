@@ -32,7 +32,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         self.parser.add_argument(
             '-i',
             '--input',
-            nargs=1,
+            action='append',
             type=str,
             required=True,
             help='path to annotated variants file (.tsv or .tsv.gz)'
@@ -40,7 +40,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         self.parser.add_argument(
             '-m',
             '--model',
-            nargs=1,
+            action='append',
             type=str,
             required=True,
             help='path to trained model (.dat)'
@@ -48,7 +48,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         self.parser.add_argument(
             '-o',
             '--output',
-            nargs=1,
+            action='append',
             type=str,
             help='path to variant predictions file (.tsv or .tsv.gz)'
         )
@@ -61,7 +61,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
 
     def _handle_module_specific_args(
             self, input_loc, output_loc, output_filename, args):
-        model_path = args.model[0]
+        model_path = self.validate_length_one(args.model, '-m/--model')
         model = self.validate_model(model_path)
         if not output_filename.endswith('.gz'):
             output_filename = output_filename + '.gz'

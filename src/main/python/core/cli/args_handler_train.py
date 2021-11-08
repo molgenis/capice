@@ -9,6 +9,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
     Command-line argument handler for train sub-command.
     Parses, validates and executes function.
     """
+    SPLIT_DEFAULT = 0.2
 
     def __init__(self, parser):
         super(ArgsHandlerTrain, self).__init__(parser=parser)
@@ -29,7 +30,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         self.parser.add_argument(
             '-i',
             '--input',
-            nargs=1,
+            action='append',
             type=str,
             required=True,
             help='path to classified annotated variants file (.tsv or .tsv.gz)'
@@ -37,7 +38,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         self.parser.add_argument(
             '-m',
             '--impute',
-            nargs=1,
+            action='append',
             type=str,
             required=True,
             help='path to impute values file (.json)'
@@ -45,16 +46,15 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         self.parser.add_argument(
             '-s',
             '--split',
-            nargs=1,
+            action='append',
             type=float,
-            default=0.2,
             help='proportion of the input data to include '
                  'in the test split (default: %(default)s)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
-            nargs=1,
+            action='append',
             type=str,
             help='path to model file (.dat)'
         )
@@ -67,9 +67,11 @@ class ArgsHandlerTrain(ArgsHandlerParent):
 
     def _handle_module_specific_args(
             self, input_loc, output_loc, output_filename, args):
-        impute = args.impute[0]
+        impute = self.validate_length_one(args.impute, '-m/--impute')
         self.validate_input_json(impute)
-        test_split = args.split
+        test_split = self.validate_length_one(args.split, '-s/--split')
+        if test_split is None:
+            test_split = self.SPLIT_DEFAULT
         # Since argparse doesn't cooperate well with default values and always
         # returns them as a list, this has to be done.
         if isinstance(test_split, list):

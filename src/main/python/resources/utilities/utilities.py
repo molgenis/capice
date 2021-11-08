@@ -113,3 +113,25 @@ class SetCustomLoggingFilter(logging.Filter):
 def load_json_as_dict(path):
     with open(path, 'rt') as impute_values_file:
         return json.load(impute_values_file)
+
+
+def validate_list_length_one(ls):
+    """
+    Validates whether ls contains only 1 argument. If None, it simply
+    returns None. If a list is given, validates whether it contains only
+    1 element. If it is an empty list or contains more than 1 element,
+    throws a ValueError.
+    :param list[str] ls: the list to be validated
+    :return: None or the first item from the given list
+    :raise ValueError: if list with 0 or more than 1 elements is given
+    """
+    if ls is None:
+        return ls
+
+    ls_len = len(ls)
+    if ls_len == 0:
+        raise ValueError('Empty list is given. Should be None or list with '
+                         'elements.')
+    elif ls_len > 1:
+        raise ValueError('List contains more than 1 item.')
+    return ls[0]
