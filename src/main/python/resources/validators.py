@@ -41,7 +41,7 @@ class InputValidator:
                 "New output directory cannot be made in a "
                 "read/execute only directory!"
             )
-        # If the output directory is present but not writeable, throw OSError
+        # If the output directory is present but not writable, throw OSError
         elif os.path.isdir(output_loc) and not os.access(output_loc, os.W_OK):
             self.parser.error(
                 "Output directory is not writable!"

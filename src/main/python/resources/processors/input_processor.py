@@ -15,7 +15,7 @@ class InputProcessor:
 
         Use getter get_output_filename() to get the output filename after
         initialization and get_output_directory() to get the output directory.
-        (output directory is not yet checked for write-ability and existence)
+        (output directory is not yet checked for writability and existence)
 
         Note: when only the input_path is provided or only a file directory is
         supplied, InputProcessor will strip the extension from the input path
