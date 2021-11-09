@@ -2,7 +2,8 @@ import unittest
 
 import pytest
 
-from main.python.resources.utilities.utilities import validate_list_length_one
+from src.main.python.resources.utilities.utilities import \
+    validate_list_length_one
 from src.main.python.resources.utilities import utilities
 
 
