@@ -1,6 +1,4 @@
-from src.main.python.resources.checkers.property_checker import PropertyChecker
-import os
-from datetime import datetime
+from src.main.python.validators.property_checker import PropertyChecker
 
 
 class CapiceManager:

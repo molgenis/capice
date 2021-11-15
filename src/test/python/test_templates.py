@@ -3,7 +3,7 @@ import pickle
 from src.main_predict import Predict
 from src.main.python.core.logger import Logger
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.main.python.utilities.utilities import get_project_root_dir
 
 
 def set_up_manager_and_loc():

@@ -2,7 +2,7 @@ import os
 import pickle
 import pandas as pd
 from src.main.python.core.logger import Logger
-from src.main.python.resources.enums.sections import Column
+from src.main.python.utilities.sections import Column
 from src.main.python.core.global_manager import CapiceManager
 
 

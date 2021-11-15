@@ -1,14 +1,14 @@
 from abc import ABC, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.core.exporter import Exporter
-from src.main.python.resources.enums.sections import Column
+from src.main.python.utilities.sections import Column
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.processors.processor import Processor
-from src.main.python.resources.parsers.input_parser import InputParser
-from src.main.python.resources.imputers.capice_imputing import CapiceImputing
-from src.main.python.resources.preprocessors.preprocessor import PreProcessor
-from src.main.python.resources.validators import PostFileParseValidator
-from src.main.python.resources.preprocessors.load_file_postprocessor import \
+from src.main.python.utilities.processor import Processor
+from src.main.python.utilities.input_parser import InputParser
+from src.main.python.utilities.capice_imputing import CapiceImputing
+from src.main.python.utilities.preprocessor import PreProcessor
+from src.main.python.validators.validators import PostFileParseValidator
+from src.main.python.utilities.load_file_postprocessor import \
     LoadFilePostProcessor
 
 

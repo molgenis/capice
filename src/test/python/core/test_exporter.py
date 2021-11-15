@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from src.main.python.core.exporter import Exporter
-from src.main.python.resources.enums.sections import Column
+from src.main.python.utilities.sections import Column
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
 

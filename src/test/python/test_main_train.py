@@ -1,10 +1,9 @@
 import unittest
 import os
 import pickle
-import json
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
-from src.main.python.resources.utilities.utilities import get_project_root_dir
+from src.main.python.utilities.utilities import get_project_root_dir
 
 
 __program__ = 'Main Train test'

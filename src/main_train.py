@@ -1,9 +1,9 @@
+import json
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
-from src.main.python.resources.enums.sections import Column, TrainEnums
-from src.main.python.resources.__version__ import __version__
-from src.main.python.resources.utilities.utilities import load_json_as_dict
+from src.main.python.utilities.sections import TrainEnums
+from src.main.python.__version__ import __version__
 from src.main_capice import Main
 from src.main.python.core.exporter import Exporter
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
@@ -62,7 +62,8 @@ class Train(Main):
             additional_required_features=self.additional_required
         )
         data = self.process(loaded_data=data)
-        json_dict = load_json_as_dict(self.json_loc)
+        with open(self.json_loc, 'rt') as impute_values_file:
+            json_dict = json.load(impute_values_file)
         self._validate_impute_complete(data, json_dict)
 
         imputed_data = self.impute(loaded_data=data,

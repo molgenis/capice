@@ -1,7 +1,7 @@
-from src.main.python.resources.validators import PostVEPProcessingValidator
-from src.main.python.resources.predictors.Predictor import Predictor
+from src.main.python.validators.validators import PostVEPProcessingValidator
+from src.main.python.utilities.Predictor import Predictor
 from src.main_capice import Main
-from src.main.python.resources.enums.sections import Column
+from src.main.python.utilities.sections import Column
 
 
 class Predict(Main):

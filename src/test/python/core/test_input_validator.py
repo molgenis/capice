@@ -3,9 +3,9 @@ import unittest
 import argparse
 from pathlib import Path
 from src.test.python.test_templates import teardown
-from src.main.python.resources.validators import InputValidator
-from src.main.python.resources.utilities.utilities import get_project_root_dir
-from src.main.python.resources.processors.input_processor import InputProcessor
+from src.main.python.validators.validators import InputValidator
+from src.main.python.utilities.utilities import get_project_root_dir
+from src.main.python.utilities.input_processor import InputProcessor
 
 
 class TestInputValidator(unittest.TestCase):
