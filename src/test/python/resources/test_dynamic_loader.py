@@ -25,8 +25,6 @@ class TestDynamicLoader(unittest.TestCase):
             'dynamic_loader_test_no_files'
         )
         cls.required_attributes = ['name', 'some_function']
-        cls.correct_vep = 104.0
-        cls.correct_grch = 37
 
     @classmethod
     def tearDownClass(cls) -> None:

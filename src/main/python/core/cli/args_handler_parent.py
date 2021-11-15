@@ -1,9 +1,10 @@
 from pathlib import Path
 from abc import ABCMeta, abstractmethod
 
-from main.python.resources.utilities.utilities import validate_list_length_one
 from src.main.python.resources.validators import InputValidator
 from src.main.python.resources.processors.input_processor import InputProcessor
+from src.main.python.resources.utilities.utilities import \
+    validate_list_length_one
 
 
 class ArgsHandlerParent(metaclass=ABCMeta):
