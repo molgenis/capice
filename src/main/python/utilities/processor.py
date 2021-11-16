@@ -1,6 +1,6 @@
 import pandas as pd
 from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.manual import ManualProcessor
 
 

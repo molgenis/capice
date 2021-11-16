@@ -1,7 +1,7 @@
 import logging
 import argparse
 from src.main.python.__version__ import __version__
-from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.cli.args_handler_train import ArgsHandlerTrain
 from src.main.python.cli.args_handler_predict import ArgsHandlerPredict
 

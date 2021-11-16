@@ -5,7 +5,7 @@ import pickle
 import unittest
 import pandas as pd
 from src.test.python.test_templates import teardown
-from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.capice_imputing import CapiceImputing
 from src.main.python.utilities.utilities import get_project_root_dir
 

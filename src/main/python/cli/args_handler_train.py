@@ -1,6 +1,6 @@
 import os
 from src.main_train import Train
-from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.cli.args_handler_parent import ArgsHandlerParent
 
 

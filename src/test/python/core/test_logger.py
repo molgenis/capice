@@ -4,7 +4,7 @@ import logging
 import unittest
 from src.main.python.core.logger import Logger
 from src.test.python.test_templates import teardown
-from src.main.python.core.global_manager import CapiceManager
+from src.main.python.core.capice_manager import CapiceManager
 
 
 class TestLogger(unittest.TestCase):
