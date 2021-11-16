@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from src.main.python.core.logger import Logger
-from src.main.python.core.exporter import Exporter
+from src.main.python.core.capice_exporter import CapiceExporter
 from src.main.python.utilities.sections import Column
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.processor import Processor
@@ -115,6 +115,6 @@ class Main(ABC):
         """
         Function to prepare the data to be exported
         """
-        Exporter(file_path=output).export_capice_prediction(
+        CapiceExporter(file_path=output).export_capice_prediction(
             datafile=dataset
         )

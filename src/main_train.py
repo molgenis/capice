@@ -5,7 +5,7 @@ from scipy import stats
 from src.main.python.utilities.sections import TrainEnums
 from src.main.python.__version__ import __version__
 from src.main_capice import Main
-from src.main.python.core.exporter import Exporter
+from src.main.python.core.capice_exporter import CapiceExporter
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
@@ -51,7 +51,7 @@ class Train(Main):
         self.model_random_state = 0
         self.processed_features = []
         self.loglevel = self.manager.loglevel
-        self.exporter = Exporter(file_path=self.output)
+        self.exporter = CapiceExporter(file_path=self.output)
 
     def run(self):
         """
