@@ -2,17 +2,17 @@ import os
 import unittest
 import numpy as np
 import pandas as pd
-from src.main.python.core.exporter import Exporter
+from src.main.python.core.capice_exporter import CapiceExporter
 from src.main.python.utilities.sections import Column
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
 
-class TestExporter(unittest.TestCase):
+class TestCapiceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
         manager, cls.output_loc = set_up_manager_and_loc()
-        cls.exporter = Exporter(file_path=cls.output_loc)
+        cls.exporter = CapiceExporter(file_path=cls.output_loc)
         cls.prediction_output_dataframe = pd.DataFrame({
             Column.chr_pos_ref_alt.value: ['1_100_A_C', '2_200_T_G'],
             Column.gene_name.value: ['foo', 'bar'],

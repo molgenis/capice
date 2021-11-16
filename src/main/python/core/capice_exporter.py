@@ -6,7 +6,7 @@ from src.main.python.utilities.sections import Column
 from src.main.python.core.capice_manager import CapiceManager
 
 
-class Exporter:
+class CapiceExporter:
     """
     Class specifically exporting files
     """
