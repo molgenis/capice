@@ -64,8 +64,8 @@ class InputProcessor:
                 f'Output file {full_output_path} already exists! '
                 f'Use -f / --force to overwrite.')
 
-    def _set_output_path(self, dir, filename):
-        self.output_directory = dir
+    def _set_output_path(self, directory, filename):
+        self.output_directory = directory
         self.output_filename = filename
 
     @staticmethod
