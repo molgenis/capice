@@ -66,11 +66,6 @@ class DynamicLoader:
         self.log.critical(error_message, self.path)
         raise FileNotFoundError(error_message % self.path)
 
-    def _raise_module_not_found_error(self, overwrite):
-        error_message = "No module overwrite with %s can be found within %s!"
-        self.log.critical(error_message, overwrite, self.path)
-        raise FileNotFoundError(error_message % (overwrite, self.path))
-
     @staticmethod
     def _load_modules_from_path(path):
         """
