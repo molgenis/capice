@@ -22,7 +22,7 @@
 import sys
 import logging
 from src.main.python.core.global_manager import CapiceManager
-from src.main.python.utilities.utilities import SetCustomLoggingFilter
+from src.main.python.utilities.custom_log_filter import CustomLoggingFilter
 
 
 class Logger:
@@ -107,7 +107,7 @@ class Logger:
                 stdout_handler.setFormatter(formatter)
                 # Filter out warning, error and critical messages.
                 stdout_handler.addFilter(
-                    SetCustomLoggingFilter(self.stdout_filter)
+                    CustomLoggingFilter(self.stdout_filter)
                 )
                 logger.addHandler(stdout_handler)
 

@@ -1,5 +1,4 @@
 import os
-import logging
 import warnings
 import functools
 from pathlib import Path
@@ -90,23 +89,6 @@ def deprecated(func):
         warnings.simplefilter('default', DeprecationWarning)
         return func(*args, **kwargs)
     return new_func
-
-
-class SetCustomLoggingFilter(logging.Filter):
-    """
-    Custom logging filter class to make sure that stdout only contains
-    INFO or DEBUG calls.
-    """
-    def __init__(self, custom_loglevels):
-        """
-        :param custom_loglevels: str or iterable: the loglevels that should pass
-        this logging filter.
-        """
-        super(SetCustomLoggingFilter, self).__init__()
-        self.custom_loglevels = custom_loglevels
-
-    def filter(self, record) -> bool:
-        return record.levelno in self.custom_loglevels
 
 
 def validate_list_length_one(ls):
