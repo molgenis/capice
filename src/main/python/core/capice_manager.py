@@ -1,4 +1,4 @@
-from src.main.python.validators.property_checker import PropertyChecker
+from src.main.python.validators.property_type_validator import PropertyTypeValidator
 
 
 class CapiceManager:
@@ -8,7 +8,7 @@ class CapiceManager:
     """
     class __CapiceManager:
         def __init__(self):
-            self.property_checker = PropertyChecker()
+            self.property_checker = PropertyTypeValidator()
             self.loglevel = None
             self.critical_logging_only = False
             self.output_filename = ''
@@ -19,9 +19,9 @@ class CapiceManager:
 
         @loglevel.setter
         def loglevel(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=int,
-                                                 include_none=True)
+            self.property_checker.validate_property(value=value,
+                                                    expected_type=int,
+                                                    include_none=True)
             self._loglevel = value
 
         @property
@@ -30,8 +30,8 @@ class CapiceManager:
 
         @critical_logging_only.setter
         def critical_logging_only(self, value):
-            self.property_checker.check_property(value=value,
-                                                 expected_type=bool)
+            self.property_checker.validate_property(value=value,
+                                                    expected_type=bool)
             self._critical_logging_only = value
 
         @property
@@ -40,7 +40,7 @@ class CapiceManager:
 
         @output_filename.setter
         def output_filename(self, value):
-            self.property_checker.check_property(value=value, expected_type=str)
+            self.property_checker.validate_property(value=value, expected_type=str)
             self._output_filename = value
 
     instance = None

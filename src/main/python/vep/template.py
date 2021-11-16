@@ -1,11 +1,11 @@
 import pandas as pd
 from abc import ABCMeta, abstractmethod
-from src.main.python.validators.property_checker import PropertyChecker
+from src.main.python.validators.property_type_validator import PropertyTypeValidator
 
 
 class Template(metaclass=ABCMeta):
     def __init__(self, name, usable):
-        self.property_checker = PropertyChecker()
+        self.property_checker = PropertyTypeValidator()
         self.name = name
         self.usable = usable
 
@@ -15,7 +15,7 @@ class Template(metaclass=ABCMeta):
 
     @name.setter
     def name(self, value='Template'):
-        self.property_checker.check_property(value=value, expected_type=str)
+        self.property_checker.validate_property(value=value, expected_type=str)
         self._name = value
 
     @property
@@ -24,7 +24,7 @@ class Template(metaclass=ABCMeta):
 
     @usable.setter
     def usable(self, value=False):
-        self.property_checker.check_property(value=value, expected_type=bool)
+        self.property_checker.validate_property(value=value, expected_type=bool)
         self._usable = value
 
     @property

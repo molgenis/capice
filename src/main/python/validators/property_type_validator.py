@@ -1,9 +1,9 @@
 from abc import abstractmethod
 
 
-class PropertyChecker:
-    def check_property(self, value: any, expected_type: any,
-                       include_none: bool = False):
+class PropertyTypeValidator:
+    def validate_property(self, value: any, expected_type: any,
+                          include_none: bool = False):
         """
         Logger method to raise a TypeError when a Property is not set correctly.
 
@@ -25,11 +25,7 @@ class PropertyChecker:
         else:
             self._raise_type_error(expected_type, value)
 
-    def _raise_type_error(self, expected_type, value):
+    @staticmethod
+    def _raise_type_error(expected_type, value):
         error_message = "Expected variable type %s but got %s"
-        self._talk_to_logger(error_message, expected_type, type(value))
         raise TypeError(error_message % (expected_type, type(value)))
-
-    @abstractmethod
-    def _talk_to_logger(self, msg, *args, **kwargs):
-        pass
