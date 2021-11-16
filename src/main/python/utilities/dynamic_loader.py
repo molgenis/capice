@@ -1,6 +1,6 @@
 import os
+from importlib import util
 from src.main.python.core.logger import Logger
-from src.main.python.utilities.utilities import importer, load_modules
 
 
 class DynamicLoader:
@@ -42,9 +42,9 @@ class DynamicLoader:
             set_required = required_attributes
         else:
             set_required = self.required_attributes
-        modules = load_modules(self.path)
+        modules = self._load_modules_from_path(self.path)
         self._check_n_modules(modules)
-        imported_modules = importer(modules)
+        imported_modules = self._importer(modules)
         for path, module in imported_modules.items():
             if all(item in dir(module) for item in set_required):
                 self.modules[path] = module
@@ -70,3 +70,53 @@ class DynamicLoader:
         error_message = "No module overwrite with %s can be found within %s!"
         self.log.critical(error_message, overwrite, self.path)
         raise FileNotFoundError(error_message % (overwrite, self.path))
+
+    @staticmethod
+    def _load_modules_from_path(path):
+        """
+        Function to dynamically load in modules in the given path
+        :param path: path to the modules
+        :return: list
+        """
+        modules = []
+        for module in os.listdir(path):
+            module = os.path.join(path, module)
+            if module.endswith('.py') and \
+                    not module.endswith('__.py') and \
+                    not module.endswith('abstract.py'):
+                modules.append(module)
+        return modules
+
+    def _importer(self, usable_modules: list):
+        """
+        Function  to dynamically load in the modules using the
+        import_module library.
+        :param usable_modules: list of absolute paths to potential modules
+        :return: list of usable modules
+        """
+        return_modules = {}
+        for module in usable_modules:
+            name = os.path.basename(module).split('.py')[0]
+            spec = util.spec_from_file_location(
+                name=name,
+                location=module
+            )
+            loaded_module = self._process_spec(spec)
+            if loaded_module and module not in return_modules.keys():
+                return_modules[module] = loaded_module
+        return return_modules
+
+    @staticmethod
+    def _process_spec(spec):
+        return_spec = None
+        loaded_spec = util.module_from_spec(spec)
+        spec.loader.exec_module(loaded_spec)
+        for attribute in dir(loaded_spec):
+            if not attribute.startswith('Template') and \
+                    not attribute.startswith('__'):
+                get_attribute = getattr(loaded_spec, attribute)
+                if 'name' in dir(get_attribute) and \
+                        'usable' in dir(get_attribute) and \
+                        get_attribute().usable is True:
+                    return_spec = get_attribute()
+        return return_spec
