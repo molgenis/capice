@@ -13,20 +13,6 @@ def get_project_root_dir():
     return Path(__file__).parent.parent.parent.parent.parent
 
 
-def get_filename_and_extension(path):
-    """
-    Function to get the filename and extension of a file from a given input
-    path or input filename.
-    :param path: string
-    :return: filename (string), extension (string)
-    """
-    no_path = os.path.basename(path)
-    splitted_path = no_path.split('.')
-    filename = splitted_path[0]
-    extension = ".".join(splitted_path[1:])
-    return filename, extension
-
-
 def deprecated(func):
     @functools.wraps(func)
     def new_func(*args, **kwargs):

@@ -1,4 +1,3 @@
-from pathlib import Path
 from abc import ABCMeta, abstractmethod
 
 from src.main.python.validators.validators import InputValidator
@@ -12,7 +11,6 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     Parent class of all module specific argument parsers / handlers.
     """
     def __init__(self, parser):
-        self._call_loc = str(Path('').absolute())
         self.parser = parser
 
     @property
@@ -73,7 +71,6 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
         processor = InputProcessor(
-            call_dir=self._call_loc,
             input_path=input_loc,
             output_path=output_path,
             force=args.force

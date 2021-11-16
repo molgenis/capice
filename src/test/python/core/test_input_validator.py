@@ -78,7 +78,6 @@ class TestInputValidator(unittest.TestCase):
         print('Input output conversion (input only)')
         test_output = None
         input_processor = InputProcessor(
-            call_dir=self.call_dir,
             input_path=self.input_file,
             output_path=test_output,
             force=False

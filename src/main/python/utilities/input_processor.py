@@ -1,10 +1,9 @@
 import os
-from src.main.python.utilities.utilities import \
-    get_filename_and_extension
+from pathlib import Path
 
 
 class InputProcessor:
-    def __init__(self, call_dir, input_path, output_path, force):
+    def __init__(self, input_path, output_path, force):
         """
         InputProcessor checks the input directory, output directory
         (being either call_dir if output_path is None or output_path) and
@@ -23,7 +22,7 @@ class InputProcessor:
         filename. (so input with example.tsv.gz will be come example).
         Extension has to be manually added within the argument parser.
         """
-        self.call_dir = call_dir
+        self.call_dir = Path('.').absolute()
         self.input_path = input_path
         self.output_path = output_path
         self.force = force
@@ -37,67 +36,50 @@ class InputProcessor:
         tell the exporter where to place what file.
         """
         if self.output_path is None:
-            self._build_output_from_input()
+            filename = self.get_filename_from_path(self.input_path)
+            self._set_output_path(self.call_dir, filename)
         else:
             # Check if it is a path or else just a filename
             if len(os.path.dirname(self.output_path)) > 0:
                 # Then I know it's an output filepath + possibly name
                 if os.path.splitext(self.output_path)[1] != '':
                     # Then I know it is a full path + filename
-                    self._build_output_from_output_directory_and_filename()
+                    self._set_output_path(os.path.dirname(self.output_path),
+                                          os.path.basename(self.output_path))
                 else:
                     # Then I know it's a full path
-                    self._build_output_from_output_directory()
+                    filename = self.get_filename_from_path(self.input_path)
+                    self._set_output_path(self.output_path, filename)
             else:
                 # Then I know it's an output filename
-                self._build_output_from_output_filename()
+                self._set_output_path(self.call_dir, self.output_path)
 
         self._check_force()
 
     def _check_force(self):
-        full_ouput_path = os.path.join(self.output_directory,
-                                       self.output_filename)
-        if not self.force and os.path.isfile(full_ouput_path):
+        full_output_path = os.path.join(self.output_directory,
+                                        self.output_filename)
+        if not self.force and os.path.isfile(full_output_path):
             raise FileExistsError(
-                f'Output file {full_ouput_path} already exists! '
+                f'Output file {full_output_path} already exists! '
                 f'Use -f / --force to overwrite.')
 
-    def _build_output_from_input(self):
-        """
-        Method to build an output directory and output filename from the input.
-        Reset of extension is required, since in train, the extension is set
-        from a TSV input to a pickle.dat output.
-        """
-        self.output_directory = self.call_dir
-        fn = get_filename_and_extension(self.input_path)[0]
-        self.output_filename = f'{fn}_capice'
+    def _set_output_path(self, dir, filename):
+        self.output_directory = dir
+        self.output_filename = filename
 
-    def _build_output_from_output_filename(self):
+    @staticmethod
+    def get_filename_from_path(path):
         """
-        Method to build the output directory and output filename from
-        the output argument being just a file name, but the output directory
-        is set to the call location.
+        Function to get the filename of a file from a given input
+        path or input filename.
+        :param path: string
+        :return: filename (string)
         """
-        self.output_directory = self.call_dir
-        self.output_filename = self.output_path
-
-    def _build_output_from_output_directory(self):
-        """
-        Method to build an output directory and output filename from the user
-        provided output directory and the input filename. Reset of input
-        filename extension is required for train.
-        """
-        self.output_directory = self.output_path
-        fn = get_filename_and_extension(self.input_path)[0]
-        self.output_filename = f'{fn}_capice'
-
-    def _build_output_from_output_directory_and_filename(self):
-        """
-        Method to build the output directory and filename from user provided
-        output argument.
-        """
-        self.output_directory = os.path.dirname(self.output_path)
-        self.output_filename = os.path.basename(self.output_path)
+        no_path = os.path.basename(path)
+        splitted_path = no_path.split('.')
+        filename = splitted_path[0]
+        return f'{filename}_capice'
 
     def get_output_filename(self):
         return self.output_filename
