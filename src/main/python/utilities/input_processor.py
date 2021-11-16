@@ -22,7 +22,7 @@ class InputProcessor:
         filename. (so input with example.tsv.gz will be come example).
         Extension has to be manually added within the argument parser.
         """
-        self.call_dir = Path('.').absolute()
+        self.call_dir = str(Path('.').absolute())
         self.input_path = input_path
         self.output_path = output_path
         self.force = force
