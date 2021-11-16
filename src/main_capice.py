@@ -3,11 +3,11 @@ from src.main.python.core.logger import Logger
 from src.main.python.core.capice_exporter import CapiceExporter
 from src.main.python.utilities.sections import Column
 from src.main.python.core.capice_manager import CapiceManager
-from src.main.python.utilities.processor import Processor
 from src.main.python.utilities.input_parser import InputParser
 from src.main.python.utilities.capice_imputing import CapiceImputing
 from src.main.python.utilities.preprocessor import PreProcessor
 from src.main.python.validators.validators import PostFileParseValidator
+from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
 from src.main.python.utilities.load_file_postprocessor import \
     LoadFilePostProcessor
 
@@ -73,8 +73,8 @@ class Main(ABC):
         """
         Function to process the VEP features to CAPICE features.
         """
-        processor = Processor(dataset=loaded_data)
-        processed_data = processor.process()
+        processor = ManualVEPProcessor()
+        processed_data = processor.process(dataset=loaded_data)
         return processed_data
 
     @staticmethod

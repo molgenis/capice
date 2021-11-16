@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import unittest
-from src.main.python.utilities.processor import Processor
+from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
 
@@ -11,7 +11,7 @@ class TestAnnotator(unittest.TestCase):
         set_up_manager_and_loc()
         # Creating a dataframe of data that is tailored to test the
         # return N append function within lookup.py.
-        dataset = pd.DataFrame(
+        cls.dataset = pd.DataFrame(
             {
                 'chr': {0: '1', 1: '1'},
                 'pos': {0: 1, 1: 10042538},
@@ -47,7 +47,7 @@ class TestAnnotator(unittest.TestCase):
                 'Intron': {0: np.nan, 1: np.nan}
             }
         )
-        cls.annotator = Processor(dataset)
+        cls.annotator = ManualVEPProcessor()
 
     def setUp(self) -> None:
         print('Testing case:')
@@ -95,7 +95,7 @@ class TestAnnotator(unittest.TestCase):
              'ConsDetail': {0: 'missense', 1: 'downstream'}
              }
         )
-        outcome = self.annotator.process()
+        outcome = self.annotator.process(self.dataset)
         pd.testing.assert_frame_equal(
             expected_outcome.sort_index(axis=1), outcome.sort_index(axis=1)
         )
@@ -126,8 +126,8 @@ class TestAnnotator(unittest.TestCase):
                 'PolyPhenVal': [np.nan, np.nan]
             }
         )
-        annotator = Processor(bugged_dataframe)
-        out_dataframe = annotator.process()
+        annotator = ManualVEPProcessor()
+        out_dataframe = annotator.process(bugged_dataframe)
         # Testing for expected dataframe columns, since it processes more.
         pd.testing.assert_frame_equal(
             expected_dataframe,
