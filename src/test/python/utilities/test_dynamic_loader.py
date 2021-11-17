@@ -1,5 +1,6 @@
 import os
 import unittest
+
 from src.test.python.test_templates import set_up_manager_and_loc
 from src.main.python.utilities.dynamic_loader import DynamicLoader
 from src.main.python.utilities.utilities import get_project_root_dir
@@ -55,28 +56,20 @@ class TestDynamicLoader(unittest.TestCase):
         self.assertTrue('Correct' in names)
 
     def test_manual_annotator_loader_raise(self):
-        print('Loading raise manual annotator no module found in '
-              'correct directory')
+        print('Loading raise manual annotator no module found in correct directory')
         loader = DynamicLoader(
             required_attributes=['name', 'unrelated_function'],
             path=self.correct_resources
         )
-        self.assertRaises(
-            FileNotFoundError,
-            loader.load_manual_annotators
-        )
+        self.assertRaises(FileNotFoundError, loader.load_manual_annotators)
 
     def test_manual_annotator_loader_raise_no_module_found(self):
-        print('Loading raise manual annotator no module found in '
-              'wrong directory')
+        print('Loading raise manual annotator no module found in wrong directory')
         loader = DynamicLoader(
             required_attributes=self.required_attributes,
             path=self.incorrect_resources
         )
-        self.assertRaises(
-            FileNotFoundError,
-            loader.load_manual_annotators
-        )
+        self.assertRaises(FileNotFoundError, loader.load_manual_annotators)
 
 
 if __name__ == '__main__':

@@ -7,10 +7,6 @@ from src.main_predict import Predict
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.utilities.utilities import get_project_root_dir
 
-__program__ = 'Main NonTrain test'
-__version__ = 'testing'
-__author__ = 'R.J. Sietsma'
-
 
 class TestMainNonTrain(unittest.TestCase):
     @classmethod

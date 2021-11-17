@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+
 from src.main.python.core.logger import Logger
 from src.main.python.utilities.sections import Column
 from src.main.python.core.capice_manager import CapiceManager
@@ -24,10 +25,12 @@ class PreProcessor:
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
         self.train = False
-        self.exclude_features = [Column.chr_pos_ref_alt.value,
-                                 Column.chr.value,
-                                 Column.pos.value
-                                 ] + exclude_features
+        self.exclude_features = [
+            Column.chr_pos_ref_alt.value,
+            Column.chr.value,
+            Column.pos.value
+        ]
+        self.exclude_features += exclude_features
         self.model_features = model_features
         self.objects = []
 
@@ -46,9 +49,7 @@ class PreProcessor:
         self._get_categorical_columns(dataset)
         processed_dataset = self._process_objects(dataset)
         if not self.train:
-            processed_dataset = self._make_sure_all_predict_columns_present(
-                processed_dataset
-            )
+            processed_dataset = self._make_sure_all_predict_columns_present(processed_dataset)
         self.log.info('Successfully preprocessed data.')
         return processed_dataset
 
@@ -62,12 +63,7 @@ class PreProcessor:
             containing column 'chr_pos_ref_alt'
         """
         dataset[Column.chr_pos_ref_alt.value] = dataset[
-            [
-                Column.chr.value,
-                Column.pos.value,
-                Column.ref.value,
-                Column.alt.value
-            ]
+            [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
         ].astype(str).agg('_'.join, axis=1)
         return dataset
 
@@ -80,10 +76,7 @@ class PreProcessor:
         for feature in dataset.select_dtypes(include=["O"]).columns:
             if feature not in self.exclude_features:
                 self.objects.append(feature)
-        self.log.debug(
-            'Converting the categorical columns: %s.',
-            ", ".join(self.objects)
-        )
+        self.log.debug('Converting the categorical columns: %s.', ', '.join(self.objects))
 
     def _process_objects(self, dataset: pd.DataFrame):
         """
@@ -98,15 +91,10 @@ class PreProcessor:
         """
         annotation_feats_dict = {}
         if self.train:
-            hardcoded_features = [Column.ref.value,
-                                  Column.alt.value,
-                                  'Domain']
+            hardcoded_features = [Column.ref.value, Column.alt.value, 'Domain']
             for feature in hardcoded_features:
                 annotation_feats_dict[feature] = 5
-            self.log.info(
-                'Training protocol, '
-                'creating new categorical conversion identifiers.'
-            )
+            self.log.info('Training protocol, creating new categorical conversion identifiers.')
             for feat in self.objects:
                 if feat not in annotation_feats_dict.keys():
                     annotation_feats_dict[feat] = 5
@@ -122,8 +110,7 @@ class PreProcessor:
         )
         return processed_data
 
-    def _process_objects_no_train(self, feature: str,
-                                  annotation_features_dict: dict):
+    def _process_objects_no_train(self, feature: str, annotation_features_dict: dict):
         for model_feature in self.model_features:
             if model_feature.startswith(feature):
                 extension = model_feature.split(''.join([feature, '_']))[-1]
@@ -133,9 +120,7 @@ class PreProcessor:
                     annotation_features_dict[feature] = [extension]
         return annotation_features_dict
 
-    def _process_categorical_vars(self,
-                                  dataset: pd.DataFrame,
-                                  annotation_feats_dict: dict):
+    def _process_categorical_vars(self, dataset: pd.DataFrame, annotation_feats_dict: dict):
         """
         Processor of categorical columns. Will create new columns based on the
         quantity of a value within a column.
@@ -154,7 +139,8 @@ class PreProcessor:
                 dataset[annotation_feature] = np.where(
                     dataset[annotation_feature].isin(feature_names),
                     dataset[annotation_feature],
-                    'other')
+                    'other'
+                )
         else:
             for annotation_feature in annotation_feats_dict.keys():
                 feature_names = annotation_feats_dict[annotation_feature]

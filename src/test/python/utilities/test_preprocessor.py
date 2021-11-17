@@ -1,4 +1,5 @@
 import unittest
+
 from src.test.python.test_templates import set_up_impute_preprocess, teardown
 
 
@@ -53,9 +54,7 @@ class TestPreprocessing(unittest.TestCase):
             self.assertIn(feature, processed_columns)
         # Check if none of the processed columns can be marked as categorical
         self.assertEqual(
-            len(processed_file[model_features].select_dtypes(
-                include=["O"]
-            ).columns),
+            len(processed_file[model_features].select_dtypes(include=["O"]).columns),
             0
         )
 
@@ -94,9 +93,7 @@ class TestPreprocessing(unittest.TestCase):
         self.assertEqual(len(impute_features), present_features)
         # Test if no columns are still objects.
         self.assertEqual(
-            len(preprocessed_file[test_features].select_dtypes(
-                include=["O"]
-            ).columns),
+            len(preprocessed_file[test_features].select_dtypes(include=["O"]).columns),
             0
         )
 

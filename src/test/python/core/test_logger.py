@@ -2,6 +2,7 @@ import io
 import sys
 import logging
 import unittest
+
 from src.main.python.core.logger import Logger
 from src.test.python.test_templates import teardown
 from src.main.python.core.capice_manager import CapiceManager
@@ -113,8 +114,7 @@ class TestLogger(unittest.TestCase):
 
     def test_logger_class(self):
         print('Logger class')
-        self.assertEqual(str(Logger().logger.__class__),
-                         "<class 'logging.RootLogger'>")
+        self.assertEqual(str(Logger().logger.__class__), "<class 'logging.RootLogger'>")
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 import unittest
+
 from src.main.python.validators.property_type_validator import \
     PropertyTypeValidator
 

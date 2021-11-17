@@ -1,14 +1,10 @@
 import unittest
 import os
 import pickle
+
 from src.main_train import Train
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 from src.main.python.utilities.utilities import get_project_root_dir
-
-
-__program__ = 'Main Train test'
-__version__ = 'testing'
-__author__ = 'R.J. Sietsma'
 
 
 class TestMainTrain(unittest.TestCase):
@@ -18,17 +14,21 @@ class TestMainTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_loc()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
-        train_file = os.path.join(get_project_root_dir(),
-                                  'CAPICE_example',
-                                  'train_example.tsv.gz'
-                                  )
-        impute_json = os.path.join(get_project_root_dir(),
-                                   'CAPICE_example',
-                                   'example_impute_values.json')
-        cls.main = Train(input_loc=train_file,
-                         json_loc=impute_json,
-                         test_split=0.2,
-                         output_loc=cls.output_dir)
+        train_file = os.path.join(
+            get_project_root_dir(),
+            'CAPICE_example',
+            'train_example.tsv.gz'
+        )
+        impute_json = os.path.join(
+            get_project_root_dir(),
+            'CAPICE_example',
+            'example_impute_values.json')
+        cls.main = Train(
+            input_loc=train_file,
+            json_loc=impute_json,
+            test_split=0.2,
+            output_loc=cls.output_dir
+        )
         cls.main.esr = 1
         cls.main.n_jobs = 2
         cls.main.cross_validate = 2
@@ -75,8 +75,8 @@ class TestMainTrain(unittest.TestCase):
         input_file = self.main._load_file()
         train, test = self.main.split_data(dataset=input_file, test_size=0.2)
         total_size = input_file.shape[0]
-        self.assertAlmostEqual(train.shape[0], total_size*0.8)
-        self.assertAlmostEqual(test.shape[0], total_size*0.2)
+        self.assertAlmostEqual(train.shape[0], total_size * 0.8)
+        self.assertAlmostEqual(test.shape[0], total_size * 0.2)
         self.assertEqual(train.shape[0] + test.shape[0], total_size)
 
 

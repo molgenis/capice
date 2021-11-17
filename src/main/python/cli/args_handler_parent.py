@@ -10,6 +10,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     """
     Parent class of all module specific argument parsers / handlers.
     """
+
     def __init__(self, parser):
         self.parser = parser
 
@@ -63,25 +64,16 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         """
         validator = InputValidator(self.parser)
         input_loc = self.validate_length_one(args.input, '-i/--input')
-        validator.validate_input_loc(
-            input_loc,
-            extension=self._extension
-        )
+        validator.validate_input_loc(input_loc, extension=self._extension)
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
-        processor = InputProcessor(
-            input_path=input_loc,
-            output_path=output_path,
-            force=args.force
-        )
+        processor = InputProcessor(input_path=input_loc, output_path=output_path, force=args.force)
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
         output_loc = processor.get_output_directory()
         validator.validate_output_loc(output_loc)
-        self._handle_module_specific_args(
-            input_loc, output_loc, output_filename, args
-        )
+        self._handle_module_specific_args(input_loc, output_loc, output_filename, args)
 
     def validate_length_one(self, arg, arg_name):
         try:
@@ -90,11 +82,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             self.parser.error(f'Invalid number of {arg_name} arguments.')
 
     @abstractmethod
-    def _handle_module_specific_args(self,
-                                     input_loc,
-                                     output_loc,
-                                     output_filename,
-                                     args):
+    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
         """
         Method to be filled in by the module specific parsers. Should perform
         additional validation over args specific to the parser. Should then call
@@ -110,8 +98,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         if '.' in output_filename and not output_filename.endswith(
                 self._required_output_extensions):
             self.parser.error(
-                f'Output file extension is incorrect. '
-                f'Expected output extensions: '
+                f'Output file extension is incorrect. Expected output extensions: '
                 f'{self._required_output_extensions}'
             )
         elif '.' not in output_filename:

@@ -6,6 +6,7 @@ class Predictor:
     """
     Predictor class for CAPICE. Produces the final CAPICE score.
     """
+
     def __init__(self, model):
         """
         :param model: XGBClassifier, the custom pickled model instance of user
@@ -25,7 +26,6 @@ class Predictor:
         """
         self.log.info('Predicting for %d samples.', dataset.shape[0])
         dataset[Column.score.value] = self.model.predict_proba(
-            dataset[self.model.get_booster().feature_names]
-        )[:, 1]
+            dataset[self.model.get_booster().feature_names])[:, 1]
         self.log.info('Prediction successful.')
         return dataset

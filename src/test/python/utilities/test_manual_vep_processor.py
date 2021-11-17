@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import unittest
+
 from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
@@ -17,9 +18,7 @@ class TestAnnotator(unittest.TestCase):
                 'pos': {0: 1, 1: 10042538},
                 'ref': {0: 'C', 1: 'C'},
                 'alt': {0: 'T', 1: 'T'},
-                'Consequence': {0: 'missense_variant',
-                                1: 'downstream_gene_variant'
-                                },
+                'Consequence': {0: 'missense_variant', 1: 'downstream_gene_variant'},
                 'GeneName': {0: 'NMNAT1', 1: 'NMNAT1'},
                 'SourceID': {0: 'HGNC', 1: 'HGNC'},
                 'HGNC_ID': {0: '17877', 1: '17877'},
@@ -60,40 +59,42 @@ class TestAnnotator(unittest.TestCase):
     def test_component_annotator(self):
         print('Processor (component)')
         expected_outcome = pd.DataFrame(
-            {'chr': {0: '1', 1: '1'}, 'pos': {0: 1, 1: 10042538},
-             'ref': {0: 'C', 1: 'C'}, 'alt': {0: 'T', 1: 'T'},
-             'Consequence': {0: 'missense_variant',
-                             1: 'downstream_gene_variant'},
-             'GeneName': {0: 'NMNAT1', 1: 'NMNAT1'},
-             'SourceID': {0: 'HGNC', 1: 'HGNC'},
-             'HGNC_ID': {0: '17877', 1: '17877'},
-             'FeatureID': {0: 'ENST00000377205', 1: 'ENST00000403197'},
-             'STRAND': {0: 1, 1: 1},
-             'Exon': {0: '5/5', 1: np.nan},
-             'Intron': {0: np.nan, 1: np.nan},
-             'motifEScoreChng': {0: np.nan, 1: np.nan},
-             'SIFTcat': {0: 'deleterious', 1: np.nan},
-             'SIFTval': {0: 0.04, 1: np.nan},
-             'CDSpos': {0: 619.0, 1: np.nan},
-             'relCDSpos': {0: 840.0, 1: np.nan},
-             'PolyPhenCat': {0: 'benign', 1: np.nan},
-             'PolyPhenVal': {0: 0.08, 1: np.nan},
-             'Domain': {0: 'hmmpanther', 1: None},
-             'Length': {0: 0, 1: 0},
-             'oAA': {0: 'R', 1: np.nan},
-             'nAA': {0: 'W', 1: np.nan},
-             # 'GC': {0: 0.41, 1: 0.46},
-             # 'CpG': {0: 0.020134228187919462, 1: 0.08053691275167785},
-             'motifEName': {0: np.nan, 1: np.nan},
-             'motifECount': {0: 0, 1: 0},
-             'Type': {0: 'SNV', 1: 'SNV'},
-             'cDNApos': {0: 763.0, 1: np.nan},
-             'relcDNApos': {0: 3781.0, 1: np.nan},
-             'motifEHIPos': {0: 0, 1: 0},
-             'protPos': {0: 207.0, 1: np.nan},
-             'relProtPos': {0: 279.0, 1: np.nan},
-             'ConsDetail': {0: 'missense', 1: 'downstream'}
-             }
+            {
+                'chr': {0: '1', 1: '1'},
+                'pos': {0: 1, 1: 10042538},
+                'ref': {0: 'C', 1: 'C'},
+                'alt': {0: 'T', 1: 'T'},
+                'Consequence': {0: 'missense_variant', 1: 'downstream_gene_variant'},
+                'GeneName': {0: 'NMNAT1', 1: 'NMNAT1'},
+                'SourceID': {0: 'HGNC', 1: 'HGNC'},
+                'HGNC_ID': {0: '17877', 1: '17877'},
+                'FeatureID': {0: 'ENST00000377205', 1: 'ENST00000403197'},
+                'STRAND': {0: 1, 1: 1},
+                'Exon': {0: '5/5', 1: np.nan},
+                'Intron': {0: np.nan, 1: np.nan},
+                'motifEScoreChng': {0: np.nan, 1: np.nan},
+                'SIFTcat': {0: 'deleterious', 1: np.nan},
+                'SIFTval': {0: 0.04, 1: np.nan},
+                'CDSpos': {0: 619.0, 1: np.nan},
+                'relCDSpos': {0: 840.0, 1: np.nan},
+                'PolyPhenCat': {0: 'benign', 1: np.nan},
+                'PolyPhenVal': {0: 0.08, 1: np.nan},
+                'Domain': {0: 'hmmpanther', 1: None},
+                'Length': {0: 0, 1: 0},
+                'oAA': {0: 'R', 1: np.nan},
+                'nAA': {0: 'W', 1: np.nan},
+                # 'GC': {0: 0.41, 1: 0.46},
+                # 'CpG': {0: 0.020134228187919462, 1: 0.08053691275167785},
+                'motifEName': {0: np.nan, 1: np.nan},
+                'motifECount': {0: 0, 1: 0},
+                'Type': {0: 'SNV', 1: 'SNV'},
+                'cDNApos': {0: 763.0, 1: np.nan},
+                'relcDNApos': {0: 3781.0, 1: np.nan},
+                'motifEHIPos': {0: 0, 1: 0},
+                'protPos': {0: 207.0, 1: np.nan},
+                'relProtPos': {0: 279.0, 1: np.nan},
+                'ConsDetail': {0: 'missense', 1: 'downstream'}
+            }
         )
         outcome = self.annotator.process(self.dataset)
         pd.testing.assert_frame_equal(
@@ -129,10 +130,7 @@ class TestAnnotator(unittest.TestCase):
         annotator = ManualVEPProcessor()
         out_dataframe = annotator.process(bugged_dataframe)
         # Testing for expected dataframe columns, since it processes more.
-        pd.testing.assert_frame_equal(
-            expected_dataframe,
-            out_dataframe[expected_dataframe.columns]
-        )
+        pd.testing.assert_frame_equal(expected_dataframe, out_dataframe[expected_dataframe.columns])
 
 
 if __name__ == '__main__':

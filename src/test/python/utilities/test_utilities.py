@@ -1,4 +1,5 @@
 import unittest
+
 from src.main.python.utilities.utilities import \
     validate_list_length_one
 

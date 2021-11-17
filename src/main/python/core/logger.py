@@ -21,6 +21,7 @@
 
 import sys
 import logging
+
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.custom_log_filter import CustomLoggingFilter
 
@@ -67,11 +68,7 @@ class Logger:
 
             logging_info = [logging.INFO]
             logging_debug = logging_info + [logging.DEBUG]
-
-            dict_of_levels = {
-                10: logging_debug,
-                20: logging_info
-            }
+            dict_of_levels = {10: logging_debug, 20: logging_info}
             self.stdout_filter = dict_of_levels[self.global_settings.loglevel]
             self.min_loglevel = self.global_settings.loglevel
 
@@ -106,9 +103,7 @@ class Logger:
                 stdout_handler.setLevel(self.global_settings.loglevel)
                 stdout_handler.setFormatter(formatter)
                 # Filter out warning, error and critical messages.
-                stdout_handler.addFilter(
-                    CustomLoggingFilter(self.stdout_filter)
-                )
+                stdout_handler.addFilter(CustomLoggingFilter(self.stdout_filter))
                 logger.addHandler(stdout_handler)
 
             # sys.stderr

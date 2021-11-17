@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+
 from src.main.python.validators.validators import PostFileParseValidator
 from src.test.python.test_templates import set_up_manager_and_loc, teardown
 
@@ -21,8 +22,7 @@ class TestTrainValidator(unittest.TestCase):
 
     def test_check_labels(self):
         print('Check labels')
-        dataset = pd.DataFrame(columns=['chr', 'pos', 'ref', 'alt',
-                                        'binarized_label', 'foo'])
+        dataset = pd.DataFrame(columns=['chr', 'pos', 'ref', 'alt','binarized_label', 'foo'])
         self.assertRaises(
             KeyError,
             self.validator.validate_minimally_required_columns,

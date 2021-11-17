@@ -1,5 +1,6 @@
 import os
 from importlib import util
+
 from src.main.python.core.logger import Logger
 
 
@@ -76,9 +77,9 @@ class DynamicLoader:
         modules = []
         for module in os.listdir(path):
             module = os.path.join(path, module)
-            if module.endswith('.py') and \
-                    not module.endswith('__.py') and \
-                    not module.endswith('abstract.py'):
+            if (module.endswith('.py')
+                    and not module.endswith('__.py')
+                    and not module.endswith('abstract.py')):
                 modules.append(module)
         return modules
 
@@ -92,10 +93,7 @@ class DynamicLoader:
         return_modules = {}
         for module in usable_modules:
             name = os.path.basename(module).split('.py')[0]
-            spec = util.spec_from_file_location(
-                name=name,
-                location=module
-            )
+            spec = util.spec_from_file_location(name=name, location=module)
             loaded_module = self._process_spec(spec)
             if loaded_module and module not in return_modules.keys():
                 return_modules[module] = loaded_module
@@ -107,11 +105,11 @@ class DynamicLoader:
         loaded_spec = util.module_from_spec(spec)
         spec.loader.exec_module(loaded_spec)
         for attribute in dir(loaded_spec):
-            if not attribute.startswith('Template') and \
-                    not attribute.startswith('__'):
+            if (not attribute.startswith('Template')
+                    and not attribute.startswith('__')):
                 get_attribute = getattr(loaded_spec, attribute)
-                if 'name' in dir(get_attribute) and \
-                        'usable' in dir(get_attribute) and \
-                        get_attribute().usable is True:
+                if ('name' in dir(get_attribute)
+                        and 'usable' in dir(get_attribute)
+                        and get_attribute().usable is True):
                     return_spec = get_attribute()
         return return_spec

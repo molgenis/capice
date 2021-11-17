@@ -19,9 +19,9 @@ class CapiceManager:
 
         @loglevel.setter
         def loglevel(self, value):
-            self.property_checker.validate_property(value=value,
-                                                    expected_type=int,
-                                                    include_none=True)
+            self.property_checker.validate_property(
+                value=value, expected_type=int, include_none=True
+            )
             self._loglevel = value
 
         @property
@@ -30,8 +30,9 @@ class CapiceManager:
 
         @critical_logging_only.setter
         def critical_logging_only(self, value):
-            self.property_checker.validate_property(value=value,
-                                                    expected_type=bool)
+            self.property_checker.validate_property(
+                value=value, expected_type=bool
+            )
             self._critical_logging_only = value
 
         @property

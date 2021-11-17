@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+
 from src.main.python.core.logger import Logger
 from src.main.python.utilities.dynamic_loader import DynamicLoader
 from src.main.python.utilities.utilities import get_project_root_dir
@@ -10,6 +11,7 @@ class ManualVEPProcessor:
     Class ManualVEPProcessor, to process the (unusable) VEP-like features to
     features that are more usable.
     """
+
     def __init__(self):
         self.log = Logger().logger
 
@@ -41,18 +43,9 @@ class ManualVEPProcessor:
         return dataset
 
     def _load_vep_processors(self):
-        location = os.path.join(
-            get_project_root_dir(),
-            'src',
-            'main',
-            'python',
-            'vep'
-        )
+        location = os.path.join(get_project_root_dir(), 'src', 'main', 'python', 'vep')
         self.log.debug('Loading modules at %s', location)
-        loader = DynamicLoader(
-            required_attributes=['name', 'process'],
-            path=location
-        )
+        loader = DynamicLoader(required_attributes=['name', 'process'], path=location)
         loaded_modules = loader.load_manual_annotators()
         self.log.debug('Loaded %d modules.', len(loaded_modules))
         return loaded_modules

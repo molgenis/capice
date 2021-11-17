@@ -1,4 +1,5 @@
 import os
+
 from src.main_train import Train
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.cli.args_handler_parent import ArgsHandlerParent
@@ -9,10 +10,10 @@ class ArgsHandlerTrain(ArgsHandlerParent):
     Command-line argument handler for train sub-command.
     Parses, validates and executes function.
     """
-    SPLIT_DEFAULT = 0.2
 
     def __init__(self, parser):
         super(ArgsHandlerTrain, self).__init__(parser=parser)
+        self.split_default = 0.2
 
     @property
     def _extension(self):
@@ -65,13 +66,12 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-    def _handle_module_specific_args(
-            self, input_loc, output_loc, output_filename, args):
+    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
         impute = self.validate_length_one(args.impute, '-m/--impute')
         self.validate_input_json(impute)
         test_split = self.validate_length_one(args.split, '-s/--split')
         if test_split is None:
-            test_split = self.SPLIT_DEFAULT
+            test_split = self.split_default
         # Since argparse doesn't cooperate well with default values and always
         # returns them as a list, this has to be done.
         if isinstance(test_split, list):

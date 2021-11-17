@@ -1,4 +1,5 @@
 import pandas as pd
+
 from src.main.python.core.logger import Logger
 from src.main.python.utilities.sections import Column
 
@@ -71,7 +72,4 @@ class CapiceImputing:
         if n_nan > 0:
             n_samples = column.size
             p_nan = round((n_nan / n_samples) * 100, ndigits=2)
-            self.log.debug('NaN detected in column %s, percentage: %s%%.',
-                           column.name,
-                           p_nan
-                           )
+            self.log.debug('NaN detected in column %s, percentage: %s%%.', column.name, p_nan)

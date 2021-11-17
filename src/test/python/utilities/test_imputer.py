@@ -1,4 +1,5 @@
 import unittest
+
 from src.test.python.test_templates import set_up_impute_preprocess, teardown
 
 
@@ -39,9 +40,7 @@ class TestImputer(unittest.TestCase):
                 self.main._load_file()
             ), impute_values=self.model.impute_values
         )
-        self.assertFalse(
-            imputed_file[self.model.impute_values.keys()].isnull().values.any()
-        )
+        self.assertFalse(imputed_file[self.model.impute_values.keys()].isnull().values.any())
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+import os
 import unittest
 from pathlib import Path
 
@@ -10,8 +11,14 @@ class TestInputProcessor(unittest.TestCase):
     @classmethod
     def setUp(cls):
         print('Setting up.')
-        output = str(get_project_root_dir()) + \
-                 '/src/test/resources/input_processor/filename.txt'
+        output = os.path.join(
+            get_project_root_dir(),
+            'src',
+            'test',
+            'resources',
+            'input_processor',
+            'filename.txt'
+        )
         cls.processor = InputProcessor('/test/input/file.txt', output, True)
 
     def test__set_output_path(self):
@@ -53,3 +60,7 @@ class TestInputProcessor(unittest.TestCase):
         self.processor._handle_input_output_directories()
         self.assertEqual('/directory', self.processor.get_output_directory())
         self.assertEqual('file.txt', self.processor.get_output_filename())
+
+
+if __name__ == '__main__':
+    unittest.main()

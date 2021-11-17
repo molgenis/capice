@@ -59,8 +59,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-    def _handle_module_specific_args(
-            self, input_loc, output_loc, output_filename, args):
+    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
         model_path = self.validate_length_one(args.model, '-m/--model')
         model = self.validate_model(model_path)
         if not output_filename.endswith('.gz'):

@@ -2,6 +2,7 @@ import os
 import pickle
 import unittest
 import pandas as pd
+
 from src.test.python.test_templates import teardown
 from src.main.python.validators.validators import PostFileParseValidator, \
     PostVEPProcessingValidator
@@ -33,10 +34,10 @@ class TestPostFileParseValidator(unittest.TestCase):
         self.validator.validate_n_columns(self.dataset)
 
     def test_validation_incorrect_n_columns(self):
-        print('KeyError raised in n_columns due to too few columns '
-              '(incorrectly loaded)')
-        incorrectly_loaded_dataset = self.dataset[
-            self.dataset.columns].astype(str).agg('_'.join, axis=1)
+        print('KeyError raised in n_columns due to too few columns (incorrectly loaded)')
+        incorrectly_loaded_dataset = self.dataset[self.dataset.columns].astype(str).agg(
+            '_'.join, axis=1
+        )
         self.assertRaises(
             KeyError,
             self.validator.validate_n_columns,

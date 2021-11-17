@@ -30,20 +30,8 @@ class InputParser:
             used_sep = 'Tab'
         else:
             used_sep = self.sep
-        self.log.info(
-            'Reading VEP file from: %s using separator: %s',
-            input_file_loc,
-            used_sep
-        )
-        input_file = pd.read_csv(
-            input_file_loc,
-            sep=self.sep,
-            na_values='.',
-            low_memory=False
-        )
-        self.log.info(
-            'Input file at %s loaded with %s samples.',
-            input_file_loc,
-            input_file.shape[0]
-        )
+        self.log.info('Reading VEP file from: %s using separator: %s', input_file_loc, used_sep)
+        input_file = pd.read_csv(input_file_loc, sep=self.sep, na_values='.', low_memory=False)
+        self.log.info('Input file at %s loaded with %s samples.', input_file_loc,
+                      input_file.shape[0])
         return input_file

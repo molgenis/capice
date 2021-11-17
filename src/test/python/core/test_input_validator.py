@@ -27,11 +27,7 @@ class TestInputValidator(unittest.TestCase):
         cls.input_validator = InputValidator(argparse.ArgumentParser())
         cls.another_test_output = cls.temp_test_output
         cls.test_output_name = cls.temp_test_directory_name
-        cls.input_file = os.path.join(
-            '.',
-            'CAPICE_example',
-            'CAPICE_input.tsv.gz'
-        )
+        cls.input_file = os.path.join(cls.input_loc, 'CAPICE_input.tsv.gz')
         cls.expected_output_filename = 'CAPICE_input_capice'
         cls.test_filename = 'test.txt'
 
@@ -68,6 +64,7 @@ class TestInputValidator(unittest.TestCase):
         self.assertTrue(
             self.test_output_name in os.listdir(get_project_root_dir())
         )
+
 
 if __name__ == '__main__':
     unittest.main()

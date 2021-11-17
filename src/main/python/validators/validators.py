@@ -23,9 +23,7 @@ class InputValidator:
         if not os.path.exists(input_loc):
             self.parser.error("Input file does not exist!")
         if not (input_loc.endswith(extension)):
-            self.parser.error(
-                'Given input file does not match required extension!'
-            )
+            self.parser.error('Given input file does not match required extension!')
 
     def validate_output_loc(self, output_loc):
         """
@@ -35,17 +33,14 @@ class InputValidator:
         """
         # If the output directory is not present and
         # the parent directory is also not writeable, throw OSError
-        if not os.path.isdir(output_loc) and not os.access(
-                Path(output_loc).parent, os.W_OK):
+        if not os.path.isdir(output_loc) and not os.access(Path(output_loc).parent, os.W_OK):
             self.parser.error(
                 "New output directory cannot be made in a "
                 "read/execute only directory!"
             )
         # If the output directory is present but not writable, throw OSError
         elif os.path.isdir(output_loc) and not os.access(output_loc, os.W_OK):
-            self.parser.error(
-                "Output directory is not writable!"
-            )
+            self.parser.error("Output directory is not writable!")
         # If the output directory is not yet present,
         # but passed the check that it is in a writable parent directory,
         # only warn
@@ -74,9 +69,7 @@ class PostFileParseValidator:
             raise KeyError(error_message)
 
     def validate_minimally_required_columns(
-            self,
-            dataset,
-            additional_required_features: list = None
+            self, dataset, additional_required_features: list = None
     ):
         """
         Validator for both predict and train to check if the very least columns
@@ -108,13 +101,11 @@ class PostFileParseValidator:
         Function to check if all values of the columns Chr and Pos are present.
         """
         if dataset[Column.chr.value].isnull().values.any():
-            error_message = 'Detected gap in Chromosome column! ' \
-                            'Please supply a valid dataset.'
+            error_message = 'Detected gap in Chromosome column! Please supply a valid dataset.'
             self.log.critical(error_message)
             raise ValueError(error_message)
         if dataset[Column.pos.value].isnull().values.any():
-            error_message = 'Detected gap in Position column! ' \
-                            'Please supply a valid dataset.'
+            error_message = 'Detected gap in Position column! Please supply a valid dataset.'
             self.log.critical(error_message)
             raise ValueError(error_message)
 

@@ -4,6 +4,7 @@ import sys
 import pickle
 import unittest
 import pandas as pd
+
 from src.test.python.test_templates import teardown
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.capice_imputing import CapiceImputing
@@ -51,8 +52,6 @@ class TestSpecificLogCalls(unittest.TestCase):
             'DEBUG: NaN detected in column bar, percentage: 50.0%.',
             'DEBUG: NaN detected in column baz, percentage: 25.0%.'
         ]
-        self.manager.vep_version = 104.0
-        self.manager.grch_build = 37
         imputer = CapiceImputing(self.model)
         imputer._get_nan_ratio_per_column(dataset=nan_dataframe)
         log_messages = new_stdout.getvalue().splitlines()
@@ -61,9 +60,7 @@ class TestSpecificLogCalls(unittest.TestCase):
         # Only the last 2 log messages are of interest.
         for message in log_messages[-2:]:
             # Cryptic way to remove timestamp.
-            stripped_log_messages.append(
-                ' '.join(message.strip().split(' ')[2:])
-            )
+            stripped_log_messages.append(' '.join(message.strip().split(' ')[2:]))
         self.assertGreater(len(stripped_log_messages), 0)
         for message in stripped_log_messages:
             self.assertIn(message.lstrip(), messages_present)
