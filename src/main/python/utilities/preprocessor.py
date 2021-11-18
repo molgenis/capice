@@ -45,16 +45,16 @@ class PreProcessor:
         :return: processed pandas Dataframe
         """
         self._is_train()
-        dataset = self._duplicate_chr_pos_ref_alt(dataset)
+        dataset = self._create_preservation_col(dataset)
         self._get_categorical_columns(dataset)
         processed_dataset = self._process_objects(dataset)
         if not self.train:
-            processed_dataset = self._make_sure_all_predict_columns_present(processed_dataset)
+            processed_dataset = self._ensure_columns_present(processed_dataset)
         self.log.info('Successfully preprocessed data.')
         return processed_dataset
 
     @staticmethod
-    def _duplicate_chr_pos_ref_alt(dataset):
+    def _create_preservation_col(dataset):
         """
         Function to create the chr_pos_ref_alt column so that it doesn't get
         lost in preprocessing.
@@ -132,7 +132,7 @@ class PreProcessor:
         """
         if self.train:
             for annotation_feature in annotation_feats_dict.keys():
-                feature_names = self._get_top10_or_less_cats(
+                feature_names = self._get_top_n_cats(
                     column=dataset[annotation_feature],
                     return_num=annotation_feats_dict[annotation_feature]
                 )
@@ -161,7 +161,7 @@ class PreProcessor:
 
         return dataset
 
-    def _get_top10_or_less_cats(self, column: pd.Series, return_num: int):
+    def _get_top_n_cats(self, column: pd.Series, return_num: int):
         """
         Function for when a training file is preprocessed to get the top
         return_num quantity values within a categorical column.
@@ -182,7 +182,12 @@ class PreProcessor:
                       )
         return value_counts
 
-    def _make_sure_all_predict_columns_present(self, dataset):
+    def _ensure_columns_present(self, dataset):
+        """
+        Function to ensure that for the prediction all prediction columns
+        are present. If a columns is not present, add it with a full
+        columns of NaN.
+        """
         for feature in self.model_features:
             if feature not in dataset.columns:
                 self.log.debug('Detected column %s not present in columns. '
