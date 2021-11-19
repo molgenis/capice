@@ -58,20 +58,8 @@ class TestAnnotator(unittest.TestCase):
 
     def test_component_annotator(self):
         print('Processor (component)')
-        expected_outcome = pd.DataFrame(
+        expected_processed_columns = pd.DataFrame(
             {
-                'chr': {0: '1', 1: '1'},
-                'pos': {0: 1, 1: 10042538},
-                'ref': {0: 'C', 1: 'C'},
-                'alt': {0: 'T', 1: 'T'},
-                'Consequence': {0: 'missense_variant', 1: 'downstream_gene_variant'},
-                'GeneName': {0: 'NMNAT1', 1: 'NMNAT1'},
-                'SourceID': {0: 'HGNC', 1: 'HGNC'},
-                'HGNC_ID': {0: '17877', 1: '17877'},
-                'FeatureID': {0: 'ENST00000377205', 1: 'ENST00000403197'},
-                'STRAND': {0: 1, 1: 1},
-                'Exon': {0: '5/5', 1: np.nan},
-                'Intron': {0: np.nan, 1: np.nan},
                 'motifEScoreChng': {0: np.nan, 1: np.nan},
                 'SIFTcat': {0: 'deleterious', 1: np.nan},
                 'SIFTval': {0: 0.04, 1: np.nan},
@@ -95,6 +83,27 @@ class TestAnnotator(unittest.TestCase):
                 'relProtPos': {0: 279.0, 1: np.nan},
                 'ConsDetail': {0: 'missense', 1: 'downstream'}
             }
+        )
+        expected_outcome = pd.concat(
+            [
+                self.dataset[
+                    [
+                        'chr',
+                        'pos',
+                        'ref',
+                        'alt',
+                        'Consequence',
+                        'GeneName',
+                        'SourceID',
+                        'HGNC_ID',
+                        'FeatureID',
+                        'STRAND',
+                        'Exon',
+                        'Intron'
+                    ]
+                ],
+                expected_processed_columns
+            ], axis=1
         )
         outcome = self.annotator.process(self.dataset)
         pd.testing.assert_frame_equal(
