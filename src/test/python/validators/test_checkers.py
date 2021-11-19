@@ -2,14 +2,14 @@ import unittest
 import pandas as pd
 
 from src.main.python.validators.validators import PostFileParseValidator
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.test.python.test_templates import set_up_manager_and_out, teardown
 
 
 class TestTrainValidator(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        set_up_manager_and_loc()
+        set_up_manager_and_out()
         cls.validator = PostFileParseValidator()
 
     @classmethod

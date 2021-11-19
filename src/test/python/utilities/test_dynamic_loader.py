@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from src.test.python.test_templates import set_up_manager_and_loc
+from src.test.python.test_templates import set_up_manager_and_out
 from src.main.python.utilities.dynamic_loader import DynamicLoader
 from src.main.python.utilities.utilities import get_project_root_dir
 
@@ -10,7 +10,7 @@ class TestDynamicLoader(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         print('Setting up.')
-        cls.manager, output = set_up_manager_and_loc()
+        cls.manager, output = set_up_manager_and_out()
         cls.correct_resources = os.path.join(
             get_project_root_dir(),
             'src',

@@ -18,7 +18,7 @@ class TestInputValidator(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        cls.input_loc = os.path.join(get_project_root_dir(), 'CAPICE_example')
+        cls.input_path = os.path.join(get_project_root_dir(), 'CAPICE_example')
         root_dir = get_project_root_dir()
         cls.output_directory = os.path.join(root_dir, '.test_output')
         if not os.path.exists(cls.output_directory):
@@ -27,7 +27,7 @@ class TestInputValidator(unittest.TestCase):
         cls.input_validator = InputValidator(argparse.ArgumentParser())
         cls.another_test_output = cls.temp_test_output
         cls.test_output_name = cls.temp_test_directory_name
-        cls.input_file = os.path.join(cls.input_loc, 'CAPICE_input.tsv.gz')
+        cls.input_file = os.path.join(cls.input_path, 'CAPICE_input.tsv.gz')
         cls.expected_output_filename = 'CAPICE_input_capice'
         cls.test_filename = 'test.txt'
 
@@ -49,18 +49,18 @@ class TestInputValidator(unittest.TestCase):
 
     def test_input_error(self):
         print('Input file error')
-        fake_input_file = os.path.join(self.input_loc, 'fakefile.tsv')
+        fake_input_file = os.path.join(self.input_path, 'fakefile.tsv')
         self.assertRaises(
             SystemExit,
-            self.input_validator.validate_input_loc,
+            self.input_validator.validate_input_path,
             fake_input_file,
             'tsv'
         )
 
-    def test_create_output_loc(self):
+    def test_create_output_path(self):
         print('Creating output location')
         with self.assertWarns(Warning):
-            self.input_validator.validate_output_loc(self.another_test_output)
+            self.input_validator.validate_output_path(self.another_test_output)
         self.assertTrue(
             self.test_output_name in os.listdir(get_project_root_dir())
         )

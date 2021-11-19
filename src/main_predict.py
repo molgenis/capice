@@ -10,8 +10,8 @@ class Predict(Main):
     preprocess and eventually predict a score over a CAPICE annotated file.
     """
 
-    def __init__(self, input_loc, model, output_loc):
-        super().__init__(input_loc, output_loc)
+    def __init__(self, input_path, model, output_path):
+        super().__init__(input_path, output_path)
 
         # Model.
         self.model = model

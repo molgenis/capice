@@ -3,13 +3,13 @@ import numpy as np
 import unittest
 
 from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.test.python.test_templates import set_up_manager_and_out, teardown
 
 
 class TestAnnotator(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        set_up_manager_and_loc()
+        set_up_manager_and_out()
         # Creating a dataframe of data that is tailored to test the
         # return N append function within lookup.py.
         cls.dataset = pd.DataFrame(

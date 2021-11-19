@@ -5,15 +5,15 @@ import pandas as pd
 
 from src.main.python.core.capice_exporter import CapiceExporter
 from src.main.python.utilities.sections import Column
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.test.python.test_templates import set_up_manager_and_out, teardown
 
 
 class TestCapiceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        manager, cls.output_loc = set_up_manager_and_loc()
-        cls.exporter = CapiceExporter(file_path=cls.output_loc)
+        manager, cls.output_path = set_up_manager_and_out()
+        cls.exporter = CapiceExporter(file_path=cls.output_path)
         cls.prediction_output_dataframe = pd.DataFrame(
             {
                 Column.chr_pos_ref_alt.value: ['1_100_A_C', '2_200_T_G'],
@@ -59,11 +59,11 @@ class TestCapiceExporter(unittest.TestCase):
     def test_prediction_output(self):
         print('Prediction output')
         filename = 'test_output.tsv'
-        filename_loc = os.path.join(self.output_loc, filename)
+        filename_path = os.path.join(self.output_path, filename)
         self.exporter.capice_filename = filename
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        self.assertTrue(os.path.isfile(filename_loc))
-        exported_data = pd.read_csv(filename_loc, compression='gzip', sep='\t')
+        self.assertTrue(os.path.isfile(filename_path))
+        exported_data = pd.read_csv(filename_path, compression='gzip', sep='\t')
         exported_data[Column.chr.value] = exported_data[Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(exported_data, self.expected_prediction_output_dataframe)
 
@@ -75,12 +75,12 @@ class TestCapiceExporter(unittest.TestCase):
         """
         print('Filename generator (with force=True)')
         present_file = 'already_present_file.tsv'
-        present_file_loc = os.path.join(self.output_loc, present_file)
-        with open(present_file_loc, 'wt') as present_file_conn:
+        present_file_path = os.path.join(self.output_path, present_file)
+        with open(present_file_path, 'wt') as present_file_conn:
             present_file_conn.write('This file is already present')
         self.exporter.capice_filename = present_file
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        forced_file = pd.read_csv(present_file_loc, compression='gzip', sep='\t')
+        forced_file = pd.read_csv(present_file_path, compression='gzip', sep='\t')
         forced_file[Column.chr.value] = forced_file[Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(forced_file, self.expected_prediction_output_dataframe)
 

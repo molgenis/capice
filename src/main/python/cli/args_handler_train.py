@@ -66,7 +66,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
         impute = self.validate_length_one(args.impute, '-m/--impute')
         self.validate_input_json(impute)
         test_split = self.validate_length_one(args.split, '-s/--split')
@@ -78,16 +78,16 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             test_split = test_split[0]
         self.validate_test_split(test_split)
         CapiceManager().output_filename = output_filename
-        Train(input_loc, impute, test_split, output_loc).run()
+        Train(input_path, impute, test_split, output_path).run()
 
-    def validate_input_json(self, json_loc):
+    def validate_input_json(self, json_path):
         """
         Function to validate that the impute json is present and has the
         correct extension.
         """
-        if not os.path.exists(json_loc):
+        if not os.path.exists(json_path):
             self.parser.error('Input JSON does not exist!')
-        if not json_loc.endswith('.json'):
+        if not json_path.endswith('.json'):
             self.parser.error('Given input JSON is not a JSON file!')
 
     def validate_test_split(self, test_split):
