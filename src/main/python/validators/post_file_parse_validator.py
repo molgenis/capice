@@ -1,7 +1,7 @@
 import pandas as pd
 
-from main.python.core.logger import Logger
-from main.python.utilities.sections import Column
+from src.main.python.core.logger import Logger
+from src.main.python.utilities.sections import Column
 
 
 class PostFileParseValidator:
