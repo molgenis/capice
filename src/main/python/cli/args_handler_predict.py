@@ -2,7 +2,7 @@ import os
 import pickle
 import xgboost as xgb
 
-from src.main_predict import Predict
+from src.main_predict import CapicePredict
 from src.main.python.__version__ import __version__
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.cli.args_handler_parent import ArgsHandlerParent
@@ -59,29 +59,40 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
         model_path = self.validate_length_one(args.model, '-m/--model')
         model = self.validate_model(model_path)
         if not output_filename.endswith('.gz'):
             output_filename = output_filename + '.gz'
         CapiceManager().output_filename = output_filename
-        Predict(input_loc, model, output_loc).run()
+        CapicePredict(input_path, model, output_path).run()
 
-    def validate_model(self, model_loc):
+    def validate_model(self, model_path):
         """
         Function to validate if the given model location is indeed a pickled
         model and matches the current CAPICE version.
-        :param model_loc: str, path-like, path to the model
+        :param model_path: str, path-like, path to the model
         :return: model, xgb.XGBClassifier class
         """
-        if not os.path.exists(model_loc):
-            self.parser.error("Input model does not exist!")
-        if not model_loc.endswith('.pickle.dat'):
-            self.parser.error("Model does not have the right extension!")
-        with open(model_loc, 'rb') as model_file:
+        self._validate_model_path(model_path)
+        with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
+        self._validate_model_class(model)
+        self._validate_model_attributes(model)
+        self._validate_model_version(model)
+        return model
+
+    def _validate_model_path(self, model_path):
+        if not os.path.exists(model_path):
+            self.parser.error("Input model does not exist!")
+        if not model_path.endswith('.pickle.dat'):
+            self.parser.error("Model does not have the right extension!")
+
+    def _validate_model_class(self, model):
         if not model.__class__ == xgb.XGBClassifier:
             self.parser.error("Given pickle is not a XGBClassifier class!")
+
+    def _validate_model_attributes(self, model):
         required_attributes = [
             'CAPICE_version',
             'impute_values',
@@ -92,9 +103,10 @@ class ArgsHandlerPredict(ArgsHandlerParent):
                 self.parser.error(
                     f'Unable to locate attribute {attribute} in model file!'
                 )
+
+    def _validate_model_version(self, model):
         if not model.CAPICE_version == __version__:
             self.parser.error(
                 f'Model version {model.CAPICE_version} '
                 f'does not match CAPICE version: {__version__}!'
             )
-        return model

@@ -1,17 +1,17 @@
-from src.main.python.validators.validators import PostVEPProcessingValidator
+from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
 from src.main.python.utilities.predictor import Predictor
 from src.main_capice import Main
 from src.main.python.utilities.sections import Column
 
 
-class Predict(Main):
+class CapicePredict(Main):
     """
     Predict class of CAPICE to call the different modules to impute,
     preprocess and eventually predict a score over a CAPICE annotated file.
     """
 
-    def __init__(self, input_loc, model, output_loc):
-        super().__init__(input_loc, output_loc)
+    def __init__(self, input_path, model, output_path):
+        super().__init__(input_path, output_path)
 
         # Model.
         self.model = model

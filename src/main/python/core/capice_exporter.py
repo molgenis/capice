@@ -34,11 +34,11 @@ class CapiceExporter:
         pathway.
         :param datafile: prediction pandas DataFrame
         """
-        export_loc = os.path.join(self.file_path, self.capice_filename)
+        export_path = os.path.join(self.file_path, self.capice_filename)
         datafile = self._post_process_split_cols(datafile)
         datafile = self._post_process_set_correct_dtypes(datafile)
-        datafile[self.export_cols].to_csv(export_loc, sep='\t', compression='gzip', index=False)
-        self.log.info('Successfully exported CAPICE datafile to: %s', export_loc)
+        datafile[self.export_cols].to_csv(export_path, sep='\t', compression='gzip', index=False)
+        self.log.info('Successfully exported CAPICE datafile to: %s', export_path)
 
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):
@@ -57,7 +57,7 @@ class CapiceExporter:
         Function specific to export a newly created CAPICE model
         :param model: XGBClassifier instance
         """
-        export_loc = os.path.join(self.file_path, self.capice_filename)
-        with open(export_loc, 'wb') as model_dump:
+        export_path = os.path.join(self.file_path, self.capice_filename)
+        with open(export_path, 'wb') as model_dump:
             pickle.dump(model, model_dump)
-        self.log.info('Successfully exported CAPICE model to: %s', export_loc)
+        self.log.info('Successfully exported CAPICE model to: %s', export_path)

@@ -6,7 +6,7 @@ from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.input_parser import InputParser
 from src.main.python.utilities.capice_imputing import CapiceImputing
 from src.main.python.utilities.preprocessor import PreProcessor
-from src.main.python.validators.validators import PostFileParseValidator
+from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
 from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
 from src.main.python.utilities.load_file_postprocessor import \
     LoadFilePostProcessor
@@ -18,7 +18,7 @@ class Main(ABC):
     function.
     """
 
-    def __init__(self, input_loc, output_loc):
+    def __init__(self, input_path, output_path):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
@@ -26,12 +26,12 @@ class Main(ABC):
         self.log.info('Initiating selected mode.')
 
         # Input file.
-        self.infile = input_loc
+        self.infile = input_path
         self.log.debug('Input argument -i / --input confirmed: %s',
                        self.infile)
 
         # Output file.
-        self.output = output_loc
+        self.output = output_path
         self.log.debug(
             'Output directory -o / --output confirmed: %s', self.output
         )
@@ -54,7 +54,7 @@ class Main(ABC):
         """
         input_parser = InputParser()
         input_file = input_parser.parse(
-            input_file_loc=self.infile
+            input_file_path=self.infile
         )
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()

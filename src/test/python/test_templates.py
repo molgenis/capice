@@ -1,13 +1,13 @@
 import os
 import pickle
 
-from src.main_predict import Predict
+from src.main_predict import CapicePredict
 from src.main.python.core.logger import Logger
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.utilities import get_project_root_dir
 
 
-def set_up_manager_and_loc():
+def set_up_manager_and_out():
     """
     Function to set up the CapiceManager and testing output location
     :return: manager instance, output_directory
@@ -37,11 +37,11 @@ def teardown():
 
 
 def set_up_predict():
-    return Predict(input_loc=None, model=None, output_loc=None)
+    return CapicePredict(input_path=None, model=None, output_path=None)
 
 
 def set_up_impute_preprocess():
-    set_up_manager_and_loc()
+    set_up_manager_and_out()
     main = set_up_predict()
     main.infile = os.path.join(
             get_project_root_dir(),

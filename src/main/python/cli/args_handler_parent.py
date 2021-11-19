@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from src.main.python.validators.validators import InputValidator
+from src.main.python.validators.input_validator import InputValidator
 from src.main.python.utilities.input_processor import InputProcessor
 from src.main.python.utilities.utilities import \
     validate_list_length_one
@@ -63,17 +63,17 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         arguments. Also parses the output filename.
         """
         validator = InputValidator(self.parser)
-        input_loc = self.validate_length_one(args.input, '-i/--input')
-        validator.validate_input_loc(input_loc, extension=self._extension)
+        input_path = self.validate_length_one(args.input, '-i/--input')
+        validator.validate_input_path(input_path, extension=self._extension)
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
-        processor = InputProcessor(input_path=input_loc, output_path=output_path, force=args.force)
+        processor = InputProcessor(input_path=input_path, output_path=output_path, force=args.force)
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
-        output_loc = processor.get_output_directory()
-        validator.validate_output_loc(output_loc)
-        self._handle_module_specific_args(input_loc, output_loc, output_filename, args)
+        output_path = processor.get_output_directory()
+        validator.validate_output_path(output_path)
+        self._handle_module_specific_args(input_path, output_path, output_filename, args)
 
     def validate_length_one(self, arg, arg_name):
         try:
@@ -82,7 +82,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             self.parser.error(f'Invalid number of {arg_name} arguments.')
 
     @abstractmethod
-    def _handle_module_specific_args(self, input_loc, output_loc, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
         """
         Method to be filled in by the module specific parsers. Should perform
         additional validation over args specific to the parser. Should then call

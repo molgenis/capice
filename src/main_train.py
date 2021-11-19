@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
+
 from src.main.python.utilities.sections import TrainEnums
 from src.main.python.__version__ import __version__
 from src.main_capice import Main
@@ -9,22 +10,22 @@ from src.main.python.core.capice_exporter import CapiceExporter
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
-class Train(Main):
+class CapiceTrain(Main):
     """
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
     def __init__(self,
-                 input_loc,
-                 json_loc,
+                 input_path,
+                 json_path,
                  test_split,
-                 output_loc):
-        super().__init__(input_loc, output_loc)
+                 output_path):
+        super().__init__(input_path, output_path)
 
         # Impute JSON.
-        self.json_loc = json_loc
+        self.json_path = json_path
         self.log.debug(
-            'Input impute JSON confirmed: %s', self.json_loc
+            'Input impute JSON confirmed: %s', self.json_path
         )
 
         # Train test size.
@@ -62,7 +63,7 @@ class Train(Main):
             additional_required_features=self.additional_required
         )
         data = self.process(loaded_data=data)
-        with open(self.json_loc, 'rt') as impute_values_file:
+        with open(self.json_path, 'rt') as impute_values_file:
             json_dict = json.load(impute_values_file)
         self._validate_impute_complete(data, json_dict)
 

@@ -2,8 +2,8 @@ import unittest
 import os
 import pickle
 
-from src.main_train import Train
-from src.test.python.test_templates import set_up_manager_and_loc, teardown
+from src.main_train import CapiceTrain
+from src.test.python.test_templates import set_up_manager_and_out, teardown
 from src.main.python.utilities.utilities import get_project_root_dir
 
 
@@ -11,7 +11,7 @@ class TestMainTrain(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        manager, cls.output_dir = set_up_manager_and_loc()
+        manager, cls.output_dir = set_up_manager_and_out()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
         train_file = os.path.join(
@@ -23,11 +23,11 @@ class TestMainTrain(unittest.TestCase):
             get_project_root_dir(),
             'CAPICE_example',
             'example_impute_values.json')
-        cls.main = Train(
-            input_loc=train_file,
-            json_loc=impute_json,
+        cls.main = CapiceTrain(
+            input_path=train_file,
+            json_path=impute_json,
             test_split=0.2,
-            output_loc=cls.output_dir
+            output_path=cls.output_dir
         )
         cls.main.esr = 1
         cls.main.n_jobs = 2
@@ -52,8 +52,8 @@ class TestMainTrain(unittest.TestCase):
         """
         print('Training (integration)')
         self.main.run()
-        output_loc = os.path.join(self.output_dir, self.output_filename)
-        with open(output_loc, 'rb') as model_dat:
+        output_path = os.path.join(self.output_dir, self.output_filename)
+        with open(output_path, 'rb') as model_dat:
             model = pickle.load(model_dat)
         best_model = str(model.__class__).split("'")[1]
         self.assertEqual('xgboost.sklearn.XGBClassifier', best_model)

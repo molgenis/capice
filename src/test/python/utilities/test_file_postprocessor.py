@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from src.test.python.test_templates import teardown, set_up_manager_and_loc
+from src.test.python.test_templates import teardown, set_up_manager_and_out
 from src.main.python.utilities.load_file_postprocessor import \
     LoadFilePostProcessor
 
@@ -10,7 +10,7 @@ class TestFilePostProcessor(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         print('Setting up.')
-        set_up_manager_and_loc()
+        set_up_manager_and_out()
 
     @classmethod
     def tearDownClass(cls) -> None:
