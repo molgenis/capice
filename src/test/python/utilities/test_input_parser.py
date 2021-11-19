@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import pandas as pd
@@ -13,7 +14,8 @@ class TestInputParser(unittest.TestCase):
 
     def test_parse(self):
         self.parser.set_separator(',')
-        input_file = self.parser.parse('../../resources/input_parser/input_parser.txt')
+        input_file = self.parser.parse(
+            os.path.join('..', '..', 'resources', 'input_parser', 'input_parser.txt'))
         expected_df = pd.DataFrame(
             {
                 'this': ['this'],
