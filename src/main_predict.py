@@ -4,7 +4,7 @@ from src.main_capice import Main
 from src.main.python.utilities.sections import Column
 
 
-class Predict(Main):
+class CapicePredict(Main):
     """
     Predict class of CAPICE to call the different modules to impute,
     preprocess and eventually predict a score over a CAPICE annotated file.

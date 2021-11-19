@@ -2,7 +2,7 @@ import unittest
 import os
 import pickle
 
-from src.main_train import Train
+from src.main_train import CapiceTrain
 from src.test.python.test_templates import set_up_manager_and_out, teardown
 from src.main.python.utilities.utilities import get_project_root_dir
 
@@ -23,7 +23,7 @@ class TestMainTrain(unittest.TestCase):
             get_project_root_dir(),
             'CAPICE_example',
             'example_impute_values.json')
-        cls.main = Train(
+        cls.main = CapiceTrain(
             input_path=train_file,
             json_path=impute_json,
             test_split=0.2,

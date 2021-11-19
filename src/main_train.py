@@ -10,7 +10,7 @@ from src.main.python.core.capice_exporter import CapiceExporter
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 
-class Train(Main):
+class CapiceTrain(Main):
     """
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.

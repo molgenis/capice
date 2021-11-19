@@ -1,7 +1,7 @@
 import os
 import pickle
 
-from src.main_predict import Predict
+from src.main_predict import CapicePredict
 from src.main.python.core.logger import Logger
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.utilities import get_project_root_dir
@@ -37,7 +37,7 @@ def teardown():
 
 
 def set_up_predict():
-    return Predict(input_path=None, model=None, output_path=None)
+    return CapicePredict(input_path=None, model=None, output_path=None)
 
 
 def set_up_impute_preprocess():
