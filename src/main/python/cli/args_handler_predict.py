@@ -74,14 +74,25 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         :param model_path: str, path-like, path to the model
         :return: model, xgb.XGBClassifier class
         """
+        self._validate_model_path(model_path)
+        with open(model_path, 'rb') as model_file:
+            model = pickle.load(model_file)
+        self._validate_model_class(model)
+        self._validate_model_attributes(model)
+        self._validate_model_version(model)
+        return model
+
+    def _validate_model_path(self, model_path):
         if not os.path.exists(model_path):
             self.parser.error("Input model does not exist!")
         if not model_path.endswith('.pickle.dat'):
             self.parser.error("Model does not have the right extension!")
-        with open(model_path, 'rb') as model_file:
-            model = pickle.load(model_file)
+
+    def _validate_model_class(self, model):
         if not model.__class__ == xgb.XGBClassifier:
             self.parser.error("Given pickle is not a XGBClassifier class!")
+
+    def _validate_model_attributes(self, model):
         required_attributes = [
             'CAPICE_version',
             'impute_values',
@@ -92,9 +103,10 @@ class ArgsHandlerPredict(ArgsHandlerParent):
                 self.parser.error(
                     f'Unable to locate attribute {attribute} in model file!'
                 )
+
+    def _validate_model_version(self, model):
         if not model.CAPICE_version == __version__:
             self.parser.error(
                 f'Model version {model.CAPICE_version} '
                 f'does not match CAPICE version: {__version__}!'
             )
-        return model
