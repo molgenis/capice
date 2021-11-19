@@ -1,4 +1,4 @@
-from main.python.core.logger import Logger
+from src.main.python.core.logger import Logger
 
 
 class PostVEPProcessingValidator:
