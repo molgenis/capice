@@ -22,7 +22,7 @@ class TestTrainValidator(unittest.TestCase):
 
     def test_check_labels(self):
         print('Check labels')
-        dataset = pd.DataFrame(columns=['chr', 'pos', 'ref', 'alt','binarized_label', 'foo'])
+        dataset = pd.DataFrame(columns=['chr', 'pos', 'ref', 'alt', 'binarized_label', 'foo'])
         self.assertRaises(
             KeyError,
             self.validator.validate_minimally_required_columns,
