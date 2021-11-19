@@ -1,4 +1,4 @@
-from src.main.python.validators.validators import PostVEPProcessingValidator
+from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
 from src.main.python.utilities.predictor import Predictor
 from src.main_capice import Main
 from src.main.python.utilities.sections import Column

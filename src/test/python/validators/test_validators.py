@@ -4,8 +4,8 @@ import unittest
 import pandas as pd
 
 from src.test.python.test_templates import teardown
-from src.main.python.validators.validators import PostFileParseValidator, \
-    PostVEPProcessingValidator
+from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
+from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
 from src.main.python.utilities.utilities import get_project_root_dir
 
 

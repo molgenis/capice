@@ -6,7 +6,7 @@ from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.input_parser import InputParser
 from src.main.python.utilities.capice_imputing import CapiceImputing
 from src.main.python.utilities.preprocessor import PreProcessor
-from src.main.python.validators.validators import PostFileParseValidator
+from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
 from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
 from src.main.python.utilities.load_file_postprocessor import \
     LoadFilePostProcessor

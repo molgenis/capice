@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from src.main.python.validators.validators import InputValidator
+from src.main.python.validators.input_validator import InputValidator
 from src.main.python.utilities.input_processor import InputProcessor
 from src.main.python.utilities.utilities import \
     validate_list_length_one

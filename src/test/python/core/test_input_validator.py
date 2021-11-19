@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from src.main.python.utilities.utilities import get_project_root_dir
-from src.main.python.validators.validators import InputValidator
+from src.main.python.validators.input_validator import InputValidator
 from src.test.python.test_templates import teardown
 
 

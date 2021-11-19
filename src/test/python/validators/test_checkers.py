@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
 
-from src.main.python.validators.validators import PostFileParseValidator
+from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
 from src.test.python.test_templates import set_up_manager_and_out, teardown
 
 
