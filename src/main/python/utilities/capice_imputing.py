@@ -67,9 +67,13 @@ class CapiceImputing:
             series = dataset[column]
             self._calculate_percentage_nan(column=series)
 
+    @staticmethod
+    def _calculate_percentage(value, total):
+        return round((value / total) * 100, ndigits=2)
+
     def _calculate_percentage_nan(self, column):
         n_nan = column.isnull().sum()
         if n_nan > 0:
             n_samples = column.size
-            p_nan = round((n_nan / n_samples) * 100, ndigits=2)
+            p_nan = self._calculate_percentage(n_nan, n_samples)
             self.log.debug('NaN detected in column %s, percentage: %s%%.', column.name, p_nan)
