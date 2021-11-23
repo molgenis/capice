@@ -9,20 +9,65 @@ MAX_AF: The desired allele frequency per variant. Can originate from gnomAD or
 
 """
 import os
+import shutil
 import argparse
+import unittest
 import numpy as np
 import pandas as pd
+from pathlib import Path
+
+__random_state__ = 5
+__bins__ = [0.0, 0.01, 0.05, 0.1, 0.5, 1.0]
+
+
+def _correct_column_names(dataset):
+    new_columns = []
+    for col in dataset.columns:
+        if col.startswith('%'):
+            new_columns.append(col.split('%')[1])
+        elif col.startswith('#'):
+            new_columns.append(col.split('#')[1])
+        else:
+            new_columns.append(col)
+    dataset.columns = new_columns
+    return dataset
 
 
 def main():
-    # To be filled in
-    pass
+    # Parse CLA
+    cla_parser = ArgumentParser()
+    input_path = cla_parser.get_argument('input')[0]
+    output_directory = cla_parser.get_argument('output')[0]
+    split = cla_parser.get_argument('split')
+    # Validate CLA
+    cla_validator = CommandLineArgumentsValidator()
+    cla_validator.validate_input_path(input_path)
+    cla_validator.validate_output_directory(output_directory)
+    # Load in dataset
+    dataset = pd.read_csv(input_path, na_values='.', sep='\t', low_memory=False)
+    dataset = _correct_column_names(dataset)
+    # Validate dataset
+    dataset_validator = InputDatasetValidator()
+    dataset_validator.validate_columns_required(dataset)
+    dataset_validator.validate_b_p_present(dataset)
+    # Run
+    exporter = BalanceExporter(output_path=output_directory)
+    splitter = Split()
+    if split:
+        validation_dataset, dataset = splitter.split(dataset)
+        # Export here so the splitter function is easier to test
+        exporter.export_validation_dataset(validation_dataset)
+    balancer = Balancer()
+    balanced_dataset = balancer.balance(dataset)
+    # Export
+    exporter.export_train_test_dataset(balanced_dataset)
 
 
 class ArgumentParser:
     """
     Class to parse the input arguments.
     """
+
     def __init__(self):
         parser = self._create_argument_parser()
         self.arguments = parser.parse_args()
@@ -79,11 +124,362 @@ class ArgumentParser:
         return value
 
 
-class Validator:
+class CommandLineArgumentsValidator:
     """
     Class to check if arguments are valid.
     """
 
+    def validate_input_path(self, input_path):
+        self._validate_input_exists(input_path)
+        self._validate_input_extension(input_path)
+
+    @staticmethod
+    def _validate_input_exists(input_path):
+        if not os.path.isfile(input_path):
+            raise FileNotFoundError('Input file does not exist!')
+
+    @staticmethod
+    def _validate_input_extension(input_path):
+        if not input_path.endswith(('.tsv', '.tsv.gz')):
+            raise FileNotFoundError('Input file is not TSV or gzipped TSV!')
+
+    def validate_output_directory(self, output_directory):
+        self._validate_output_directory_parent_exists(output_directory)
+        self._validate_output_parent_writable(output_directory)
+        self._ensure_output(output_directory)
+
+    @staticmethod
+    def _validate_output_directory_parent_exists(output_directory):
+        if (
+                not os.path.isdir(output_directory)
+                and not os.path.isdir(Path(output_directory).parent)
+        ):
+            raise OSError('Given output directory parent does not exist!')
+
+    @staticmethod
+    def _validate_output_parent_writable(output_directory):
+        if (
+                not os.path.isdir(output_directory)
+                and not os.access(Path(output_directory).parent, os.W_OK)
+        ):
+            raise OSError('New directory can not be created in a read/execute only directory!')
+
+    @staticmethod
+    def _ensure_output(output_directory):
+        if not os.path.isdir(output_directory):
+            os.makedirs(output_directory)
+
+
+class InputDatasetValidator:
+    """
+    Class to check if the input dataset is usable
+    """
+
+    @staticmethod
+    def validate_columns_required(dataset: pd.DataFrame):
+        required_columns = ['Consequence', 'MAX_AF', 'binarized_label']
+        for col in required_columns:
+            if col not in dataset.columns:
+                raise KeyError(f'Required column {col} not found in input dataset.')
+
+    @staticmethod
+    def validate_b_p_present(dataset: pd.DataFrame):
+        """
+        Method to validate that at least one pathogenic and one benign sample is present
+        """
+        if dataset[dataset['binarized_label'] == 0].shape[0] == 0:
+            raise ValueError('Not enough benign samples to balance!')
+        if dataset[dataset['binarized_label'] == 1].shape[0] == 0:
+            raise ValueError('Not enough pathogenic samples to balance!')
+
+
+class Split:
+    """
+    Class dedicated to splitting the data into a validation dataset and a train/test dataset.
+    """
+
+    @staticmethod
+    def split(dataset: pd.DataFrame):
+        """
+        Splits 10% of the pathogenic and 10% of the benign samples into a validation dataset
+        and immediately exports said validation dataset. Returns the train-test dataset.
+        """
+        validation_dataset = pd.DataFrame(columns=dataset.columns)
+        return_dataset = pd.DataFrame(columns=dataset.columns)
+        # Benign
+        all_benign = dataset[dataset['binarized_label'] == 0]
+        all_benign._is_copy = None
+        v_benign_samples = all_benign.sample(frac=0.1, random_state=__random_state__)
+        # A bit cryptic to remove the random samples from the benign dataset, but it works
+        all_benign = all_benign.append(v_benign_samples)
+        all_benign.drop_duplicates(keep=False, inplace=True)
+        return_dataset = return_dataset.append(all_benign, ignore_index=True)
+        validation_dataset = validation_dataset.append(v_benign_samples, ignore_index=True)
+
+        # Pathogenic
+        all_pathogenic = dataset[dataset['binarized_label'] == 1]
+        all_pathogenic._is_copy = None
+        v_patho_samples = all_pathogenic.sample(frac=0.1, random_state=__random_state__)
+        # Again a cryptic way to remove the randomly samples pathogenic samples
+        all_pathogenic = all_pathogenic.append(v_patho_samples)
+        all_pathogenic.drop_duplicates(keep=False, inplace=True)
+        return_dataset = return_dataset.append(all_pathogenic, ignore_index=True)
+        validation_dataset = validation_dataset.append(v_patho_samples, ignore_index=True)
+
+        return validation_dataset, return_dataset
+
+
+class Balancer:
+    """
+    Class dedicated to performing the balancing algorithm
+    """
+
+    def __init__(self):
+        self.bins = __bins__
+        self.columns = []
+
+    def balance(self, dataset: pd.DataFrame):
+        self.columns = dataset.columns
+        pathogenic = dataset[dataset['binarized_label'] == 1]
+        benign = dataset[dataset['binarized_label'] == 0]
+        return_dataset = pd.DataFrame(columns=self.columns)
+        for consequence in dataset['Consequence'].unique():
+            selected_pathogenic = pathogenic[pathogenic['Consequence'] == consequence]
+            selected_benign = benign[benign['Consequence'] == consequence]
+            processed_consequence = self._process_consequence(
+                pathogenic_dataset=selected_pathogenic, benign_dataset=selected_benign
+            )
+            return_dataset = return_dataset.append(processed_consequence)
+        return return_dataset
+
+    def _process_consequence(self, pathogenic_dataset, benign_dataset):
+        n_patho = pathogenic_dataset.shape[0]
+        n_benign = benign_dataset.shape[0]
+        if n_patho > n_benign:
+            pathogenic_dataset = pathogenic_dataset.sample(
+                n_benign,
+                random_state=__random_state__
+            )
+        pathogenic_histogram, bins = np.histogram(
+            pathogenic_dataset['MAX_AF'],
+            bins=self.bins
+        )
+        processed_bins = pd.DataFrame(columns=self.columns)
+        for ind in range(len(bins) - 1):
+            lower_bound = bins[ind]
+            upper_bound = bins[ind + 1]
+            sample_number = pathogenic_histogram[ind]
+            processed_bins = processed_bins.append(
+                self._process_bins(
+                    pathogenic_dataset, benign_dataset, upper_bound, lower_bound, sample_number
+                )
+            )
+        return processed_bins
+
+    def _process_bins(
+            self, pathogenic_dataset, benign_dataset, upper_bound, lower_bound, sample_num
+    ):
+        selected_pathogenic = self._get_variants_within_range(
+            pathogenic_dataset, upper_bound=upper_bound, lower_bound=lower_bound
+        )
+        selected_benign = self._get_variants_within_range(
+            benign_dataset, upper_bound=upper_bound, lower_bound=lower_bound
+        )
+        if sample_num < selected_benign.shape[0]:
+            return_benign = selected_benign.sample(
+                sample_num,
+                random_state=__random_state__
+            )
+            return_pathogenic = selected_pathogenic
+        else:
+            return_benign = selected_benign
+            return_pathogenic = selected_pathogenic.sample(
+                selected_benign.shape[0],
+                random_state=__random_state__
+            )
+        return return_benign.append(return_pathogenic, ignore_index=True)
+
+    @staticmethod
+    def _get_variants_within_range(dataset, upper_bound, lower_bound):
+        return dataset[(dataset['MAX_AF'] >= lower_bound) & (dataset['MAX_AF'] < upper_bound)]
+
+
+class BalanceExporter:
+    """
+    Class dedicated to exporting of splitting datasets and exporting of the balancing dataset.
+    """
+
+    def __init__(self, output_path):
+        self.output_path = output_path
+
+    def export_validation_dataset(self, dataset):
+        self._export_dataset(dataset, 'validation.tsv.gz')
+
+    def export_train_test_dataset(self, dataset):
+        self._export_dataset(dataset, 'train_test_split.tsv.gz')
+
+    def _export_dataset(self, dataset: pd.DataFrame, dataset_name: str):
+        full_export = os.path.join(self.output_path, dataset_name)
+        dataset.to_csv(
+            path_or_buf=full_export, sep='\t', na_rep='.', index=False, compression='gzip'
+        )
+        print(f'Successfully exported {dataset_name} to {full_export}')
+
+
+class TestBalancer(unittest.TestCase):
+    __current_directory__ = Path(__file__).parent.absolute()
+    __test_path__ = os.path.join(__current_directory__, '.test_folder')
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        if not os.path.isdir(cls.__test_path__):
+            os.makedirs(cls.__test_path__)
+        cls.dataset = _correct_column_names(
+            pd.read_csv(
+                os.path.join(
+                    cls.__current_directory__.parent,
+                    'CAPICE_example',
+                    'train_example.tsv.gz'
+                ),
+                sep='\t',
+                na_values='.',
+                low_memory=False
+            )
+        )
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        if os.path.isdir(cls.__test_path__):
+            for filename in os.listdir(cls.__test_path__):
+                filepath = os.path.join(cls.__test_path__, filename)
+                try:
+                    if os.path.isfile(filepath) or os.path.islink(filepath):
+                        os.unlink(filepath)
+                    elif os.path.isdir(filepath):
+                        shutil.rmtree(filepath)
+                except Exception as e:
+                    print(f'Failed to delete {filepath}, reason: {e}')
+            try:
+                os.rmdir(cls.__test_path__)
+            except Exception as e:
+                print(f'Failed to remove test folder {cls.__test_path__}, reason: {e}')
+
+    def setUp(self) -> None:
+        print('Testing Class:')
+
+    def tearDown(self) -> None:
+        print('Done.')
+
+    def test_split(self):
+        """
+        Function to test the splitter class
+        """
+        print('Splitter')
+        n_b_tot = self.dataset[self.dataset['binarized_label'] == 0].shape[0]
+        p10_b = n_b_tot * 0.1
+        p90_b = n_b_tot - p10_b
+        n_p_tot = self.dataset[self.dataset['binarized_label'] == 1].shape[0]
+        p10_p = n_p_tot * 0.1
+        p90_p = n_p_tot - p10_p
+        splitter = Split()
+        copy_of_dataset = self.dataset.copy(deep=True)
+        validation_dataset, dataset = splitter.split(copy_of_dataset)
+        self.assertAlmostEqual(
+            validation_dataset[validation_dataset['binarized_label'] == 0].shape[0], p10_b
+        )
+        self.assertAlmostEqual(
+            validation_dataset[validation_dataset['binarized_label'] == 1].shape[0], p10_p
+        )
+        self.assertAlmostEqual(
+            dataset[dataset['binarized_label'] == 0].shape[0], p90_b
+        )
+        self.assertAlmostEqual(
+            dataset[dataset['binarized_label'] == 1].shape[0], p90_p
+        )
+        self.assertGreater(dataset.shape[0], 0)
+        self.assertGreater(validation_dataset.shape[0], 0)
+
+    def test_balancer(self):
+        """
+        Function to test the balancer
+        """
+        print('Balancer')
+        balancer = Balancer()
+        dataset = self.dataset.copy(deep=True)
+        balanced_dataset = balancer.balance(dataset)
+        self.assertGreater(balanced_dataset.shape[0], 0)
+        self.assertEqual(
+            balanced_dataset[balanced_dataset['binarized_label'] == 0].shape[0],
+            balanced_dataset[balanced_dataset['binarized_label'] == 1].shape[0]
+        )
+        for ind in range(len(__bins__) - 1):
+            lower_bound = __bins__[ind]
+            upper_bound = __bins__[ind + 1]
+            self.assertEqual(
+                balanced_dataset[(balanced_dataset['MAX_AF'] >= lower_bound) &
+                                 (balanced_dataset['MAX_AF'] < upper_bound) &
+                                 (balanced_dataset['binarized_label'] == 0)].shape[0],
+                balanced_dataset[(balanced_dataset['MAX_AF'] >= lower_bound) &
+                                 (balanced_dataset['MAX_AF'] < upper_bound) &
+                                 (balanced_dataset['binarized_label'] == 1)].shape[0]
+            )
+
+    def test_cla_validator(self):
+        """
+        Function to test the Command Line Arguments validator
+
+        (does not test the -if directory is writable- validation, which is incredably difficult
+        to implement)
+        """
+        print('CLA Validator')
+        validator = CommandLineArgumentsValidator()
+        self.assertRaises(
+            FileNotFoundError,
+            validator.validate_input_path,
+            self.__current_directory__
+        )
+        self.assertRaises(
+            FileNotFoundError,
+            validator.validate_input_path,
+            str(Path(__file__))
+        )
+        self.assertRaises(
+            OSError,
+            validator.validate_output_directory,
+            os.path.join(self.__current_directory__, 'no', 'directory')
+        )
+        new_dir = '.another_test_output'
+        validator.validate_output_directory(
+            os.path.join(
+                self.__current_directory__,
+                new_dir
+            )
+        )
+        self.assertIn(new_dir, os.listdir(self.__current_directory__))
+        os.rmdir(os.path.join(self.__current_directory__, new_dir))
+
+    def test_dataset_validator(self):
+        """
+        Function to test if the dataset validator does what it is supposed to.
+        """
+        print('Dataset validator')
+        validator = InputDatasetValidator()
+        dataset = self.dataset.copy(deep=True)
+        self.assertRaises(
+            KeyError,
+            validator.validate_columns_required,
+            dataset.drop(columns=['MAX_AF'])
+        )
+        self.assertRaises(
+            ValueError,
+            validator.validate_b_p_present,
+            dataset[dataset['binarized_label'] == 0]
+        )
+        self.assertRaises(
+            ValueError,
+            validator.validate_b_p_present,
+            dataset[dataset['binarized_label'] == 1]
+        )
 
 
 if __name__ == '__main__':
