@@ -1,6 +1,6 @@
 import pandas as pd
 from src.main.python.vep.template import Template
-from src.main.python.utilities.sections import Column
+from src.main.python.utilities.enums import Column
 
 
 class Length(Template):

@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 
 from src.main.python.core.logger import Logger
-from src.main.python.utilities.sections import Column
+from src.main.python.utilities.enums import Column
 from src.main.python.core.capice_manager import CapiceManager
 
 

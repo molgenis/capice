@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from src.main.python.vep.template import Template
-from src.main.python.utilities.sections import Domains
+from src.main.python.utilities.enums import Domains
 
 
 class Domain(Template):
