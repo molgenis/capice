@@ -1,6 +1,6 @@
 import unittest
 
-from src.main.python.utilities.sections import Column
+from src.main.python.utilities.enums import Column
 from src.test.python.test_templates import set_up_impute_preprocess, teardown
 
 

@@ -3,7 +3,7 @@ import pandas as pd
 import xgboost as xgb
 from scipy import stats
 
-from src.main.python.utilities.sections import TrainEnums
+from src.main.python.utilities.enums import TrainEnums
 from src.main.python.__version__ import __version__
 from src.main_capice import Main
 from src.main.python.core.capice_exporter import CapiceExporter

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from src.main.python.core.logger import Logger
 from src.main.python.core.capice_exporter import CapiceExporter
-from src.main.python.utilities.sections import Column
+from src.main.python.utilities.enums import Column
 from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.utilities.input_parser import InputParser
 from src.main.python.utilities.capice_imputing import CapiceImputing
