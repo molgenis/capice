@@ -1,101 +1,73 @@
 import unittest
 
-from src.test.python.test_templates import set_up_impute_preprocess, teardown
+import pandas as pd
+
+from src.main.python.utilities.preprocessor import PreProcessor
 
 
-class TestPreprocessing(unittest.TestCase):
+def get_uint8_array(values_list):
+    return pd.array(values_list, dtype='uint8')
+
+
+class TestPreprocessor(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUp(cls):
         print('Setting up.')
-        cls.main, cls.model = set_up_impute_preprocess()
+        cls.preprocessor = PreProcessor([])
 
-    @classmethod
-    def tearDownClass(cls):
-        print('Tearing down.')
-        teardown()
+    def test__create_preservation_col(self):
+        input_data_frame = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T']})
+        expected_output = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T'], 'chr_pos_ref_alt': ['1_123_A_G', '2_456_T_A', '4_789_C_T']})
+        actual_output = self.preprocessor._create_preservation_col(input_data_frame)
 
-    def setUp(self):
-        print('Testing case:')
+        pd.testing.assert_frame_equal(expected_output, actual_output)
 
-    def test_unit_preprocessing_file(self):
-        """
-        Unit test for the preprocessor to see if the preprocessor works just
-        the file header information.
-        """
-        print('Preprocessing (unit) (file)')
-        self.main.preprocess(
-            loaded_data=self.main.impute(
-                loaded_data=self.main.process(
-                    self.main._load_file()
-                ), impute_values=self.model.impute_values
-            ), model_features=self.model.get_booster().feature_names
-        )
+    def test__is_train(self):
+        self.assertEqual(False, self.preprocessor.train)
+        self.preprocessor._is_train()
+        self.assertEqual(True, self.preprocessor.train)
 
-    def test_component_preprocessing(self):
-        """
-        component test for preprocessing. All columns within the CADD
-        features should be processed. Furthermore,
-        within all processed columns,
-        there should not be 1 or more column that is still
-        considered categorical.
-        """
-        print('Preprocessing (component)')
-        processed_file = self.main.preprocess(
-            self.main.impute(
-                self.main.process(
-                    self.main._load_file()
-                ), impute_values=self.model.impute_values
-            ), model_features=self.model.get_booster().feature_names
-        )
-        model_features = self.model.get_booster().feature_names
-        processed_columns = processed_file.columns
-        for feature in model_features:
-            # Check if all model features are present before predicting
-            self.assertIn(feature, processed_columns)
-        # Check if none of the processed columns can be marked as categorical
-        self.assertEqual(
-            len(processed_file[model_features].select_dtypes(include=["O"]).columns),
-            0
-        )
+    def test__get_categorical_columns(self):
+        input_data_frame = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T']})
+        self.preprocessor._get_categorical_columns(input_data_frame)
+        self.assertEqual(['ref', 'alt'], self.preprocessor.objects)
 
-    def test_component_preprocessing_train(self):
-        """
-        Component test for the preprocessing part with train=True.
-        """
-        print('Preprocessing (train) (component)')
-        preprocessed_file = self.main.preprocess(
-            self.main.impute(
-                self.main.process(
-                    self.main._load_file()
-                ), impute_values=self.model.impute_values
-            )
-        )
+    def test__process_objects_train_false(self):
+        self.preprocessor.objects = ['ref', 'alt', 'blaat']
+        self.preprocessor.model_features = ['blaat_something']
+        input_data_frame = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'here']})
 
-        # Test if all columns matching,
-        # or starting with features within the imputing
-        # file are not classified objects.
-        impute_features = self.model.impute_values.keys()
-        processed_columns = preprocessed_file.columns
-        present_features = 1
-        # Should be one, since the for loop quits before
-        # it can finish the last add_one
-        test_features = []
-        add_one = False
-        for feature in impute_features:
-            if add_one:
-                present_features += 1
-            add_one = False
-            for processed_feature in processed_columns:
-                if processed_feature.startswith(feature):
-                    add_one = True
-                    test_features.append(processed_feature)
-        # Test if all impute features are present
-        self.assertEqual(len(impute_features), present_features)
-        # Test if no columns are still objects.
-        self.assertEqual(
-            len(preprocessed_file[test_features].select_dtypes(include=["O"]).columns),
-            0
-        )
+        expected = pd.DataFrame({'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+                                 'alt': ['G', 'A', 'T'],
+                                 'blaat_other': get_uint8_array([1, 1, 1])})
+        observed = self.preprocessor._process_objects(input_data_frame)
+        pd.testing.assert_frame_equal(expected, observed)
+
+    def test__process_objects_train_true(self):
+        self.preprocessor.train = True
+        self.preprocessor.objects = ['ref', 'alt', 'blaat']
+        self.preprocessor.model_features = ['blaat_something']
+        input_data_frame = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'here'], 'Domain': ['1', '2', '3']})
+        expected = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref_A': get_uint8_array([1, 0, 0]),
+             'ref_C': get_uint8_array([0, 0, 1]), 'ref_T': get_uint8_array([0, 1, 0]),
+             'alt_A': get_uint8_array([0, 1, 0]), 'alt_G': get_uint8_array([1, 0, 0]),
+             'alt_T': get_uint8_array([0, 0, 1]), 'Domain_1': get_uint8_array([1, 0, 0]),
+             'Domain_2': get_uint8_array([0, 1, 0]), 'Domain_3': get_uint8_array([0, 0, 1]),
+             'blaat_here': get_uint8_array([0, 0, 1]), 'blaat_some': get_uint8_array([1, 0, 0]),
+             'blaat_value': get_uint8_array([0, 1, 0])})
+        observed = self.preprocessor._process_objects(input_data_frame)
+        pd.testing.assert_frame_equal(expected, observed)
 
 
 if __name__ == '__main__':
