@@ -3,7 +3,6 @@ import unittest
 import pandas as pd
 
 from src.main.python.utilities.capice_imputing import CapiceImputing
-from src.main.python.utilities.enums import Column
 
 
 class TestInputProcessor(unittest.TestCase):

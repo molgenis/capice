@@ -23,7 +23,7 @@ import sys
 import logging
 
 from src.main.python.core.capice_manager import CapiceManager
-from src.main.python.utilities.custom_log_filter import CustomLoggingFilter
+from src.main.python.utilities.custom_logging_filter import CustomLoggingFilter
 
 
 class Logger:
