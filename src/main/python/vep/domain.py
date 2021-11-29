@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-from src.main.python.vep.template import Template
+
 from src.main.python.utilities.enums import Domains
+from src.main.python.vep.template import Template
 
 
 class Domain(Template):
@@ -63,8 +64,7 @@ class Domain(Template):
         # TODO: Find prettier way to check for NaN crash possible processor
         if not dataframe[self.name].isnull().all():
             subset = dataframe[self.name].str.split('&', expand=True)
-            subset = subset.apply(lambda x: x.str.split(':', expand=True)[0],
-                                  axis=0)
+            subset = subset.apply(lambda x: x.str.split(':', expand=True)[0], axis=0)
             subset = self._process_ndomain(subset)
             subset.replace(self.levels_dict, inplace=True)
             subset = self._process_others(subset)
@@ -78,25 +78,13 @@ class Domain(Template):
     @staticmethod
     def _process_ndomain(subset: pd.DataFrame):
         for col in subset.columns:
-            subset[col] = np.where(
-                subset[col].str.contains('_domain', na=False),
-                3,
-                subset[col]
-            )
-            subset[col] = np.where(
-                subset[col].str.contains('_profile', na=False),
-                3,
-                subset[col]
-            )
+            subset[col] = np.where(subset[col].str.contains('_domain', na=False), 3, subset[col])
+            subset[col] = np.where(subset[col].str.contains('_profile', na=False), 3, subset[col])
         return subset
 
     def _process_others(self, subset: pd.DataFrame):
         for col in subset.columns:
-            subset[col] = np.where(
-                subset[col].notnull() & ~subset[col].isin(
-                    self.levels_dict.keys()) & ~subset[col].isin(
-                    self.levels_dict.values()),
-                5,
-                subset[col]
-            )
+            subset[col] = np.where(subset[col].notnull() & ~subset[col].isin(
+                self.levels_dict.keys()) & ~subset[col].isin(self.levels_dict.values()), 5,
+                                   subset[col])
         return subset

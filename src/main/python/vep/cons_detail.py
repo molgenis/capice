@@ -21,8 +21,7 @@ class ConsDetail(Template):
         subset = dataframe[self.name].str.split('&', expand=True)
         for column in subset.columns:
             for string in self.replace_empty:
-                subset[column] = subset[column].str.replace(
-                    string, '', regex=False)
+                subset[column] = subset[column].str.replace(string, '', regex=False)
         subset.loc[subset[subset.notnull().all(axis=1)].index, 0] = subset[
             subset.notnull().all(axis=1)].agg(','.join, axis=1)
         dataframe['ConsDetail'] = subset[0]

@@ -22,7 +22,6 @@ class AminoAcids(Template):
         return self.columns[1]
 
     def process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split('/',
-                                                                 expand=True)
+        dataframe[self.columns] = dataframe[self.name].str.split('/', expand=True)
         dataframe[self.naa].fillna(dataframe[self.oaa], inplace=True)
         return dataframe
