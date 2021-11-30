@@ -11,11 +11,9 @@ class Length(Template):
         )
 
     def process(self, dataframe: pd.DataFrame):
-        dataframe['len_ref'] = dataframe[Column.ref.value].str.len()
-        dataframe['len_alt'] = dataframe[Column.alt.value].str.len()
-        dataframe['Length'] = (
-                    dataframe[['len_ref', 'len_alt']].max(axis=1) - 1)
-        dataframe.drop(columns=['len_ref', 'len_alt'], inplace=True)
+        dataframe['Length'] = abs(
+            dataframe[Column.ref.value].str.len() - dataframe[Column.alt.value].str.len()
+        )
         return dataframe
 
     @property

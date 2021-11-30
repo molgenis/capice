@@ -27,5 +27,6 @@ class TestType(unittest.TestCase):
         )
         pd.testing.assert_frame_equal(expected, observed)
 
+
 if __name__ == '__main__':
     unittest.main()
