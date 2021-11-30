@@ -45,7 +45,7 @@ class DynamicLoader:
             set_required = self.required_attributes
         modules = self._load_modules_from_path(self.path)
         self._check_n_modules(modules)
-        imported_modules = self._importer(modules)
+        imported_modules = self._import(modules)
         for path, module in imported_modules.items():
             if all(item in dir(module) for item in set_required):
                 self.modules[path] = module
@@ -83,7 +83,7 @@ class DynamicLoader:
                 modules.append(module)
         return modules
 
-    def _importer(self, usable_modules: list):
+    def _import(self, usable_modules: list):
         """
         Function  to dynamically load in the modules using the
         import_module library.
