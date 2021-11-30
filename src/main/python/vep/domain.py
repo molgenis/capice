@@ -61,7 +61,6 @@ class Domain(Template):
                 }
 
     def process(self, dataframe: pd.DataFrame):
-        # TODO: Find prettier way to check for NaN crash possible processor
         if not dataframe[self.name].isnull().all():
             subset = dataframe[self.name].str.split('&', expand=True)
             subset = subset.apply(lambda x: x.str.split(':', expand=True)[0], axis=0)

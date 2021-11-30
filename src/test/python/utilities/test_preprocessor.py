@@ -43,11 +43,14 @@ class TestPreprocessor(unittest.TestCase):
         self.preprocessor.model_features = ['blaat_something']
         input_data_frame = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
-             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'here']})
+             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'something']})
 
-        expected = pd.DataFrame({'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
-                                 'alt': ['G', 'A', 'T'],
-                                 'blaat_other': get_uint8_array([1, 1, 1])})
+        expected = pd.DataFrame(
+            {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
+             'alt': ['G', 'A', 'T'],
+             'blaat_other': get_uint8_array([1, 1, 0]),
+             'blaat_something': get_uint8_array([0, 0, 1])
+             })
         observed = self.preprocessor._process_objects(input_data_frame)
         pd.testing.assert_frame_equal(expected, observed)
 
