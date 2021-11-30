@@ -13,9 +13,7 @@ class TestType(unittest.TestCase):
     def test_process(self):
         dataframe = pd.DataFrame(
             {
-                'Amino_acids': ['A/G', 'R/C', 'G/C'],
-                'oAA': ['', '', ''],
-                'nAA': ['', '', '']
+                'Amino_acids': ['A/G', 'R/C', 'G/C']
             }
         )
         observed = self.aa.process(dataframe)
@@ -27,6 +25,7 @@ class TestType(unittest.TestCase):
             }
         )
         pd.testing.assert_frame_equal(expected, observed)
+
 
 if __name__ == '__main__':
     unittest.main()
