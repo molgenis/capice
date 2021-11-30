@@ -8,8 +8,7 @@ from src.main.python.utilities.capice_imputing import CapiceImputing
 from src.main.python.utilities.preprocessor import PreProcessor
 from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
 from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
-from src.main.python.utilities.load_file_postprocessor import \
-    LoadFilePostProcessor
+from src.main.python.utilities.load_file_postprocessor import LoadFilePostProcessor
 
 
 class Main(ABC):
@@ -27,14 +26,11 @@ class Main(ABC):
 
         # Input file.
         self.infile = input_path
-        self.log.debug('Input argument -i / --input confirmed: %s',
-                       self.infile)
+        self.log.debug('Input argument -i / --input confirmed: %s', self.infile)
 
         # Output file.
         self.output = output_path
-        self.log.debug(
-            'Output directory -o / --output confirmed: %s', self.output
-        )
+        self.log.debug('Output directory -o / --output confirmed: %s', self.output)
 
         # Preprocessor global exclusion features
         # Overwrite in specific module if features are incorrect
@@ -53,9 +49,7 @@ class Main(ABC):
         :return: pandas DataFrame
         """
         input_parser = InputParser()
-        input_file = input_parser.parse(
-            input_file_path=self.infile
-        )
+        input_file = input_parser.parse(input_file_path=self.infile)
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()
         validator = PostFileParseValidator()
@@ -83,9 +77,7 @@ class Main(ABC):
         Function to perform imputing over the loaded data.
         self.model can be None, but impute_json has to be defined in that case.
         """
-        capice_imputer = CapiceImputing(
-            impute_values=impute_values
-        )
+        capice_imputer = CapiceImputing(impute_values=impute_values)
         capice_data = capice_imputer.impute(loaded_data)
         return capice_data
 
@@ -105,8 +97,7 @@ class Main(ABC):
         """
         preprocessor = PreProcessor(
             exclude_features=self.exclude_features,
-            model_features=model_features
-        )
+            model_features=model_features)
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 
@@ -115,6 +106,4 @@ class Main(ABC):
         """
         Function to prepare the data to be exported
         """
-        CapiceExporter(file_path=output).export_capice_prediction(
-            datafile=dataset
-        )
+        CapiceExporter(file_path=output).export_capice_prediction(datafile=dataset)
