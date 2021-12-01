@@ -20,12 +20,16 @@ class TemplatePosition(Template):
     def pos_col(self):
         return self.columns[0]
 
-    def process(self, dataframe: pd.DataFrame):
+    def _process(self, dataframe: pd.DataFrame):
         if self.name in dataframe.select_dtypes(include='O'):
-            dataframe[self.columns] = dataframe[self.name].str.split(
-                '/',
-                expand=True
-            )
+            if dataframe[self.name].str.split('/', expand=True).shape[1] > 1:
+                dataframe[self.columns] = dataframe[self.name].str.split(
+                    '/',
+                    expand=True
+                )
+            else:
+                dataframe[self.pos_col] = dataframe[self.name]
+                dataframe[self.columns[1]] = np.nan
             dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
                 '?-',
                 '',

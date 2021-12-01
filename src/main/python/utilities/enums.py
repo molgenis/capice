@@ -40,3 +40,11 @@ class Domains(Enum):
     ndomain = 3
     panther = 4
     other = 5
+
+
+class UniqueSeparator(Enum):
+    """
+    Enum specific to creating a specific separator for the preservation of the chr pos ref alt
+    columns.
+    """
+    unique_separator = '_VeryUniqueCAPICESeparator_'

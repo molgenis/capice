@@ -10,7 +10,14 @@ class MotifName(Template):
             usable=True
         )
 
+    @property
+    def columns(self):
+        return ['motifEName', 'motifECount']
+
     def process(self, dataframe: pd.DataFrame):
-        dataframe['motifEName'] = dataframe[self.name]
-        dataframe['motifECount'] = np.where(dataframe[self.name].isna(), 0, 1)
+        return self._process(dataframe)
+
+    def _process(self, dataframe: pd.DataFrame):
+        dataframe[self.columns[0]] = dataframe[self.name]
+        dataframe[self.columns[1]] = np.where(dataframe[self.name].isna(), 0, 1)
         return dataframe

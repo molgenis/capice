@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from abc import ABCMeta, abstractmethod
 from src.main.python.validators.property_type_validator import PropertyTypeValidator
@@ -19,6 +20,11 @@ class Template(metaclass=ABCMeta):
         self._name = value
 
     @property
+    @abstractmethod
+    def columns(self):
+        return []
+
+    @property
     def usable(self):
         return self._usable
 
@@ -31,6 +37,13 @@ class Template(metaclass=ABCMeta):
     def drop(self):
         return True
 
-    @abstractmethod
     def process(self, dataframe: pd.DataFrame):
-        pass
+        if dataframe[self.name].isnull().all():
+            dataframe[self.columns] = np.nan
+            return dataframe
+        else:
+            return self._process(dataframe)
+
+    @abstractmethod
+    def _process(self, dataframe: pd.DataFrame):
+        return dataframe

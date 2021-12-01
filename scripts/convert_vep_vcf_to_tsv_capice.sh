@@ -103,8 +103,6 @@ processFile() {
 
   local format="${pre_header}\n"
 
-  local -r file_info="## VEP VCF to CAPICE tsv converter"
-
   local args=()
   args+=("+split-vep")
   args+=("-d")
@@ -117,15 +115,8 @@ processFile() {
   bcftools "${args[@]}"
 
   echo "BCFTools finished, building output file."
-  
-  if file --mime-type "$input" | grep -q gzip$
-  then
-	  vep_line=$(zcat "${input}" | grep -m 1 "VEP=")
-  else
-	  vep_line=$(grep -m 1 "VEP=" "${input}")
-  fi
 
-  echo -e "${file_info}\n${vep_line}\n${pre_header}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  echo -e "${pre_header}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 

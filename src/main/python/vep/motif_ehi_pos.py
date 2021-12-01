@@ -10,6 +10,13 @@ class MotifEHIPos(Template):
             usable=True
         )
 
-    def process(self, dataset: pd.DataFrame):
-        dataset['motifEHIPos'] = np.where(dataset[self.name] == 'Y', 1, 0)
+    @property
+    def columns(self):
+        return ['motifEHIPos']
+
+    def process(self, dataframe: pd.DataFrame):
+        return self._process(dataframe)
+
+    def _process(self, dataset: pd.DataFrame):
+        dataset[self.columns] = np.where(dataset[self.name] == 'Y', 1, 0)
         return dataset

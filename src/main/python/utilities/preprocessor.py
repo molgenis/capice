@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from src.main.python.core.logger import Logger
-from src.main.python.utilities.enums import Column
+from src.main.python.utilities.enums import Column, UniqueSeparator
 from src.main.python.core.capice_manager import CapiceManager
 
 
@@ -64,7 +64,7 @@ class PreProcessor:
         """
         dataset[Column.chr_pos_ref_alt.value] = dataset[
             [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
-        ].astype(str).agg('_'.join, axis=1)
+        ].astype(str).agg(UniqueSeparator.unique_separator.value.join, axis=1)
         return dataset
 
     def _get_categorical_columns(self, dataset: pd.DataFrame):

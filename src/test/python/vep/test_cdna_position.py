@@ -22,6 +22,22 @@ class TestType(unittest.TestCase):
                                  })
         pd.testing.assert_frame_equal(expected, observed)
 
+    def test_corner_case(self):
+        dataframe = pd.DataFrame(
+            {
+                'cDNA_position': ['483-486', '162-163']
+            }
+        )
+        observed = self.cdna_pos.process(dataframe)
+        expected = pd.DataFrame(
+            {
+                'cDNA_position': ['483-486', '162-163'],
+                'cDNApos': [483.00000, 162.00000],
+                'relcDNApos': [np.nan, np.nan]
+            }
+        )
+        pd.testing.assert_frame_equal(expected, observed)
+
     def test_process_nan(self):
         dataframe = pd.DataFrame(
             {

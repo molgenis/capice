@@ -16,7 +16,12 @@ class TestCapiceExporter(unittest.TestCase):
         cls.exporter = CapiceExporter(file_path=cls.output_path)
         cls.prediction_output_dataframe = pd.DataFrame(
             {
-                Column.chr_pos_ref_alt.value: ['1_100_A_C', '2_200_T_G'],
+                Column.chr_pos_ref_alt.value: [
+                    '1_VeryUniqueCAPICESeparator_100'
+                    '_VeryUniqueCAPICESeparator_A_VeryUniqueCAPICESeparator_C',
+                    '2_VeryUniqueCAPICESeparator_200'
+                    '_VeryUniqueCAPICESeparator_T_VeryUniqueCAPICESeparator_G'
+                ],
                 Column.gene_name.value: ['foo', 'bar'],
                 Column.gene_id.value: [1000, 2000],
                 Column.id_source.value: ['foo', 'bar'],

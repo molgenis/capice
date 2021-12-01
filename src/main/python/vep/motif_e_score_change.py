@@ -9,6 +9,10 @@ class MotifEScoreChange(Template):
             usable=True
         )
 
-    def process(self, dataset: pd.DataFrame):
-        dataset['motifEScoreChng'] = dataset[self.name]
+    @property
+    def columns(self):
+        return ['motifEScoreChng']
+
+    def _process(self, dataset: pd.DataFrame):
+        dataset[self.columns] = dataset[self.name]
         return dataset

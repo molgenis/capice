@@ -10,7 +10,11 @@ class Type(Template):
             usable=True
         )
 
-    def process(self, dataframe: pd.DataFrame):
+    @property
+    def columns(self):
+        return ['Type']
+
+    def _process(self, dataframe: pd.DataFrame):
         """
         process variants to annotate their types
         :param dataframe: a dataframe with as columns at least a ref and an alt
@@ -25,19 +29,19 @@ class Type(Template):
         else:
             type = 'DELINS'
         """
-        dataframe['Type'] = 'DELINS'
+        dataframe[self.columns] = 'DELINS'
         dataframe.loc[
             dataframe[
                 (dataframe[Column.ref.value].str.len() == 1) & (
-                            dataframe[Column.alt.value].str.len() == 1)].index, 'Type'] = 'SNV'
+                        dataframe[Column.alt.value].str.len() == 1)].index, self.columns] = 'SNV'
         dataframe.loc[
             dataframe[
                 (dataframe[Column.ref.value].str.get(0) == dataframe[Column.alt.value]) & (
-                        dataframe[Column.alt.value].str.len() == 1)].index, 'Type'] = 'DEL'
+                        dataframe[Column.alt.value].str.len() == 1)].index, self.columns] = 'DEL'
         dataframe.loc[
             dataframe[
                 (dataframe[Column.alt.value].str.get(0) == dataframe[Column.ref.value]) & (
-                        dataframe[Column.ref.value].str.len() == 1)].index, 'Type'] = 'INS'
+                        dataframe[Column.ref.value].str.len() == 1)].index, self.columns] = 'INS'
         return dataframe
 
     @property

@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 
 from src.main.python.core.logger import Logger
-from src.main.python.utilities.enums import Column
+from src.main.python.utilities.enums import Column, UniqueSeparator
 from src.main.python.core.capice_manager import CapiceManager
 
 
@@ -44,7 +44,8 @@ class CapiceExporter:
     def _post_process_split_cols(datafile: pd.DataFrame):
         datafile[
             [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
-        ] = datafile[Column.chr_pos_ref_alt.value].str.split('_', expand=True)
+        ] = datafile[Column.chr_pos_ref_alt.value].str.split(
+            UniqueSeparator.unique_separator.value, expand=True)
         return datafile
 
     @staticmethod

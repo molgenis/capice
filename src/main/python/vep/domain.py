@@ -60,18 +60,15 @@ class Domain(Template):
                 Domains.other.value: 'other'
                 }
 
-    def process(self, dataframe: pd.DataFrame):
-        if not dataframe[self.name].isnull().all():
-            subset = dataframe[self.name].str.split('&', expand=True)
-            subset = subset.apply(lambda x: x.str.split(':', expand=True)[0], axis=0)
-            subset = self._process_ndomain(subset)
-            subset.replace(self.levels_dict, inplace=True)
-            subset = self._process_others(subset)
-            subset = subset.agg('min', axis=1)
-            subset.replace(self.output_dict, inplace=True)
-            dataframe[self.columns] = subset
-        else:
-            dataframe[self.columns] = np.nan
+    def _process(self, dataframe: pd.DataFrame):
+        subset = dataframe[self.name].str.split('&', expand=True)
+        subset = subset.apply(lambda x: x.str.split(':', expand=True)[0], axis=0)
+        subset = self._process_ndomain(subset)
+        subset.replace(self.levels_dict, inplace=True)
+        subset = self._process_others(subset)
+        subset = subset.agg('min', axis=1)
+        subset.replace(self.output_dict, inplace=True)
+        dataframe[self.columns] = subset
         return dataframe
 
     @staticmethod

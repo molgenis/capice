@@ -9,12 +9,16 @@ class SEQ(Template):
             usable=False
         )
 
-    def process(self, dataframe: pd.DataFrame):
-        dataframe['GC'] = (dataframe[self.name].str.count('C') + dataframe[
+    @property
+    def columns(self):
+        return ['GC', 'CpG']
+
+    def _process(self, dataframe: pd.DataFrame):
+        dataframe[self.columns[0]] = (dataframe[self.name].str.count('C') + dataframe[
             self.name].str.count('G') + dataframe[
                                self.name].str.count('N') * 0.41) / dataframe[
                               self.name].str.len()
-        dataframe['CpG'] = (dataframe[self.name].str.count('CG') + dataframe[
+        dataframe[self.columns[1]] = (dataframe[self.name].str.count('CG') + dataframe[
             self.name].str.count('N') * 0.01) / (
                                    dataframe[self.name].str.len() - 1) * 2
         return dataframe

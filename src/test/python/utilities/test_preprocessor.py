@@ -21,7 +21,16 @@ class TestPreprocessor(unittest.TestCase):
              'alt': ['G', 'A', 'T']})
         expected_output = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
-             'alt': ['G', 'A', 'T'], 'chr_pos_ref_alt': ['1_123_A_G', '2_456_T_A', '4_789_C_T']})
+             'alt': ['G', 'A', 'T'],
+             'chr_pos_ref_alt':
+                 ['1_VeryUniqueCAPICESeparator_123_VeryUniqueCAPICESeparator_'
+                  'A_VeryUniqueCAPICESeparator_G',
+                  '2_VeryUniqueCAPICESeparator_456_VeryUniqueCAPICESeparator_'
+                  'T_VeryUniqueCAPICESeparator_A',
+                  '4_VeryUniqueCAPICESeparator_789_VeryUniqueCAPICESeparator_'
+                  'C_VeryUniqueCAPICESeparator_T']
+             }
+        )
         actual_output = self.preprocessor._create_preservation_col(input_data_frame)
 
         pd.testing.assert_frame_equal(expected_output, actual_output)
