@@ -15,8 +15,15 @@ class TestMainNonTrain(unittest.TestCase):
         print('Setting up.')
         manager, cls.output_dir = set_up_manager_and_out()
         manager.output_filename = os.path.join(cls.output_dir, 'test_output.txt')
-        with open(os.path.join(get_project_root_dir(), 'CAPICE_model', 'GRCh37', 'POC',
-                               'xgb_booster_poc.pickle.dat'), 'rb') as model_file:
+        with open(
+                os.path.join(
+                    get_project_root_dir(),
+                    'src',
+                    'test',
+                    'resources',
+                    'xgb_booster_poc.pickle.dat'
+                ), 'rb'
+        ) as model_file:
             cls.model = pickle.load(model_file)
 
     @classmethod

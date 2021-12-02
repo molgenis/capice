@@ -25,9 +25,9 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
         with open(
                 os.path.join(
                     get_project_root_dir(),
-                    'CAPICE_model',
-                    'GRCh37',
-                    'POC',
+                    'src',
+                    'test',
+                    'resources',
                     'xgb_booster_poc.pickle.dat'
                 ), 'rb'
         ) as model_file:
