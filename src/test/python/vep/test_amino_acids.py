@@ -1,4 +1,5 @@
 import unittest
+
 import pandas as pd
 
 from src.main.python.vep import amino_acids
@@ -11,19 +12,11 @@ class TestType(unittest.TestCase):
         cls.aa = amino_acids.AminoAcids()
 
     def test_process(self):
-        dataframe = pd.DataFrame(
-            {
-                'Amino_acids': ['A/G', 'R/C', 'G/C']
-            }
-        )
+        dataframe = pd.DataFrame({'Amino_acids': ['A/G', 'R/C', 'G/C']})
         observed = self.aa.process(dataframe)
-        expected = pd.DataFrame(
-            {
-                'Amino_acids': ['A/G', 'R/C', 'G/C'],
-                'oAA': ['A', 'R', 'G'],
-                'nAA': ['G', 'C', 'C']
-            }
-        )
+        expected = pd.DataFrame({'Amino_acids': ['A/G', 'R/C', 'G/C'],
+                                 'oAA': ['A', 'R', 'G'],
+                                 'nAA': ['G', 'C', 'C']})
         pd.testing.assert_frame_equal(expected, observed)
 
 

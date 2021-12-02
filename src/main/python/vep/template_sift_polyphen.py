@@ -1,6 +1,7 @@
-import numpy as np
-import pandas as pd
 from abc import abstractmethod
+
+import pandas as pd
+
 from src.main.python.vep.template import Template
 
 
@@ -21,13 +22,7 @@ class TemplateSiftPolyPhen(Template):
         return self.columns[1]
 
     def _process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split(
-            '(',
-            expand=True
-        )
-        dataframe[self.val_col] = dataframe[self.val_col].str.split(
-            ')',
-            expand=True
-        )[0]
+        dataframe[self.columns] = dataframe[self.name].str.split('(', expand=True)
+        dataframe[self.val_col] = dataframe[self.val_col].str.split(')', expand=True)[0]
         dataframe[self.val_col] = dataframe[self.val_col].astype(float)
         return dataframe

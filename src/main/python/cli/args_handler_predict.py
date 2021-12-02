@@ -1,11 +1,12 @@
 import os
 import pickle
+
 import xgboost as xgb
 
-from src.main_predict import CapicePredict
 from src.main.python.__version__ import __version__
-from src.main.python.core.capice_manager import CapiceManager
 from src.main.python.cli.args_handler_parent import ArgsHandlerParent
+from src.main.python.core.capice_manager import CapiceManager
+from src.main_predict import CapicePredict
 
 
 class ArgsHandlerPredict(ArgsHandlerParent):
@@ -93,20 +94,12 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.parser.error("Given pickle is not a XGBClassifier class!")
 
     def _validate_model_attributes(self, model):
-        required_attributes = [
-            'CAPICE_version',
-            'impute_values',
-            'predict_proba'
-        ]
+        required_attributes = ['CAPICE_version', 'impute_values', 'predict_proba']
         for attribute in required_attributes:
             if attribute not in dir(model):
-                self.parser.error(
-                    f'Unable to locate attribute {attribute} in model file!'
-                )
+                self.parser.error(f'Unable to locate attribute {attribute} in model file!')
 
     def _validate_model_version(self, model):
         if not model.CAPICE_version == __version__:
-            self.parser.error(
-                f'Model version {model.CAPICE_version} '
-                f'does not match CAPICE version: {__version__}!'
-            )
+            self.parser.error(f'Model version {model.CAPICE_version} '
+                              f'does not match CAPICE version: {__version__}!')

@@ -12,18 +12,10 @@ class TestType(unittest.TestCase):
         cls.score_change = motif_e_score_change.MotifEScoreChange()
 
     def test_process(self):
-        dataframe = pd.DataFrame(
-            {
-                'MOTIF_SCORE_CHANGE': [1, 2, 3]
-            }
-        )
+        dataframe = pd.DataFrame({'MOTIF_SCORE_CHANGE': [1, 2, 3]})
         observed = self.score_change.process(dataframe)
-        expected = pd.DataFrame(
-            {
-                'MOTIF_SCORE_CHANGE': [1, 2, 3],
-                'motifEScoreChng': [1, 2, 3]
-            }
-        )
+        expected = pd.DataFrame({'MOTIF_SCORE_CHANGE': [1, 2, 3],
+                                 'motifEScoreChng': [1, 2, 3]})
         pd.testing.assert_frame_equal(expected, observed)
 
 

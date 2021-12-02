@@ -32,6 +32,6 @@ class InputParser:
             used_sep = self.sep
         self.log.info('Reading VEP file from: %s using separator: %s', input_file_path, used_sep)
         input_file = pd.read_csv(input_file_path, sep=self.sep, na_values='.', low_memory=False)
-        self.log.info('Input file at %s loaded with %s samples.', input_file_path,
-                      input_file.shape[0])
+        message = 'Input file at %s loaded with %s samples.'
+        self.log.info(message, input_file_path, input_file.shape[0])
         return input_file

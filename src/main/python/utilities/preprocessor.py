@@ -154,10 +154,7 @@ class PreProcessor:
                     dataset[annotation_feature],
                     'other'
                 )
-        dataset = pd.get_dummies(
-            dataset,
-            columns=list(annotation_feats_dict.keys())
-        )
+        dataset = pd.get_dummies(dataset, columns=list(annotation_feats_dict.keys()))
 
         return dataset
 
@@ -176,10 +173,8 @@ class PreProcessor:
             if not isinstance(value, str):
                 value = str(value)
             printable_value_counts.append(value)
-        self.log.info('For feature: %s saved the following values: %s',
-                      column.name,
-                      ', '.join(printable_value_counts)
-                      )
+        message = 'For feature: %s saved the following values: %s'
+        self.log.info(message, column.name, ', '.join(printable_value_counts))
         return value_counts
 
     def _ensure_columns_present(self, dataset):
@@ -190,7 +185,7 @@ class PreProcessor:
         """
         for feature in self.model_features:
             if feature not in dataset.columns:
-                self.log.debug('Detected column %s not present in columns. '
-                               'Adding full column of NaN', feature)
+                message = 'Detected column %s not present in columns. Adding full column of NaN'
+                self.log.debug(message, feature)
                 dataset[feature] = np.nan
         return dataset

@@ -1,6 +1,7 @@
 import pandas as pd
-from src.main.python.vep.template import Template
+
 from src.main.python.utilities.enums import Column
+from src.main.python.vep.template import Template
 
 
 class Type(Template):
@@ -13,6 +14,10 @@ class Type(Template):
     @property
     def columns(self):
         return ['Type']
+
+    @staticmethod
+    def _ensure_column_value_is_one(column):
+        return column.str.len() == 1
 
     def _process(self, dataframe: pd.DataFrame):
         """
@@ -29,19 +34,24 @@ class Type(Template):
         else:
             type = 'DELINS'
         """
+        alt_column = dataframe[Column.alt.value]
+        ref_column = dataframe[Column.ref.value]
+
+        alt_column_value_is_1 = self._ensure_column_value_is_one(alt_column)
+        ref_column_value_is_1 = self._ensure_column_value_is_one(ref_column)
+
+        first_ref_nuc = ref_column.str.get(0)
+        first_alt_nuc = alt_column.str.get(0)
+
         dataframe[self.columns] = 'DELINS'
         dataframe.loc[
-            dataframe[
-                (dataframe[Column.ref.value].str.len() == 1) & (
-                        dataframe[Column.alt.value].str.len() == 1)].index, self.columns] = 'SNV'
+            dataframe[ref_column_value_is_1 & alt_column_value_is_1].index, self.columns] = 'SNV'
         dataframe.loc[
             dataframe[
-                (dataframe[Column.ref.value].str.get(0) == dataframe[Column.alt.value]) & (
-                        dataframe[Column.alt.value].str.len() == 1)].index, self.columns] = 'DEL'
+                (first_ref_nuc == alt_column) & alt_column_value_is_1].index, self.columns] = 'DEL'
         dataframe.loc[
             dataframe[
-                (dataframe[Column.alt.value].str.get(0) == dataframe[Column.ref.value]) & (
-                        dataframe[Column.ref.value].str.len() == 1)].index, self.columns] = 'INS'
+                (first_alt_nuc == ref_column) & ref_column_value_is_1].index, self.columns] = 'INS'
         return dataframe
 
     @property

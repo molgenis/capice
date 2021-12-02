@@ -1,10 +1,10 @@
-import unittest
 import os
 import pickle
+import unittest
 
+from src.main.python.utilities.utilities import get_project_root_dir
 from src.main_train import CapiceTrain
 from src.test.python.test_templates import set_up_manager_and_out, teardown
-from src.main.python.utilities.utilities import get_project_root_dir
 
 
 class TestMainTrain(unittest.TestCase):
@@ -14,21 +14,14 @@ class TestMainTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
-        train_file = os.path.join(
-            get_project_root_dir(),
-            'CAPICE_example',
-            'train_example.tsv.gz'
-        )
-        impute_json = os.path.join(
-            get_project_root_dir(),
-            'CAPICE_example',
-            'example_impute_values.json')
-        cls.main = CapiceTrain(
-            input_path=train_file,
-            json_path=impute_json,
-            test_split=0.2,
-            output_path=cls.output_dir
-        )
+        train_file = os.path.join(get_project_root_dir(), 'CAPICE_example', 'train_example.tsv.gz')
+        impute_json = os.path.join(get_project_root_dir(),
+                                   'CAPICE_example',
+                                   'example_impute_values.json')
+        cls.main = CapiceTrain(input_path=train_file,
+                               json_path=impute_json,
+                               test_split=0.2,
+                               output_path=cls.output_dir)
         cls.main.esr = 1
         cls.main.n_jobs = 2
         cls.main.cross_validate = 2

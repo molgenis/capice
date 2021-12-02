@@ -12,18 +12,10 @@ class TestType(unittest.TestCase):
         cls.score_change = motif_ehi_pos.MotifEHIPos()
 
     def test_process(self):
-        dataframe = pd.DataFrame(
-            {
-                'HIGH_INF_POS': ['Y', '1', 'M', '2']
-            }
-        )
+        dataframe = pd.DataFrame({'HIGH_INF_POS': ['Y', '1', 'M', '2']})
         observed = self.score_change.process(dataframe)
-        expected = pd.DataFrame(
-            {
-                'HIGH_INF_POS': ['Y', '1', 'M', '2'],
-                'motifEHIPos': [1, 0, 0, 0]
-            }
-        )
+        expected = pd.DataFrame({'HIGH_INF_POS': ['Y', '1', 'M', '2'],
+                                 'motifEHIPos': [1, 0, 0, 0]})
         pd.testing.assert_frame_equal(expected, observed)
 
 

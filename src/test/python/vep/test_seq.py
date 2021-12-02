@@ -15,13 +15,10 @@ class TestType(unittest.TestCase):
         dataframe = pd.DataFrame(
             {'Seq': ['GATTTCCAGGNNNAACC', 'TTTTTGCCAACCC', 'TTTCCCGGANNNNNNNAAGGGTT', 'GTAACC']})
         observed = self.seq.process(dataframe)
-        expected = pd.DataFrame(
-            {
-                'Seq': ['GATTTCCAGGNNNAACC', 'TTTTTGCCAACCC', 'TTTCCCGGANNNNNNNAAGGGTT', 'GTAACC'],
-                'GC': [0.48412, 0.46154, 0.47261, 0.50000],
-                'CpG': [0.00375, 0.00000, 0.09727272727272727, 0.00000]
-            }
-        )
+        expected = pd.DataFrame({
+            'Seq': ['GATTTCCAGGNNNAACC', 'TTTTTGCCAACCC', 'TTTCCCGGANNNNNNNAAGGGTT', 'GTAACC'],
+            'GC': [0.48412, 0.46154, 0.47261, 0.50000],
+            'CpG': [0.00375, 0.00000, 0.09727272727272727, 0.00000]})
         pd.testing.assert_frame_equal(expected, observed)
 
 

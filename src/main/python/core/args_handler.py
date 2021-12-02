@@ -17,9 +17,8 @@ class ArgsHandler:
     def __init__(self):
         self.version = __version__
         self.parser = argparse.ArgumentParser(
-            description="CAPICE, a machine-learning-based method for "
-                        "prioritizing pathogenic variants "
-                        "https://doi.org/10.1186/s13073-020-00775-w"
+            description="CAPICE, a machine-learning-based method for prioritizing pathogenic"
+                        " variants https://doi.org/10.1186/s13073-020-00775-w"
         )
         self.manager = CapiceManager()
 

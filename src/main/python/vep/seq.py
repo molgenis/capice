@@ -1,4 +1,5 @@
 import pandas as pd
+
 from src.main.python.vep.template import Template
 
 
@@ -13,12 +14,20 @@ class SEQ(Template):
     def columns(self):
         return ['GC', 'CpG']
 
+    @staticmethod
+    def _calculate_g_c_n(dataframe, name):
+        c = dataframe[name].str.count('C')
+        g = dataframe[name].str.count('G')
+        n = dataframe[name].str.count('N')
+        return (c + g + n * 0.41) / dataframe[name].str.len()
+
+    @staticmethod
+    def _calculate_cg_n(dataframe, name):
+        cg = dataframe[name].str.count('CG')
+        n = dataframe[name].str.count('N')
+        return (cg + n * 0.01) / (dataframe[name].str.len() - 1) * 2
+
     def _process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns[0]] = (dataframe[self.name].str.count('C') + dataframe[
-            self.name].str.count('G') + dataframe[
-                               self.name].str.count('N') * 0.41) / dataframe[
-                              self.name].str.len()
-        dataframe[self.columns[1]] = (dataframe[self.name].str.count('CG') + dataframe[
-            self.name].str.count('N') * 0.01) / (
-                                   dataframe[self.name].str.len() - 1) * 2
+        dataframe[self.columns[0]] = self._calculate_g_c_n(dataframe, self.name)
+        dataframe[self.columns[1]] = self._calculate_cg_n(dataframe, self.name)
         return dataframe

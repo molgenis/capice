@@ -44,17 +44,15 @@ class LoadFilePostProcessor:
         "GeneID, FeatureID, GeneName, Intron and Exon".
         """
         self.dataset.rename(
-            columns={
-                'CHROM': Column.chr.value,
-                'POS': Column.pos.value,
-                'REF': Column.ref.value,
-                'ALT': Column.alt.value,
-                'HGNC_ID': Column.gene_id.value,
-                'SYMBOL_SOURCE': Column.id_source.value,
-                'Feature': Column.transcript.value,
-                'SYMBOL': Column.gene_name.value,
-                'INTRON': 'Intron',
-                'EXON': 'Exon',
-                'MAX_AF': 'max_AF'
-            }, inplace=True
-        )
+            columns={'CHROM': Column.chr.value,
+                     'POS': Column.pos.value,
+                     'REF': Column.ref.value,
+                     'ALT': Column.alt.value,
+                     'HGNC_ID': Column.gene_id.value,
+                     'SYMBOL_SOURCE': Column.id_source.value,
+                     'Feature': Column.transcript.value,
+                     'SYMBOL': Column.gene_name.value,
+                     'INTRON': 'Intron',
+                     'EXON': 'Exon',
+                     'MAX_AF': 'max_AF'},
+            inplace=True)

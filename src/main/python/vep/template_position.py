@@ -1,6 +1,8 @@
+from abc import abstractmethod
+
 import numpy as np
 import pandas as pd
-from abc import abstractmethod
+
 from src.main.python.vep.template import Template
 
 
@@ -23,31 +25,16 @@ class TemplatePosition(Template):
     def _process(self, dataframe: pd.DataFrame):
         if self.name in dataframe.select_dtypes(include='O'):
             if dataframe[self.name].str.split('/', expand=True).shape[1] > 1:
-                dataframe[self.columns] = dataframe[self.name].str.split(
-                    '/',
-                    expand=True
-                )
+                dataframe[self.columns] = dataframe[self.name].str.split('/', expand=True)
             else:
                 dataframe[self.pos_col] = dataframe[self.name]
                 dataframe[self.columns[1]] = np.nan
-            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
-                '?-',
-                '',
-                regex=False
-            )
-            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace(
-                '-?',
-                '',
-                regex=False
-            )
-            dataframe[self.pos_col] = dataframe[self.pos_col].str.split(
-                '-', expand=True)[0]
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace('?-', '', regex=False)
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.replace('-?', '', regex=False)
+            dataframe[self.pos_col] = dataframe[self.pos_col].str.split('-', expand=True)[0]
 
             for column in self.columns:
-                dataframe.loc[
-                    dataframe[dataframe[column] == ''].index,
-                    column
-                ] = np.nan
+                dataframe.loc[dataframe[dataframe[column] == ''].index, column] = np.nan
                 dataframe[column] = dataframe[column].astype(float)
         else:
             dataframe[self.pos_col] = dataframe[self.name]

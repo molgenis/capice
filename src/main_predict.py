@@ -1,7 +1,7 @@
-from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
-from src.main.python.utilities.predictor import Predictor
-from src.main_capice import Main
 from src.main.python.utilities.enums import Column
+from src.main.python.utilities.predictor import Predictor
+from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
+from src.main_capice import Main
 
 
 class CapicePredict(Main):
@@ -20,23 +20,14 @@ class CapicePredict(Main):
         """
         Function to make CAPICE run in a prediction matter.
         """
-        capice_data = self._load_file(
-            additional_required_features=[
-                Column.gene_name.value,
-                Column.gene_id.value,
-                Column.id_source.value,
-                Column.transcript.value
-            ]
-        )
+        capice_data = self._load_file(additional_required_features=[Column.gene_name.value,
+                                                                    Column.gene_id.value,
+                                                                    Column.id_source.value,
+                                                                    Column.transcript.value])
         capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(
-            loaded_data=capice_data,
-            impute_values=self.model.impute_values
-        )
-        capice_data = self.preprocess(
-            loaded_data=capice_data,
-            model_features=self.model.get_booster().feature_names
-        )
+        capice_data = self.impute(loaded_data=capice_data, impute_values=self.model.impute_values)
+        capice_data = self.preprocess(loaded_data=capice_data,
+                                      model_features=self.model.get_booster().feature_names)
         capice_data = self.predict(loaded_data=capice_data)
         self._export(dataset=capice_data, output=self.output)
 

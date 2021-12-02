@@ -16,8 +16,7 @@ class Length(Template):
 
     def _process(self, dataframe: pd.DataFrame):
         dataframe[self.columns] = abs(
-            dataframe[Column.ref.value].str.len() - dataframe[Column.alt.value].str.len()
-        )
+            dataframe[Column.ref.value].str.len() - dataframe[Column.alt.value].str.len())
         return dataframe
 
     @property

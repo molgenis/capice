@@ -49,8 +49,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             '--split',
             action='append',
             type=float,
-            help='proportion of the input data to include '
-                 'in the test split (default: %(default)s)'
+            help='proportion of the input data to include in the test split (default: %(default)s)'
         )
         self.parser.add_argument(
             '-o',

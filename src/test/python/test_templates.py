@@ -1,10 +1,10 @@
 import os
 import pickle
 
-from src.main_predict import CapicePredict
-from src.main.python.core.logger import Logger
 from src.main.python.core.capice_manager import CapiceManager
+from src.main.python.core.logger import Logger
 from src.main.python.utilities.utilities import get_project_root_dir
+from src.main_predict import CapicePredict
 
 
 def set_up_manager_and_out():
@@ -43,11 +43,7 @@ def set_up_predict():
 def set_up_impute_preprocess():
     set_up_manager_and_out()
     main = set_up_predict()
-    main.infile = os.path.join(
-            get_project_root_dir(),
-            'CAPICE_example',
-            'CAPICE_input.tsv.gz'
-        )
+    main.infile = os.path.join(get_project_root_dir(), 'CAPICE_example', 'CAPICE_input.tsv.gz')
     with open(
             os.path.join(
                 get_project_root_dir(),

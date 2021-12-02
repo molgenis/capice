@@ -47,8 +47,7 @@ class Domain(Template):
                 'ndomain': Domains.ndomain.value,
                 'Low_complexity_(Seg)': Domains.lowcomplex.value,
                 'Cleavage_site_(Signalp)': Domains.signalp.value,
-                'Coiled-coils_(Ncoils)': Domains.ncoils.value
-                }
+                'Coiled-coils_(Ncoils)': Domains.ncoils.value}
 
     @property
     def output_dict(self):
@@ -57,8 +56,7 @@ class Domain(Template):
                 Domains.lowcomplex.value: 'lcompl',
                 Domains.ndomain.value: 'ndomain',
                 Domains.panther.value: 'hmmpanther',
-                Domains.other.value: 'other'
-                }
+                Domains.other.value: 'other'}
 
     def _process(self, dataframe: pd.DataFrame):
         subset = dataframe[self.name].str.split('&', expand=True)

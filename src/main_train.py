@@ -1,13 +1,14 @@
 import json
+
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
-
-from src.main.python.utilities.enums import TrainEnums
-from src.main.python.__version__ import __version__
-from src.main_capice import Main
-from src.main.python.core.capice_exporter import CapiceExporter
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
+
+from src.main.python.__version__ import __version__
+from src.main.python.core.capice_exporter import CapiceExporter
+from src.main.python.utilities.enums import TrainEnums
+from src.main_capice import Main
 
 
 class CapiceTrain(Main):
@@ -15,32 +16,25 @@ class CapiceTrain(Main):
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
-    def __init__(self,
-                 input_path,
-                 json_path,
-                 test_split,
-                 output_path):
+
+    def __init__(self, input_path, json_path, test_split, output_path):
         super().__init__(input_path, output_path)
 
         # Impute JSON.
         self.json_path = json_path
-        self.log.debug(
-            'Input impute JSON confirmed: %s', self.json_path
-        )
+        self.log.debug('Input impute JSON confirmed: %s', self.json_path)
 
         # Train test size.
         self.train_test_size = test_split
         self.log.debug(
-            'The percentage of data used for the testing dataset within '
-            'training: %s', self.train_test_size
-        )
+            'The percentage of data used for the testing dataset within training: %s',
+            self.train_test_size)
 
         # Required features when file is loaded
         self.additional_required = ['binarized_label', 'sample_weight']
         self.exclude_features += self.additional_required
 
         # Variables that can be edited in testing to speed up the train testing
-
         self.esr = 15
         self.n_jobs = 8
         self.cross_validate = 5
@@ -59,31 +53,21 @@ class CapiceTrain(Main):
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self._load_file(
-            additional_required_features=self.additional_required
-        )
+        data = self._load_file(additional_required_features=self.additional_required)
         data = self.process(loaded_data=data)
         with open(self.json_path, 'rt') as impute_values_file:
             json_dict = json.load(impute_values_file)
         self._validate_impute_complete(data, json_dict)
 
-        imputed_data = self.impute(loaded_data=data,
-                                   impute_values=json_dict)
-        processed_data = self.preprocess(
-            loaded_data=imputed_data
-        )
-        self._get_processed_features(dataset=processed_data,
-                                     impute_keys=json_dict.keys())
-        processed_train, processed_test = self.split_data(
-            dataset=processed_data,
-            test_size=self.train_test_size
-        )
+        imputed_data = self.impute(loaded_data=data, impute_values=json_dict)
+        processed_data = self.preprocess(loaded_data=imputed_data)
+        self._get_processed_features(dataset=processed_data, impute_keys=json_dict.keys())
+        processed_train, processed_test = self.split_data(dataset=processed_data,
+                                                          test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
         setattr(model, "impute_values", json_dict)
         setattr(model, 'CAPICE_version', __version__)
-        self.exporter.export_capice_model(
-            model=model
-        )
+        self.exporter.export_capice_model(model=model)
 
     def _validate_impute_complete(self, dataset, json_dict):
         """
@@ -98,8 +82,7 @@ class CapiceTrain(Main):
                 missing.append(key)
 
         if len(missing) > 0:
-            error_message = 'Impute file missing needed columns for ' \
-                            'input file: %s'
+            error_message = 'Impute file missing needed columns for input file: %s'
             self.log.critical(error_message, missing)
             raise ValueError(error_message % missing)
 
@@ -111,11 +94,9 @@ class CapiceTrain(Main):
         :param test_size: float, ranging 0-1
         :return: train, test (1-test_size, test_size)
         """
-        train, test = train_test_split(
-            dataset,
-            test_size=test_size,
-            random_state=self.split_random_state
-        )
+        train, test = train_test_split(dataset,
+                                       test_size=test_size,
+                                       random_state=self.split_random_state)
         return train, test
 
     def _get_processed_features(self, dataset: pd.DataFrame, impute_keys):
@@ -182,16 +163,12 @@ class CapiceTrain(Main):
                                         verbose=verbosity)
 
         if int(xgb.__version__.split('.')[0]) > 0:
-            eval_set = [(
-                test_set[self.processed_features],
-                test_set[TrainEnums.binarized_label.value]
-            )]
+            eval_set = [(test_set[self.processed_features],
+                         test_set[TrainEnums.binarized_label.value])]
         else:
-            eval_set = [(
-                test_set[self.processed_features],
-                test_set[TrainEnums.binarized_label.value],
-                'test'
-            )]
+            eval_set = [(test_set[self.processed_features],
+                         test_set[TrainEnums.binarized_label.value],
+                         'test')]
         self.log.info('Random search starting, please hold.')
         ransearch1.fit(train_set[self.processed_features],
                        train_set[TrainEnums.binarized_label.value],

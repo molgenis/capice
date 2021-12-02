@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 
 from src.main.python.core.logger import Logger
@@ -34,10 +35,7 @@ class ManualVEPProcessor:
                     dataset.drop(columns=processor.name, inplace=True)
                 n_feats_processed += 1
             else:
-                self.log.warning(
-                    'Could not use processor %s on input dataset!',
-                    processor.name
-                )
+                self.log.warning('Could not use processor %s on input dataset!', processor.name)
         self.log.info('Processing successful.')
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset

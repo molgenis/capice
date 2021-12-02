@@ -1,11 +1,13 @@
 import os
 import shutil
 import unittest
-import pandas as pd
 from pathlib import Path
-from src.main.python.utilities.utilities import get_project_root_dir
+
+import pandas as pd
+
 from scripts.balance_dataset import correct_column_names, Split, Balancer, \
     CommandLineArgumentsValidator, InputDatasetValidator, __bins__
+from src.main.python.utilities.utilities import get_project_root_dir
 
 
 class TestBalancer(unittest.TestCase):
@@ -67,17 +69,11 @@ class TestBalancer(unittest.TestCase):
         copy_of_dataset = self.dataset.copy(deep=True)
         validation_dataset, dataset = splitter.split(copy_of_dataset)
         self.assertAlmostEqual(
-            validation_dataset[validation_dataset['binarized_label'] == 0].shape[0], p10_b
-        )
+            validation_dataset[validation_dataset['binarized_label'] == 0].shape[0], p10_b)
         self.assertAlmostEqual(
-            validation_dataset[validation_dataset['binarized_label'] == 1].shape[0], p10_p
-        )
-        self.assertAlmostEqual(
-            dataset[dataset['binarized_label'] == 0].shape[0], p90_b
-        )
-        self.assertAlmostEqual(
-            dataset[dataset['binarized_label'] == 1].shape[0], p90_p
-        )
+            validation_dataset[validation_dataset['binarized_label'] == 1].shape[0], p10_p)
+        self.assertAlmostEqual(dataset[dataset['binarized_label'] == 0].shape[0], p90_b)
+        self.assertAlmostEqual(dataset[dataset['binarized_label'] == 1].shape[0], p90_p)
         self.assertGreater(dataset.shape[0], 0)
         self.assertGreater(validation_dataset.shape[0], 0)
 
@@ -147,21 +143,15 @@ class TestBalancer(unittest.TestCase):
         print('Dataset validator')
         validator = InputDatasetValidator()
         dataset = self.dataset.copy(deep=True)
-        self.assertRaises(
-            KeyError,
-            validator.validate_columns_required,
-            dataset.drop(columns=['MAX_AF'])
-        )
-        self.assertRaises(
-            ValueError,
-            validator.validate_b_p_present,
-            dataset[dataset['binarized_label'] == 0]
-        )
-        self.assertRaises(
-            ValueError,
-            validator.validate_b_p_present,
-            dataset[dataset['binarized_label'] == 1]
-        )
+        self.assertRaises(KeyError,
+                          validator.validate_columns_required,
+                          dataset.drop(columns=['MAX_AF']))
+        self.assertRaises(ValueError,
+                          validator.validate_b_p_present,
+                          dataset[dataset['binarized_label'] == 0])
+        self.assertRaises(ValueError,
+                          validator.validate_b_p_present,
+                          dataset[dataset['binarized_label'] == 1])
 
 
 if __name__ == '__main__':

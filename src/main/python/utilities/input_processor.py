@@ -44,10 +44,8 @@ class InputProcessor:
                 # Then I know it's an output filepath + possibly name
                 if os.path.splitext(self.output_path)[1] != '':
                     # Then I know it is a full path + filename
-                    self._set_output_path(
-                        os.path.dirname(self.output_path),
-                        os.path.basename(self.output_path)
-                    )
+                    self._set_output_path(os.path.dirname(self.output_path),
+                                          os.path.basename(self.output_path))
                 else:
                     # Then I know it's a full path
                     filename = self.get_filename_from_path(self.input_path)
@@ -62,9 +60,7 @@ class InputProcessor:
         full_output_path = os.path.join(self.output_directory, self.output_filename)
         if not self.force and os.path.isfile(full_output_path):
             raise FileExistsError(
-                f'Output file {full_output_path} already exists! '
-                f'Use -f / --force to overwrite.'
-            )
+                f'Output file {full_output_path} already exists! Use -f / --force to overwrite.')
 
     def _set_output_path(self, directory, filename):
         self.output_directory = directory

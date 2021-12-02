@@ -65,7 +65,6 @@ class Logger:
             Required because else Warning, Error and CRITICAL messages are
             printed to sys.stdout.
             """
-
             logging_info = [logging.INFO]
             logging_debug = logging_info + [logging.DEBUG]
             dict_of_levels = {10: logging_debug, 20: logging_info}
