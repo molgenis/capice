@@ -1,122 +1,109 @@
+from abc import ABC, abstractmethod
 from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
-from src.main.python.core.exporter import Exporter
-from src.main.python.core.config_reader import ConfigReader
-from src.main.python.resources.parsers.cadd_parser import CaddParser
-from src.main.python.resources.parsers.cadd_header_parser import CaddHeaderParser
-from src.main.python.resources.imputers.cadd_imputing import CaddImputing
-from src.main.python.resources.checkers.cadd_version_checker import CaddVersionChecker
-from src.main.python.resources.preprocessors.preprocessor import PreProcessor
+from src.main.python.core.capice_exporter import CapiceExporter
+from src.main.python.utilities.enums import Column
+from src.main.python.core.capice_manager import CapiceManager
+from src.main.python.utilities.input_parser import InputParser
+from src.main.python.utilities.capice_imputing import CapiceImputing
+from src.main.python.utilities.preprocessor import PreProcessor
+from src.main.python.validators.post_file_parse_validator import PostFileParseValidator
+from src.main.python.utilities.manual_vep_processor import ManualVEPProcessor
+from src.main.python.utilities.load_file_postprocessor import LoadFilePostProcessor
 
 
-class Main:
+class Main(ABC):
     """
-    Main class of CAPICE to call the different modules to impute, preprocess and eventually predict a score over a CADD
-    annotated file.
+    Main class of CAPICE that contains methods to help the different modes to
+    function.
     """
-    def __init__(self,
-                 __program__, __author__, __version__,
-                 input_loc, output_loc):
 
-        # Order is important here
+    def __init__(self, input_path, output_path):
+        # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
 
-        # Config loading
-        self.config = ConfigReader()
+        self.log.info('Initiating selected mode.')
 
-        # Welcome message
+        # Input file.
+        self.infile = input_path
+        self.log.debug('Input argument -i / --input confirmed: %s', self.infile)
 
-        self.log.info('Thank you for using {}, version: {}, created by: {}.'.format(
-            __program__,
-            __version__,
-            __author__
-        ))
+        # Output file.
+        self.output = output_path
+        self.log.debug('Output directory -o / --output confirmed: %s', self.output)
 
-        self.log.info('Verbose -v / --verbose confirmed: {}'.format(self.manager.verbose))
+        # Preprocessor global exclusion features
+        # Overwrite in specific module if features are incorrect
+        self.exclude_features = [Column.gene_name.value,
+                                 Column.gene_id.value,
+                                 Column.id_source.value,
+                                 Column.transcript.value]
 
-        # Order is less important here
-
-        self.log.info('Arguments passed. Starting program.')
-        self.infile = input_loc
-        self.log.debug('Input argument -i / --input confirmed: {}'.format(self.infile))
-        self.output = output_loc
-        self.log.debug('Output directory -o / --output confirmed: {}'.format(self.output))
-        self.cla_genome_build = self.config.get_default_value('genomebuild')
-        self.log.debug('Genome build -gb / --genome_build confirmed: {}'.format(self.cla_genome_build))
-        self.cla_cadd_version = self.config.get_default_value('caddversion')
-        self.log.debug('CADD build -cb / --cadd_build confirmed: {}'.format(self.cla_cadd_version))
-        self.log.debug('Force flag confirmed: {}'.format(self.manager.force))
-
+    @abstractmethod
     def run(self):
-        """
-        Function to make CAPICE run in a prediction matter.
-        """
-        cadd_data = self.load_file()
-        cadd_data = self.impute(loaded_cadd_data=cadd_data)
-        preprocessing_instance, cadd_data = self.preprocess(loaded_cadd_data=cadd_data, train=False)
-        cadd_data = self.predict(loaded_cadd_data=cadd_data, preprocessing_instance=preprocessing_instance)
-        self._export(datafile=cadd_data)
+        pass
 
-    def load_file(self):
+    def _load_file(self, additional_required_features: list = None):
         """
-        Function to load the CADD file into main
+        Function to load the input TSV file into main
         :return: pandas DataFrame
         """
-        is_gzipped = False
-        if self.infile.endswith('.gz'):
-            is_gzipped = True
-        cadd_header_parser = CaddHeaderParser(
-            is_gzipped=is_gzipped,
-            cadd_file_loc=self.infile
+        input_parser = InputParser()
+        input_file = input_parser.parse(input_file_path=self.infile)
+        post_load_processor = LoadFilePostProcessor(dataset=input_file)
+        input_file = post_load_processor.process()
+        validator = PostFileParseValidator()
+        # Individual calls to the validator for error readability
+        validator.validate_chrom_pos(input_file)
+        validator.validate_n_columns(input_file)
+        validator.validate_minimally_required_columns(
+            input_file,
+            additional_required_features=additional_required_features
         )
-        header_present = cadd_header_parser.get_header_present()
-        header_version = cadd_header_parser.get_header_version()
-        header_build = cadd_header_parser.get_header_build()
-        CaddVersionChecker(
-            cla_cadd_version=self.cla_cadd_version,
-            cla_grch_build=self.cla_genome_build,
-            file_cadd_version=header_version,
-            file_grch_build=header_build
-        )
-        cadd_parser = CaddParser()
-        cadd_file = cadd_parser.parse(
-            cadd_file_loc=self.infile,
-            header_present=header_present
-        )
-        return cadd_file
+        return input_file
 
     @staticmethod
-    def impute(loaded_cadd_data):
+    def process(loaded_data):
         """
-        Function to perform imputing and converting of categorical features
+        Function to process the VEP features to CAPICE features.
         """
-        cadd_imputer = CaddImputing()
-        cadd_data = cadd_imputer.impute(loaded_cadd_data)
-        return cadd_data
+        processor = ManualVEPProcessor()
+        processed_data = processor.process(dataset=loaded_data)
+        return processed_data
 
     @staticmethod
-    def preprocess(loaded_cadd_data, train: bool):
+    def impute(loaded_data, impute_values):
         """
-        Function to perform the preprocessing of a datafile to be ready for CAPICE imputing.
-        :param loaded_cadd_data: Pandas dataframe of the imputed CADD data
-        :param train: bool
+        Function to perform imputing over the loaded data.
+        self.model can be None, but impute_json has to be defined in that case.
         """
-        preprocessor = PreProcessor(is_train=train)
-        cadd_data = preprocessor.preprocess(datafile=loaded_cadd_data)
-        return preprocessor, cadd_data
+        capice_imputer = CapiceImputing(impute_values=impute_values)
+        capice_data = capice_imputer.impute(loaded_data)
+        return capice_data
+
+    def preprocess(self, loaded_data, model_features=None):
+        """
+        Function to perform the preprocessing of the loaded data to convert
+        categorical columns.
+        :param loaded_data: Pandas dataframe of the imputed CAPICE data
+        :param model_features: list (default None), a list containing all
+        the features present within a model file. When set to None,
+        PreProcessor will activate the train protocol.
+
+        Note: please adjust self.exclude_features: to include all of the
+        features that the preprocessor should NOT process.
+        Features chr_pos_ref_alt, chr and pos are hardcoded and
+        thus do not have to be included.
+        """
+        preprocessor = PreProcessor(
+            exclude_features=self.exclude_features,
+            model_features=model_features)
+        capice_data = preprocessor.preprocess(loaded_data)
+        return capice_data
 
     @staticmethod
-    def predict(loaded_cadd_data, preprocessing_instance):
-        """
-        Function to call the correct model to predict CAPICE scores
-        :return: pandas DataFrame
-        """
-        cadd_data = preprocessing_instance.predict(datafile=loaded_cadd_data)
-        return cadd_data
-
-    def _export(self, datafile):
+    def _export(dataset, output):
         """
         Function to prepare the data to be exported
         """
-        Exporter(file_path=self.output).export_capice_prediction(datafile=datafile)
+        CapiceExporter(file_path=output).export_capice_prediction(datafile=dataset)

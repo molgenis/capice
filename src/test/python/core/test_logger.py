@@ -1,10 +1,11 @@
-import os
+import io
+import sys
+import logging
 import unittest
-from datetime import datetime
+
 from src.main.python.core.logger import Logger
-from src.main.python.core.global_manager import CapiceManager
-from src.main.python.resources.utilities.utilities import get_project_root_dir
 from src.test.python.test_templates import teardown
+from src.main.python.core.capice_manager import CapiceManager
 
 
 class TestLogger(unittest.TestCase):
@@ -12,76 +13,108 @@ class TestLogger(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         cls.manager = CapiceManager()
-        cls.output_loc = os.path.join(get_project_root_dir(), '.test_output')
-        if not os.path.exists(cls.output_loc):
-            os.makedirs(cls.output_loc)
-        cls.manager.now = datetime.now()
-        cls.manager.log_loc = cls.output_loc
         cls.manager.critical_logging_only = False
-        cls.manager.enable_logfile = True
-        cls.log = Logger().logger
 
     @classmethod
     def tearDownClass(cls):
         print('Tearing down.')
         teardown()
 
+    def capture_stdout_call(self):
+        old_stdout = sys.stdout
+        listener = io.StringIO()
+        sys.stdout = listener
+        log = Logger().logger
+        log.info('SomeString')
+        log.debug('SomeString')
+        out = listener.getvalue()
+        sys.stdout = old_stdout
+        self.assertGreater(len(out), 0)
+        return out
+
+    def capture_stderr_call(self):
+        old_stderr = sys.stderr
+        listener = io.StringIO()
+        sys.stderr = listener
+        log = Logger().logger
+        log.critical('SomeString')
+        log.error('SomeString')
+        out = listener.getvalue()
+        sys.stderr = old_stderr
+        self.assertGreater(len(out), 0)
+        return out
+
     def setUp(self):
         print('Testing case:')
-        self.log = Logger()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         print('Resetting arguments.')
-        # Logger.instance = None
-        # self.manager.verbose = False
-        # self.log.create_logfile = False
+        Logger.instance = None
+        self.manager.critical_logging_only = False
+        self.manager.loglevel = None
+        print('Arguments reset.')
+
+    def test_isenbaled_false_debug(self):
+        print('isEnabledFor(logging.DEBUG) is False')
+        self.manager.loglevel = 20
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.DEBUG))
+
+    def test_isenabled_true_debug(self):
+        print('isEnabledFor(logging.DEBUG) is True')
+        self.manager.loglevel = 10
+        log = Logger().logger
+        self.assertTrue(log.isEnabledFor(logging.DEBUG))
+
+    def test_isenabled_false_warning(self):
+        print('isEnabledFor(logging.WARNING) is False')
+        self.manager.critical_logging_only = True
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.WARNING))
+
+    def test_isenabled_true_warning(self):
+        print('isEnabledFor(logging.WARNING) is True')
+        log = Logger().logger
+        self.assertTrue(log.isEnabledFor(logging.WARNING))
+        self.assertFalse(log.isEnabledFor(logging.INFO))
+
+    def test_set_multiple_loglevels(self):
+        print('isEnabledFor(logging.DEBUG) is False with '
+              'CapiceManager().critical_logging_only set to True')
+        self.manager.critical_logging_only = True
+        self.manager.loglevel = 10
+        log = Logger().logger
+        self.assertFalse(log.isEnabledFor(logging.DEBUG))
 
     def test_loglevel_nonverbose(self):
-        print('Loglevel non verbose')
-        loglevel = self.log.set_loglevel()
-        self.assertEqual(loglevel, 20)
+        """
+        Testing Info messages just became a lot harder since the logger is set
+        to logging.NOTSET by default, with it's StreamHandlers taking care of
+        the messages itself, specially the stdout StreamHandler.
+        """
+        print('Loglevel info')
+        self.manager.loglevel = 20
+        out = self.capture_stdout_call()
+        self.assertIn('INFO', out)
+        self.assertNotIn('DEBUG', out)
 
     def test_loglevel_verbose(self):
         print('Loglevel verbose')
-        self.manager.verbose = True
-        loglevel = self.log.set_loglevel()
-        self.assertEqual(loglevel, 0)
+        self.manager.loglevel = 10
+        out = self.capture_stdout_call()
+        self.assertIn('INFO', out)
+        self.assertIn('DEBUG', out)
 
-    def test_create_logfile(self):
-        print('Creating logfile')
-        message = 'This is a test_create_logfile specific message for testing purposes'
-        self.log.logger.info(message)
-        expected_out_message = '[CAPICE] [test_logger.py] [test_create_logfile] [INFO]  {}'.format(message)
-        logfile = os.listdir(self.output_loc)[0]
-        with open(os.path.join(self.output_loc, logfile), 'rt') as log_messages:
-            messages = log_messages.readlines()
-        stripped_messages = []
-        for log in messages:
-            stripped_messages.append(' '.join(log.strip().split(' ')[2:]))
-        self.assertIn(expected_out_message, stripped_messages)
+    def test_loglevel_critical_logging_only(self):
+        print('Critical logging only')
+        self.manager.critical_logging_only = True
+        out = self.capture_stderr_call()
+        self.assertIn('CRITICAL', out)
+        self.assertNotIn('ERROR', out)
 
-    def test_filehandler(self):
-        print('Logging filehandler')
-        self.manager.log_loc = self.output_loc
-        handlers = self.log.logger.handlers
-        string_handlers = []
-        for handler in handlers:
-            string_handlers.append(str(handler.__class__))
-        self.assertTrue("<class 'logging.FileHandler'>" in string_handlers)
-
-    def test_final_logloc(self):
-        print('Final logloc')
-        files_present = []
-        for file in os.listdir(self.output_loc):
-            files_present.append(os.path.join(self.output_loc, file))
-        self.assertTrue(self.log.get_log_loc() in files_present)
-
-    def test_creating_log_filename(self):
-        print('Logfile filename')
-        with open(os.path.join(self.output_loc, 'present_file.log'), 'wt') as logfile:
-            logfile.write('Already present')
-        new_filename = self.log._create_log_export_name(out_file_name='present_file')
-        self.assertEqual(new_filename, os.path.join(self.output_loc, 'present_file_1.log'))
+    def test_logger_class(self):
+        print('Logger class')
+        self.assertEqual(str(Logger().logger.__class__), "<class 'logging.RootLogger'>")
 
 
 if __name__ == '__main__':

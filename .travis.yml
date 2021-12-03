@@ -1,0 +1,24 @@
+os: linux
+dist: focal
+language: python
+python:
+- '3.9'
+cache: pip
+branches:
+  only:
+  - master
+  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+before_install:
+- pip install -U pip
+- pip install -U pytest
+- pip install pytest-cov
+install:
+- pip install -r requirements.txt
+script:
+- pytest --junitxml=results.xml --cov=. --cov-report xml
+- sonar-scanner
+addons:
+  sonarcloud:
+    organization: "molgenis"
+    token:
+      secure: "qFkmx02PjcBy6nCpf05evyhQBcwOqq3BHycZbmyYkKE9AS9AbYH7eiGboTOvO5N45d3UoZaUud22JK+rD4mKTm9fMzhxQLrexww+EUOCs0EYRDaQkBtl9HcgnDWnHtRl55151agb8VJ2l9AFMC6vlfJjs+nYGeFimhoat0s4NxWlhQV/fEdmmlJCj9k37Z1We0SSoSuw8A+kJ5S3Lzf+7mhm2o/BF1rvjipW9m66e6uOyNmm9n2FMi9em06OdQRDoeLIXjgqvF2SvphcOwXfiL3TFJR4R3wjajRqgGlRmCcdt/HSMe5eTjcNvHiE3HmeAKSLoItixSqxBxzLrW/lBziWPp6E4GqRpyePhprUzJDIeB4nPg28CHS5mbqtsEiJFkGKwcaDWd+jY/KHIhN/5ECMGGQrBsiB0v7ENwasa46pMzsZ9m9b1oZzMO+dKxBl9N7BGmcjZp37nRv7n7zo5SGn1NMSs+w+8C542mAuVT0TCemKf1178auK2zeHguUxt+/GHw67lGyegZC17a9DAVN4IBCU+hkrFSwhfk1VqXulVM/b+TDpHggOaRLTNR5u45j+ibNTASTvTHwVDlbaGOOrcBSjoMY8yf+/777g3KzQFofXyyaiWRcVQAg1pl8XJUVNSJkULxCZlxy9CXc0dmnwRpui6fGtHgNpn/hwXvk="
