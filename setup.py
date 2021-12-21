@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='capice',
-    version='2.0.1',
+    version='3.0.0-beta1',
     packages=find_packages('src', exclude=['test']),
     package_dir={"": "src"},
     url='https://capice.molgeniscloud.org/',
@@ -19,7 +19,7 @@ setup(
                 'to predict SNVs and InDels pathogenicity.',
     long_description=long_description,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: LGPL-3.0',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
