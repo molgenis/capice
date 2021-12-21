@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+import numpy as np
 import pandas as pd
 
 from src.main.python.vep.template import Template
@@ -17,12 +18,12 @@ class TemplateSiftPolyPhen(Template):
     def columns(self):
         return [None, None]
 
-    @property
-    def val_col(self):
-        return self.columns[1]
+    @abstractmethod
+    def apply_label(self, dataframe: pd.DataFrame):
+        return dataframe
 
     def _process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = dataframe[self.name].str.split('(', expand=True)
-        dataframe[self.val_col] = dataframe[self.val_col].str.split(')', expand=True)[0]
-        dataframe[self.val_col] = dataframe[self.val_col].astype(float)
+        dataframe[self.columns[1]] = dataframe[self.name]
+        dataframe[self.columns[0]] = np.nan
+        dataframe = self.apply_label(dataframe)
         return dataframe
