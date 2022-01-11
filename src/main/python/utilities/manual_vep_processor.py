@@ -26,16 +26,19 @@ class ManualVEPProcessor:
         """
         self.log.info('Starting manual VEP feature processing.')
         vep_annotators = self._load_vep_processors()
+        dropping_columns = []
         n_feats_processed = 0
         for processor in vep_annotators:
             if processor.name in dataset.columns and processor.usable:
                 self.log.debug('Processing: %s', processor.name)
                 dataset = processor.process(dataset)
-                if processor.drop:
-                    dataset.drop(columns=processor.name, inplace=True)
+                if processor.drop and processor.name not in dropping_columns:
+                    dropping_columns.append(processor.name)
                 n_feats_processed += 1
             else:
                 self.log.warning('Could not use processor %s on input dataset!', processor.name)
+        self.log.debug('Property drop was set True for columns: %s', ', '.join(dropping_columns))
+        dataset.drop(columns=dropping_columns, inplace=True)
         self.log.info('Processing successful.')
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset
