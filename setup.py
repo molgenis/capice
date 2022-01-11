@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, find_packages
+from src.main.python.__version__ import __version__
 
 with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
 setup(
     name='capice',
-    version='3.0.0-beta1',
+    version=__version__,
     packages=find_packages('src', exclude=['test']),
     package_dir={"": "src"},
     url='https://capice.molgeniscloud.org/',
