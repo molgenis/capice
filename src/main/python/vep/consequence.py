@@ -18,7 +18,7 @@ class Consequence(Template):
 
     @property
     def drop(self):
-        return False
+        return True
 
     @property
     def columns(self):

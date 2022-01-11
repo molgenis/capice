@@ -116,7 +116,6 @@ class TestAnnotator(unittest.TestCase):
                         'pos',
                         'ref',
                         'alt',
-                        'Consequence',
                         'GeneName',
                         'SourceID',
                         'HGNC_ID',
