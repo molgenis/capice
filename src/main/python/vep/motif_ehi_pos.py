@@ -18,5 +18,7 @@ class MotifEHIPos(Template):
         return self._process(dataframe)
 
     def _process(self, dataset: pd.DataFrame):
-        dataset[self.columns] = np.where(dataset[self.name] == 'Y', 1, 0)
+        dataset = dataset.join(
+            pd.DataFrame(np.where(dataset[self.name] == 'Y', 1, 0), columns=self.columns)
+        )
         return dataset

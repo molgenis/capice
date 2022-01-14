@@ -28,5 +28,11 @@ class ConsDetail(Template):
                 subset[column] = subset[column].str.replace(string, '', regex=False)
         subset.loc[subset[subset.notnull().all(axis=1)].index, 0] = subset[
             subset.notnull().all(axis=1)].agg(','.join, axis=1)
-        dataframe[self.columns] = subset[0]
+        dataframe = dataframe.join(
+            pd.DataFrame(
+                pd.Series(
+                    subset[0].tolist()
+                ), columns=self.columns
+            )
+        )
         return dataframe

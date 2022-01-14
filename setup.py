@@ -28,12 +28,11 @@ setup(
     ],
     python_requires='>=3.7',
     install_requires=[
-        'numpy==1.21.0',
-        'pandas==1.2.4',
-        'scipy==1.6.2',
-        'scikit-learn==0.24.2',
-        'xgboost==1.4.2',
-        'pysam==0.16.0.1'
+        'numpy==1.22.0',
+        'pandas==1.3.5',
+        'scipy==1.7.3',
+        'scikit-learn==1.0.2',
+        'xgboost==1.4.2'
     ],
     entry_points={
         'console_scripts': [

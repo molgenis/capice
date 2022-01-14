@@ -66,7 +66,7 @@ class Domain(Template):
         subset = self._process_others(subset)
         subset = subset.agg('min', axis=1)
         subset.replace(self.output_dict, inplace=True)
-        dataframe[self.columns] = subset
+        dataframe = dataframe.join(pd.DataFrame(subset, columns=self.columns))
         return dataframe
 
     @staticmethod
