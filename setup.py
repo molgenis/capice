@@ -27,14 +27,17 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10'
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.7.1',
     install_requires=[
-        'numpy==1.22.0',
+        'numpy==1.21.3',
         'pandas==1.3.5',
         'scipy==1.7.3',
         'scikit-learn==1.0.2',
         'xgboost==1.4.2'
     ],
+    extras_require={
+        'testing': ['pytest']
+    },
     entry_points={
         'console_scripts': [
             'capice = capice:main'
