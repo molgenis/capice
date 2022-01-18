@@ -2,37 +2,40 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
 
-**Describe the bug**
+### Describe the bug
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+### System information (command line)
+ - OS: [e.g. iOS]
+ - Version [e.g. 3.0.0]
+ - Python version [e.g. Python3.9.1]
+ - Shell [e.g. ZSH]
 
-**Expected behavior**
+### System information (web service)
+ - OS: [e.g. iOS]
+ - Version [e.g. 3.0.0]
+ - Molgenis database version [e.g. 7.4.1-GAVIN2-1.0.0-SNAPSHOT]
+ - Browser [e.g. chrome, safari]
+ 
+### How to Reproduce
+Steps to reproduce the behavior:
+1. `cd` to dir [...]
+2. Run the command `[...]`
+3. See error.
+
+### Expected behavior
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+### Logs
+If available, the generated logging information and/or error message (can also be attached as a file if very large).
+
+### Screenshots
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
+### Additional context
 Add any other context about the problem here.
