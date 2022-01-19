@@ -7,7 +7,7 @@ cache: pip
 branches:
   only:
   - master
-  - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 before_install:
 - pip install -U pip
 - pip install -U pytest
@@ -19,6 +19,11 @@ script:
 - sonar-scanner
 addons:
   sonarcloud:
-    organization: "molgenis"
+    organization: molgenis
     token:
-      secure: "qFkmx02PjcBy6nCpf05evyhQBcwOqq3BHycZbmyYkKE9AS9AbYH7eiGboTOvO5N45d3UoZaUud22JK+rD4mKTm9fMzhxQLrexww+EUOCs0EYRDaQkBtl9HcgnDWnHtRl55151agb8VJ2l9AFMC6vlfJjs+nYGeFimhoat0s4NxWlhQV/fEdmmlJCj9k37Z1We0SSoSuw8A+kJ5S3Lzf+7mhm2o/BF1rvjipW9m66e6uOyNmm9n2FMi9em06OdQRDoeLIXjgqvF2SvphcOwXfiL3TFJR4R3wjajRqgGlRmCcdt/HSMe5eTjcNvHiE3HmeAKSLoItixSqxBxzLrW/lBziWPp6E4GqRpyePhprUzJDIeB4nPg28CHS5mbqtsEiJFkGKwcaDWd+jY/KHIhN/5ECMGGQrBsiB0v7ENwasa46pMzsZ9m9b1oZzMO+dKxBl9N7BGmcjZp37nRv7n7zo5SGn1NMSs+w+8C542mAuVT0TCemKf1178auK2zeHguUxt+/GHw67lGyegZC17a9DAVN4IBCU+hkrFSwhfk1VqXulVM/b+TDpHggOaRLTNR5u45j+ibNTASTvTHwVDlbaGOOrcBSjoMY8yf+/777g3KzQFofXyyaiWRcVQAg1pl8XJUVNSJkULxCZlxy9CXc0dmnwRpui6fGtHgNpn/hwXvk="
+      secure: qFkmx02PjcBy6nCpf05evyhQBcwOqq3BHycZbmyYkKE9AS9AbYH7eiGboTOvO5N45d3UoZaUud22JK+rD4mKTm9fMzhxQLrexww+EUOCs0EYRDaQkBtl9HcgnDWnHtRl55151agb8VJ2l9AFMC6vlfJjs+nYGeFimhoat0s4NxWlhQV/fEdmmlJCj9k37Z1We0SSoSuw8A+kJ5S3Lzf+7mhm2o/BF1rvjipW9m66e6uOyNmm9n2FMi9em06OdQRDoeLIXjgqvF2SvphcOwXfiL3TFJR4R3wjajRqgGlRmCcdt/HSMe5eTjcNvHiE3HmeAKSLoItixSqxBxzLrW/lBziWPp6E4GqRpyePhprUzJDIeB4nPg28CHS5mbqtsEiJFkGKwcaDWd+jY/KHIhN/5ECMGGQrBsiB0v7ENwasa46pMzsZ9m9b1oZzMO+dKxBl9N7BGmcjZp37nRv7n7zo5SGn1NMSs+w+8C542mAuVT0TCemKf1178auK2zeHguUxt+/GHw67lGyegZC17a9DAVN4IBCU+hkrFSwhfk1VqXulVM/b+TDpHggOaRLTNR5u45j+ibNTASTvTHwVDlbaGOOrcBSjoMY8yf+/777g3KzQFofXyyaiWRcVQAg1pl8XJUVNSJkULxCZlxy9CXc0dmnwRpui6fGtHgNpn/hwXvk=
+deploy:
+  provider: pypi
+  username: molgenis
+  password:
+    secure: J+HDrhTJp0pkuPfH3kJ3VCycsthma25/mrfyBbiNH3tLz6B7f+j+hUubdFCfUgt9SiHyzJL4UnGfip3qFP/oTtXUsh42jXQQUF1XD85Q8y0AYU+xuvrKtjJRDWUVuz82fPF0VDEofMQZzP4KpBY3KQ6yw+kw2ms6au5HqDnY1yH278/ByZe2CJxe3MwFjxyiA438g3ZQixBEu+0fLcjW7xV/iHYIgCpy6WGCR9oyebO5TX3IBZqHZrz3uJ3GzT6iHizK2TGg3gN3dz0vPLZguqExhLmZ4HIR/v1Pvguj9dX2kklGpUg/Blwg18B/ZrUY+9Fmcxe2X0qU7Kcu752B/4TOGWMBX2qsNoqLi+g7QzUHYdk/2qyUof1/+ly6boho8gyZVqtPk9zm0krb3fSGd2MG0+4EWH6UZc4oaMqJ1ocantduNYiNkLkfAcqFXXoNvYp3sPwWYASrGn3OBW+gcP6EmNDJ1IkWVlkLhmAC15E6adG4PSc94K4jj2jax9uafZChMjws2+DDTo/MX9hWY7pYVtG51PhsVpeLc6qgT4nAaai9a61ducA+Q1dTIyYikoa0o3YuWSziZYlOASCzx6NT07adfgfMHCc63tKbkTxdDABLF43IXKzxhZ5Ff8KR8ZVbOQwx2CqE20GdxcGIZGf7MHSTuC4W7DT4uCCToa0=
