@@ -18,6 +18,7 @@ setup(
                 'Clinical Exoma variations. State of the art machine learning '
                 'to predict SNVs and InDels pathogenicity.',
     long_description=long_description,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
