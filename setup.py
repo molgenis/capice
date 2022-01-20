@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='capice',
-    version='3.0.0rc0',
+    version='3.0.0rc1',
     packages=find_packages('src', exclude=['test']),
     package_dir={"": "src"},
     url='https://capice.molgeniscloud.org/',
@@ -20,7 +20,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
