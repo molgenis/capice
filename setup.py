@@ -8,8 +8,8 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 setup(
     name='capice',
     version='3.0.0rc0',
-    packages=find_packages('src', exclude=['test']),
-    package_dir={"": "src"},
+    packages=find_packages('.', exclude=['test']),
+    package_dir={"": "."},
     url='https://capice.molgeniscloud.org/',
     license='LGPL-3.0',
     author='Shuang Li, Robert Sietsma and Molgenis',
@@ -37,7 +37,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'capice = capice:main'
+            'capice = capice.capice:main'
         ]
     }
 
