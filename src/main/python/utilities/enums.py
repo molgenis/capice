@@ -3,7 +3,7 @@ from enum import Enum
 
 class Column(Enum):
     """
-    Enums to use that are specific to the column names after .
+    Enums to use that are specific to the column names after.
     """
     chr_pos_ref_alt = 'chr_pos_ref_alt'
     chr = 'chr'
@@ -15,6 +15,19 @@ class Column(Enum):
     id_source = 'id_source'
     transcript = 'transcript'
     score = 'score'
+    suggested_class = 'suggested_class'
+
+
+class OutputClasses(Enum):
+    """
+    Enums to use for the suggested output classes.
+    """
+    unknown = 'VUS'
+    # Variables already defined for future implementation
+    tolerated = ''
+    likely_tolerated = ''
+    likely_damaging = ''
+    damaging = ''
 
 
 class TrainEnums(Enum):

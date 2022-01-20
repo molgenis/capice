@@ -26,7 +26,8 @@ class TestCapiceExporter(unittest.TestCase):
                 Column.gene_id.value: [1000, 2000],
                 Column.id_source.value: ['foo', 'bar'],
                 Column.transcript.value: ['TRANS_01', 'TRANS_02'],
-                Column.score.value: [0.01, 0.998]
+                Column.score.value: [0.01, 0.998],
+                Column.suggested_class.value: ['VUS', 'VUS']
             }
         )
         cls.expected_prediction_output_dataframe = pd.DataFrame(
@@ -39,7 +40,8 @@ class TestCapiceExporter(unittest.TestCase):
                 Column.gene_id.value: [1000, 2000],
                 Column.id_source.value: ['foo', 'bar'],
                 Column.transcript.value: ['TRANS_01', 'TRANS_02'],
-                Column.score.value: [0.01, 0.998]
+                Column.score.value: [0.01, 0.998],
+                Column.suggested_class.value: ['VUS', 'VUS']
             }
         )
         cls.export_dataset = pd.DataFrame(

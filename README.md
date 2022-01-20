@@ -148,6 +148,8 @@ A file will be put out containing the following columns:
 - transcript: The transcript of the variant as supplied.
 - score: The predicted CAPICE score for the variant. The higher the score, the more likely that the variant is
   pathogenic.
+- suggested_class: __Suggested__ output class of the variant keeping in mind the score and gene. 
+Currently VUS only. Work in progress.
 
 ### Usage for making new CAPICE like models
 
