@@ -1,5 +1,6 @@
 from src.main.python.utilities.enums import Column
 from src.main.python.utilities.predictor import Predictor
+from src.main.python.utilities.class_suggestor import ClassSuggestor
 from src.main.python.validators.post_vep_processing_validator import PostVEPProcessingValidator
 from src.main_capice import Main
 
@@ -29,6 +30,7 @@ class CapicePredict(Main):
         capice_data = self.preprocess(loaded_data=capice_data,
                                       model_features=self.model.get_booster().feature_names)
         capice_data = self.predict(loaded_data=capice_data)
+        capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)
 
     def process(self, loaded_data):
@@ -48,3 +50,14 @@ class CapicePredict(Main):
         predictor = Predictor(self.model)
         capice_data = predictor.predict(loaded_data)
         return capice_data
+
+    @staticmethod
+    def apply_suggested_class(predicted_data):
+        """
+        Method to call the ClassSuggestor
+        :return: pandas DataFrame
+        """
+        suggestor = ClassSuggestor()
+        capice_data = suggestor.apply_suggestion(predicted_data)
+        return capice_data
+

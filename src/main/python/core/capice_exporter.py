@@ -25,7 +25,8 @@ class CapiceExporter:
             Column.gene_id.value,
             Column.id_source.value,
             Column.transcript.value,
-            Column.score.value
+            Column.score.value,
+            Column.suggested_class.value
         ]
 
     def export_capice_prediction(self, datafile: pd.DataFrame):
