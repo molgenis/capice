@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from molgenis.capice.vep import motif_e_score_change
+from src.molgenis.capice.vep import motif_e_score_change
 
 
 class TestType(unittest.TestCase):
