@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from src.main.python.vep.sift import SIFT
+from molgenis.capice.vep.sift import SIFT
 
 
 class TestSift(unittest.TestCase):
