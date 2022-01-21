@@ -13,7 +13,7 @@ before_install:
 - pip install -U pytest
 - pip install pytest-cov
 install:
-- pip install -r requirements.txt
+- pip install .
 script:
 - pytest --junitxml=results.xml --cov=. --cov-report xml
 - sonar-scanner
