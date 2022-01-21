@@ -9,7 +9,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 setup(
     name='capice',
     version=__version__,
-    packages=find_namespace_packages('src'),
+    packages=find_namespace_packages('src', exclude=['tests', 'scripts']),
     package_dir={"": "src"},
     url='https://capice.molgeniscloud.org/',
     license='LGPL-3.0',
