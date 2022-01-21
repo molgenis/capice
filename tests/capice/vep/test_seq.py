@@ -5,7 +5,7 @@ import pandas as pd
 from molgenis.capice.vep import seq
 
 
-class TestType(unittest.TestCase):
+class TestSeq(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')

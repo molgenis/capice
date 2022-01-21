@@ -17,6 +17,8 @@ install:
 script:
 - coverage run --source molgenis.capice -m pytest --junitxml=results.xml
 - coverage xml
+- ls -la
+- cat coverage.xml
 - sonar-scanner
 addons:
   sonarcloud:
