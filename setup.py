@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
+from src.molgenis.capice.__version__ import __version__
 
 with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
 
 setup(
     name='capice',
-    version='3.0.0rc0',
-    packages=find_packages('.', exclude=['test']),
-    package_dir={"": "."},
+    version=__version__,
+    packages=find_namespace_packages('src'),
+    package_dir={"": "src"},
     url='https://capice.molgeniscloud.org/',
     license='LGPL-3.0',
     author='Shuang Li, Robert Sietsma and Molgenis',
@@ -20,7 +21,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
@@ -32,12 +33,11 @@ setup(
         'pandas==1.2.4',
         'scipy==1.6.2',
         'scikit-learn==0.24.2',
-        'xgboost==1.4.2',
-        'pysam==0.16.0.1'
+        'xgboost==1.4.2'
     ],
     entry_points={
         'console_scripts': [
-            'capice = capice.capice:main'
+            'capice = molgenis.capice.capice:main'
         ]
     }
 
