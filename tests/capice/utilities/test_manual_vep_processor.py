@@ -28,8 +28,8 @@ class TestAnnotator(unittest.TestCase):
                 'Protein_position': {0: '207/279', 1: np.nan},
                 'Amino_acids': {0: 'R/W', 1: np.nan},
                 'STRAND': {0: 1, 1: 1},
-                'SIFT': {0: 'deleterious(0.04)', 1: np.nan},
-                'PolyPhen': {0: 'benign(0.08)', 1: np.nan},
+                'SIFT': {0: 0.04, 1: np.nan},
+                'PolyPhen': {0: 0.08, 1: np.nan},
                 'DOMAINS': {
                     0: 'PANTHER:PTHR12039&'
                        'PANTHER:PTHR12039:SF3&'
