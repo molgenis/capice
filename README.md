@@ -13,7 +13,7 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-* VEP v105
+* VEP v104.2
 * BCF tools v1.14-1
 * Python >=3.7
 
@@ -71,7 +71,7 @@ command:
 ```commandline
 vep --input_file *path to your input file* --format vcf --output_file *path to your output file* --vcf 
 --compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --canonical --symbol --shift_3prime 1 
---allele_number --no_stats --offline --cache --dir_cache */path/to/cache/105* --species "homo_sapiens" 
+--allele_number --no_stats --offline --cache --dir_cache */path/to/cache/104* --species "homo_sapiens" 
 --assembly GRCh37 --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
 --fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant
 ```
