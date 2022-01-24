@@ -48,7 +48,7 @@ class LoadFilePostProcessor:
                      'POS': Column.pos.value,
                      'REF': Column.ref.value,
                      'ALT': Column.alt.value,
-                     'HGNC_ID': Column.gene_id.value,
+                     'Gene': Column.gene_id.value,
                      'SYMBOL_SOURCE': Column.id_source.value,
                      'Feature': Column.transcript.value,
                      'SYMBOL': Column.gene_name.value,
