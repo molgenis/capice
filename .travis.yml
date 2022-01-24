@@ -12,10 +12,10 @@ before_install:
 - pip install -U pip
 - pip install -U pytest
 install:
-- pip install .
+- pip install -e .
 - pip install coverage
 script:
-- coverage run --source molgenis.capice -m pytest --junitxml=results.xml
+- coverage run -m pytest --junitxml=results.xml
 - coverage xml
 - sonar-scanner
 addons:
