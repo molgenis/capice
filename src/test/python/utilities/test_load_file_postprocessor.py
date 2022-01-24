@@ -14,7 +14,7 @@ class LoadFilePostprocessor(unittest.TestCase):
                 'POS': [123],
                 'REF': ['A'],
                 'ALT': ['G'],
-                'HGNC_ID': [123],
+                'Gene': [123],
                 'SYMBOL_SOURCE': ['hgnc'],
                 '%Feature': ['NM1.123'],
                 'SYMBOL': ['ACDC'],
