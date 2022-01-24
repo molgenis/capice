@@ -24,9 +24,8 @@ class TestPredictor(unittest.TestCase):
     def test_predict(self):
         observed = self.predictor.predict(self.dataset)
         expected = pd.Series(
-            [0.3761149, 0.19460522, 0.48907468, 0.3761149, 0.09151724, 0.3761149, 0.33234078,
-             0.33234078, 0.48907468, 0.33234078, 0.33234078, 0.5323306, 0.5323306, 0.5323306,
-             0.3761149, 0.41544372, 0.19460522, 0.33234078, 0.33234078, 0.19460522]).astype(
+            [0.3761149048805237, 0.19460521638393402, 0.3761149048805237, 0.3761149048805237,
+             0.5323305726051331, 0.5323305726051331, 0.3761149048805237]).astype(
             np.float32).rename('score')
         pd.testing.assert_series_equal(expected, observed['score'])
 
