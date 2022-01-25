@@ -13,7 +13,7 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-* VEP v104.2
+* VEP v105
 * BCF tools v1.14-1
 * Python >=3.7
 
@@ -46,14 +46,14 @@ pip install .
 Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
-numpy | Version 1.20.2
+numpy | Version 1.21.0
 pandas | Version 1.2.4
 scipy | Version 1.6.2
 scikit-learn | Version 0.24.2
 xgboost | Version 1.4.2
 ```
 
-`pip install numpy==1.20.2 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==1.4.2`
+`pip install numpy==1.21.0 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==1.4.2`
 
 ### Windows
 
@@ -71,7 +71,7 @@ command:
 ```commandline
 vep --input_file *path to your input file* --format vcf --output_file *path to your output file* --vcf 
 --compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --canonical --symbol --shift_3prime 1 
---allele_number --no_stats --offline --cache --dir_cache */path/to/cache/104* --species "homo_sapiens" 
+--allele_number --no_stats --offline --cache --dir_cache */path/to/cache/105* --species "homo_sapiens" 
 --assembly GRCh37 --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
 --fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant
 ```

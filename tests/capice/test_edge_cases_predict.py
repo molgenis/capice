@@ -62,9 +62,8 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.34160867, 0.34160867, 0.4994438, 0.18767472, 0.18767472,
-             0.18767472, 0.82134193,  0.82134193, 0.09479392, 0.09479392,
-             0.82134193, 0.38768333, 0.5490537, 0.48907468]).astype(np.float64).rename('score')
+            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5021135]).astype(
+            np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
     def test_symbolic_alleles(self):
@@ -74,11 +73,9 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.34160867, 0.4994438, 0.82134193, 0.82134193, 0.16419265, 0.16419265, 0.16419265,
-             0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438,
-             0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438,
-             0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438,
-             0.4994438, 0.4994438, 0.4994438, 0.4994438, 0.4994438]
+            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+             0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+             0.5, 0.5]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
@@ -89,8 +86,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.38156226, 0.34160867, 0.4994438, 0.4994438, 0.059770167, 0.059770167, 0.059770167,
-             0.059770167, 0.100919195, 0.100919195, 0.100919195, 0.100919195]
+            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
