@@ -13,7 +13,7 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-* VEP v105
+* VEP v104.2
 * BCF tools v1.14-1
 * Python >=3.7
 
@@ -46,14 +46,14 @@ pip install .
 Alternatively, individual packages can be installed manually through `pip install`:
 
 ```
-numpy | Version 1.21.0
+numpy | Version 1.20.2
 pandas | Version 1.2.4
 scipy | Version 1.6.2
 scikit-learn | Version 0.24.2
 xgboost | Version 1.4.2
 ```
 
-`pip install numpy==1.21.0 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==1.4.2`
+`pip install numpy==1.20.2 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==1.4.2`
 
 ### Windows
 

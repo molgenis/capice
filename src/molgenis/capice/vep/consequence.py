@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 
-from molgenis.capice.vep.template import Template
+from src.molgenis.capice.vep.template import Template
 
 
 class Consequence(Template):
