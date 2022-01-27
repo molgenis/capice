@@ -1,12 +1,7 @@
-# first make dataframe of the consequence column (splitted_consequences) with expand = True
-# then use np.where(np.isin(splitted_consequences, consequence).any(axis=1), 1, 0)) to assign a 1
-# to every column that contains the consequence and 0 to those that don't
-# Do this in a for loop with consequences (dataset[f'is_{consequence}'] = np.where(np.isin(
-# splitted_consequences, consequence).any(axis=1), 1, 0))
 import numpy as np
 import pandas as pd
 
-from src.molgenis.capice.vep.template import Template
+from molgenis.capice.vep.template import Template
 
 
 class Consequence(Template):
