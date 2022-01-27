@@ -27,7 +27,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
 
     @property
     def _empty_output_extension(self):
-        return self._required_output_extensions[0]
+        return self._required_output_extensions[1]
 
     def create(self):
         self.parser.add_argument(
