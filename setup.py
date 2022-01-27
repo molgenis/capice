@@ -37,7 +37,10 @@ setup(
         'xgboost==1.4.2'
     ],
     extras_require={
-        'testing': ['pytest']
+        'testing': [
+            'pytest',
+            'coverage'
+        ]
     },
     entry_points={
         'console_scripts': [
