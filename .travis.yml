@@ -31,6 +31,7 @@ deploy:
   - provider: releases
     token:
       secure: HFhnxyHVPrwSuAxsKwGG2k5HPtwlxxc7TCwNkrf2xdChddNWNc9mbKXHiAeLO2/DiAaO2kxNPlXO26IL1h7K7OLm4hzhYbtrp/AQesTRmI8Gzc1OI67o3f4GkM/eY2SN8X8V8LJ5Zu+n+iZglIGSRKSO+2ccVIfGnMpJxZrj/cBNDAm3CWl7E3EzM5sV/732Cd4kLKKQnHu9h2sfs74f6p9Z4qxEPVn2pRLDN//uQYe+1TdAh5/fjQTBH3LkvD1nhIbzDKyppl4HPkSMHZHCDL+YS9yUY/AEDGdsK6FGbnVKlEv9kyCFiEj2QWG6CgMNpiRtKd7a/DWi/EWHn4M6SBdqHpMzjfLetrwvObSqN7cf594grJYsefEo6vgIzWgS7uzKLwluApZr6rA+ZpYFp3/Jr+MlJ7Edims2Mlp/kQlwmaElzTS8Ghnx8rqjp1go0qw1GS2xoZ1btxp2faLL/Xf/ET8BZlCQg938849gRq3AxnGGL92NkCodqPgjVVYajLgTvmecWDW2o72Qz2dEaAiIYvWJl+ADCYbTToOaZHLMWPA72iNO3/2G/4N4G2jvvZzflZo02loJTN6IIiaurniXOHKWXbHV2qRBommB0OueByJ5Xwkxkbyvia7nsY+zeiGfL//J//NF3VIqpa9UGpQHErUPaD6iZnPSQ8bmpoo=
+    file: "bogus.file"
     prerelease: true
     on:
       tags: true
