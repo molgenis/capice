@@ -15,7 +15,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
 ## Requirements
 * VEP v105
 * BCF tools v1.14-1
-* Python >=3.7
+* Python >=3.8
 
 ## Install
 
@@ -25,41 +25,30 @@ using the CAPICE model.
 
 ### UNIX like systems
 
-__Note: performance of CAPICE has been tested on Python 3.7, 3.8 and 3.9. Performance on other Python versions is not
+__Note: performance of CAPICE has been tested on Python 3.8, 3.9 and 3.10. Performance on other Python versions is not
 guaranteed.__
 
-1. Download
+1. Download and installation
 
+_Preffered_
+
+```commandline
+pip install capice
 ```
+
+_Optional_
+
+```commandline
 git clone https://github.com/molgenis/capice.git
 cd capice
-```
-
-2. Installation of libraries
-
-CAPICE can be installed through the supplied setup.py.
-
-```
 pip install .
 ```
-
-Alternatively, individual packages can be installed manually through `pip install`:
-
-```
-numpy | Version 1.21.0
-pandas | Version 1.2.4
-scipy | Version 1.6.2
-scikit-learn | Version 0.24.2
-xgboost | Version 1.4.2
-```
-
-`pip install numpy==1.21.0 pandas==1.2.4 scipy==1.6.2 scikit-learn==0.24.2 xgboost==1.4.2`
 
 ### Windows
 
 __Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (iOS or Linux) or use
-the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). We are working on making
-a Singularity container available which should work with Windows.__
+the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
+You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
 ## Usage
 
@@ -69,10 +58,10 @@ In order to score your variants through CAPICE, you have to annotate your varian
 command:
 
 ```commandline
-vep --input_file *path to your input file* --format vcf --output_file *path to your output file* --vcf 
+vep --input_file <path to your input file> --format vcf --output_file <path to your output file> --vcf 
 --compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --canonical --symbol --shift_3prime 1 
---allele_number --no_stats --offline --cache --dir_cache */path/to/cache/105* --species "homo_sapiens" 
---assembly GRCh37 --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
+--allele_number --no_stats --offline --cache --dir_cache </path/to/cache/105> --species "homo_sapiens" 
+--assembly <GRCh37 or GRCh38> --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
 --fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant
 ```
 
@@ -83,7 +72,7 @@ Then you have to convert the VEP output to TSV using our own BCFTools script:
 
 CAPICE can be run by using the following command:
 
-`python3 capice.py [-h] [-v] [--version] {module}` _arguments_
+`capice [-h] [-v] [--version] {module}` _arguments_
 
 - `-h`: Print help and exit.
 - `-v`: Verbose flag. Add multiple `v` to increase verbosity (more than 2 `v` does not further increase verbosity).
@@ -99,7 +88,7 @@ For both module `predict` and `train`, the following arguments are available:
 - -i / --input **(required)**: The path to the
   input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be
   both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/CAPICE_input.tsv.gz` for genome
-  build 37. The annotations within this file are based on VEP104.2 . VEP outputs can be converted using
+  build 37. The annotations within this file are based on VEP105 . VEP outputs can be converted using
   the `convert_vep_to_tsv_capice.sh` script in `scripts` using BCFTools.
 - -o / --output _(optional)_: The path to the directory, output filename or output directory and filename where the
   output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the
@@ -132,7 +121,7 @@ The following arguments are specific to `train`:
 - -s / --split _(optional)_: Percentage of input data that should be used to measure performance during training.
   Argument should be given in float from 0.1 (10%) to 0.9 (90%), default = 0.2.
 
-You can also use `python3 capice.py {module} --help` to show help on the command line.
+You can also use `capice {module} --help` to show help on the command line.
 
 #### Output of CAPICE prediction files
 
@@ -183,7 +172,7 @@ with open(path/to/model_file.pickle.dat, 'rb') as model_file:
 - Will CAPICE support CADD 1.6 and Genome Build 38?
 
 No. CADD has moved on to Snakemake and is quite slow. It also limits us on updating VEP for improved and bugfixes on
-features.
+features. However, CAPICE will support genome build 38.
 
 - These scores are nice and all, but what do they really mean for this particular variant?
 
@@ -206,6 +195,8 @@ not work either, we suggest you use either a Unix style virtual machine or, if y
 the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) is also available in the
 Windows Store for free, which is guaranteed to work.
 
+You could also use CAPICE through the [Singularity Container](https://download.molgeniscloud.org/downloads/vip/images/).
+
 - I'm getting
   a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>`
   when loading in the model, what is going wrong?
@@ -224,9 +215,11 @@ running.
 "sklearn" is a module that should be installed when `scikit-learn` is installed. Either install `sklearn` manually
 though `pip install sklearn` or try to re-install scikit-learn.
 
-```
-python3 -m unittest discover src.test.python
-```
+- I'm getting the warning `/usr/local/lib/python3.8/dist-packages/joblib/_multiprocessing_helpers.py:45: UserWarning: [Errno 2] No such file or directory.  joblib will operate in serial mode
+  warnings.warn('%s.  joblib will operate in serial mode' % (e,))` when using the CAPICE Singularity image, what's wrong?
+
+This is likely due to the fact that the Singularity image searches for shared memory, which is different for Windows style operating systems.
+This means that any and all multiprocessing parts of CAPICE will perform in single threaded mode. Other than that, CAPICE should work just fine.
 
 ## Overview of code
 

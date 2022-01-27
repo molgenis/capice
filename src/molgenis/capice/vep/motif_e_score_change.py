@@ -15,5 +15,7 @@ class MotifEScoreChange(Template):
         return ['motifEScoreChng']
 
     def _process(self, dataset: pd.DataFrame):
-        dataset[self.columns] = dataset[self.name]
+        dataset = dataset.join(
+            pd.DataFrame(pd.Series(dataset[self.name].tolist()), columns=self.columns)
+        )
         return dataset

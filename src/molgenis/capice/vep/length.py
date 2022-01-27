@@ -16,8 +16,12 @@ class Length(Template):
         return ['Length']
 
     def _process(self, dataframe: pd.DataFrame):
-        dataframe[self.columns] = abs(
-            dataframe[Column.ref.value].str.len() - dataframe[Column.alt.value].str.len())
+        dataframe = dataframe.join(
+            pd.DataFrame(
+                abs(dataframe[Column.ref.value].str.len() - dataframe[Column.alt.value].str.len()),
+                columns=self.columns
+            )
+        )
         return dataframe
 
     @property

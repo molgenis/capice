@@ -23,18 +23,24 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9'
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10'
     ],
     python_requires='>=3.8',
     install_requires=[
-        'numpy==1.21.0',
-        'pandas==1.2.4',
-        'scipy==1.6.2',
-        'scikit-learn==0.24.2',
+        'numpy==1.21.3',
+        'pandas==1.3.5',
+        'scipy==1.7.3',
+        'scikit-learn==1.0.2',
         'xgboost==1.4.2'
     ],
+    extras_require={
+        'testing': [
+            'pytest',
+            'coverage'
+        ]
+    },
     entry_points={
         'console_scripts': [
             'capice = molgenis.capice.capice:main'
