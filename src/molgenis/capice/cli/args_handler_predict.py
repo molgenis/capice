@@ -63,8 +63,6 @@ class ArgsHandlerPredict(ArgsHandlerParent):
     def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
         model_path = self.validate_length_one(args.model, '-m/--model')
         model = self.validate_model(model_path)
-        if not output_filename.endswith('.gz'):
-            output_filename = output_filename + '.gz'
         CapiceManager().output_filename = output_filename
         CapicePredict(input_path, model, output_path).run()
 

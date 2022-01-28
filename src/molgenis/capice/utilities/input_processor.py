@@ -67,6 +67,8 @@ class InputProcessor:
 
     def _set_output_path(self, directory, filename):
         self.output_directory = directory
+        if self.default_extension.endswith('.gz') and not filename.endswith('.gz'):
+            filename = filename + '.gz'
         self.output_filename = filename
 
     def get_filename_from_path(self, path):
