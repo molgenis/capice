@@ -9,9 +9,9 @@ from molgenis.capice.utilities.input_processor import InputProcessor
 class TestInputProcessor(unittest.TestCase):
 
     __FILE__ = 'file_capice.txt'
+    __GZIPFILE__ = 'file_capice.txt.gz'
 
-    @classmethod
-    def setUp(cls):
+    def setUp(self):
         print('Setting up.')
         output = os.path.join(
             _project_root_directory,
@@ -20,7 +20,7 @@ class TestInputProcessor(unittest.TestCase):
             'input_processor',
             'filename.txt'
         )
-        cls.processor = InputProcessor('/test/input/file.txt', output, True, '.txt')
+        self.processor = InputProcessor('/test/input/file.txt', output, True, '.txt')
 
     def tearDown(self) -> None:
         potential_file = os.path.join(
@@ -31,7 +31,14 @@ class TestInputProcessor(unittest.TestCase):
         )
         if os.path.isfile(potential_file):
             os.remove(potential_file)
-        self.processor.force = True
+        second_potential_file = os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                self.__GZIPFILE__
+            )
+        if os.path.isfile(second_potential_file):
+            os.remove(second_potential_file)
 
     def test__set_output_path(self):
         output_dir = '/test/input/dir'
@@ -86,6 +93,31 @@ class TestInputProcessor(unittest.TestCase):
         ) as some_file:
             some_file.write('SomeString')
         self.processor.force = False
+        self.assertRaises(
+            FileExistsError,
+            self.processor._handle_input_output_directories
+        )
+
+    def test_force_false_output_ungzipped_output_exists(self):
+        # This test mimics what happens when an output is given but without gzip extension and
+        # the output file already exists.
+        with open(
+            os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                self.__GZIPFILE__
+            ), 'wt'
+        ) as some_file:
+            some_file.write('SomeString')
+        self.processor.force = False
+        self.processor.default_extension = '.txt.gz'
+        self.processor.output_path = os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                'file_capice.txt'
+            )
         self.assertRaises(
             FileExistsError,
             self.processor._handle_input_output_directories
