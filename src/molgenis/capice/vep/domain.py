@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from molgenis.capice.utilities import deprecated
+
 from molgenis.capice.vep.template import Template
 from molgenis.capice.utilities.enums import Domains
 
@@ -34,7 +36,7 @@ class Domain(Template):
     def __init__(self):
         super(Domain, self).__init__(
             name='DOMAINS',
-            usable=True
+            usable=False
         )
 
     @property
@@ -58,6 +60,7 @@ class Domain(Template):
                 Domains.panther.value: 'hmmpanther',
                 Domains.other.value: 'other'}
 
+    @deprecated
     def _process(self, dataframe: pd.DataFrame):
         subset = dataframe[self.name].str.split('&', expand=True)
         subset = subset.apply(lambda x: x.str.split(':', expand=True)[0], axis=0)

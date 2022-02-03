@@ -1,5 +1,7 @@
 import pandas as pd
 
+from molgenis.capice.utilities import deprecated
+
 from molgenis.capice.vep.template import Template
 
 
@@ -7,7 +9,7 @@ class ConsDetail(Template):
     def __init__(self):
         super(ConsDetail, self).__init__(
             name='Consequence',
-            usable=True
+            usable=False
         )
 
     @property
@@ -22,6 +24,7 @@ class ConsDetail(Template):
     def drop(self):
         return False
 
+    @deprecated
     def _process(self, dataframe: pd.DataFrame):
         subset = dataframe[self.name].str.split('&', expand=True)
         for column in subset.columns:

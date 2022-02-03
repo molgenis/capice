@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from molgenis.capice.utilities import deprecated
+
 from molgenis.capice.vep.template import Template
 
 
@@ -8,7 +10,7 @@ class MotifName(Template):
     def __init__(self):
         super(MotifName, self).__init__(
             name='MOTIF_NAME',
-            usable=True
+            usable=False
         )
 
     @property
@@ -18,6 +20,7 @@ class MotifName(Template):
     def process(self, dataframe: pd.DataFrame):
         return self._process(dataframe)
 
+    @deprecated
     def _process(self, dataframe: pd.DataFrame):
         dataframe[self.columns[0]] = dataframe[self.name]
         dataframe[self.columns[1]] = np.where(dataframe[self.name].isna(), 0, 1)
