@@ -12,6 +12,7 @@ class Domain(unittest.TestCase):
         print('Setting up.')
         cls.cd = domain.Domain()
 
+    @unittest.skip('Deprecated')
     def test_process_not_null(self):
         dataframe = pd.DataFrame({
             'DOMAINS': [
@@ -41,6 +42,7 @@ class Domain(unittest.TestCase):
             'Domain': ['ndomain', 'hmmpanther', 'ncoils', 'sigp', 'lcompl', 'other']})
         pd.testing.assert_frame_equal(expected, observed)
 
+    @unittest.skip('Deprecated')
     def test_process_null(self):
         dataframe = pd.DataFrame({'DOMAINS': [None, None]})
         observed = self.cd.process(dataframe)

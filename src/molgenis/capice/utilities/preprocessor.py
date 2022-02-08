@@ -91,7 +91,7 @@ class PreProcessor:
         """
         annotation_feats_dict = {}
         if self.train:
-            hardcoded_features = [Column.ref.value, Column.alt.value, 'Domain']
+            hardcoded_features = [Column.ref.value, Column.alt.value]
             for feature in hardcoded_features:
                 annotation_feats_dict[feature] = 5
             self.log.info('Training protocol, creating new categorical conversion identifiers.')

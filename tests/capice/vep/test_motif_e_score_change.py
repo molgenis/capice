@@ -11,6 +11,7 @@ class TestType(unittest.TestCase):
         print('Setting up.')
         cls.score_change = motif_e_score_change.MotifEScoreChange()
 
+    @unittest.skip('Deprecated')
     def test_process(self):
         dataframe = pd.DataFrame({'MOTIF_SCORE_CHANGE': [1, 2, 3]})
         observed = self.score_change.process(dataframe)

@@ -3,6 +3,9 @@
 # Stops script if any error occurs.
 set -e
 
+# Possibly variable variables
+readonly PRE_HEADER="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%Gene\t%Feature\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%EXON\t%INTRON\t%SpliceAI_pred_DP_AG\t%SpliceAI_pred_DP_AL\t%SpliceAI_pred_DP_DG\t%SpliceAI_pred_DP_DL\t%SpliceAI_pred_DS_AG\t%SpliceAI_pred_DS_AL\t%SpliceAI_pred_DS_DG\t%SpliceAI_pred_DS_DL\t%SpliceAI_pred_SYMBOL"
+
 # Defines error echo.
 errcho() { echo "$@" 1>&2; }
 
@@ -12,6 +15,7 @@ Usage:
 convert_vep_to_tsv_capice.sh -i <arg> -o <arg>
 -i    required: The VEP output VCF
 -o    required: The directory and output filename for the CAPICE .tsv.gz
+-f    optional: Force flag. Overwrite output if exists.
 
 Example:
 bash convert_vep_vcf_to_tsv_capice.sh -i vep_out.vcf -o capice_in.tsv.gz
@@ -19,6 +23,7 @@ bash convert_vep_vcf_to_tsv_capice.sh -i vep_out.vcf -o capice_in.tsv.gz
 Requirements:
 BCFTools
 "
+
 
 main() {
   digestCommandLine "$@"
@@ -99,9 +104,7 @@ processFile() {
   local output="${output%.gz}" # Strips '.gz' to better work with code below.
   local output_tmp="${output}.tmp"
 
-  local -r pre_header="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%Gene\t%Feature\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%DOMAINS\t%MOTIF_NAME\t%HIGH_INF_POS\t%MOTIF_SCORE_CHANGE\t%EXON\t%INTRON"
-
-  local format="${pre_header}\n"
+  local format="${PRE_HEADER}\n"
 
   local args=()
   args+=("+split-vep")
@@ -116,7 +119,7 @@ processFile() {
 
   echo "BCFTools finished, building output file."
 
-  echo -e "${pre_header}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  echo -e "${PRE_HEADER}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 

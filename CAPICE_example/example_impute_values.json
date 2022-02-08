@@ -48,5 +48,14 @@
   "is_mature_miRNA_variant": 0,
   "is_NMD_transcript_variant": 0,
   "is_feature_elongation": 0,
-  "is_feature_truncation": 0
+  "is_feature_truncation": 0,
+  "SpliceAI_pred_DP_AG": 0,
+  "SpliceAI_pred_DP_AL": 0,
+  "SpliceAI_pred_DP_DG": 0,
+  "SpliceAI_pred_DP_DL": 0,
+  "SpliceAI_pred_DS_AG": 0,
+  "SpliceAI_pred_DS_AL": 0,
+  "SpliceAI_pred_DS_DG": 0,
+  "SpliceAI_pred_DS_DL": 0,
+  "SpliceAI_pred_SYMBOL_match": 0
 }

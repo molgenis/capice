@@ -62,7 +62,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5021135]).astype(
+            [0.4711801, 0.48963082, 0.46430552, 0.45460835, 0.46869215, 0.46721697]).astype(
             np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
@@ -73,9 +73,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-             0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
-             0.5, 0.5]
+            [0.46146303, 0.45460835, 0.4655312, 0.46430552, 0.45460835, 0.46430552]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
@@ -86,7 +84,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            [0.4711801, 0.4711801, 0.46430552, 0.46430552, 0.45460835, 0.45460835]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 

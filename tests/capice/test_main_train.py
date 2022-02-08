@@ -67,8 +67,8 @@ class TestMainTrain(unittest.TestCase):
         input_file = self.main._load_file()
         train, test = self.main.split_data(dataset=input_file, test_size=0.2)
         total_size = input_file.shape[0]
-        self.assertAlmostEqual(train.shape[0], total_size * 0.8)
-        self.assertAlmostEqual(test.shape[0], total_size * 0.2)
+        self.assertAlmostEqual(train.shape[0], total_size * 0.8, delta=1)
+        self.assertAlmostEqual(test.shape[0], total_size * 0.2, delta=1)
         self.assertEqual(train.shape[0] + test.shape[0], total_size)
 
 

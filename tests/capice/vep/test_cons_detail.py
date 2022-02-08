@@ -11,6 +11,7 @@ class TestType(unittest.TestCase):
         print('Setting up.')
         cls.cd = cons_detail.ConsDetail()
 
+    @unittest.skip('Deprecated')
     def test_process(self):
         dataframe = pd.DataFrame({
             'Consequence': ['cq1_variant&cq2_region', 'cq3&cq4_gene', 'cq5_transcript']})

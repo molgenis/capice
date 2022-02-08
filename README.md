@@ -14,6 +14,8 @@ CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
 * VEP v105
+  * Including plugin(s):
+  * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
 * BCF tools v1.14-1
 * Python >=3.8
 
@@ -49,6 +51,14 @@ pip install .
 __Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (iOS or Linux) or use
 the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
+
+### SpliceAI
+
+CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). 
+Files for SpliceAI can be found [here] after creating an account (for free). 
+In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
+The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin descrition.
+The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version). 
 
 ## Usage
 
