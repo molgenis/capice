@@ -62,8 +62,8 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.4711801, 0.48963082, 0.46430552, 0.45460835, 0.46869215, 0.46721697]).astype(
-            np.float64).rename('score')
+            [0.42409733, 0.53885114, 0.45975062, 0.44440997, 0.56147087, 0.571394]
+        ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
     def test_symbolic_alleles(self):
@@ -73,7 +73,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.46146303, 0.45460835, 0.4655312, 0.46430552, 0.45460835, 0.46430552]
+            [0.42409733, 0.44440997, 0.55765855, 0.41767898, 0.4985433, 0.42409733]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 
@@ -84,7 +84,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.4711801, 0.4711801, 0.46430552, 0.46430552, 0.45460835, 0.45460835]
+            [0.517514, 0.42409733, 0.45975062, 0.571394, 0.4985433, 0.44440997]
         ).astype(np.float64).rename('score')
         pd.testing.assert_series_equal(observed_output['score'], expected_output)
 

@@ -31,8 +31,7 @@ class TestAnnotator(unittest.TestCase):
                 'SIFT': {0: 0.04, 1: np.nan},
                 'PolyPhen': {0: 0.08, 1: np.nan},
                 'Exon': {0: '5/5', 1: np.nan},
-                'Intron': {0: np.nan, 1: np.nan},
-                'SpliceAI_pred_SYMBOL': {0: 'NMNAT1', 1: 'FOO'}
+                'Intron': {0: np.nan, 1: np.nan}
             }
         )
         cls.annotator = ManualVEPProcessor()
@@ -90,8 +89,7 @@ class TestAnnotator(unittest.TestCase):
                 'is_mature_miRNA_variant': {0: 0, 1: 0},
                 'is_NMD_transcript_variant': {0: 0, 1: 0},
                 'is_feature_elongation': {0: 0, 1: 0},
-                'is_feature_truncation': {0: 0, 1: 0},
-                'SpliceAI_pred_SYMBOL_match': {0: 1, 1: 0}
+                'is_feature_truncation': {0: 0, 1: 0}
             }
         )
         expected_outcome = pd.concat(
