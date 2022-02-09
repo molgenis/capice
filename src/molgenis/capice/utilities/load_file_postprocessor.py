@@ -51,7 +51,7 @@ class LoadFilePostProcessor:
                      'Gene': Column.gene_id.value,
                      'SYMBOL_SOURCE': Column.id_source.value,
                      'Feature': Column.feature.value,
-                     ''
+                     'Feature_type': Column.feature_type.value,
                      'SYMBOL': Column.gene_name.value,
                      'INTRON': 'Intron',
                      'EXON': 'Exon',
