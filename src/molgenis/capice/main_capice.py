@@ -37,7 +37,7 @@ class Main(ABC):
         self.exclude_features = [Column.gene_name.value,
                                  Column.gene_id.value,
                                  Column.id_source.value,
-                                 Column.transcript.value]
+                                 Column.feature.value]
 
     @abstractmethod
     def run(self):

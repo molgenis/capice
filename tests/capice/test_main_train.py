@@ -13,9 +13,9 @@ class TestMainTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
-        train_file = os.path.join(_project_root_directory, 'CAPICE_example', 'train_example.tsv.gz')
+        train_file = os.path.join(_project_root_directory, 'resources', 'train_example.tsv.gz')
         impute_json = os.path.join(_project_root_directory,
-                                   'CAPICE_example',
+                                   'resources',
                                    'example_impute_values.json')
         cls.main = CapiceTrain(input_path=train_file,
                                json_path=impute_json,

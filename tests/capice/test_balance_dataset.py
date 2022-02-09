@@ -22,7 +22,7 @@ class TestBalancer(unittest.TestCase):
             pd.read_csv(
                 os.path.join(
                     cls.__current_directory__,
-                    'CAPICE_example',
+                    'resources',
                     'train_example.tsv.gz'
                 ),
                 sep='\t',

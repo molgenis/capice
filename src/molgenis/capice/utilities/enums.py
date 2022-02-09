@@ -13,7 +13,8 @@ class Column(Enum):
     gene_name = 'gene_name'
     gene_id = 'gene_id'
     id_source = 'id_source'
-    transcript = 'transcript'
+    feature = 'feature'
+    feature_type = 'feature_type'
     score = 'score'
     suggested_class = 'suggested_class'
 

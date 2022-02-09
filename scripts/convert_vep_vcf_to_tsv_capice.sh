@@ -4,7 +4,7 @@
 set -e
 
 # Possibly variable variables
-readonly PRE_HEADER="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%Gene\t%Feature\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%EXON\t%INTRON\t%SpliceAI_pred_DP_AG\t%SpliceAI_pred_DP_AL\t%SpliceAI_pred_DP_DG\t%SpliceAI_pred_DP_DL\t%SpliceAI_pred_DS_AG\t%SpliceAI_pred_DS_AL\t%SpliceAI_pred_DS_DG\t%SpliceAI_pred_DS_DL\t%SpliceAI_pred_SYMBOL"
+readonly PRE_HEADER="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%Gene\t%Feature\t%Feature_type\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%EXON\t%INTRON\t%SpliceAI_pred_DP_AG\t%SpliceAI_pred_DP_AL\t%SpliceAI_pred_DP_DG\t%SpliceAI_pred_DP_DL\t%SpliceAI_pred_DS_AG\t%SpliceAI_pred_DS_AL\t%SpliceAI_pred_DS_DG\t%SpliceAI_pred_DS_DL\t%SpliceAI_pred_SYMBOL"
 
 # Defines error echo.
 errcho() { echo "$@" 1>&2; }
@@ -15,7 +15,6 @@ Usage:
 convert_vep_to_tsv_capice.sh -i <arg> -o <arg>
 -i    required: The VEP output VCF
 -o    required: The directory and output filename for the CAPICE .tsv.gz
--f    optional: Force flag. Overwrite output if exists.
 
 Example:
 bash convert_vep_vcf_to_tsv_capice.sh -i vep_out.vcf -o capice_in.tsv.gz

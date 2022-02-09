@@ -50,7 +50,8 @@ class LoadFilePostProcessor:
                      'ALT': Column.alt.value,
                      'Gene': Column.gene_id.value,
                      'SYMBOL_SOURCE': Column.id_source.value,
-                     'Feature': Column.transcript.value,
+                     'Feature': Column.feature.value,
+                     ''
                      'SYMBOL': Column.gene_name.value,
                      'INTRON': 'Intron',
                      'EXON': 'Exon',
