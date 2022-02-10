@@ -20,6 +20,15 @@ class PostFileParseValidator:
             self.log.critical(error_message)
             raise KeyError(error_message)
 
+    def validate_variants_present(self, dataset):
+        """
+        Validator to make sure that there is at least one variant present.
+        """
+        if dataset.shape[0] == 0:
+            error_message = 'Loaded dataset does not contain variants!'
+            self.log.critical(error_message)
+            raise ValueError(error_message)
+
     def validate_minimally_required_columns(
             self, dataset, additional_required_features: list = None
     ):
