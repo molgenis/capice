@@ -64,7 +64,10 @@ class TestEdgeCases(unittest.TestCase):
         expected_output = pd.Series(
             [0.42409733, 0.53885114, 0.45975062, 0.44440997, 0.56147087, 0.571394]
         ).astype(np.float64).rename('score')
-        pd.testing.assert_series_equal(observed_output['score'], expected_output)
+        # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
+        pd.testing.assert_series_equal(
+            observed_output['score'], expected_output, check_exact=False, rtol=0.0005, atol=0.0005
+        )
 
     def test_symbolic_alleles(self):
         print('Symbolic alleles')
@@ -75,7 +78,10 @@ class TestEdgeCases(unittest.TestCase):
         expected_output = pd.Series(
             [0.42409733, 0.44440997, 0.55765855, 0.41767898, 0.4985433, 0.42409733]
         ).astype(np.float64).rename('score')
-        pd.testing.assert_series_equal(observed_output['score'], expected_output)
+        # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
+        pd.testing.assert_series_equal(
+            observed_output['score'], expected_output, check_exact=False, rtol=0.0005, atol=0.0005
+        )
 
     def test_breakpoints(self):
         print('Breakpoints')
@@ -86,7 +92,10 @@ class TestEdgeCases(unittest.TestCase):
         expected_output = pd.Series(
             [0.517514, 0.42409733, 0.45975062, 0.571394, 0.4985433, 0.44440997]
         ).astype(np.float64).rename('score')
-        pd.testing.assert_series_equal(observed_output['score'], expected_output)
+        # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
+        pd.testing.assert_series_equal(
+            observed_output['score'], expected_output, check_exact=False, rtol=0.0005, atol=0.0005
+        )
 
 
 if __name__ == '__main__':

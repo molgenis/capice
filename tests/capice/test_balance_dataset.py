@@ -23,7 +23,7 @@ class TestBalancer(unittest.TestCase):
                 os.path.join(
                     cls.__current_directory__,
                     'resources',
-                    'train_example.tsv.gz'
+                    'train_input.tsv.gz'
                 ),
                 sep='\t',
                 na_values='.',
