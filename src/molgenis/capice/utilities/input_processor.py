@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class InputProcessor:
-    def __init__(self, input_path, output_path, force):
+    def __init__(self, input_path, output_path, force, default_extension):
         """
         InputProcessor checks the input directory, output directory
         (being either call_dir if output_path is None or output_path) and
@@ -11,6 +11,8 @@ class InputProcessor:
         :param input_path: str, path-like
         :param output_path: str, path-like (if missing: supply None)
         :param force: bool, force flag present or not
+        :param default_extension: str, the default extension the output file should get in case
+        output is missing from CLI
 
         Use getter get_output_filename() to get the output filename after
         initialization and get_output_directory() to get the output directory.
@@ -26,6 +28,7 @@ class InputProcessor:
         self.input_path = input_path
         self.output_path = output_path
         self.force = force
+        self.default_extension = default_extension
         self.output_directory = ''
         self.output_filename = ''
         self._handle_input_output_directories()
@@ -64,10 +67,11 @@ class InputProcessor:
 
     def _set_output_path(self, directory, filename):
         self.output_directory = directory
+        if self.default_extension.endswith('.gz') and not filename.endswith('.gz'):
+            filename = filename + '.gz'
         self.output_filename = filename
 
-    @staticmethod
-    def get_filename_from_path(path):
+    def get_filename_from_path(self, path):
         """
         Function to get the filename of a file from a given input
         path or input filename.
@@ -77,7 +81,7 @@ class InputProcessor:
         no_path = os.path.basename(path)
         splitted_path = no_path.split('.')
         filename = splitted_path[0]
-        return f'{filename}_capice'
+        return f'{filename}_capice{self.default_extension}'
 
     def get_output_filename(self):
         return self.output_filename

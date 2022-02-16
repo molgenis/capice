@@ -67,7 +67,12 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
-        processor = InputProcessor(input_path=input_path, output_path=output_path, force=args.force)
+        processor = InputProcessor(
+            input_path=input_path,
+            output_path=output_path,
+            force=args.force,
+            default_extension=self._empty_output_extension
+        )
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
         output_path = processor.get_output_directory()
@@ -100,8 +105,5 @@ class ArgsHandlerParent(metaclass=ABCMeta):
                 f'Output file extension is incorrect. Expected output extensions: '
                 f'{self._required_output_extensions}'
             )
-        elif '.' not in output_filename:
-            output_filename = output_filename + self._empty_output_extension
-            return output_filename
         else:
             return output_filename
