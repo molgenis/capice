@@ -8,8 +8,10 @@ from molgenis.capice.utilities.input_processor import InputProcessor
 
 class TestInputProcessor(unittest.TestCase):
 
-    @classmethod
-    def setUp(cls):
+    __FILE__ = 'file_capice.txt'
+    __GZIPFILE__ = 'file_capice.txt.gz'
+
+    def setUp(self):
         print('Setting up.')
         output = os.path.join(
             _project_root_directory,
@@ -18,7 +20,25 @@ class TestInputProcessor(unittest.TestCase):
             'input_processor',
             'filename.txt'
         )
-        cls.processor = InputProcessor('/test/input/file.txt', output, True)
+        self.processor = InputProcessor('/test/input/file.txt', output, True, '.txt')
+
+    def tearDown(self) -> None:
+        potential_file = os.path.join(
+            _project_root_directory,
+            'tests',
+            'resources',
+            self.__FILE__
+        )
+        if os.path.isfile(potential_file):
+            os.remove(potential_file)
+        second_potential_file = os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                self.__GZIPFILE__
+            )
+        if os.path.isfile(second_potential_file):
+            os.remove(second_potential_file)
 
     def test__set_output_path(self):
         output_dir = '/test/input/dir'
@@ -30,7 +50,7 @@ class TestInputProcessor(unittest.TestCase):
     def test_get_filename_from_path(self):
         path = '/test/input/dir/filename.txt'
         actual = self.processor.get_filename_from_path(path)
-        self.assertEqual(actual, 'filename_capice')
+        self.assertEqual(actual, 'filename_capice.txt')
 
     def test__check_force(self):
         self.processor.force = False
@@ -40,7 +60,7 @@ class TestInputProcessor(unittest.TestCase):
         self.processor.output_path = None
         self.processor._handle_input_output_directories()
         self.assertEqual(str(Path('.').absolute()), self.processor.get_output_directory())
-        self.assertEqual('file_capice', self.processor.get_output_filename())
+        self.assertEqual(self.__FILE__, self.processor.get_output_filename())
 
     def test___handle_input_output_directories_case2(self):
         self.processor.output_path = ''
@@ -49,16 +69,59 @@ class TestInputProcessor(unittest.TestCase):
         self.assertEqual('', self.processor.get_output_filename())
 
     def test___handle_input_output_directories_case3(self):
-        self.processor.output_path = '/something/.txt'
+        self.processor.output_path = '/something'
         self.processor._handle_input_output_directories()
-        self.assertEqual('/something/.txt', self.processor.get_output_directory())
-        self.assertEqual('file_capice', self.processor.get_output_filename())
+        self.assertEqual('/something', self.processor.get_output_directory())
+        self.assertEqual(self.__FILE__, self.processor.get_output_filename())
 
     def test___handle_input_output_directories_case4(self):
         self.processor.output_path = '/directory/file.txt'
         self.processor._handle_input_output_directories()
         self.assertEqual('/directory', self.processor.get_output_directory())
         self.assertEqual('file.txt', self.processor.get_output_filename())
+
+    def test_force_false_output_missing_output_exists(self):
+        # This test mimics what happens when output is left empty from the CLI
+        # and the output file + _capice + default_extension already exists
+        with open(
+                os.path.join(
+                    _project_root_directory,
+                    'tests',
+                    'resources',
+                    self.__FILE__
+                ), 'wt'
+        ) as some_file:
+            some_file.write('SomeString')
+        self.processor.force = False
+        self.assertRaises(
+            FileExistsError,
+            self.processor._handle_input_output_directories
+        )
+
+    def test_force_false_output_ungzipped_output_exists(self):
+        # This test mimics what happens when an output is given but without gzip extension and
+        # the output file already exists.
+        with open(
+            os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                self.__GZIPFILE__
+            ), 'wt'
+        ) as some_file:
+            some_file.write('SomeString')
+        self.processor.force = False
+        self.processor.default_extension = '.txt.gz'
+        self.processor.output_path = os.path.join(
+                _project_root_directory,
+                'tests',
+                'resources',
+                'file_capice.txt'
+            )
+        self.assertRaises(
+            FileExistsError,
+            self.processor._handle_input_output_directories
+        )
 
 
 if __name__ == '__main__':
