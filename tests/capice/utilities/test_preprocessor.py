@@ -69,14 +69,13 @@ class TestPreprocessor(unittest.TestCase):
         self.preprocessor.model_features = ['blaat_something']
         input_data_frame = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
-             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'here'], 'Domain': ['1', '2', '3']})
+             'alt': ['G', 'A', 'T'], 'blaat': ['some', 'value', 'here']})
         expected = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref_A': get_uint8_array([1, 0, 0]),
              'ref_C': get_uint8_array([0, 0, 1]), 'ref_T': get_uint8_array([0, 1, 0]),
              'alt_A': get_uint8_array([0, 1, 0]), 'alt_G': get_uint8_array([1, 0, 0]),
-             'alt_T': get_uint8_array([0, 0, 1]), 'Domain_1': get_uint8_array([1, 0, 0]),
-             'Domain_2': get_uint8_array([0, 1, 0]), 'Domain_3': get_uint8_array([0, 0, 1]),
-             'blaat_here': get_uint8_array([0, 0, 1]), 'blaat_some': get_uint8_array([1, 0, 0]),
+             'alt_T': get_uint8_array([0, 0, 1]), 'blaat_here': get_uint8_array([0, 0, 1]),
+             'blaat_some': get_uint8_array([1, 0, 0]),
              'blaat_value': get_uint8_array([0, 1, 0])})
         observed = self.preprocessor._process_objects(input_data_frame)
         pd.testing.assert_frame_equal(expected, observed)

@@ -8,7 +8,7 @@ class Length(Template):
     def __init__(self):
         super(Length, self).__init__(
             name=Column.ref.value,
-            usable=True
+            usable=False
         )
 
     @property

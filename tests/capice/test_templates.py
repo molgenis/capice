@@ -45,7 +45,7 @@ def set_up_predict():
 def set_up_impute_preprocess():
     set_up_manager_and_out()
     main = set_up_predict()
-    main.infile = os.path.join(_project_root_directory, 'CAPICE_example', 'CAPICE_input.tsv.gz')
+    main.infile = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
     with open(
             os.path.join(
                 _project_root_directory,

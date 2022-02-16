@@ -22,8 +22,8 @@ class TestBalancer(unittest.TestCase):
             pd.read_csv(
                 os.path.join(
                     cls.__current_directory__,
-                    'CAPICE_example',
-                    'train_example.tsv.gz'
+                    'resources',
+                    'train_input.tsv.gz'
                 ),
                 sep='\t',
                 na_values='.',
@@ -60,11 +60,11 @@ class TestBalancer(unittest.TestCase):
         """
         print('Splitter')
         n_b_tot = self.dataset[self.dataset['binarized_label'] == 0].shape[0]
-        p10_b = n_b_tot * 0.1
-        p90_b = n_b_tot - p10_b
+        p10_b = round(n_b_tot * 0.1)
+        p90_b = round(n_b_tot - p10_b)
         n_p_tot = self.dataset[self.dataset['binarized_label'] == 1].shape[0]
-        p10_p = n_p_tot * 0.1
-        p90_p = n_p_tot - p10_p
+        p10_p = round(n_p_tot * 0.1)
+        p90_p = round(n_p_tot - p10_p)
         splitter = Split()
         copy_of_dataset = self.dataset.copy(deep=True)
         validation_dataset, dataset = splitter.split(copy_of_dataset)

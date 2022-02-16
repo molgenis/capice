@@ -13,10 +13,10 @@ class TestMainTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
-        train_file = os.path.join(_project_root_directory, 'CAPICE_example', 'train_example.tsv.gz')
+        train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
         impute_json = os.path.join(_project_root_directory,
-                                   'CAPICE_example',
-                                   'example_impute_values.json')
+                                   'resources',
+                                   'train_impute_values.json')
         cls.main = CapiceTrain(input_path=train_file,
                                json_path=impute_json,
                                test_split=0.2,
@@ -67,8 +67,8 @@ class TestMainTrain(unittest.TestCase):
         input_file = self.main._load_file()
         train, test = self.main.split_data(dataset=input_file, test_size=0.2)
         total_size = input_file.shape[0]
-        self.assertAlmostEqual(train.shape[0], total_size * 0.8)
-        self.assertAlmostEqual(test.shape[0], total_size * 0.2)
+        self.assertAlmostEqual(train.shape[0], total_size * 0.8, delta=1)
+        self.assertAlmostEqual(test.shape[0], total_size * 0.2, delta=1)
         self.assertEqual(train.shape[0] + test.shape[0], total_size)
 
 

@@ -1,18 +1,14 @@
 {
-  "motifEHIPos": 0,
   "PolyPhenCat": "unknown",
   "PolyPhenVal": 0.0,
-  "motifECount": 0,
   "cDNApos": 0.0,
   "relcDNApos": 0.0,
   "SIFTcat": "UD",
   "SIFTval": 0.0,
   "protPos": 0.0,
   "relProtPos": 0.0,
-  "Domain": "UD",
   "oAA": "unknown",
   "nAA": "unknown",
-  "motifEScoreChng": 0.0,
   "CDSpos": 0.0,
   "relCDSpos": 0.0,
   "ref": "N",
@@ -52,5 +48,13 @@
   "is_mature_miRNA_variant": 0,
   "is_NMD_transcript_variant": 0,
   "is_feature_elongation": 0,
-  "is_feature_truncation": 0
+  "is_feature_truncation": 0,
+  "SpliceAI_pred_DP_AG": 0,
+  "SpliceAI_pred_DP_AL": 0,
+  "SpliceAI_pred_DP_DG": 0,
+  "SpliceAI_pred_DP_DL": 0,
+  "SpliceAI_pred_DS_AG": 0,
+  "SpliceAI_pred_DS_AL": 0,
+  "SpliceAI_pred_DS_DG": 0,
+  "SpliceAI_pred_DS_DL": 0
 }

@@ -35,7 +35,7 @@ class LoadFilePostprocessor(unittest.TestCase):
                 'alt': ['G'],
                 'gene_id': [123],
                 'id_source': ['hgnc'],
-                'transcript': ['NM1.123'],
+                'feature': ['NM1.123'],
                 'gene_name': ['ACDC'],
                 'Intron': [5],
                 'Exon': [11],

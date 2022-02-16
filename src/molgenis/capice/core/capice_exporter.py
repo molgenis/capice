@@ -24,7 +24,8 @@ class CapiceExporter:
             Column.gene_name.value,
             Column.gene_id.value,
             Column.id_source.value,
-            Column.transcript.value,
+            Column.feature.value,
+            Column.feature_type.value,
             Column.score.value,
             Column.suggested_class.value
         ]

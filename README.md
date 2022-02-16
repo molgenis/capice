@@ -1,5 +1,4 @@
 # CAPICE : a computational method for Consequence-Agnostic Pathogenicity Interpretation of Clinical Exome variations
-
 CAPICE is a computational method for predicting the pathogenicity of SNVs and InDels. It is a gradient boosting tree
 model trained using a variety of genomic annotations used by CADD score and trained on the clinical significance. CAPICE
 performs consistently across diverse independent synthetic, and real clinical data sets. It ourperforms the current best
@@ -9,22 +8,21 @@ The software can be used as web service, as pre-computed scores or by installing
 below.
 
 ## Use online web service
-
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
 * VEP v105
+  * Including plugin(s):
+  * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
 * BCF tools v1.14-1
 * Python >=3.8
 
 ## Install
-
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
 sections will guide you through the steps needed for the variant annotation and the execution of making predictions
 using the CAPICE model.
 
 ### UNIX like systems
-
 __Note: performance of CAPICE has been tested on Python 3.8, 3.9 and 3.10. Performance on other Python versions is not
 guaranteed.__
 
@@ -45,21 +43,25 @@ pip install .
 ```
 
 ### Windows
-
 __Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (iOS or Linux) or use
 the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
+### SpliceAI
+CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). 
+Files for SpliceAI can be found [here] after creating an account (for free). 
+In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
+The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin description.
+The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version). 
+
 ## Usage
-
 ### VEP
-
 In order to score your variants through CAPICE, you have to annotate your variants using VEP by using the following
 command:
 
 ```commandline
 vep --input_file <path to your input file> --format vcf --output_file <path to your output file> --vcf 
---compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --canonical --symbol --shift_3prime 1 
+--compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --symbol --shift_3prime 1 
 --allele_number --no_stats --offline --cache --dir_cache </path/to/cache/105> --species "homo_sapiens" 
 --assembly <GRCh37 or GRCh38> --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
 --fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant
@@ -69,7 +71,6 @@ Then you have to convert the VEP output to TSV using our own BCFTools script:
 `/scripts/convert_vep_vcf_to_tsv_capice.sh -i */path/to/vep_output.vcf.gz* -o */path/to/capice_input.tsv.gz*`
 
 ### CAPICE
-
 CAPICE can be run by using the following command:
 
 `capice [-h] [-v] [--version] {module}` _arguments_
@@ -124,7 +125,6 @@ The following arguments are specific to `train`:
 You can also use `capice {module} --help` to show help on the command line.
 
 #### Output of CAPICE prediction files
-
 A file will be put out containing the following columns:
 
 - chr: column containing the chromosome of a variant
@@ -141,7 +141,6 @@ A file will be put out containing the following columns:
 Currently VUS only. Work in progress.
 
 ### Usage for making new CAPICE like models
-
 Outside of Predictions, this repository also provides users the availability to create new CAPICE like models according
 to their specific use case. Since the input file features are not validated apart from 6 features (`%CHROM`, `%POS`
 , `%REF`, `%ALT`, `%sample_weight`, `%binarized_label` (case sensitive, `%` or `#` optional)), user can provide their
@@ -152,7 +151,6 @@ depending on your labels of classification. Train is optimized for a 2 class pro
 more than 2 classes.
 
 #### Outputs for training a new model:
-
 A file will be put out containing the following element:
 
 - `xgb_classifier`: Custom [Pickled](https://docs.python.org/3/library/pickle.html) instance of
@@ -168,7 +166,6 @@ with open(path/to/model_file.pickle.dat, 'rb') as model_file:
 ```
 
 ## FAQ:
-
 - Will CAPICE support CADD 1.6 and Genome Build 38?
 
 No. CADD has moved on to Snakemake and is quite slow. It also limits us on updating VEP for improved and bugfixes on
@@ -222,6 +219,5 @@ This is likely due to the fact that the Singularity image searches for shared me
 This means that any and all multiprocessing parts of CAPICE will perform in single threaded mode. Other than that, CAPICE should work just fine.
 
 ## Overview of code
-
 If you're lost in the code, a map can be
 found [here](https://drive.google.com/file/d/1R_yM6pZ_m2DPazBqx2KdaG9sP5ZXC2K2/view?usp=sharing).

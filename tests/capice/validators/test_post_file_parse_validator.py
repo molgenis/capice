@@ -40,6 +40,15 @@ class TestPostFileParseValidator(unittest.TestCase):
             incorrectly_loaded_dataset
         )
 
+    def test_no_variants_present(self):
+        print('ValueError raised in validate_variants_present')
+        dataset = pd.DataFrame(columns=self.dataset.columns)
+        self.assertRaises(
+            ValueError,
+            self.validator.validate_variants_present,
+            dataset
+        )
+
     def test_validation_correct_required_columns(self):
         print('Correct validation required_columns')
         self.validator.validate_minimally_required_columns(

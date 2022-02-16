@@ -47,7 +47,7 @@ class TestFilePostProcessor(unittest.TestCase):
                 "ref": ['A', 'T', 'G'],
                 "alt": ['T', 'G', 'A'],
                 "id_source": ['foo', 'foo', 'bar'],
-                "transcript": ['bar', 'bar', 'buz'],
+                "feature": ['bar', 'bar', 'buz'],
                 "gene_name": ['g1', 'g2', 'g3'],
                 "Intron": [1, 0, 0],
                 "Exon": [0, 1, 1]

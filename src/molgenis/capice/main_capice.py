@@ -37,7 +37,7 @@ class Main(ABC):
         self.exclude_features = [Column.gene_name.value,
                                  Column.gene_id.value,
                                  Column.id_source.value,
-                                 Column.transcript.value]
+                                 Column.feature.value]
 
     @abstractmethod
     def run(self):
@@ -54,6 +54,7 @@ class Main(ABC):
         input_file = post_load_processor.process()
         validator = PostFileParseValidator()
         # Individual calls to the validator for error readability
+        validator.validate_variants_present(input_file)
         validator.validate_chrom_pos(input_file)
         validator.validate_n_columns(input_file)
         validator.validate_minimally_required_columns(
