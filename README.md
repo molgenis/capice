@@ -48,11 +48,10 @@ the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/i
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
 ### SpliceAI
-CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). 
-Files for SpliceAI can be found [here] after creating an account (for free). 
+CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). Files for the SpliceAI VEP plugin can be found [here](https://basespace.illumina.com/s/otSPW8hnhaZR) after creating an account (for free). 
 In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
 The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin description.
-The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version). 
+The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version).
 
 ## Usage
 ### VEP
@@ -135,7 +134,8 @@ A file will be put out containing the following columns:
 - gene_name: The gene name of the variant as supplied.
 - gene_id: The id of the gene name.
 - id_source: The source of the gene id.
-- transcript: The transcript of the variant as supplied.
+- feature: The feature of the variant as supplied.
+- feature_type: The type of the feature of the variant as supplied.
 - score: The predicted CAPICE score for the variant. The higher the score, the more likely that the variant is
   pathogenic.
 - suggested_class: __Suggested__ output class of the variant keeping in mind the score and gene. 
@@ -218,6 +218,12 @@ though `pip install sklearn` or try to re-install scikit-learn.
 
 This is likely due to the fact that the Singularity image searches for shared memory, which is different for Windows style operating systems.
 This means that any and all multiprocessing parts of CAPICE will perform in single threaded mode. Other than that, CAPICE should work just fine.
+
+- I want to use the [standalone SpliceAI](https://github.com/Illumina/SpliceAI) instead of the VEP plugin, is this possible?
+
+We are investigating options to include the standalone SpliceAI since this requires a lot less resources for the precomputed scores that the VEP plugin uses.
+You could try to use it, but proceed at your own risk.
+
 
 ## Overview of code
 If you're lost in the code, a map can be
