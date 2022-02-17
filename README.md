@@ -13,7 +13,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
 ## Requirements
 * VEP v105
   * Including plugin(s):
-  * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
+  * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) **OR** [Standalone SpliceAI](https://github.com/Illumina/SpliceAI)
 * BCF tools v1.14-1
 * Python >=3.8
 
@@ -48,16 +48,19 @@ the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/i
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
 ### SpliceAI
-CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). 
-Files for SpliceAI can be found [here] after creating an account (for free). 
+CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai), or direct annotations from the [standalone SpliceAI](https://github.com/Illumina/SpliceAI).
+Using the [standalone SpliceAI](https://github.com/Illumina/SpliceAI) only requires the reference genome fasta and it's fasta index file. For more information check the [SpliceAI README](https://github.com/Illumina/SpliceAI/blob/master/README.md).
+Files for the SpliceAI VEP plugin can be found [here](https://basespace.illumina.com/s/otSPW8hnhaZR) after creating an account (for free). 
 In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
 The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin description.
-The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version). 
+The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version).
 
 ## Usage
 ### VEP
 In order to score your variants through CAPICE, you have to annotate your variants using VEP by using the following
 command:
+
+_(This command uses the SpliceAI VEP plugin. If you're using the standalone SpliceAI, please remove flags `--plugin` and `--dir_plugins`. Please note that you have to run VEP before running SpliceAI so that all the annotations end up in your VCF before conversion to TSV.)_
 
 ```commandline
 vep --input_file <path to your input file> --format vcf --output_file <path to your output file> --vcf 
@@ -135,7 +138,8 @@ A file will be put out containing the following columns:
 - gene_name: The gene name of the variant as supplied.
 - gene_id: The id of the gene name.
 - id_source: The source of the gene id.
-- transcript: The transcript of the variant as supplied.
+- feature: The feature of the variant as supplied.
+- feature_type: The type of the feature of the variant as supplied.
 - score: The predicted CAPICE score for the variant. The higher the score, the more likely that the variant is
   pathogenic.
 - suggested_class: __Suggested__ output class of the variant keeping in mind the score and gene. 
