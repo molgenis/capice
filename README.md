@@ -61,10 +61,11 @@ command:
 
 ```commandline
 vep --input_file <path to your input file> --format vcf --output_file <path to your output file> --vcf 
---compress_output gzip --regulatory --sift s --polyphen s --domains --numbers --symbol --shift_3prime 1 
+--compress_output gzip --sift s --polyphen s --numbers --symbol --shift_3prime 1 
 --allele_number --no_stats --offline --cache --dir_cache </path/to/cache/105> --species "homo_sapiens" 
 --assembly <GRCh37 or GRCh38> --refseq --use_given_ref --exclude_predicted --use_given_ref --flag_pick_allele --force_overwrite 
---fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant
+--fork 4 --af_gnomad --pubmed --dont_skip --allow_non_variant 
+--plugin SpliceAI,snv=<path/to/raw_scores_snv.vcf.gz>,indel=</path/to/raw_scores_indel.vcf.gz> --dir_plugins <path to your VEP plugin directory>
 ```
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
