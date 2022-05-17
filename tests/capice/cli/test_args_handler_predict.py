@@ -28,7 +28,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
     @patch.object(pickle, 'load')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_invalid_version(self, pickle_load, stderr):
-        setattr(self.model, 'CAPICE_version', '1!0!0')
+        setattr(self.model, 'CAPICE_version', '1.0.0-')
         pickle_load.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -36,7 +36,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model version does not adhere to correct format: 1!0!0',
+        self.assertIn('Model version does not adhere to correct format: 1.0.0-',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
