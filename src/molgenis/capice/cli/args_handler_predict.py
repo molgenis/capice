@@ -7,6 +7,8 @@ from molgenis.capice.__version__ import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
+from re import match
+from molgenis.capice.utilities.enums import Versioning
 
 
 class ArgsHandlerPredict(ArgsHandlerParent):
@@ -98,6 +100,16 @@ class ArgsHandlerPredict(ArgsHandlerParent):
                 self.parser.error(f'Unable to locate attribute {attribute} in model file!')
 
     def _validate_model_version(self, model):
-        if not model.CAPICE_version == __version__:
-            self.parser.error(f'Model version {model.CAPICE_version} '
-                              f'does not match CAPICE version: {__version__}!')
+        model_version = match(Versioning.VALIDATION_REGEX.value, model.CAPICE_version)
+        if model_version is None:
+            self.parser.error(f'Model version does not adhere to correct format: '
+                              f'{model.CAPICE_version}!')
+
+        capice_version = match(Versioning.VALIDATION_REGEX.value, __version__)
+        if model_version.group('major') != capice_version.group('major'):
+            self.parser.error(f'Model major version {model.CAPICE_version} does not match '
+                              f'with CAPICE: {__version__}!')
+
+        if model_version.group('prerelease') != capice_version.group('prerelease'):
+            self.parser.error(f'Model prerelease version {model.CAPICE_version} does not match '
+                              f'with CAPICE: {__version__}!')

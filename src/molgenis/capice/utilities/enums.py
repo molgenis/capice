@@ -62,3 +62,8 @@ class UniqueSeparator(Enum):
     columns.
     """
     unique_separator = '_VeryUniqueCAPICESeparator_'
+
+
+class Versioning(Enum):
+    VALIDATION_REGEX = ('^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
+                        '(?P<prerelease>-[a-zA-Z0-9-]+)?$')
