@@ -110,6 +110,14 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.parser.error(f'Model major version {model.CAPICE_version} does not match '
                               f'with CAPICE: {__version__}!')
 
-        if model_version.group('prerelease') != capice_version.group('prerelease'):
-            self.parser.error(f'Model prerelease version {model.CAPICE_version} does not match '
-                              f'with CAPICE: {__version__}!')
+        if model_version.group('prerelease') is not None \
+                or capice_version.group('prerelease') is not None:
+            if model_version.group('minor') != capice_version.group('minor'):
+                self.parser.error(f'Model minor version {model.CAPICE_version} does not match with '
+                                  f'CAPICE: {__version__} (should match for pre-releases)!')
+            elif model_version.group('patch') != capice_version.group('patch'):
+                self.parser.error(f'Model patch version {model.CAPICE_version} does not match with '
+                                  f'CAPICE: {__version__} (should match for pre-releases)!')
+            elif model_version.group('prerelease') != capice_version.group('prerelease'):
+                self.parser.error(f'Model pre-release version {model.CAPICE_version} does not '
+                                  f'match with CAPICE: {__version__}!')

@@ -99,7 +99,39 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model prerelease version 1.0.0-rc2 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('Model pre-release version 1.0.0-rc2 does not match with CAPICE: 1.0.0-rc1!',
+                      stderr.getvalue())
+
+    @patch('sys.stderr', new_callable=StringIO)
+    @patch.object(pickle, 'load')
+    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    def test_model_semantic_prerelease_with_minor_mismatch(self, pickle_load, stderr):
+        setattr(self.model, 'CAPICE_version', '1.2.0-rc1')
+        pickle_load.return_value = self.model
+
+        args_handler = ArgsHandlerPredict(ArgumentParser())
+        with self.assertRaises(SystemExit) as cm:
+            args_handler.validate_model(self.model_path)
+
+        self.assertEqual(cm.exception.code, 2)
+        self.assertIn('Model minor version 1.2.0-rc1 does not match with CAPICE: 1.0.0-rc1 '
+                      '(should match for pre-releases)!',
+                      stderr.getvalue())
+
+    @patch('sys.stderr', new_callable=StringIO)
+    @patch.object(pickle, 'load')
+    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    def test_model_semantic_prerelease_with_patch_mismatch(self, pickle_load, stderr):
+        setattr(self.model, 'CAPICE_version', '1.0.2-rc1')
+        pickle_load.return_value = self.model
+
+        args_handler = ArgsHandlerPredict(ArgumentParser())
+        with self.assertRaises(SystemExit) as cm:
+            args_handler.validate_model(self.model_path)
+
+        self.assertEqual(cm.exception.code, 2)
+        self.assertIn('Model patch version 1.0.2-rc1 does not match with CAPICE: 1.0.0-rc1 '
+                      '(should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -114,7 +146,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model prerelease version 1.0.0-rc1 does not match with CAPICE: 1.0.0!',
+        self.assertIn('Model pre-release version 1.0.0-rc1 does not match with CAPICE: 1.0.0!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -129,7 +161,22 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model prerelease version 1.0.0 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('Model pre-release version 1.0.0 does not match with CAPICE: 1.0.0-rc1!',
+                      stderr.getvalue())
+
+    @patch('sys.stderr', new_callable=StringIO)
+    @patch.object(pickle, 'load')
+    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0rc1')
+    def test_model_pypi_prerelease_missing_in_model(self, pickle_load, stderr):
+        setattr(self.model, 'CAPICE_version', '1.0.0')
+        pickle_load.return_value = self.model
+
+        args_handler = ArgsHandlerPredict(ArgumentParser())
+        with self.assertRaises(SystemExit) as cm:
+            args_handler.validate_model(self.model_path)
+
+        self.assertEqual(cm.exception.code, 2)
+        self.assertIn('Model pre-release version 1.0.0 does not match with CAPICE: 1.0.0rc1!',
                       stderr.getvalue())
 
     @patch.object(pickle, 'load')
@@ -162,7 +209,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model prerelease version 1.0.0rc2 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('Model pre-release version 1.0.0rc2 does not match with CAPICE: 1.0.0-rc1!',
                       stderr.getvalue())
 
 
