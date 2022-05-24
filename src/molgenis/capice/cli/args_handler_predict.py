@@ -1,13 +1,12 @@
 import os
 import pickle
-
+from re import match
 import xgboost as xgb
 
 from molgenis.capice.__version__ import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
-from re import match
 from molgenis.capice.utilities.enums import Versioning
 
 
@@ -110,8 +109,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.parser.error(f'Model major version {model.CAPICE_version} does not match '
                               f'with CAPICE: {__version__}!')
 
-        if model_version.group('prerelease') is not None \
-                or capice_version.group('prerelease') is not None:
+        if model_version.group('prerelease') or capice_version.group('prerelease'):
             if model_version.group('minor') != capice_version.group('minor'):
                 self.parser.error(f'Model minor version {model.CAPICE_version} does not match with '
                                   f'CAPICE: {__version__} (should match for pre-releases)!')
