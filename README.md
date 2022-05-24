@@ -28,7 +28,7 @@ guaranteed.__
 
 1. Download and installation
 
-_Preffered_
+_Preferred_
 
 ```commandline
 pip install capice
@@ -42,8 +42,15 @@ cd capice
 pip install .
 ```
 
+_Developers_
+```commandline
+git clone https://github.com/molgenis/capice.git
+cd capice
+pip install --editable '.[testing]'
+```
+
 ### Windows
-__Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (iOS or Linux) or use
+__Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (macOS or Linux) or use
 the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
@@ -68,7 +75,7 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 ```
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
-`/scripts/convert_vep_vcf_to_tsv_capice.sh -i */path/to/vep_output.vcf.gz* -o */path/to/capice_input.tsv.gz*`
+`/scripts/convert_vep_vcf_to_tsv_capice.sh -i </path/to/vep_output.vcf.gz> -o </path/to/capice_input.tsv.gz>`
 
 ### CAPICE
 CAPICE can be run by using the following command:
@@ -88,9 +95,9 @@ For both module `predict` and `train`, the following arguments are available:
 
 - -i / --input **(required)**: The path to the
   input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be
-  both gzipped or not). An example of an input TSV file can be found in `CAPICE_example/CAPICE_input.tsv.gz` for genome
-  build 37. The annotations within this file are based on VEP105 . VEP outputs can be converted using
-  the `convert_vep_to_tsv_capice.sh` script in `scripts` using BCFTools.
+  both gzipped or not). Example input data can be found in the [resources](./resources) directory (based on genome build 37 with VEP105).
+  The non-raw input files can be used directly with CAPICE.
+  VEP outputs can be converted using `convert_vep_to_tsv_capice.sh` in the [scripts](./scripts) directory (requires BCFTools).
 - -o / --output _(optional)_: The path to the directory, output filename or output directory and filename where the
   output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the
   file will be placed within the directory of which CAPICE was called from. __The file will always be gzipped with a .gz
@@ -106,13 +113,12 @@ _For instance:_
 
 `-i input.tsv -o path/to/output` becomes `path/to/output/input_capice.tsv.gz`
 
-- -f / --force: Overwrite an output file if already present (does NOT work for logfiles).
+- -f / --force: Overwrite an output file if already present.
 
 The following argument is specific to `predict`:
 
 - -m / --model **(required)**: The path to a custom pickled CAPICE model that includes
-  attributes `CAPICE_version` (`str`) and `impute_values` (`dict`). Models can be found within the `CAPICE_model`
-  directory.
+  attributes `CAPICE_version` (`str`) and `impute_values` (`dict`). Models can be found as attachments on the [GitHub releases](https://github.com/molgenis/capice/releases) page.
 
 The following arguments are specific to `train`:
 
@@ -148,7 +154,7 @@ to their specific use case. Since the input file features are not validated apar
 own features. Please note that performance is validated on natively supported features. **Performance is not guaranteed
 for custom features.**
 Sample weight can be 1 for all samples if no sample weight should be applied. Binarized label should be either 0 or 1,
-depending on your labels of classification. Train is optimized for a 2 class problem, performance is not guaranteed for
+depending on your labels of classification. Train is optimized for a 2 class problem. Performance is not guaranteed for
 more than 2 classes.
 
 #### Outputs for training a new model:
@@ -158,7 +164,7 @@ A file will be put out containing the following element:
   a [XGBClassifier](https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier) instance that
   has successfully trained on the input data, containing additional attributes CAPICE_version and impute_values.
 
-_Note: to load in a pickled instance of a model, use the following commands:_
+_Note: To load in a pickled instance of a model, use the following commands:_
 
 ```
 import pickle
@@ -167,27 +173,41 @@ with open(path/to/model_file.pickle.dat, 'rb') as model_file:
 ```
 
 ## FAQ:
-- Will CAPICE support CADD 1.6 and Genome Build 38?
+__Question:__  
+Will CAPICE support CADD 1.6 and Genome Build 38?
 
-No. CADD has moved on to Snakemake and is quite slow. It also limits us on updating VEP for improved and bugfixes on
-features. However, CAPICE will support genome build 38.
+__Answer:__  
+No (CADD 1.6) and yes (Genome Build 38). CADD has moved on to Snakemake and is quite slow.
+It also limits us on updating VEP for improved and bugfixes on features. However, CAPICE will support genome build 38.
 
-- These scores are nice and all, but what do they really mean for this particular variant?
+---
 
+__Question:__  
+These scores are nice and all, but what do they really mean for this particular variant?
+
+__Answer:__  
 CAPICE bases it's scoring on the training that it was provided with. A score is assigned based on features the model
 learned to recognize during training. There are plans to make a "Capice Explain Tool" which will tell how a score came
 to be.
 
-- Training a new model failed with an error in `joblib.externals.loky.process_executor.RemoteTraceback`
+---
+
+__Question:__   
+Training a new model failed with an error in `joblib.externals.loky.process_executor.RemoteTraceback`
   with `ValueError: unknown format is not supported`. Why?
 
+__Answer:__  
 This could possibly originate from a low sample size during the cross validation in RandomSearchCV.
 Please [contact us](https://github.com/molgenis/capice/issues) for further help.
 
-- I'm on Windows and installing XGBoost fails with the PIP
+---
+
+__Question:__  
+I'm on Windows and installing XGBoost fails with the PIP
   error `“No files/directories in C:\path\to\xgboost\pip-egg-info (from PKG-INFO)”`. Am I doing something wrong?
 
-Unfortunatly, XGBoost does not cooperate well with Windows. You might want to try to
+__Answer:__  
+Unfortunately, XGBoost does not cooperate well with Windows. You might want to try to
 install [Setuptools](https://pypi.org/project/setuptools/) before you attempt to install the dependencies. If that does
 not work either, we suggest you use either a Unix style virtual machine or, if you are using Windows 10,
 the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) is also available in the
@@ -195,32 +215,52 @@ Windows Store for free, which is guaranteed to work.
 
 You could also use CAPICE through the [Singularity Container](https://download.molgeniscloud.org/downloads/vip/images/).
 
-- I'm getting
+---
+
+__Question:__  
+ I'm getting
   a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>`
   when loading in the model, what is going wrong?
 
+__Answer:__  
 CAPICE has been further developed on Python3.8 and Python3.9, where installing xgboost 0.72.1 was unavailable other than
-forcing it. To fix this issue, XGBoost 0.90 can be used which is compatible with Python3.7, 3.8 and 3.9.
+forcing it. To fix this issue, XGBoost 0.90 can be used which is compatible with Python3.4 and higher.
 
-- I'm trying to run CAPICE, but I'm getting the following error:
+---
+
+__Question:__  
+I'm trying to run CAPICE, but I'm getting the following error:
   `xgboost.core.XGBoostError: XGBoost Library (libxgboost.dylib) could not be loaded.`
 
-This error is caused on (likely) OSX when the package "OpenMP" is not installed. Please install `libomp` to get XGBoost
+__Answer:__  
+This error is caused on (likely) macOS when the package "OpenMP" is not installed. Please install `libomp` to get XGBoost
 running.
 
-- I'm getting the following error: `ModuleNotFoundError: No module named 'sklearn'`, what is going wrong?
+---
 
-"sklearn" is a module that should be installed when `scikit-learn` is installed. Either install `sklearn` manually
-though `pip install sklearn` or try to re-install scikit-learn.
+__Question:__  
+I'm getting the following error: `ModuleNotFoundError: No module named 'sklearn'`. What is going wrong?
 
-- I'm getting the warning `/usr/local/lib/python3.8/dist-packages/joblib/_multiprocessing_helpers.py:45: UserWarning: [Errno 2] No such file or directory.  joblib will operate in serial mode
-  warnings.warn('%s.  joblib will operate in serial mode' % (e,))` when using the CAPICE Singularity image, what's wrong?
+__Answer:__  
+`sklearn` is a module that should be installed when `scikit-learn` is installed. Either install `sklearn` manually
+though `pip install sklearn` or try to re-install `scikit-learn`.
 
+---
+
+__Question:__  
+I'm getting the warning `/usr/local/lib/python3.8/dist-packages/joblib/_multiprocessing_helpers.py:45: UserWarning: [Errno 2] No such file or directory.  joblib will operate in serial mode
+  warnings.warn('%s.  joblib will operate in serial mode' % (e,))` when using the CAPICE Singularity image. What's going wrong?
+
+__Answer:__  
 This is likely due to the fact that the Singularity image searches for shared memory, which is different for Windows style operating systems.
 This means that any and all multiprocessing parts of CAPICE will perform in single threaded mode. Other than that, CAPICE should work just fine.
 
-- I want to use the [standalone SpliceAI](https://github.com/Illumina/SpliceAI) instead of the VEP plugin, is this possible?
+---
 
+__Question:__  
+I want to use the [standalone SpliceAI](https://github.com/Illumina/SpliceAI) instead of the VEP plugin. Is this possible?
+
+__Answer:__  
 We are investigating options to include the standalone SpliceAI since this requires a lot less resources for the precomputed scores that the VEP plugin uses.
 You could try to use it, but proceed at your own risk.
 
