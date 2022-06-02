@@ -6,7 +6,7 @@ from scipy import stats
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 from molgenis.capice.main_capice import Main
-from molgenis.capice.__version__ import __version__
+from molgenis.capice import __version__
 from molgenis.capice.utilities.enums import TrainEnums
 from molgenis.capice.core.capice_exporter import CapiceExporter
 
