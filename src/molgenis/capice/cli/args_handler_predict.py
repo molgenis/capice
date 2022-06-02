@@ -3,7 +3,7 @@ import pickle
 
 import xgboost as xgb
 
-from molgenis.capice.__version__ import __version__
+from molgenis.capice.__init__ import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
