@@ -65,5 +65,5 @@ class UniqueSeparator(Enum):
 
 
 class Versioning(Enum):
-    VALIDATION_REGEX = ('^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
-                        '(-?(?P<prerelease>a|b|rc[0-9]+))?$')
+    VALIDATION_REGEX = (r'^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)'
+                        r'(-?(?P<prerelease>a|b|rc[0-9]+))?$')
