@@ -218,17 +218,6 @@ You could also use CAPICE through the [Singularity Container](https://download.m
 ---
 
 __Question:__  
- I'm getting
-  a `AttributeError: Can't get attribute 'XGBoostLabelEncoder' on <module 'xgboost.compat' from 'capice/venv/lib/python(version)/site-packages/xgboost/compat.py'>`
-  when loading in the model, what is going wrong?
-
-__Answer:__  
-CAPICE has been further developed on Python3.8 and Python3.9, where installing xgboost 0.72.1 was unavailable other than
-forcing it. To fix this issue, XGBoost 0.90 can be used which is compatible with Python3.4 and higher.
-
----
-
-__Question:__  
 I'm trying to run CAPICE, but I'm getting the following error:
   `xgboost.core.XGBoostError: XGBoost Library (libxgboost.dylib) could not be loaded.`
 
@@ -263,6 +252,17 @@ I want to use the [standalone SpliceAI](https://github.com/Illumina/SpliceAI) in
 __Answer:__  
 We are investigating options to include the standalone SpliceAI since this requires a lot less resources for the precomputed scores that the VEP plugin uses.
 You could try to use it, but proceed at your own risk.
+
+
+---
+
+__Question:__  
+CAPICE gives an error that the model version does not match with the CAPICE version.
+
+__Answer:__  
+There are certain restrictions regarding what model versions can be used with CAPICE.
+For regular releases, the major version must be identical.
+For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
 
 
 ## Overview of code
