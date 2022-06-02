@@ -1,7 +1,7 @@
 import logging
 import argparse
 
-from molgenis.capice.__version__ import __version__
+from molgenis.capice import __version__
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
