@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from setuptools import setup, find_namespace_packages
-from src.molgenis.capice.__init__ import __version__
+from src.molgenis.capice import __version__
 
 with open('README.md', 'r', encoding='utf-8') as fh:
     long_description = fh.read()
