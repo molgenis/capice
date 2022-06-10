@@ -52,7 +52,9 @@ class PostFileParseValidator:
             if col not in dataset.columns:
                 columns_not_present.append(col)
         if len(columns_not_present) > 0:
-            error_message = 'Detected required columns %s not present within input dataset!'
+            error_message = 'Detected required column %s not present within input dataset!'
+            if len(columns_not_present) > 1:
+                error_message = 'Detected required columns %s not present within input dataset!'
             self.log.critical(error_message, ', '.join(columns_not_present))
             raise KeyError(error_message % ', '.join(columns_not_present))
 

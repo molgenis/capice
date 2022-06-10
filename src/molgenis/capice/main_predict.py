@@ -24,7 +24,8 @@ class CapicePredict(Main):
         capice_data = self._load_file(additional_required_features=[Column.gene_name.value,
                                                                     Column.gene_id.value,
                                                                     Column.id_source.value,
-                                                                    Column.feature.value])
+                                                                    Column.feature.value,
+                                                                    Column.feature_type.value])
         capice_data = self.process(loaded_data=capice_data)
         capice_data = self.impute(loaded_data=capice_data, impute_values=self.model.impute_values)
         capice_data = self.preprocess(loaded_data=capice_data,
