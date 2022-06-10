@@ -43,7 +43,7 @@ class InputProcessor:
             self._set_output_path(self.call_dir, filename)
         else:
             # Check if it is a path or else just a filename
-            if len(os.path.dirname(self.output_path)) > 0:
+            if len(os.path.dirname(self.output_path)) > 0 or self.output_path == '.':
                 # Then I know it's an output filepath + possibly name
                 if os.path.splitext(self.output_path)[1] != '':
                     # Then I know it is a full path + filename
