@@ -80,6 +80,18 @@ class TestInputProcessor(unittest.TestCase):
         self.assertEqual('/directory', self.processor.get_output_directory())
         self.assertEqual('file.txt', self.processor.get_output_filename())
 
+    def test___handle_input_output_directories_case5(self):
+        self.processor.output_path = '.'
+        self.processor._handle_input_output_directories()
+        self.assertEqual('.', self.processor.get_output_directory())
+        self.assertEqual(self.__FILE__, self.processor.get_output_filename())
+
+    def test___handle_input_output_directories_case6(self):
+        self.processor.output_path = './file.txt'
+        self.processor._handle_input_output_directories()
+        self.assertEqual('.', self.processor.get_output_directory())
+        self.assertEqual('file.txt', self.processor.get_output_filename())
+
     def test_force_false_output_missing_output_exists(self):
         # This test mimics what happens when output is left empty from the CLI
         # and the output file + _capice + default_extension already exists
