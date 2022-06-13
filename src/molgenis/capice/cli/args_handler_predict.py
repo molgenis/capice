@@ -94,7 +94,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.parser.error("Model does not have the right extension!")
 
     def _validate_model_class(self, model):
-        if not isinstance(model.__class__, xgb.XGBClassifier):
+        if not isinstance(model, xgb.XGBClassifier):
             self.parser.error("Given pickle is not a XGBClassifier class!")
 
     def _validate_model_attributes(self, model):

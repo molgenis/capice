@@ -7,6 +7,8 @@ class TestVersionValidator(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.validator = VersionValidator()
+        cls.pep440_rc1 = '4.0.0rc1'
+        cls.semantic_rc1 = '4.0.0-rc1'
 
     def test_capice_semantic_invalid_version(self):
         """
@@ -90,7 +92,7 @@ class TestVersionValidator(unittest.TestCase):
         """
         Tests if ValueError is raised when testing 2 different prerelease versions.
         """
-        version_capice = '4.0.0-rc1'
+        version_capice = self.semantic_rc1
         version_model = '4.0.0-rc2'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
@@ -105,7 +107,7 @@ class TestVersionValidator(unittest.TestCase):
         Tests if ValueError is raised when testing 2 same prerelease versions, but at different
         minor versions.
         """
-        version_capice = '4.0.0-rc1'
+        version_capice = self.semantic_rc1
         version_model = '4.2.0-rc1'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
@@ -120,7 +122,7 @@ class TestVersionValidator(unittest.TestCase):
         Tests if ValueError is raised when testing 2 same prerelease versions, but at different
         patch versions.
         """
-        version_capice = '4.0.0-rc1'
+        version_capice = self.semantic_rc1
         version_model = '4.0.2-rc1'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
@@ -135,7 +137,7 @@ class TestVersionValidator(unittest.TestCase):
         Tests if ValueError is raised when the model has a prerelease, but CAPICE does not.
         """
         version_capice = '4.0.0'
-        version_model = '4.0.0-rc1'
+        version_model = self.semantic_rc1
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
         self.assertEqual(
@@ -148,7 +150,7 @@ class TestVersionValidator(unittest.TestCase):
         """
         Tests if ValueError is raised when the CAPICE has a prerelease, but the model does not.
         """
-        version_capice = '4.0.0-rc1'
+        version_capice = self.semantic_rc1
         version_model = '4.0.0'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
@@ -164,7 +166,7 @@ class TestVersionValidator(unittest.TestCase):
         PEP440 format.
         """
         version_capice = '4.0.0'
-        version_model = '4.0.0rc1'
+        version_model = self.pep440_rc1
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
         self.assertEqual(
@@ -178,7 +180,7 @@ class TestVersionValidator(unittest.TestCase):
         Tests if ValueError is raised when CAPICE has a prerelease, but the model does not. In
         PEP440 format.
         """
-        version_capice = '4.0.0rc1'
+        version_capice = self.pep440_rc1
         version_model = '4.0.0'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
@@ -193,8 +195,8 @@ class TestVersionValidator(unittest.TestCase):
         Tests if no ValueError is raised when the model and CAPICE match in prerelease,
         but in PEP440 format.
         """
-        version_capice = '4.0.0rc1'
-        version_model = '4.0.0rc1'
+        version_capice = self.pep440_rc1
+        version_model = self.pep440_rc1
         self.validator.validate_versions_compatible(version_capice, version_model)
 
     def test_pep440_semantic_prerelease_match(self):
@@ -202,8 +204,8 @@ class TestVersionValidator(unittest.TestCase):
         Tests if no ValueError is raised when the model and CAPICE match in prerelease,
         but the CAPICE version is in PEP440 and the model is in semantic.
         """
-        version_capice = '4.0.0rc1'
-        version_model = '4.0.0-rc1'
+        version_capice = self.pep440_rc1
+        version_model = self.semantic_rc1
         self.validator.validate_versions_compatible(version_capice, version_model)
 
     def test_pep440_semantic_prerelease_mismatch(self):
@@ -211,7 +213,7 @@ class TestVersionValidator(unittest.TestCase):
         Tests if ValueError is raised when the model and CAPICE do not match in prerelease,
         but the CAPICE version is in PEP440 and the model is in semantic.
         """
-        version_capice = '4.0.0rc1'
+        version_capice = self.pep440_rc1
         version_model = '4.0.0-rc2'
         with self.assertRaises(ValueError) as cm:
             self.validator.validate_versions_compatible(version_capice, version_model)
