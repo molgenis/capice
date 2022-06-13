@@ -7,7 +7,7 @@ from molgenis.capice import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
-from molgenis.capice.utilities.enums import Versioning
+from molgenis.capice.validators.version_validator import VersionValidator
 
 
 class ArgsHandlerPredict(ArgsHandlerParent):
@@ -79,7 +79,12 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             model = pickle.load(model_file)
         self._validate_model_class(model)
         self._validate_model_attributes(model)
-        self._validate_model_version(model)
+        version_validator = VersionValidator()
+        try:
+            version_validator.validate_model_version(model.CAPICE_version)
+            version_validator.validate_versions_compatible(__version__, model.CAPICE_version)
+        except ValueError as cm:
+            self.parser.error(str(cm))
         return model
 
     def _validate_model_path(self, model_path):
@@ -89,7 +94,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.parser.error("Model does not have the right extension!")
 
     def _validate_model_class(self, model):
-        if not model.__class__ == xgb.XGBClassifier:
+        if not isinstance(model.__class__, xgb.XGBClassifier):
             self.parser.error("Given pickle is not a XGBClassifier class!")
 
     def _validate_model_attributes(self, model):
@@ -97,25 +102,3 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         for attribute in required_attributes:
             if attribute not in dir(model):
                 self.parser.error(f'Unable to locate attribute {attribute} in model file!')
-
-    def _validate_model_version(self, model):
-        model_version = match(Versioning.VALIDATION_REGEX.value, model.CAPICE_version)
-        if model_version is None:
-            self.parser.error(f'Model version does not adhere to correct format: '
-                              f'{model.CAPICE_version}!')
-
-        capice_version = match(Versioning.VALIDATION_REGEX.value, __version__)
-        if model_version.group('major') != capice_version.group('major'):
-            self.parser.error(f'Model major version {model.CAPICE_version} does not match '
-                              f'with CAPICE: {__version__}!')
-
-        if model_version.group('prerelease') or capice_version.group('prerelease'):
-            if model_version.group('minor') != capice_version.group('minor'):
-                self.parser.error(f'Model minor version {model.CAPICE_version} does not match with '
-                                  f'CAPICE: {__version__} (should match for pre-releases)!')
-            elif model_version.group('patch') != capice_version.group('patch'):
-                self.parser.error(f'Model patch version {model.CAPICE_version} does not match with '
-                                  f'CAPICE: {__version__} (should match for pre-releases)!')
-            elif model_version.group('prerelease') != capice_version.group('prerelease'):
-                self.parser.error(f'Model pre-release version {model.CAPICE_version} does not '
-                                  f'match with CAPICE: {__version__}!')

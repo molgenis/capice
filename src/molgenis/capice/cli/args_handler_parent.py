@@ -1,8 +1,10 @@
 from abc import ABCMeta, abstractmethod
 
+from molgenis.capice import __version__
 from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.utilities import validate_list_length_one
 from molgenis.capice.utilities.input_processor import InputProcessor
+from molgenis.capice.validators.version_validator import VersionValidator
 
 
 class ArgsHandlerParent(metaclass=ABCMeta):
@@ -61,6 +63,11 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Superclass handle args to parse and validate the input and output
         arguments. Also parses the output filename.
         """
+        version_validator = VersionValidator()
+        try:
+            version_validator.validate_capice_version(__version__)
+        except ValueError as cm:
+            self.parser.error(str(cm))
         validator = InputValidator(self.parser)
         input_path = self.validate_length_one(args.input, '-i/--input')
         validator.validate_input_path(input_path, extension=self._extension)
