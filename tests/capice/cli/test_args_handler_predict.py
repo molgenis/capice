@@ -76,7 +76,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model major version 2.0.0 does not match with CAPICE: 1.0.0!',
+        self.assertIn('CAPICE major version 1.0.0 does not match with the model 2.0.0!',
                       stderr.getvalue())
 
     @patch.object(pickle, 'load')
@@ -118,7 +118,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model pre-release version 1.0.0-rc2 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('CAPICE prerelease version 1.0.0-rc1 does not match the model '
+                      'prerelease version 1.0.0-rc2 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -140,8 +141,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model minor version 1.2.0-rc1 does not match with CAPICE: 1.0.0-rc1 '
-                      '(should match for pre-releases)!',
+        self.assertIn('CAPICE minor version 1.0.0-rc1 does not match the model minor version '
+                      '1.2.0-rc1 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -163,8 +164,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model patch version 1.0.2-rc1 does not match with CAPICE: 1.0.0-rc1 '
-                      '(should match for pre-releases)!',
+        self.assertIn('CAPICE patch version 1.0.0-rc1 does not match the model patch version '
+                      '1.0.2-rc1 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -187,7 +188,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model pre-release version 1.0.0-rc1 does not match with CAPICE: 1.0.0!',
+        self.assertIn('CAPICE prerelease version 1.0.0 does not match the model prerelease '
+                      'version 1.0.0-rc1 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -210,7 +212,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model pre-release version 1.0.0 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('CAPICE prerelease version 1.0.0-rc1 does not match the model '
+                      'prerelease version 1.0.0 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
@@ -233,7 +236,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model pre-release version 1.0.0 does not match with CAPICE: 1.0.0rc1!',
+        self.assertIn('CAPICE prerelease version 1.0.0rc1 does not match the model '
+                      'prerelease version 1.0.0 (should match for pre-releases)!',
                       stderr.getvalue())
 
     @patch.object(pickle, 'load')
@@ -284,7 +288,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
             args_handler.validate_model(self.model_path)
 
         self.assertEqual(cm.exception.code, 2)
-        self.assertIn('Model pre-release version 1.0.0rc2 does not match with CAPICE: 1.0.0-rc1!',
+        self.assertIn('CAPICE prerelease version 1.0.0-rc1 does not match the model '
+                      'prerelease version 1.0.0rc2 (should match for pre-releases)!',
                       stderr.getvalue())
 
 
