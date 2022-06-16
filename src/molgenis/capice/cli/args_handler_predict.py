@@ -72,10 +72,13 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         :param model_path: str, path-like, path to the model
         :return: model, xgb.XGBClassifier class
         """
-        self.input_validator.validate_input_path(model_path, extension='.pickle.dat')
+        try:
+            self.input_validator.validate_input_path(model_path, extension='.pickle.dat')
+        except FileNotFoundError as cm:
+            self.parser.error(str(cm))
         with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
-        model_validator = ModelValidator(self.parser)
+        model_validator = ModelValidator()
         model_validator.validate_is_xgb_classifier(model)
         model_validator.validate_has_required_attributes(model)
         version_validator = VersionValidator()

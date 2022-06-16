@@ -14,7 +14,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     def __init__(self, parser):
         self.parser = parser
-        self.input_validator = InputValidator(self.parser)
+        self.input_validator = InputValidator()
 
     @property
     @abstractmethod
@@ -70,7 +70,10 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         except ValueError as cm:
             self.parser.error(str(cm))
         input_path = self.validate_length_one(args.input, '-i/--input')
-        self.input_validator.validate_input_path(input_path, extension=self._extension)
+        try:
+            self.input_validator.validate_input_path(input_path, extension=self._extension)
+        except FileNotFoundError as cm:
+            self.parser.error(str(cm))
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
@@ -83,7 +86,10 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
         output_path = processor.get_output_directory()
-        self.input_validator.validate_output_path(output_path)
+        try:
+            self.input_validator.validate_output_path(output_path)
+        except OSError as cm:
+            self.parser.error(str(cm))
         self._handle_module_specific_args(input_path, output_path, output_filename, args)
 
     def validate_length_one(self, arg, arg_name):

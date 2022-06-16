@@ -62,7 +62,10 @@ class ArgsHandlerExplain(ArgsHandlerParent):
         except ValueError as cm:
             self.parser.error(str(cm))
         input_path = self.validate_length_one(args.model, '-m/--model')
-        self.input_validator.validate_input_path(input_path, extension='.pickle.dat')
+        try:
+            self.input_validator.validate_input_path(input_path, extension='.pickle.dat')
+        except FileNotFoundError as cm:
+            self.parser.error(str(cm))
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
@@ -74,15 +77,17 @@ class ArgsHandlerExplain(ArgsHandlerParent):
         )
         output_filename = self._handle_output_filename(input_processor.get_output_filename())
         output_path = input_processor.get_output_directory()
-        self.input_validator.validate_output_path(output_path)
+        try:
+            self.input_validator.validate_output_path(output_path)
+        except OSError as cm:
+            self.parser.error(str(cm))
         self._handle_module_specific_args(input_path, output_path, output_filename, args)
 
     def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
-        model_path = self.validate_length_one(args.model, '-m/--model')
-        self.input_validator.validate_input_path(model_path, extension='.pickle.dat')
+        model_path = input_path
         with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
-        validator = ModelValidator(self.parser)
+        validator = ModelValidator()
         validator.validate_is_xgb_classifier(model)
         validator.validate_has_required_attributes(model)
         CapiceManager().output_filename = output_filename
