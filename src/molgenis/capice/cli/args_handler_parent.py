@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
 from molgenis.capice import __version__
-from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.utilities import validate_list_length_one
 from molgenis.capice.utilities.input_processor import InputProcessor
+from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.validators.version_validator import VersionValidator
 
 
@@ -14,6 +14,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     def __init__(self, parser):
         self.parser = parser
+        self.input_validator = InputValidator(self.parser)
 
     @property
     @abstractmethod
@@ -68,9 +69,8 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             version_validator.validate_capice_version(__version__)
         except ValueError as cm:
             self.parser.error(str(cm))
-        validator = InputValidator(self.parser)
         input_path = self.validate_length_one(args.input, '-i/--input')
-        validator.validate_input_path(input_path, extension=self._extension)
+        self.input_validator.validate_input_path(input_path, extension=self._extension)
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
@@ -83,7 +83,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
         output_path = processor.get_output_directory()
-        validator.validate_output_path(output_path)
+        self.input_validator.validate_output_path(output_path)
         self._handle_module_specific_args(input_path, output_path, output_filename, args)
 
     def validate_length_one(self, arg, arg_name):
