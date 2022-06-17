@@ -28,7 +28,8 @@ class CapiceExplain(Main):
 
     def _convert_importances_to_dataframe(self, importances: dict):
         self.log.info('Converting importances to dataframe.')
-        feature_importances = pd.DataFrame(data=[importances.keys(), importances.values()], index=['feature', 'gain']).T
+        feature_importances = pd.DataFrame(data=[importances.keys(), importances.values()],
+                                           index=['feature', 'gain']).T
         self.log.debug('Converted %d features into the dataframe', feature_importances.shape[0])
         return feature_importances
 

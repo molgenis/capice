@@ -43,7 +43,8 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             '--output',
             action='append',
             type=str,
-            help='path to directory or filename (or both) for export. Has to be in .csv or .csv.gz extension. '
+            help='path to directory or filename (or both) for export. '
+                 'Has to be in .csv or .csv.gz extension. '
                  'Will always be gzipped!'
         )
         self.parser.add_argument(
@@ -55,7 +56,8 @@ class ArgsHandlerExplain(ArgsHandlerParent):
 
     def _handle_args(self, args):
         """
-        Method overwrites the args_handler_parent because explain does not require an input argument.
+        Method overwrites the args_handler_parent because
+        explain does not require an input argument.
         """
         try:
             VersionValidator().validate_capice_version(__version__)

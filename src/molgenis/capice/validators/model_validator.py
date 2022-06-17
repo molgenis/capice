@@ -13,7 +13,8 @@ class ModelValidator:
     @staticmethod
     def validate_has_required_attributes(model):
         """
-        Function to validate if the required attributes CAPICE_version, impute_values and predict_proba are present.
+        Function to validate if the required attributes CAPICE_version,
+        impute_values and predict_proba are present.
         """
         required_attributes = ['CAPICE_version', 'impute_values', 'predict_proba']
         for attribute in required_attributes:
