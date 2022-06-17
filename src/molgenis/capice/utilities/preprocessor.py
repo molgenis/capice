@@ -185,8 +185,8 @@ class PreProcessor:
         columns of NaN.
         """
         column_checker = ColumnChecker()
-        column_checker.set_specified_columns(dataset.columns)
-        missing = column_checker.get_missing_diff_with(self.model_features)
+        column_checker.set_specified_columns(self.model_features)
+        missing = column_checker.get_missing_diff_with(dataset.columns)
         for feature in missing:
             message = 'Detected column %s not present in columns. Adding full column of NaN'
             self.log.debug(message, feature)

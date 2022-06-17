@@ -13,8 +13,8 @@ class PostVEPProcessingValidator:
         presently processed.
         """
         column_checker = ColumnChecker()
-        column_checker.set_specified_columns(datafile.columns)
-        features_not_present = column_checker.get_missing_diff_with(self.model.impute_values.keys())
+        column_checker.set_specified_columns(self.model.impute_values.keys())
+        features_not_present = column_checker.get_missing_diff_with(datafile.columns)
         if len(features_not_present) > 0:
             error_message = 'Detected required feature(s) %s not ' \
                             'present within VEP processed input file!'
