@@ -33,6 +33,16 @@ class TestInputValidator(unittest.TestCase):
             'tsv'
         )
 
+    def test_input_extension_error(self):
+        print('Input file extension error')
+        fake_input_file = os.path.join(_project_root_directory, 'fakefile.csv')
+        self.assertRaises(
+            FileNotFoundError,
+            self.input_validator.validate_input_path,
+            fake_input_file,
+            'tsv'
+        )
+
     def test_create_output_path(self):
         print('Creating output location')
         with self.assertWarns(Warning):
@@ -48,7 +58,8 @@ class TestInputValidator(unittest.TestCase):
 
     def test_input_explain_correct(self):
         print('Input file explain correct')
-        input_file = os.path.join(_project_root_directory, 'tests', 'resources', 'xgb_booster_poc.pickle.dat')
+        input_file = os.path.join(_project_root_directory, 'tests', 'resources',
+                                  'xgb_booster_poc.pickle.dat')
         self.input_validator.validate_input_path(input_file, extension='.pickle.dat')
 
 
