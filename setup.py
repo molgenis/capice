@@ -29,7 +29,7 @@ setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'numpy==1.21.3',
+        'numpy==1.22.0',
         'pandas==1.3.5',
         'scipy==1.7.3',
         'scikit-learn==1.0.2',
