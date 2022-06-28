@@ -35,12 +35,12 @@ class TestInputValidator(unittest.TestCase):
 
     def test_input_extension_error(self):
         print('Input file extension error')
-        fake_input_file = os.path.join(_project_root_directory, 'fakefile.csv')
+        fake_input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
         self.assertRaises(
             FileNotFoundError,
             self.input_validator.validate_input_path,
             fake_input_file,
-            'tsv'
+            '.pickle.dat'
         )
 
     def test_create_output_path(self):
@@ -49,6 +49,25 @@ class TestInputValidator(unittest.TestCase):
             self.input_validator.validate_output_path(self.new_directory)
         self.assertTrue(
             self.new_directory_name in os.listdir(_project_root_directory)
+        )
+
+    def test_create_output_error_unwritable_directory(self):
+        print('Error raised in unwritable directory')
+        path = os.path.join(_project_root_directory, 'tests', 'resources', 'unwritable_directory')
+        self.assertRaises(
+            OSError,
+            self.input_validator.validate_output_path,
+            path
+        )
+
+    def test_create_new_directory_in_unwritable_directory_error(self):
+        print('Error raised when trying to make a new directory in an unwritable directory')
+        path = os.path.join(_project_root_directory, 'tests', 'resources',
+                            'unwritable_directory', 'a_new_directory')
+        self.assertRaises(
+            OSError,
+            self.input_validator.validate_output_path,
+            path
         )
 
     def test_input_predict_correct(self):
