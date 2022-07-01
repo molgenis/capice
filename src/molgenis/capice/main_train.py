@@ -31,7 +31,7 @@ class CapiceTrain(Main):
             self.train_test_size)
 
         # Required features when file is loaded
-        self.additional_required = ['binarized_label', 'sample_weight']
+        self.additional_required = [TrainEnums.binarized_label.value, 'sample_weight']
         self.exclude_features += self.additional_required
 
         # Variables that can be edited in testing to speed up the train testing
@@ -111,6 +111,37 @@ class CapiceTrain(Main):
                         column not in self.processed_features:
                     self.processed_features.append(column)
 
+    def _set_verbosity_from_log_level(self):
+        """
+        Uses loglevel to set verbosity and xg boost verbosity
+        :return: tuple of int and bool
+        verbosity, xgboost verbosity
+        """
+        verbosity = 0
+        xgb_verbosity = False
+
+        # First checking if it is not None
+        if self.loglevel and self.loglevel < 20:
+            verbosity = 1
+            xgb_verbosity = True
+        return verbosity, xgb_verbosity
+
+    def _create_eval_set(self, xgb_version, test_set):
+        """
+        Creates the eval_set for xgb version, test set and processed features (0.x.x will be test).
+        :param xgb_version: string
+            xg boost version
+        :param test_set: pandas DataFrame
+            the testing dataset for determine performance during training
+        :return: a list with tuple with pandas Dataframe, pandas Series and possibly "test"
+        eval_set
+        """
+        eval_data = [test_set[self.processed_features],
+                     test_set[TrainEnums.binarized_label.value]]
+        if int(xgb_version.split('.')[0]) < 1:
+            eval_data.append('test')
+        return [tuple(eval_data)]
+
     def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """
         The training part of main_train.py after all has been processed.
@@ -130,13 +161,7 @@ class CapiceTrain(Main):
             # (random integer from 10 to 600)
         }
 
-        verbosity = 0
-        xgb_verbosity = False
-
-        # First checking if it is not None
-        if self.loglevel and self.loglevel < 20:
-            verbosity = 1
-            xgb_verbosity = True
+        verbosity, xgb_verbosity = self._set_verbosity_from_log_level()
 
         self.log.debug('Preparing the estimator model.')
 
@@ -155,31 +180,26 @@ class CapiceTrain(Main):
             random_state=self.model_random_state,
             use_label_encoder=False
         )
-        ransearch1 = RandomizedSearchCV(estimator=model_estimator,
-                                        param_distributions=param_dist,
-                                        scoring='roc_auc', n_jobs=8,
-                                        cv=self.cross_validate,
-                                        n_iter=self.n_iterations,
-                                        verbose=verbosity)
+        randomised_search_cv = RandomizedSearchCV(estimator=model_estimator,
+                                                  param_distributions=param_dist,
+                                                  scoring='roc_auc', n_jobs=8,
+                                                  cv=self.cross_validate,
+                                                  n_iter=self.n_iterations,
+                                                  verbose=verbosity)
 
-        if int(xgb.__version__.split('.')[0]) > 0:
-            eval_set = [(test_set[self.processed_features],
-                         test_set[TrainEnums.binarized_label.value])]
-        else:
-            eval_set = [(test_set[self.processed_features],
-                         test_set[TrainEnums.binarized_label.value],
-                         'test')]
+        eval_set = self._create_eval_set(xgb.__version__, test_set)
+
         self.log.info('Random search starting, please hold.')
-        ransearch1.fit(train_set[self.processed_features],
-                       train_set[TrainEnums.binarized_label.value],
-                       early_stopping_rounds=self.esr,
-                       eval_metric=["auc"],
-                       eval_set=eval_set,
-                       verbose=xgb_verbosity,
-                       sample_weight=train_set[TrainEnums.sample_weight.value])
+        randomised_search_cv.fit(train_set[self.processed_features],
+                                 train_set[TrainEnums.binarized_label.value],
+                                 early_stopping_rounds=self.esr,
+                                 eval_metric=["auc"],
+                                 eval_set=eval_set,
+                                 verbose=xgb_verbosity,
+                                 sample_weight=train_set[TrainEnums.sample_weight.value])
         self.log.info(
             'Training successful, '
             'average CV AUC of best performing model: %.4f',
-            ransearch1.best_score_)
+            randomised_search_cv.best_score_)
 
-        return ransearch1.best_estimator_
+        return randomised_search_cv.best_estimator_
