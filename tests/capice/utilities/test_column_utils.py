@@ -12,7 +12,7 @@ class TestUtilities(unittest.TestCase):
     def setUp(self):
         print('\nTesting case:')
         self.column_utils = column_utils.ColumnUtils()
-        self.column_utils.specified_columns = ['a', 'b', 'c']
+        self.column_utils.specified_columns = set(['a', 'b', 'c'])
 
     def test_set_specified_columns(self):
         """
@@ -22,16 +22,25 @@ class TestUtilities(unittest.TestCase):
         print('Setting specified columns')
         columns = ['x', 'y', 'z']
         self.column_utils.set_specified_columns(columns)
-        self.assertEqual(columns, self.column_utils.get_specified_columns())
+        self.assertEqual(set(columns), self.column_utils.get_specified_columns())
 
-    def test_add_to_specified_columns(self):
+    def test_add_to_specified_columns_single(self):
         """
         Test add_to_specified_columns
         Should add string to specified_columns of class
         """
         print('Adding to specified columns')
-        self.column_utils.add_to_specified_columns('d')
-        self.assertEqual(['a', 'b', 'c', 'd'], self.column_utils.get_specified_columns())
+        self.column_utils.add_to_specified_columns('da')
+        self.assertEqual(set(['a', 'b', 'c', 'da']), self.column_utils.get_specified_columns())
+
+    def test_add_to_specified_columns_multiple(self):
+        """
+        Test add_to_specified_columns
+        Should merge list of columns with specified_columns of class
+        """
+        print('Adding to specified columns')
+        self.column_utils.add_to_specified_columns(['d', 'd', 'e'])
+        self.assertEqual(set(['a', 'b', 'c', 'd', 'e']), self.column_utils.get_specified_columns())
 
     def test_column_in_specified_columns(self):
         """
@@ -50,6 +59,15 @@ class TestUtilities(unittest.TestCase):
         print('Column not is in specified columns')
         column = 'x'
         self.assertFalse(self.column_utils.column_in_specified_columns(column))
+
+    def test_add_to_specified_columns_set(self):
+        """
+        Test add_to_specified_columns
+        Should merge set of columns with specified_columns of class
+        """
+        print('Adding to specified columns')
+        self.column_utils.add_to_specified_columns({'d', 'e'})
+        self.assertEqual({'a', 'b', 'c', 'd', 'e'}, self.column_utils.get_specified_columns())
 
     def test_get_missing_diff_with_list(self):
         """

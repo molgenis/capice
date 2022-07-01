@@ -4,7 +4,7 @@ class ColumnUtils:
     """
 
     def __init__(self):
-        self.specified_columns = []
+        self.specified_columns = set()
 
     def get_specified_columns(self):
         """
@@ -18,15 +18,17 @@ class ColumnUtils:
         Setter for specified columns
         :param specified_columns: list
         """
-        self.specified_columns = specified_columns
+        self.specified_columns = set(specified_columns)
 
-    def add_to_specified_columns(self, column):
+    def add_to_specified_columns(self, columns):
         """
-        Adds one column to the list of specified columns
-        :param column: string
+        Adds column(s) to the set of specified columns.
+        :param columns: string/int/float or list/tuple/set
         """
-        if not self.column_in_specified_columns(column):
-            self.specified_columns.append(column)
+        if type(columns) in [str, int, float]:
+            columns = [columns]
+        for column in columns:
+            self.specified_columns.add(column)
 
     def column_in_specified_columns(self, column):
         """
@@ -45,4 +47,4 @@ class ColumnUtils:
         list of columns that are in the specified columns (specified_columns),
         but not in the presented ones (columns)
         """
-        return list(set(self.specified_columns) - set(columns))
+        return list(self.specified_columns - set(columns))

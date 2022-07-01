@@ -46,8 +46,7 @@ class PostFileParseValidator:
             Column.alt.value,
         ])
         if additional_required_features is not None:
-            for feature in additional_required_features:
-                column_utils.add_to_specified_columns(feature)
+            column_utils.add_to_specified_columns(additional_required_features)
         columns_not_present = column_utils.get_missing_diff_with(dataset.columns)
         if len(columns_not_present) > 0:
             error_message = 'Detected required column %s not present within input dataset!'
