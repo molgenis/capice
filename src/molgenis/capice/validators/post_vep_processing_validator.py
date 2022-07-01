@@ -1,5 +1,5 @@
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.column_checker import ColumnChecker
+from molgenis.capice.utilities.column_utils import ColumnUtils
 
 
 class PostVEPProcessingValidator:
@@ -12,9 +12,9 @@ class PostVEPProcessingValidator:
         Validator to see if all features within the model impute values are
         presently processed.
         """
-        column_checker = ColumnChecker()
-        column_checker.set_specified_columns(self.model.impute_values.keys())
-        features_not_present = column_checker.get_missing_diff_with(datafile.columns)
+        column_utils = ColumnUtils()
+        column_utils.set_specified_columns(self.model.impute_values.keys())
+        features_not_present = column_utils.get_missing_diff_with(datafile.columns)
         if len(features_not_present) > 0:
             error_message = 'Detected required feature(s) %s not ' \
                             'present within VEP processed input file!'

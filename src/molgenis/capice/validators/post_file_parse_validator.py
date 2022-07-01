@@ -2,7 +2,7 @@ import pandas as pd
 
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.utilities.enums import Column
-from molgenis.capice.utilities.column_checker import ColumnChecker
+from molgenis.capice.utilities.column_utils import ColumnUtils
 
 
 class PostFileParseValidator:
@@ -38,8 +38,8 @@ class PostFileParseValidator:
         are present (chr, pos, ref, alt) and additionally the additional
         required columns.
         """
-        column_checker = ColumnChecker()
-        column_checker.set_specified_columns([
+        column_utils = ColumnUtils()
+        column_utils.set_specified_columns([
             Column.chr.value,
             Column.pos.value,
             Column.ref.value,
@@ -47,8 +47,8 @@ class PostFileParseValidator:
         ])
         if additional_required_features is not None:
             for feature in additional_required_features:
-                column_checker.add_to_specified_columns(feature)
-        columns_not_present = column_checker.get_missing_diff_with(dataset.columns)
+                column_utils.add_to_specified_columns(feature)
+        columns_not_present = column_utils.get_missing_diff_with(dataset.columns)
         if len(columns_not_present) > 0:
             error_message = 'Detected required column %s not present within input dataset!'
             if len(columns_not_present) > 1:

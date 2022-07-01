@@ -4,7 +4,7 @@ import pandas as pd
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.enums import Column, UniqueSeparator
-from molgenis.capice.utilities.column_checker import ColumnChecker
+from molgenis.capice.utilities.column_utils import ColumnUtils
 
 
 class PreProcessor:
@@ -184,9 +184,9 @@ class PreProcessor:
         are present. If a columns is not present, add it with a full
         columns of NaN.
         """
-        column_checker = ColumnChecker()
-        column_checker.set_specified_columns(self.model_features)
-        missing = column_checker.get_missing_diff_with(dataset.columns)
+        column_utils = ColumnUtils()
+        column_utils.set_specified_columns(self.model_features)
+        missing = column_utils.get_missing_diff_with(dataset.columns)
         for feature in missing:
             message = 'Detected column %s not present in columns. Adding full column of NaN'
             self.log.debug(message, feature)
