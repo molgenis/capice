@@ -51,25 +51,6 @@ class TestInputValidator(unittest.TestCase):
             self.new_directory_name in os.listdir(_project_root_directory)
         )
 
-    def test_create_output_error_unwritable_directory(self):
-        print('Error raised in unwritable directory')
-        path = os.path.join(_project_root_directory, 'tests', 'resources', 'unwritable_directory')
-        self.assertRaises(
-            OSError,
-            self.input_validator.validate_output_path,
-            path
-        )
-
-    def test_create_new_directory_in_unwritable_directory_error(self):
-        print('Error raised when trying to make a new directory in an unwritable directory')
-        path = os.path.join(_project_root_directory, 'tests', 'resources',
-                            'unwritable_directory', 'a_new_directory')
-        self.assertRaises(
-            OSError,
-            self.input_validator.validate_output_path,
-            path
-        )
-
     def test_input_predict_correct(self):
         print('Input file predict correct')
         input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
