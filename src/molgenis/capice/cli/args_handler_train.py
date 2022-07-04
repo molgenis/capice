@@ -1,5 +1,4 @@
 import os
-import multiprocessing as mp
 
 from molgenis.capice.main_train import CapiceTrain
 from molgenis.capice.core.capice_manager import CapiceManager
