@@ -60,7 +60,9 @@ class TestConsequence(unittest.TestCase):
                 )
             ], axis=1
         )
-        pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(axis=1))
+        # if numpy.array dtype not given, then the type will be determined as the minimum type required to hold the
+        # objects in the sequence. this minimal type is system dependent.
+        pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(axis=1), check_dtype=False)
 
 
 if __name__ == '__main__':
