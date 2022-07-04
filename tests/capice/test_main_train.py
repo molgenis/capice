@@ -20,9 +20,9 @@ class TestMainTrain(unittest.TestCase):
         cls.main = CapiceTrain(input_path=train_file,
                                json_path=impute_json,
                                test_split=0.2,
-                               output_path=cls.output_dir)
+                               output_path=cls.output_dir,
+                               threads=2)
         cls.main.esr = 1
-        cls.main.n_jobs = 2
         cls.main.cross_validate = 2
         cls.main.n_iterations = 2
 
