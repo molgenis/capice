@@ -108,8 +108,11 @@ class TestAnnotator(unittest.TestCase):
             ], axis=1
         )
         outcome = self.annotator.process(self.dataset)
+        # if numpy.array dtype not given,
+        # then the type will be determined as the minimum type required to hold the
+        # objects in the sequence. this minimal type is system dependent.
         pd.testing.assert_frame_equal(
-            expected_outcome.sort_index(axis=1), outcome.sort_index(axis=1)
+            expected_outcome.sort_index(axis=1), outcome.sort_index(axis=1), check_dtype=False
         )
 
     def test_bug_attributeerror_template_sift_polyphen(self):
