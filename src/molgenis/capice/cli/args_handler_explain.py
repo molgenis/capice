@@ -31,8 +31,8 @@ class ArgsHandlerExplain(ArgsHandlerParent):
 
     def create(self):
         self.parser.add_argument(
-            '-m',
-            '--model',
+            '-i',
+            '--input',
             action='append',
             type=str,
             required=True,
@@ -63,7 +63,7 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             VersionValidator().validate_capice_version(__version__)
         except ValueError as cm:
             self.parser.error(str(cm))
-        input_path = self.validate_length_one(args.model, '-m/--model')
+        input_path = self.validate_length_one(args.input, '-i/--input')
         try:
             self.input_validator.validate_input_path(input_path, extension='.pickle.dat')
         except FileNotFoundError as cm:

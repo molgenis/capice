@@ -49,6 +49,16 @@ class TestCapiceExplain(unittest.TestCase):
             ], index=['feature', 'gain']
         ).T.sort_values(by='gain', ascending=False).reset_index(drop=True)
         expected['gain'] = expected['gain'].astype(float)
+        expected['total_gain'] = expected['feature'].map(self.model.get_booster().get_score(
+            importance_type='total_gain'))
+        expected['weight'] = expected['feature'].map(self.model.get_booster().get_score(
+            importance_type='weight'))
+        expected['cover'] = expected['feature'].map(self.model.get_booster().get_score(
+            importance_type='cover'))
+        expected['total_cover'] = expected['feature'].map(self.model.get_booster().get_score(
+            importance_type='total_cover'))
+        print(expected)
+        print(observed)
         pd.testing.assert_frame_equal(observed, expected)
 
 
