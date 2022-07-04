@@ -41,7 +41,7 @@ class TestCapiceExplain(unittest.TestCase):
         explainer = CapiceExplain(model=self.model, output_path=self.output_path)
         explainer.run()
         feature_importances = self.model.get_booster().get_score(importance_type='gain')
-        observed = pd.read_csv(self.full_output_path)
+        observed = pd.read_csv(self.full_output_path, sep='\t')
         expected = pd.DataFrame(
             data=[
                 feature_importances.keys(),

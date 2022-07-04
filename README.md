@@ -86,12 +86,13 @@ CAPICE can be run by using the following command:
 - `-v`: Verbose flag. Add multiple `v` to increase verbosity (more than 2 `v` does not further increase verbosity).
 - `--version`: Print current CAPICE version and exit.
 
-CAPICE currently has 2 available modules:
+CAPICE currently has the following available modules:
 
 - `predict`
 - `train`
+- `explain`
 
-For both module `predict` and `train`, the following arguments are available:
+For all modules `predict`, `train` and `explain`, the following arguments are available:
 
 - -i / --input **(required)**: The path to the
   input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be
@@ -171,6 +172,12 @@ import pickle
 with open(path/to/model_file.pickle.dat, 'rb') as model_file:
     model = pickle.load(model_file)
 ```
+
+### Usage for the explain module
+The explain module takes a model, __which is not specifically tied to a CAPICE version__, and exports the feature importances of said model.
+Each of the importance type is described [here](https://xgboost.readthedocs.io/en/stable/python/python_api.html#xgboost.Booster.get_score).
+
+Do note that the output of the explain module will always a gzipped TSV, just like the output of `predict`.
 
 ## FAQ:
 __Question:__  

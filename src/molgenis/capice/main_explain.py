@@ -82,5 +82,5 @@ class CapiceExplain(Main):
 
     def _export(self, dataset, output):
         output_path = os.path.join(output, CapiceManager().output_filename)
-        dataset.to_csv(output_path, compression='gzip', index=False)
+        dataset.to_csv(output_path, compression='gzip', index=False, sep='\t')
         self.log.info('Successfully exported explain to: %s', output_path)

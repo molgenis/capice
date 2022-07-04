@@ -19,11 +19,11 @@ class ArgsHandlerExplain(ArgsHandlerParent):
 
     @property
     def _extension(self):
-        return '.csv', '.csv.gz'
+        return '.tsv', '.tsv.gz'
 
     @property
     def _required_output_extensions(self):
-        return '.csv', '.csv.gz'
+        return '.tsv', '.tsv.gz'
 
     @property
     def _empty_output_extension(self):
@@ -44,7 +44,7 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             action='append',
             type=str,
             help='path to directory or filename (or both) for export. '
-                 'Has to be in .csv or .csv.gz extension. '
+                 'Has to be in .tsv or .tsv.gz extension. '
                  'Will always be gzipped!'
         )
         self.parser.add_argument(
