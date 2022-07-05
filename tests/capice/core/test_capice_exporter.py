@@ -13,7 +13,7 @@ class TestCapiceExporter(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, cls.output_path = set_up_manager_and_out()
-        cls.exporter = CapiceExporter(file_path=cls.output_path)
+        cls.exporter = CapiceExporter(file_path=cls.output_path, output_given=True)
         cls.prediction_output_dataframe = pd.DataFrame(
             {
                 Column.chr_pos_ref_alt.value: [

@@ -17,8 +17,8 @@ class CapiceTrain(Main):
     use cases.
     """
 
-    def __init__(self, input_path, json_path, test_split, output_path):
-        super().__init__(input_path, output_path)
+    def __init__(self, input_path, json_path, test_split, output_path, output_given):
+        super().__init__(input_path, output_path, output_given)
 
         # Impute JSON.
         self.json_path = json_path
@@ -46,7 +46,7 @@ class CapiceTrain(Main):
         self.model_random_state = 0
         self.processed_features = []
         self.loglevel = self.manager.loglevel
-        self.exporter = CapiceExporter(file_path=self.output)
+        self.exporter = CapiceExporter(file_path=self.output, output_given=self.output_given)
 
     def run(self):
         """
