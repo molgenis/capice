@@ -77,12 +77,15 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
-        processor = InputProcessor(
-            input_path=input_path,
-            output_path=output_path,
-            force=args.force,
-            default_extension=self._empty_output_extension
-        )
+        try:
+            processor = InputProcessor(
+                input_path=input_path,
+                output_path=output_path,
+                force=args.force,
+                default_extension=self._empty_output_extension
+            )
+        except FileExistsError as cm:
+            self.parser.error(str(cm))
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
         output_given = processor.get_output_given()
