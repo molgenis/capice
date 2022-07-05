@@ -65,7 +65,8 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
+                                     args):
         impute = self.validate_length_one(args.impute, '-m/--impute')
         self.validate_input_json(impute)
         test_split = self.validate_length_one(args.split, '-s/--split')
@@ -77,7 +78,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             test_split = test_split[0]
         self.validate_test_split(test_split)
         CapiceManager().output_filename = output_filename
-        CapiceTrain(input_path, impute, test_split, output_path).run()
+        CapiceTrain(input_path, impute, test_split, output_path, output_given).run()
 
     def validate_input_json(self, json_path):
         """

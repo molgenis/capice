@@ -78,14 +78,17 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             default_extension=self._empty_output_extension
         )
         output_filename = self._handle_output_filename(input_processor.get_output_filename())
+        output_given = input_processor.get_output_given()
         output_path = input_processor.get_output_directory()
         try:
             self.input_validator.validate_output_path(output_path)
         except OSError as cm:
             self.parser.error(str(cm))
-        self._handle_module_specific_args(input_path, output_path, output_filename, args)
+        self._handle_module_specific_args(input_path, output_path, output_filename, output_given,
+                                          args)
 
-    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
+                                     args):
         model_path = input_path
         with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
@@ -93,4 +96,4 @@ class ArgsHandlerExplain(ArgsHandlerParent):
         validator.validate_is_xgb_classifier(model)
         validator.validate_has_required_attributes(model)
         CapiceManager().output_filename = output_filename
-        CapiceExplain(model, output_path).run()
+        CapiceExplain(model, output_path, output_given).run()

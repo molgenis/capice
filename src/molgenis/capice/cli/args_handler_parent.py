@@ -85,12 +85,14 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         )
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
+        output_given = processor.get_output_given()
         output_path = processor.get_output_directory()
         try:
             self.input_validator.validate_output_path(output_path)
         except OSError as cm:
             self.parser.error(str(cm))
-        self._handle_module_specific_args(input_path, output_path, output_filename, args)
+        self._handle_module_specific_args(input_path, output_path, output_filename, output_given,
+                                          args)
 
     def validate_length_one(self, arg, arg_name):
         try:
@@ -99,7 +101,8 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             self.parser.error(f'Invalid number of {arg_name} arguments.')
 
     @abstractmethod
-    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
+                                     args):
         """
         Method to be filled in by the module specific parsers. Should perform
         additional validation over args specific to the parser. Should then call

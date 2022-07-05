@@ -27,6 +27,7 @@ class InputProcessor:
         self.call_dir = str(Path('.').absolute())
         self.input_path = input_path
         self.output_path = output_path
+        self.output_given = False
         self.force = force
         self.default_extension = default_extension
         self.output_directory = ''
@@ -49,6 +50,7 @@ class InputProcessor:
                     # Then I know it is a full path + filename
                     self._set_output_path(os.path.dirname(self.output_path),
                                           os.path.basename(self.output_path))
+                    self.output_given = True
                 else:
                     # Then I know it's a full path
                     filename = self.get_filename_from_path(self.input_path)
@@ -88,3 +90,6 @@ class InputProcessor:
 
     def get_output_directory(self):
         return self.output_directory
+
+    def get_output_given(self):
+        return self.output_given

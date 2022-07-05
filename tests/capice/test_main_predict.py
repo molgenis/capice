@@ -35,7 +35,8 @@ class TestMainNonTrain(unittest.TestCase):
     def test_integration_main_nontrain(self):
         print('Main no-train (integration)')
         infile = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-        predict = CapicePredict(input_path=infile, model=self.model, output_path=self.output_dir)
+        predict = CapicePredict(input_path=infile, model=self.model, output_path=self.output_dir,
+                                output_given=True)
         predict.run()
         prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'),
                                         compression='gzip',

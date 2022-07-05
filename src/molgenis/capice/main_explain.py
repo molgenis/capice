@@ -8,8 +8,8 @@ from molgenis.capice.core.capice_manager import CapiceManager
 
 
 class CapiceExplain(Main):
-    def __init__(self, model, output_path):
-        super().__init__(input_path=None, output_path=output_path)
+    def __init__(self, model, output_path, output_given):
+        super().__init__(input_path=None, output_path=output_path, output_given=output_given)
         self.model = model
         self.output = output_path
         self.log = Logger().logger
@@ -83,4 +83,5 @@ class CapiceExplain(Main):
     def _export(self, dataset, output):
         output_path = os.path.join(output, CapiceManager().output_filename)
         dataset.to_csv(output_path, compression='gzip', index=False, sep='\t')
-        self.log.info('Successfully exported explain to: %s', output_path)
+        if not self.output_given:
+            print(f'Successfully exported explain to: {output_path}')
