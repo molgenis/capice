@@ -36,7 +36,7 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to trained model (.dat)'
+            help='path to trained model (.dat) (required)'
         )
         self.parser.add_argument(
             '-o',
@@ -44,8 +44,8 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             action='append',
             type=str,
             help='path to directory or filename (or both) for export. '
-                 'Has to be in .tsv or .tsv.gz extension. '
-                 'Will always be gzipped!'
+                 'If a filename is supplied, the filename has to have the .tsv.gz extension! '
+                 '(optional)'
         )
         self.parser.add_argument(
             '-f',

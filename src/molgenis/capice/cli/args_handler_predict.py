@@ -35,7 +35,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to annotated variants file (.tsv or .tsv.gz)'
+            help='path to annotated variants file (.tsv or .tsv.gz) (required)'
         )
         self.parser.add_argument(
             '-m',
@@ -43,14 +43,16 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to trained model (.dat)'
+            help='path to trained model (.dat) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help='path to variant predictions file (.tsv or .tsv.gz)'
+            help='path to directory or filename (or both) for export. '
+                 'If a filename is supplied, the filename has to have the .tsv.gz extension! '
+                 '(optional)'
         )
         self.parser.add_argument(
             '-f',

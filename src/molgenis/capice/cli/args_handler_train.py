@@ -34,7 +34,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to classified annotated variants file (.tsv or .tsv.gz)'
+            help='path to classified annotated variants file (.tsv or .tsv.gz) (required)'
         )
         self.parser.add_argument(
             '-m',
@@ -42,21 +42,24 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to impute values file (.json)'
+            help='path to impute values file (.json) (required)'
         )
         self.parser.add_argument(
             '-s',
             '--split',
             action='append',
             type=float,
-            help='proportion of the input data to include in the test split (default: %(default)s)'
+            help='proportion of the input data to include in the test split (default: %('
+                 'default)s) (optional)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help='path to model file (.dat)'
+            help='path to directory or filename (or both) for export. '
+                 'If a filename is supplied, the filename has to have the .pickle.dat extension! '
+                 '(optional)'
         )
         self.parser.add_argument(
             '-f',
