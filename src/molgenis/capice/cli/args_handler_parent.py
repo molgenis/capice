@@ -118,7 +118,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         if '.' in output_filename and not output_filename.endswith(
                 self._required_output_extensions):
             self.parser.error(
-                f'Output file extension is incorrect. Expected output extensions: '
+                f'Output file extension is incorrect. Expected output extension: '
                 f'{self._required_output_extensions}'
             )
         else:

@@ -22,11 +22,11 @@ class ArgsHandlerPredict(ArgsHandlerParent):
 
     @property
     def _required_output_extensions(self):
-        return '.tsv', '.tsv.gz'
+        return '.tsv.gz'
 
     @property
     def _empty_output_extension(self):
-        return self._required_output_extensions[1]
+        return self._required_output_extensions
 
     def create(self):
         self.parser.add_argument(
