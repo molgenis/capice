@@ -21,7 +21,8 @@ class TestMainTrain(unittest.TestCase):
                                json_path=impute_json,
                                test_split=0.2,
                                output_path=cls.output_dir,
-                               threads=2)
+                               threads=2,
+                               output_given=True)
         cls.main.esr = 1
         cls.main.cross_validate = 2
         cls.main.n_iterations = 2

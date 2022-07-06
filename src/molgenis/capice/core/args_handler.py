@@ -5,6 +5,7 @@ from molgenis.capice import __version__
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
+from molgenis.capice.cli.args_handler_explain import ArgsHandlerExplain
 
 
 class ArgsHandler:
@@ -49,6 +50,9 @@ class ArgsHandler:
         trainer = ArgsHandlerTrain(subparsers.add_parser('train'))
         trainer.create()
         trainer.handle()
+        explainer = ArgsHandlerExplain(subparsers.add_parser('explain'))
+        explainer.create()
+        explainer.handle()
 
     def _add_arguments(self):
         self.parser.add_argument(

@@ -39,7 +39,7 @@ def teardown():
 
 
 def set_up_predict():
-    return CapicePredict(input_path=None, model=None, output_path=None)
+    return CapicePredict(input_path=None, model=None, output_path=None, output_given=False)
 
 
 def set_up_impute_preprocess():
