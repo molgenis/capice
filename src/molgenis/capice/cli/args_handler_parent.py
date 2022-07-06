@@ -1,9 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
 from molgenis.capice import __version__
-from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.utilities import validate_list_length_one
 from molgenis.capice.utilities.input_processor import InputProcessor
+from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.validators.version_validator import VersionValidator
 
 
@@ -14,6 +14,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     def __init__(self, parser):
         self.parser = parser
+        self.input_validator = InputValidator()
 
     @property
     @abstractmethod
@@ -68,23 +69,33 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             version_validator.validate_capice_version(__version__)
         except ValueError as cm:
             self.parser.error(str(cm))
-        validator = InputValidator(self.parser)
         input_path = self.validate_length_one(args.input, '-i/--input')
-        validator.validate_input_path(input_path, extension=self._extension)
+        try:
+            self.input_validator.validate_input_path(input_path, extension=self._extension)
+        except FileNotFoundError as cm:
+            self.parser.error(str(cm))
         output_path = None
         if args.output is not None:
             output_path = self.validate_length_one(args.output, '-o/--output')
-        processor = InputProcessor(
-            input_path=input_path,
-            output_path=output_path,
-            force=args.force,
-            default_extension=self._empty_output_extension
-        )
+        try:
+            processor = InputProcessor(
+                input_path=input_path,
+                output_path=output_path,
+                force=args.force,
+                default_extension=self._empty_output_extension
+            )
+        except FileExistsError as cm:
+            self.parser.error(str(cm))
         output_filename = processor.get_output_filename()
         output_filename = self._handle_output_filename(output_filename)
+        output_given = processor.get_output_given()
         output_path = processor.get_output_directory()
-        validator.validate_output_path(output_path)
-        self._handle_module_specific_args(input_path, output_path, output_filename, args)
+        try:
+            self.input_validator.validate_output_path(output_path)
+        except OSError as cm:
+            self.parser.error(str(cm))
+        self._handle_module_specific_args(input_path, output_path, output_filename, output_given,
+                                          args)
 
     def validate_length_one(self, arg, arg_name):
         try:
@@ -93,7 +104,8 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             self.parser.error(f'Invalid number of {arg_name} arguments.')
 
     @abstractmethod
-    def _handle_module_specific_args(self, input_path, output_path, output_filename, args):
+    def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
+                                     args):
         """
         Method to be filled in by the module specific parsers. Should perform
         additional validation over args specific to the parser. Should then call
@@ -109,7 +121,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         if '.' in output_filename and not output_filename.endswith(
                 self._required_output_extensions):
             self.parser.error(
-                f'Output file extension is incorrect. Expected output extensions: '
+                f'Output file extension is incorrect. Expected output extension: '
                 f'{self._required_output_extensions}'
             )
         else:

@@ -12,10 +12,11 @@ class CapiceExporter:
     Class specifically exporting files
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, output_given):
         self.log = Logger().logger
         self.capice_filename = CapiceManager().output_filename
         self.file_path = file_path
+        self.output_given = output_given
         self.export_cols = [
             Column.chr.value,
             Column.pos.value,
@@ -40,7 +41,8 @@ class CapiceExporter:
         datafile = self._post_process_split_cols(datafile)
         datafile = self._post_process_set_correct_dtypes(datafile)
         datafile[self.export_cols].to_csv(export_path, sep='\t', compression='gzip', index=False)
-        self.log.info('Successfully exported CAPICE datafile to: %s', export_path)
+        if not self.output_given:
+            print('Successfully exported CAPICE datafile to: %s', export_path)
 
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):
@@ -63,4 +65,5 @@ class CapiceExporter:
         export_path = os.path.join(self.file_path, self.capice_filename)
         with open(export_path, 'wb') as model_dump:
             pickle.dump(model, model_dump)
-        self.log.info('Successfully exported CAPICE model to: %s', export_path)
+        if not self.output_given:
+            print('Successfully exported CAPICE model to: %s', export_path)

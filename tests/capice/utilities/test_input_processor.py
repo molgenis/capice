@@ -110,31 +110,6 @@ class TestInputProcessor(unittest.TestCase):
             self.processor._handle_input_output_directories
         )
 
-    def test_force_false_output_ungzipped_output_exists(self):
-        # This test mimics what happens when an output is given but without gzip extension and
-        # the output file already exists.
-        with open(
-            os.path.join(
-                _project_root_directory,
-                'tests',
-                'resources',
-                self.__GZIPFILE__
-            ), 'wt'
-        ) as some_file:
-            some_file.write('SomeString')
-        self.processor.force = False
-        self.processor.default_extension = '.txt.gz'
-        self.processor.output_path = os.path.join(
-                _project_root_directory,
-                'tests',
-                'resources',
-                'file_capice.txt'
-            )
-        self.assertRaises(
-            FileExistsError,
-            self.processor._handle_input_output_directories
-        )
-
 
 if __name__ == '__main__':
     unittest.main()

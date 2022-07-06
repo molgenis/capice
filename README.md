@@ -86,12 +86,13 @@ CAPICE can be run by using the following command:
 - `-v`: Verbose flag. Add multiple `v` to increase verbosity (more than 2 `v` does not further increase verbosity).
 - `--version`: Print current CAPICE version and exit.
 
-CAPICE currently has 2 available modules:
+CAPICE currently has the following available modules:
 
 - `predict`
 - `train`
+- `explain`
 
-For both module `predict` and `train`, the following arguments are available:
+For all modules `predict`, `train` and `explain`, the following arguments are available:
 
 - -i / --input **(required)**: The path to the
   input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be
@@ -172,6 +173,14 @@ with open(path/to/model_file.pickle.dat, 'rb') as model_file:
     model = pickle.load(model_file)
 ```
 
+### Usage for the explain module
+__Is only supported for CAPICE models that have been created using CAPICE v3.0.0 or greater!__
+
+The explain module takes a model and exports the feature importances of said model. 
+Each of the importance type is described [here](https://xgboost.readthedocs.io/en/stable/python/python_api.html#xgboost.Booster.get_score).
+
+Do note that the output of the explain module will always a gzipped TSV, just like the output of `predict`.
+
 ## FAQ:
 __Question:__  
 Will CAPICE support CADD 1.6 and Genome Build 38?
@@ -224,6 +233,17 @@ I'm trying to run CAPICE, but I'm getting the following error:
 __Answer:__  
 This error is caused on (likely) macOS when the package "OpenMP" is not installed. Please install `libomp` to get XGBoost
 running.
+
+---
+
+__Question:__  
+I'm trying to run the CAPICE explain module, but I'm getting the following error:
+  `_pickle.UnpicklingError: invalid load key, '\x0a'.`
+
+__Answer:__  
+This error is caused because the model you try to explain is created using a (much) older XGBoost version 
+that is currently supported. You will have to manually extract the model features from that model using the correct 
+XGBoost version. For the original publication model XGBoost version 0.90 should work.
 
 ---
 
