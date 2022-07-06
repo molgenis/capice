@@ -14,6 +14,7 @@ class TestLogger(unittest.TestCase):
         print('Setting up.')
         cls.manager = CapiceManager()
         cls.manager.critical_logging_only = False
+        cls.not_present_string = 'Not present string'
 
     @classmethod
     def tearDownClass(cls):
@@ -111,6 +112,38 @@ class TestLogger(unittest.TestCase):
         out = self.capture_stderr_call()
         self.assertIn('CRITICAL', out)
         self.assertNotIn('ERROR', out)
+
+    def test_stderr(self):
+        print('Levels INFO and DEBUG not present in stderr')
+        self.manager.loglevel = 10
+
+        old_stderr = sys.stderr
+        listener = io.StringIO()
+        sys.stderr = listener
+
+        log = Logger().logger
+        log.info(self.not_present_string)
+        log.debug(self.not_present_string)
+
+        out = listener.getvalue()
+        sys.stderr = old_stderr
+        self.assertNotIn(self.not_present_string, out)
+
+    def test_stdout(self):
+        print('Levels WARNING, ERROR and CRITICAL not present in stdout')
+        old_stdout = sys.stdout
+        listener = io.StringIO()
+        sys.stdout = listener
+
+        log = Logger().logger
+        log.warning(self.not_present_string)
+        log.error(self.not_present_string)
+        log.critical(self.not_present_string)
+
+        out = listener.getvalue()
+        sys.stdout = old_stdout
+
+        self.assertNotIn(self.not_present_string, out)
 
     def test_logger_class(self):
         print('Logger class')
