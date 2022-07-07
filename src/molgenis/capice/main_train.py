@@ -31,7 +31,7 @@ class CapiceTrain(Main):
             self.train_test_size)
 
         # Required features when file is loaded
-        self.additional_required = [TrainEnums.binarized_label.value, 'sample_weight']
+        self.additional_required = [TrainEnums.binarized_label.value, TrainEnums.sample_weight.value]
         self.exclude_features += self.additional_required
 
         # Variables that can be edited in testing to speed up the train testing
@@ -200,6 +200,12 @@ class CapiceTrain(Main):
         self.log.info(
             'Training successful, '
             'average CV AUC of best performing model: %.4f',
-            randomised_search_cv.best_score_)
+            randomised_search_cv.best_score_
+        )
+
+        self.log.info(
+            'Using parameters: %s',
+            ', '.join([key + ': ' + str(value) for key, value in randomised_search_cv.best_params_.items()])
+        )
 
         return randomised_search_cv.best_estimator_
