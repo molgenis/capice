@@ -31,9 +31,10 @@ class TestMainTrain(unittest.TestCase):
                                    'resources',
                                    'train_impute_values.json')
         self.main = CapiceTrain(input_path=train_file,
-                               json_path=impute_json,
-                               test_split=0.2,
-                               output_path=self.output_dir)
+                                json_path=impute_json,
+                                test_split=0.2,
+                                output_path=self.output_dir,
+                                output_given=True)
         self.main.esr = 1
         self.main.n_jobs = 2
         self.main.cross_validate = 2
