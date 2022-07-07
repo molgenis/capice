@@ -17,7 +17,7 @@ class CapiceTrain(Main):
     use cases.
     """
 
-    def __init__(self, input_path, json_path, test_split, output_path, output_given):
+    def __init__(self, input_path, json_path, test_split, output_path, output_given, threads):
         super().__init__(input_path, output_path, output_given)
 
         # Impute JSON.
@@ -36,7 +36,7 @@ class CapiceTrain(Main):
 
         # Variables that can be edited in testing to speed up the train testing
         self.esr = 15
-        self.n_jobs = 8
+        self.n_jobs = threads
         self.cross_validate = 5
         self.n_iterations = 20
 
