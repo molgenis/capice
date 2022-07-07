@@ -2,6 +2,8 @@ import os
 import pickle
 import unittest
 
+import pandas as pd
+
 from molgenis.capice.main_train import CapiceTrain
 from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory
 
@@ -13,19 +15,6 @@ class TestMainTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         cls.output_filename = 'train_example_capice.pickle.dat'
         manager.output_filename = cls.output_filename
-        train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
-        impute_json = os.path.join(_project_root_directory,
-                                   'resources',
-                                   'train_impute_values.json')
-        cls.main = CapiceTrain(input_path=train_file,
-                               json_path=impute_json,
-                               test_split=0.2,
-                               output_path=cls.output_dir,
-                               output_given=True)
-        cls.main.esr = 1
-        cls.main.n_jobs = 2
-        cls.main.cross_validate = 2
-        cls.main.n_iterations = 2
 
     @classmethod
     def tearDownClass(cls):
@@ -37,6 +26,19 @@ class TestMainTrain(unittest.TestCase):
 
     def setUp(self):
         print('Performing test:')
+        train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
+        impute_json = os.path.join(_project_root_directory,
+                                   'resources',
+                                   'train_impute_values.json')
+        self.main = CapiceTrain(input_path=train_file,
+                                json_path=impute_json,
+                                test_split=0.2,
+                                output_path=self.output_dir,
+                                output_given=True)
+        self.main.esr = 1
+        self.main.n_jobs = 2
+        self.main.cross_validate = 2
+        self.main.n_iterations = 2
 
     def test_integration_training(self):
         """
@@ -71,6 +73,69 @@ class TestMainTrain(unittest.TestCase):
         self.assertAlmostEqual(train.shape[0], total_size * 0.8, delta=1)
         self.assertAlmostEqual(test.shape[0], total_size * 0.2, delta=1)
         self.assertEqual(train.shape[0] + test.shape[0], total_size)
+
+    def test__set_verbosity_from_log_level_none(self):
+        """
+        Component test for _set_verbosity_from_log_level when there is no log level set.
+        Expects verbosity set to 0 and false.
+        """
+        verbosity, xgb_verbosity = self.main._set_verbosity_from_log_level()
+        self.assertFalse(verbosity)
+        self.assertEqual(0, xgb_verbosity)
+
+    def test__set_verbosity_from_log_level_10(self):
+        """
+        Component test for _set_verbosity_from_log_level with log level 10
+        Expects verbosity to be set to 1 and true.
+        """
+        self.main.loglevel = 10
+        verbosity, xgb_verbosity = self.main._set_verbosity_from_log_level()
+        self.assertTrue(verbosity)
+        self.assertEqual(1, xgb_verbosity)
+
+    def test__set_eval_set_test(self):
+        """
+        Component test for _create_eval_set for test version of xg boost
+        Should return list with tuple with:
+            a dataframe with the processed features,
+            a dataseries of binarized label
+            "test"
+        """
+        processed_features = ['feat1', 'feat2']
+        self.main.processed_features = processed_features
+        test_set = pd.DataFrame(data={
+            'binarized_label': [0, 1, 0],
+            'feat1': [1, 0, 0],
+            'feat2': [1, 0, 1],
+            'feat3': [0, 0, 0],
+            'test': [1, 1, 1]
+        })
+        eval_set = self.main._create_eval_set('0.0.1', test_set)
+        pd.testing.assert_frame_equal(test_set[['feat1', 'feat2']], eval_set[0][0])
+        pd.testing.assert_series_equal(test_set['binarized_label'], eval_set[0][1])
+        self.assertEqual('test', eval_set[0][2])
+
+    def test__set_eval_set(self):
+        """
+        Component test for _create_eval_set for test version of xg boost
+        Should return list with tuple with:
+            a dataframe with the processed features,
+            a dataseries of binarized label
+            (length should be 2, as "test" shouldn't be included)
+        """
+        processed_features = ['feat1', 'feat2']
+        self.main.processed_features = processed_features
+        test_set = pd.DataFrame(data={
+            'binarized_label': [0, 1, 0],
+            'feat1': [1, 0, 0],
+            'feat2': [1, 0, 1],
+            'feat3': [0, 0, 0],
+            'test': [1, 1, 1]
+        })
+        eval_set = self.main._create_eval_set('1.0.1', test_set)
+        pd.testing.assert_frame_equal(test_set[['feat1', 'feat2']], eval_set[0][0])
+        pd.testing.assert_series_equal(test_set['binarized_label'], eval_set[0][1])
+        self.assertEqual(2, len(eval_set[0]))
 
 
 if __name__ == '__main__':
