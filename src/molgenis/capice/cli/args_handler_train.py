@@ -67,6 +67,15 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='store_true',
             help='overwrites output if it already exists'
         )
+        self.parser.add_argument(
+            '-t',
+            '--threads',
+            action='store',
+            default=1,
+            type=int,
+            help='The amount of threads that can be used by XGBoost to parallel train (default: '
+                 '%(default)s)'
+        )
 
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
                                      args):
@@ -80,8 +89,10 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         if isinstance(test_split, list):
             test_split = test_split[0]
         self.validate_test_split(test_split)
+        n_threads = args.threads
+        self.validate_n_threads(n_threads)
         CapiceManager().output_filename = output_filename
-        CapiceTrain(input_path, impute, test_split, output_path, output_given).run()
+        CapiceTrain(input_path, impute, test_split, output_path, output_given, n_threads).run()
 
     def validate_input_json(self, json_path):
         """
@@ -92,6 +103,13 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             self.parser.error('Input JSON does not exist!')
         if not json_path.endswith('.json'):
             self.parser.error('Given input JSON is not a JSON file!')
+
+    def validate_n_threads(self, n_threads):
+        """
+        Function to validate that the amount of threads is at least 1.
+        """
+        if n_threads < 1:
+            self.parser.error('The amount of threads has to be at least 1!')
 
     def validate_test_split(self, test_split):
         """

@@ -34,6 +34,7 @@ class TestMainTrain(unittest.TestCase):
                                 json_path=impute_json,
                                 test_split=0.2,
                                 output_path=self.output_dir,
+                                threads=2,
                                 output_given=True)
         self.main.esr = 1
         self.main.n_jobs = 2
