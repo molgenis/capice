@@ -4,6 +4,7 @@ import unittest
 
 from io import StringIO
 from unittest.mock import patch
+from tests.capice.test_templates import _project_root_directory
 
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 
@@ -24,11 +25,8 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     def test_validate_input_json_json(self, stderr):
-        # When running test in PyCharm, set working dir to root of capice to match pytest and travis
-        if os.getcwd().endswith('cli'):
-            os.chdir('../../..')
         with self.assertRaises(SystemExit):
-            self.aht.validate_input_json('setup.py')
+            self.aht.validate_input_json(os.path.join(_project_root_directory, 'setup.py'))
         self.assertIn('Given input JSON is not a JSON file!', stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
