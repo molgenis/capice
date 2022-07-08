@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from molgenis.capice.core.logger import Logger
 from molgenis.capice.vep.template import Template
 
 
@@ -10,6 +11,7 @@ class Consequence(Template):
             name='Consequence',
             usable=True
         )
+        self.log = Logger().logger
 
     @property
     def drop(self):
@@ -52,13 +54,27 @@ class Consequence(Template):
                 'is_mature_miRNA_variant',
                 'is_NMD_transcript_variant',
                 'is_feature_elongation',
-                'is_feature_truncation']
+                'is_feature_truncation',
+                'is_splice_donor_5th_base_variant',
+                'is_splice_donor_region_variant',
+                'is_splice_polypyrimidine_tract_variant'
+                ]
 
     def _process(self, dataframe: pd.DataFrame):
         splitted_consequence = dataframe[self.name].str.split('&', expand=True)
+        raw_consequences = []
         for consequence in self.columns:
             current_consequence = consequence.split('is_')[1]
             dataframe[consequence] = np.where(
                 np.isin(splitted_consequence, current_consequence).any(axis=1), 1, 0
             )
+            raw_consequences.append(current_consequence)
+        self._validate_consequences(splitted_consequence, raw_consequences)
         return dataframe
+
+    def _validate_consequences(self, consequences: pd.DataFrame, supported_consequences: list):
+        unique_consequences = pd.Series(pd.unique(consequences.values.ravel('K'))).dropna()
+        for consequence in unique_consequences:
+            if consequence not in supported_consequences:
+                self.log.warning('Supplied VEP consequence: %s is not supported in the '
+                                 'Consequence processor!', consequence)
