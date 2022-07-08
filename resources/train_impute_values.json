@@ -56,5 +56,6 @@
   "SpliceAI_pred_DS_AG": 0,
   "SpliceAI_pred_DS_AL": 0,
   "SpliceAI_pred_DS_DG": 0,
-  "SpliceAI_pred_DS_DL": 0
+  "SpliceAI_pred_DS_DL": 0,
+  "gnomAD_HN": 0
 }
