@@ -1,6 +1,4 @@
-import io
 import os
-import sys
 import pickle
 import unittest
 import pandas as pd
@@ -36,9 +34,6 @@ class TestSpecificLogCalls(unittest.TestCase):
 
     def test_nan_calculator(self):
         print('Nan calculator (using piping of stderr to variable)')
-        old_stdout = sys.stdout
-        new_stdout = io.StringIO()
-        sys.stdout = new_stdout
         nan_dataframe = pd.DataFrame(
             {
                 'foo': [1, 2, 3, 4],
@@ -47,21 +42,15 @@ class TestSpecificLogCalls(unittest.TestCase):
             }
         )
         messages_present = [
-            'DEBUG: NaN detected in column bar, percentage: 50.0%.',
-            'DEBUG: NaN detected in column baz, percentage: 25.0%.'
+            'DEBUG:CAPICE:NaN detected in column bar, percentage: 50.0%.',
+            'DEBUG:CAPICE:NaN detected in column baz, percentage: 25.0%.'
         ]
         imputer = CapiceImputing(self.model)
-        imputer._get_nan_ratio_per_column(dataset=nan_dataframe)
-        log_messages = new_stdout.getvalue().splitlines()
-        sys.stdout = old_stdout
-        stripped_log_messages = []
-        # Only the last 2 log messages are of interest.
-        for message in log_messages[-2:]:
-            # Cryptic way to remove timestamp.
-            stripped_log_messages.append(' '.join(message.strip().split(' ')[2:]))
-        self.assertGreater(len(stripped_log_messages), 0)
-        for message in stripped_log_messages:
-            self.assertIn(message.lstrip(), messages_present)
+        with self.assertLogs(level=10) as captured:
+            imputer._get_nan_ratio_per_column(dataset=nan_dataframe)
+        self.assertGreater(len(captured.output), 0)
+        for message in messages_present:
+            self.assertIn(message, captured.output)
 
 
 if __name__ == '__main__':

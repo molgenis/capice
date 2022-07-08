@@ -7,18 +7,13 @@ from molgenis.capice.vep.consequence import Consequence
 
 
 class TestConsequence(unittest.TestCase):
-    def test_consequence(self):
-        dataframe = pd.DataFrame(
+    def setUp(self) -> None:
+        self.data = pd.DataFrame(
             {
                 'Consequence': ['transcript_ablation&stop_lost', 'start_lost', np.nan]
             }
         )
-        copy_dataframe = dataframe.copy(deep=True)
-        observerd = Consequence().process(dataframe)
-        expected = pd.concat(
-            [
-                copy_dataframe,
-                pd.DataFrame(
+        self.expected_data = pd.DataFrame(
                     {
                         'is_regulatory_region_variant': {0: 0, 1: 0, 2: 0},
                         'is_regulatory_region_ablation': {0: 0, 1: 0, 2: 0},
@@ -55,16 +50,53 @@ class TestConsequence(unittest.TestCase):
                         'is_mature_miRNA_variant': {0: 0, 1: 0, 2: 0},
                         'is_NMD_transcript_variant': {0: 0, 1: 0, 2: 0},
                         'is_feature_elongation': {0: 0, 1: 0, 2: 0},
-                        'is_feature_truncation': {0: 0, 1: 0, 2: 0}}
+                        'is_feature_truncation': {0: 0, 1: 0, 2: 0},
+                        'is_splice_donor_5th_base_variant': {0: 0, 1: 0, 2: 0},
+                        'is_splice_donor_region_variant': {0: 0, 1: 0, 2: 0},
+                        'is_splice_polypyrimidine_tract_variant': {0: 0, 1: 0, 2: 0}
+                    }
 
                 )
-            ], axis=1
-        )
+
+    def test_consequence(self):
+        data_copy = self.data.copy(deep=True)
+        observerd = Consequence().process(self.data)
         # if numpy.array dtype not given,
         # then the type will be determined as the minimum type required to hold the
         # objects in the sequence. this minimal type is system dependent.
-        pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(axis=1),
-                                      check_dtype=False)
+        expected = pd.concat(
+            [
+                data_copy,
+                self.expected_data
+            ], axis=1
+        )
+        pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(
+            axis=1), check_dtype=False)
+
+    def test_consequence_warning(self):
+        """
+        Tests that when a consequence is encountered that is not present within the processor
+        raises a warning.
+        """
+        dataframe = pd.DataFrame(
+            {
+                'Consequence': ['transcript_ablation&stop_lost', 'start_lost', 'fake_consequence']
+            }
+        )
+        dataframe_copy = dataframe.copy(deep=True)
+        with self.assertLogs() as captured:
+            observed = Consequence().process(dataframe)
+        expected = pd.concat(
+            [
+                dataframe_copy,
+                self.expected_data
+            ], axis=1
+        )
+
+        pd.testing.assert_frame_equal(observed.sort_index(axis=1), expected.sort_index(
+            axis=1), check_dtype=False)
+        self.assertEqual('Supplied VEP consequence: fake_consequence is not supported in the '
+                         'Consequence processor!', captured.records[0].getMessage())
 
 
 if __name__ == '__main__':
