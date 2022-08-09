@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 This is a helper script to balance out an input dataset.
 Requires columns (%)Consequence and *_AF.
@@ -42,6 +44,7 @@ def main():
     cla_validator.validate_output(output)
     # Load in dataset
     dataset = pd.read_csv(input_path, na_values='.', sep='\t', low_memory=False)
+    n_samples_start = dataset.shape[0]
     dataset = correct_column_names(dataset)
     # Validate dataset
     dataset_validator = InputDatasetValidator()
@@ -51,11 +54,16 @@ def main():
     n_no_af = dataset[dataset['gnomAD_AF'].isnull()].shape[0]
     if n_no_af > 0:
         n_total = dataset.shape[0]
-        print(f'Setting AF 0 for {n_no_af}/{n_total}({round(n_no_af/n_total*100, 2)}%) variants')
+        print(f'Setting Allele Frequency 0 for {n_no_af}/{n_total} '
+              f'({round(n_no_af/n_total*100, 2)}%) variants.')
         dataset['gnomAD_AF'].fillna(0, inplace=True)
     exporter = BalanceExporter()
     balancer = Balancer()
     balanced_dataset = balancer.balance(dataset)
+    n_samples_end = balanced_dataset.shape[0]
+    print(f'Balancing complete. '
+          f'Sampled {n_samples_end}/{n_samples_start} '
+          f'({round(n_samples_end/n_samples_start*100, 2)}%) variants.')
     # Export
     exporter.export_dataset(balanced_dataset, output)
 
