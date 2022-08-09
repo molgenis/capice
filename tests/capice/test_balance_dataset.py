@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from tests.capice.test_templates import _project_root_directory
-from scripts.balance_dataset import correct_column_names, Split, Balancer, \
+from scripts.balance_dataset import correct_column_names, Balancer, \
     CommandLineArgumentsValidator, InputDatasetValidator, __bins__
 
 
@@ -54,29 +54,6 @@ class TestBalancer(unittest.TestCase):
     def tearDown(self) -> None:
         print('Done.')
 
-    def test_split(self):
-        """
-        Function to test the splitter class
-        """
-        print('Splitter')
-        n_b_tot = self.dataset[self.dataset['binarized_label'] == 0].shape[0]
-        p10_b = round(n_b_tot * 0.1)
-        p90_b = round(n_b_tot - p10_b)
-        n_p_tot = self.dataset[self.dataset['binarized_label'] == 1].shape[0]
-        p10_p = round(n_p_tot * 0.1)
-        p90_p = round(n_p_tot - p10_p)
-        splitter = Split()
-        copy_of_dataset = self.dataset.copy(deep=True)
-        validation_dataset, dataset = splitter.split(copy_of_dataset)
-        self.assertAlmostEqual(
-            validation_dataset[validation_dataset['binarized_label'] == 0].shape[0], p10_b)
-        self.assertAlmostEqual(
-            validation_dataset[validation_dataset['binarized_label'] == 1].shape[0], p10_p)
-        self.assertAlmostEqual(dataset[dataset['binarized_label'] == 0].shape[0], p90_b)
-        self.assertAlmostEqual(dataset[dataset['binarized_label'] == 1].shape[0], p90_p)
-        self.assertGreater(dataset.shape[0], 0)
-        self.assertGreater(validation_dataset.shape[0], 0)
-
     def test_balancer(self):
         """
         Function to test the balancer
@@ -123,18 +100,16 @@ class TestBalancer(unittest.TestCase):
         )
         self.assertRaises(
             OSError,
-            validator.validate_output_directory,
+            validator.validate_output,
             os.path.join(self.__current_directory__, 'no', 'directory')
         )
-        new_dir = '.another_test_output'
-        validator.validate_output_directory(
+
+        validator.validate_output(
             os.path.join(
                 self.__current_directory__,
-                new_dir
+                'some_output_file.tsv.gz'
             )
         )
-        self.assertIn(new_dir, os.listdir(self.__current_directory__))
-        os.rmdir(os.path.join(self.__current_directory__, new_dir))
 
     def test_dataset_validator(self):
         """

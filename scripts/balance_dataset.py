@@ -35,12 +35,11 @@ def main():
     # Parse CLA
     cla_parser = ArgumentParser()
     input_path = cla_parser.get_argument('input')[0]
-    output_directory = cla_parser.get_argument('output')[0]
-    split = cla_parser.get_argument('split')
+    output = cla_parser.get_argument('output')[0]
     # Validate CLA
     cla_validator = CommandLineArgumentsValidator()
     cla_validator.validate_input_path(input_path)
-    cla_validator.validate_output_directory(output_directory)
+    cla_validator.validate_output(output)
     # Load in dataset
     dataset = pd.read_csv(input_path, na_values='.', sep='\t', low_memory=False)
     dataset = correct_column_names(dataset)
@@ -53,16 +52,12 @@ def main():
     if n_no_af > 0:
         n_total = dataset.shape[0]
         print(f'Setting AF 0 for {n_no_af}/{n_total}({round(n_no_af/n_total*100, 2)}%) variants')
-    exporter = BalanceExporter(output_path=output_directory)
-    splitter = Split()
-    if split:
-        validation_dataset, dataset = splitter.split(dataset)
-        # Export here so the splitter function is easier to test
-        exporter.export_validation_dataset(validation_dataset)
+        dataset['gnomAD_AF'].fillna(0, inplace=True)
+    exporter = BalanceExporter()
     balancer = Balancer()
     balanced_dataset = balancer.balance(dataset)
     # Export
-    exporter.export_train_test_dataset(balanced_dataset)
+    exporter.export_dataset(balanced_dataset, output)
 
 
 class ArgumentParser:
@@ -100,14 +95,8 @@ class ArgumentParser:
             nargs=1,
             type=str,
             required=True,
-            help='The output directory in which the files should be placed.'
-        )
-        parser.add_argument(
-            '-s',
-            '--split',
-            action='store_true',
-            help='Whenever the input dataset should be split into 20% '
-                 'validation and 80% train/test.'
+            help='The full path + filename of where the output file should be placed. '
+                 'Has to have the .tsv.gz extension!'
         )
 
         return parser
@@ -145,31 +134,25 @@ class CommandLineArgumentsValidator:
         if not input_path.endswith(('.tsv', '.tsv.gz')):
             raise FileNotFoundError('Input file is not TSV or gzipped TSV!')
 
-    def validate_output_directory(self, output_directory):
-        self._validate_output_directory_parent_exists(output_directory)
-        self._validate_output_parent_writable(output_directory)
-        self._ensure_output(output_directory)
+    def validate_output(self, output):
+        self._validate_output_extension(output)
+        self._validate_output_directory_parent_exists(output)
+        self._validate_output_parent_writable(output)
 
     @staticmethod
-    def _validate_output_directory_parent_exists(output_directory):
-        if (
-                not os.path.isdir(output_directory)
-                and not os.path.isdir(Path(output_directory).parent)
-        ):
-            raise OSError('Given output directory parent does not exist!')
+    def _validate_output_extension(output):
+        if not output.endswith('.tsv.gz'):
+            raise OSError('Output file has to have the .tsv.gz extension!')
 
     @staticmethod
-    def _validate_output_parent_writable(output_directory):
-        if (
-                not os.path.isdir(output_directory)
-                and not os.access(Path(output_directory).parent, os.W_OK)
-        ):
-            raise OSError('New directory can not be created in a read/execute only directory!')
+    def _validate_output_directory_parent_exists(output):
+        if not os.path.isdir(os.path.dirname(output)):
+            raise OSError('Can not place file in an output folder that does not exist!')
 
     @staticmethod
-    def _ensure_output(output_directory):
-        if not os.path.isdir(output_directory):
-            os.makedirs(output_directory)
+    def _validate_output_parent_writable(output):
+        if not os.access(os.path.dirname(output), os.W_OK):
+            raise OSError('Output directory is not writable!')
 
 
 class InputDatasetValidator:
@@ -193,42 +176,6 @@ class InputDatasetValidator:
             raise ValueError('Not enough benign samples to balance!')
         if dataset[dataset['binarized_label'] == 1].shape[0] == 0:
             raise ValueError('Not enough pathogenic samples to balance!')
-
-
-class Split:
-    """
-    Class dedicated to splitting the data into a validation dataset and a train/test dataset.
-    """
-
-    @staticmethod
-    def split(dataset: pd.DataFrame):
-        """
-        Splits 10% of the pathogenic and 10% of the benign samples into a validation dataset
-        and immediately exports said validation dataset. Returns the train-test dataset.
-        """
-        validation_dataset = pd.DataFrame(columns=dataset.columns)
-        return_dataset = pd.DataFrame(columns=dataset.columns)
-        # Benign
-        all_benign = dataset[dataset['binarized_label'] == 0]
-        all_benign._is_copy = None
-        v_benign_samples = all_benign.sample(frac=0.1, random_state=__random_state__)
-        # A bit cryptic to remove the random samples from the benign dataset, but it works
-        all_benign = all_benign.append(v_benign_samples)
-        all_benign.drop_duplicates(keep=False, inplace=True)
-        return_dataset = return_dataset.append(all_benign, ignore_index=True)
-        validation_dataset = validation_dataset.append(v_benign_samples, ignore_index=True)
-
-        # Pathogenic
-        all_pathogenic = dataset[dataset['binarized_label'] == 1]
-        all_pathogenic._is_copy = None
-        v_patho_samples = all_pathogenic.sample(frac=0.1, random_state=__random_state__)
-        # Again a cryptic way to remove the randomly samples pathogenic samples
-        all_pathogenic = all_pathogenic.append(v_patho_samples)
-        all_pathogenic.drop_duplicates(keep=False, inplace=True)
-        return_dataset = return_dataset.append(all_pathogenic, ignore_index=True)
-        validation_dataset = validation_dataset.append(v_patho_samples, ignore_index=True)
-
-        return validation_dataset, return_dataset
 
 
 class Balancer:
@@ -310,22 +257,12 @@ class BalanceExporter:
     """
     Class dedicated to exporting of splitting datasets and exporting of the balancing dataset.
     """
-
-    def __init__(self, output_path):
-        self.output_path = output_path
-
-    def export_validation_dataset(self, dataset):
-        self._export_dataset(dataset, 'validation.tsv.gz')
-
-    def export_train_test_dataset(self, dataset):
-        self._export_dataset(dataset, 'train_test_split.tsv.gz')
-
-    def _export_dataset(self, dataset: pd.DataFrame, dataset_name: str):
-        full_export = os.path.join(self.output_path, dataset_name)
+    @staticmethod
+    def export_dataset(dataset: pd.DataFrame, output: str):
         dataset.to_csv(
-            path_or_buf=full_export, sep='\t', na_rep='.', index=False, compression='gzip'
+            path_or_buf=output, sep='\t', na_rep='.', index=False, compression='gzip'
         )
-        print(f'Successfully exported {dataset_name} to {full_export}')
+        print(f'Successfully exported balanced dataset to {output}')
 
 
 if __name__ == '__main__':
