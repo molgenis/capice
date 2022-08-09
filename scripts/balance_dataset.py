@@ -4,8 +4,8 @@ Requires columns (%)Consequence and *_AF.
 (%)Consequence: The consequence a variant has (Del, ins, DELINS etc.).
     Can be supplied raw (starting with %) or processed. The most important part
     is Consequence itself.
-MAX_AF: The desired allele frequency per variant. Can originate from gnomAD or
-1000 genomes or NHLBI-ESP, but has to be named MAX_AF.
+gnomAD_AF: The desired allele frequency per variant. Can originate from gnomAD or
+1000 genomes or NHLBI-ESP, but has to be named gnomAD_AF.
 
 """
 import os
@@ -49,6 +49,10 @@ def main():
     dataset_validator.validate_columns_required(dataset)
     dataset_validator.validate_b_p_present(dataset)
     # Run
+    n_no_af = dataset[dataset['gnomAD_AF'].isnull()].shape[0]
+    if n_no_af > 0:
+        n_total = dataset.shape[0]
+        print(f'Setting AF 0 for {n_no_af}/{n_total}({round(n_no_af/n_total*100, 2)}%) variants')
     exporter = BalanceExporter(output_path=output_directory)
     splitter = Split()
     if split:
@@ -76,9 +80,9 @@ class ArgumentParser:
             prog=os.path.basename(__file__),
             description='Helper script to balance out an possible input '
                         'dataset on allele frequency and Consequence. Requires '
-                        'the columns (%)Consequence, (%)MAX_AF and '
-                        'binarized_label. MAX_AF can originate from anywhere, '
-                        'as long as it is called MAX_AF. Note: when -s/--split '
+                        'the columns (%)Consequence, (%)gnomAD_AF and '
+                        'binarized_label. gnomAD_AF can originate from anywhere, '
+                        'as long as it is called gnomAD_AF. Note: when -s/--split '
                         'is called, it will split before balancing.'
         )
 
@@ -175,7 +179,7 @@ class InputDatasetValidator:
 
     @staticmethod
     def validate_columns_required(dataset: pd.DataFrame):
-        required_columns = ['Consequence', 'MAX_AF', 'binarized_label']
+        required_columns = ['Consequence', 'gnomAD_AF', 'binarized_label']
         for col in required_columns:
             if col not in dataset.columns:
                 raise KeyError(f'Required column {col} not found in input dataset.')
@@ -259,7 +263,7 @@ class Balancer:
                 random_state=__random_state__
             )
         pathogenic_histogram, bins = np.histogram(
-            pathogenic_dataset['MAX_AF'],
+            pathogenic_dataset['gnomAD_AF'],
             bins=self.bins
         )
         processed_bins = pd.DataFrame(columns=self.columns)
@@ -299,7 +303,7 @@ class Balancer:
 
     @staticmethod
     def _get_variants_within_range(dataset, upper_bound, lower_bound):
-        return dataset[(dataset['MAX_AF'] >= lower_bound) & (dataset['MAX_AF'] < upper_bound)]
+        return dataset[(dataset['gnomAD_AF'] >= lower_bound) & (dataset['gnomAD_AF'] < upper_bound)]
 
 
 class BalanceExporter:
