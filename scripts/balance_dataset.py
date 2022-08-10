@@ -200,9 +200,13 @@ class Balancer:
         pathogenic = dataset[dataset['binarized_label'] == 1]
         benign = dataset[dataset['binarized_label'] == 0]
         return_dataset = pd.DataFrame(columns=self.columns)
-        for consequence in dataset['Consequence'].unique():
-            selected_pathogenic = pathogenic[pathogenic['Consequence'] == consequence]
-            selected_benign = benign[benign['Consequence'] == consequence]
+        splitted_consequences = dataset['Consequence'].str.split('&', expand=True)
+        consequences = pd.Series(
+            splitted_consequences.values.ravel()
+        ).dropna().sort_values(ignore_index=True).unique()
+        for consequence in consequences:
+            selected_pathogenic = pathogenic[pathogenic['Consequence'].str.contains(consequence)]
+            selected_benign = benign[benign['Consequence'].str.contains(consequence)]
             processed_consequence = self._process_consequence(
                 pathogenic_dataset=selected_pathogenic, benign_dataset=selected_benign
             )
