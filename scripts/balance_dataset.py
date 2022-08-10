@@ -64,6 +64,8 @@ def main():
     print(f'Balancing complete. '
           f'Sampled {n_samples_end}/{n_samples_start} '
           f'({round(n_samples_end/n_samples_start*100, 2)}%) variants.')
+    # Ordering
+    Orderer().order(balanced_dataset)
     # Export
     exporter.export_dataset(balanced_dataset, output)
 
@@ -263,6 +265,22 @@ class Balancer:
     @staticmethod
     def _get_variants_within_range(dataset, upper_bound, lower_bound):
         return dataset[(dataset['gnomAD_AF'] >= lower_bound) & (dataset['gnomAD_AF'] < upper_bound)]
+
+
+class Orderer:
+    """
+    Class dedicated to ordering the variants on chromosome and position
+    """
+    @staticmethod
+    def order(dataset):
+        dataset['order'] = dataset['CHROM']
+        dataset.loc[dataset['order'] == 'X', 'order'] = 22
+        dataset.loc[dataset['order'] == 'Y', 'order'] = 23
+        dataset.loc[dataset['order'] == 'MT', 'order'] = 24
+        dataset['order'] = dataset['order'].astype(int)
+        dataset.sort_values(by=['order', 'POS'], inplace=True)
+        dataset.reset_index(drop=True, inplace=True)
+        dataset.drop(columns='order', inplace=True)
 
 
 class BalanceExporter:
