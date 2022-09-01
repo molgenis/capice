@@ -13,7 +13,7 @@ class PostVEPProcessingValidator:
         presently processed.
         """
         column_utils = ColumnUtils()
-        column_utils.set_specified_columns(self.model.impute_values.keys())
+        column_utils.set_specified_columns(self.model.model_features)
         features_not_present = column_utils.get_missing_diff_with(datafile.columns)
         if len(features_not_present) > 0:
             error_message = 'Detected required feature(s) %s not ' \

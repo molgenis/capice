@@ -29,7 +29,7 @@ class TestMainTrain(unittest.TestCase):
         train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
         impute_json = os.path.join(_project_root_directory,
                                    'resources',
-                                   'train_impute_values.json')
+                                   'train_features.json')
         self.main = CapiceTrain(input_path=train_file,
                                 json_path=impute_json,
                                 test_split=0.2,

@@ -27,7 +27,6 @@ class CapicePredict(Main):
                                                                     Column.feature.value,
                                                                     Column.feature_type.value])
         capice_data = self.process(loaded_data=capice_data)
-        capice_data = self.impute(loaded_data=capice_data, impute_values=self.model.impute_values)
         capice_data = self.preprocess(loaded_data=capice_data,
                                       model_features=self.model.get_booster().feature_names)
         capice_data = self.predict(loaded_data=capice_data)

@@ -24,11 +24,9 @@ class TestPreprocessing(unittest.TestCase):
         """
         print('Preprocessing (unit) (file)')
         self.main.preprocess(
-            loaded_data=self.main.impute(
-                loaded_data=self.main.process(
+            loaded_data=self.main.process(
                     self.main._load_file()
-                ), impute_values=self.model.impute_values
-            ), model_features=self.model.get_booster().feature_names
+                ), model_features=self.model.get_booster().feature_names
         )
 
     def test_component_preprocessing(self):
@@ -41,10 +39,8 @@ class TestPreprocessing(unittest.TestCase):
         """
         print('Preprocessing (component)')
         processed_file = self.main.preprocess(
-            self.main.impute(
-                self.main.process(
-                    self.main._load_file()
-                ), impute_values=self.model.impute_values
+            self.main.process(
+                self.main._load_file()
             ), model_features=self.model.get_booster().feature_names
         )
         model_features = self.model.get_booster().feature_names
@@ -64,17 +60,15 @@ class TestPreprocessing(unittest.TestCase):
         """
         print('Preprocessing (train) (component)')
         preprocessed_file = self.main.preprocess(
-            self.main.impute(
-                self.main.process(
-                    self.main._load_file()
-                ), impute_values=self.model.impute_values
+            self.main.process(
+                self.main._load_file()
             )
         )
 
         # Test if all columns matching,
         # or starting with features within the imputing
         # file are not classified objects.
-        impute_features = self.model.impute_values.keys()
+        impute_features = self.model.model_features
         processed_columns = preprocessed_file.columns
         present_features = 1
         # Should be one, since the for loop quits before
