@@ -87,7 +87,8 @@ class TestAnnotator(unittest.TestCase):
                 'is_feature_truncation': {0: 0, 1: 0},
                 'is_splice_donor_5th_base_variant': {0: 0, 1: 0},
                 'is_splice_donor_region_variant': {0: 0, 1: 0},
-                'is_splice_polypyrimidine_tract_variant': {0: 0, 1: 0}
+                'is_splice_polypyrimidine_tract_variant': {0: 0, 1: 0},
+                'Type': {0: 'SNV', 1: 'SNV'}
             }
         )
         expected_outcome = pd.concat(
