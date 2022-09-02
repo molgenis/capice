@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import unittest
@@ -137,6 +138,34 @@ class TestMainTrain(unittest.TestCase):
         pd.testing.assert_frame_equal(test_set[['feat1', 'feat2']], eval_set[0][0])
         pd.testing.assert_series_equal(test_set['binarized_label'], eval_set[0][1])
         self.assertEqual(2, len(eval_set[0]))
+
+    def test_processed_features(self):
+        with open(
+                os.path.join(
+                    _project_root_directory, 'tests', 'resources', 'features_test.json'
+                ), 'rt'
+        ) as fh:
+            features = json.load(fh)
+        dataset = pd.DataFrame(
+            {
+                'unused_feature_1': [1, 2, 3],
+                'feature_1': ['foo', 'bar', 'baz'],
+                'unused_feature_2': [3, 4, 5],
+                'feature_foobarbaz': ['bar', 'baz', 'foo'],
+                'feature_3_cat1': [10, 20, 30],
+                'feature_3_cat2': [10, 20, 30],
+                'feature_3_cat3': [10, 20, 30]
+            }
+        )
+        self.main._get_processed_features(dataset, features.keys())
+        self.assertListEqual(
+            ['feature_1',
+             'feature_foobarbaz',
+             'feature_3_cat1',
+             'feature_3_cat2',
+             'feature_3_cat3'],
+            self.main.processed_features
+        )
 
 
 if __name__ == '__main__':
