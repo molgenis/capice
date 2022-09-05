@@ -167,6 +167,32 @@ class TestMainTrain(unittest.TestCase):
             self.main.processed_features
         )
 
+    def test_full_processed_features(self):
+        loaded_dataset = pd.DataFrame(
+            {
+                'ref': ['C', 'GC'],
+                'alt': ['A', 'G'],
+                'PolyPhen': [0.1, 0.01],
+                'Sift': [0.1, 0.01],
+                'Other_feature': ['foo', 'bar']
+            }
+        )
+        processed_data = self.main.process(loaded_dataset)
+        with open(self.main.json_path, 'rt') as fh:
+            features = json.load(fh).keys()
+        self.main._get_processed_features(processed_data, features)
+        self.assertListEqual(
+            [
+                'ref',
+                'alt',
+                'Length',
+                'Type',
+                'PolyPhenVal',
+                'PolyPhenCat'
+            ],
+            self.main.processed_features
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
