@@ -57,5 +57,6 @@
     "SpliceAI_pred_DS_AL": null,
     "SpliceAI_pred_DS_DG": null,
     "SpliceAI_pred_DS_DL": null,
-    "Type": null
+    "Type": null,
+    "Length": null
 }
