@@ -158,13 +158,13 @@ class TestMainTrain(unittest.TestCase):
             }
         )
         self.main._get_processed_features(dataset, features.keys())
-        self.assertListEqual(
-            ['feature_1',
+        self.assertSetEqual(
+            {'feature_1',
              'feature_foobarbaz',
              'feature_3_cat1',
              'feature_3_cat2',
-             'feature_3_cat3'],
-            self.main.processed_features
+             'feature_3_cat3'},
+            set(self.main.processed_features)
         )
 
     def test_full_processed_features(self):
@@ -181,16 +181,9 @@ class TestMainTrain(unittest.TestCase):
         with open(self.main.json_path, 'rt') as fh:
             features = json.load(fh).keys()
         self.main._get_processed_features(processed_data, features)
-        self.assertListEqual(
-            [
-                'ref',
-                'alt',
-                'Length',
-                'Type',
-                'PolyPhenVal',
-                'PolyPhenCat'
-            ],
-            self.main.processed_features
+        self.assertSetEqual(
+            {'ref', 'alt', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
+            set(self.main.processed_features)
         )
 
 

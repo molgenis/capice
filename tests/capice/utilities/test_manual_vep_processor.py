@@ -88,7 +88,8 @@ class TestAnnotator(unittest.TestCase):
                 'is_splice_donor_5th_base_variant': {0: 0, 1: 0},
                 'is_splice_donor_region_variant': {0: 0, 1: 0},
                 'is_splice_polypyrimidine_tract_variant': {0: 0, 1: 0},
-                'Type': {0: 'SNV', 1: 'SNV'}
+                'Type': {0: 'SNV', 1: 'SNV'},
+                'Length': {0: 0, 1: 0}
             }
         )
         expected_outcome = pd.concat(
