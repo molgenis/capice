@@ -54,6 +54,18 @@ class TestMainTrain(unittest.TestCase):
         best_model = str(model.__class__).split("'")[1]
         self.assertEqual('xgboost.sklearn.XGBClassifier', best_model)
 
+    def test_params(self):
+        """
+        Test to see if the >1.6.2 XGBoost parameter settings are applied correctly to the model
+        """
+        print('Test params')
+        self.main.run()
+        output_path = os.path.join(self.output_dir, self.output_filename)
+        with open(output_path, 'rb') as model_dat:
+            model = pickle.load(model_dat)
+        self.assertEqual(model.get_params()['early_stopping_rounds'], 1)
+        self.assertEqual(model.get_params()['eval_metric'], ['auc'])
+
     def test_unit_split(self):
         """
         Unit test to see if split works.
