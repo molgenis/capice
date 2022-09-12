@@ -17,7 +17,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
 
     @property
     def _extension(self):
-        return '.tsv.gz', '.tsv'
+        return '.tsv.gz'
 
     @property
     def _required_output_extensions(self):
@@ -42,7 +42,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to impute values file (.json) (required)'
+            help='path to the json containing the features that can be used in training (required)'
         )
         self.parser.add_argument(
             '-s',

@@ -66,4 +66,4 @@ class CapiceExporter:
         with open(export_path, 'wb') as model_dump:
             pickle.dump(model, model_dump)
         if not self.output_given:
-            print('Successfully exported CAPICE model to: %s', export_path)
+            print('Successfully exported CAPICE model to: ', export_path)

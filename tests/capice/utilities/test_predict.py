@@ -25,10 +25,8 @@ class TestPredict(unittest.TestCase):
         print('Prediction (unit)')
         self.main.predict(
             self.main.preprocess(
-                self.main.impute(
-                    self.main.process(
-                        self.main._load_file()
-                    ), impute_values=self.model.impute_values
+                self.main.process(
+                    self.main._load_file()
                 ), model_features=self.model.get_booster().feature_names
             )
         )
@@ -41,10 +39,8 @@ class TestPredict(unittest.TestCase):
         print('Prediction (component)')
         prediction = self.main.predict(
             self.main.preprocess(
-                self.main.impute(
-                    self.main.process(
-                        self.main._load_file()
-                    ), impute_values=self.model.impute_values
+                self.main.process(
+                    self.main._load_file()
                 ), model_features=self.model.get_booster().feature_names
             )
         )
