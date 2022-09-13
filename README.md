@@ -66,11 +66,15 @@ In order to score your variants through CAPICE, you have to annotate your varian
 command:
 
 ```commandline
-vep --input_file <path to your input file> --format vcf --output_file <path to your output file> --vcf --compress_output gzip --force_overwrite 
---sift s --polyphen s --numbers --symbol --shift_3prime 1 --allele_number --refseq --total_length  
---no_stats --offline --cache --dir_cache </path/to/cache/105> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> --fork 4 
---dont_skip --allow_non_variant --use_given_ref --exclude_predicted --flag_pick_allele
---plugin SpliceAI,snv=<path/to/raw_scores_snv.vcf.gz>,indel=</path/to/raw_scores_indel.vcf.gz> --dir_plugins <path to your VEP plugin directory>
+vep --input_file <path to your input file> --format vcf --output_file <path to your output file> \
+--vcf --compress_output gzip --sift s --polyphen s --numbers --symbol \
+--shift_3prime 1 --allele_number --refseq --total_length --no_stats --offline --cache \
+--dir_cache </path/to/cache/105> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> \
+--fork <n_threads> --dont_skip --allow_non_variant --use_given_ref --exclude_predicted \
+--flag_pick_allele --plugin Grantham \
+--plugin SpliceAI,snv=<path/to/raw_scores_snv.vcf.gz>,indel=</path/to/raw_scores_indel.vcf.gz> \
+--custom "<path/to/gnomad.total.r2.1.1.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF,HN" \
+--dir_plugins <path to your VEP plugin directory>
 ```
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
