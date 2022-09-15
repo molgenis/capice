@@ -13,7 +13,8 @@ CAPICE can be used as online service at http://molgenis.org/capice
 ## Requirements
 * VEP v105
   * Including plugin(s):
-  * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
+  * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
+  * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
 * BCF tools v1.14-1
 * Python >=3.8
 * [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz) with [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi) (for GRCh38: [data](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz) + [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi))
