@@ -16,7 +16,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
   * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
 * BCF tools v1.14-1
 * Python >=3.8
-* [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/) (go back one page for GRCh38 resource)
+* [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz) with [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi) (for GRCh38: [data](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz) + [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi))
 
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
