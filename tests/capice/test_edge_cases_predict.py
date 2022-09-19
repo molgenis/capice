@@ -62,7 +62,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.42409733, 0.53885114, 0.45975062, 0.44440997, 0.56147087, 0.571394]
+            [0.49126872, 0.48867428, 0.4910041, 0.4910041, 0.502575, 0.4910041]
         ).astype(np.float64).rename('score')
         # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
         pd.testing.assert_series_equal(
@@ -76,7 +76,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.42409733, 0.44440997, 0.55765855, 0.41767898, 0.4985433, 0.42409733]
+            [0.49126872, 0.4910041, 0.49990514, 0.4910041, 0.4910041, 0.4910041]
         ).astype(np.float64).rename('score')
         # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
         pd.testing.assert_series_equal(
@@ -90,7 +90,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         expected_output = pd.Series(
-            [0.517514, 0.42409733, 0.45975062, 0.571394, 0.4985433, 0.44440997]
+            [0.49126872, 0.49126872, 0.4910041, 0.4910041, 0.4910041, 0.4910041]
         ).astype(np.float64).rename('score')
         # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
         pd.testing.assert_series_equal(

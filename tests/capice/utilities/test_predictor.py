@@ -24,7 +24,7 @@ class TestPredictor(unittest.TestCase):
     def test_predict(self):
         observed = self.predictor.predict(self.dataset)
         expected = pd.Series(
-            [0.20261085, 0.4030959, 0.5546794, 0.71313614]
+            [0.48867428, 0.4910041, 0.49810505, 0.5075883]
         ).astype(np.float32).rename('score')
         # rtol = atol = 0.0005, because 0.5 * 10 ** -3 = 0.0005 for a tolerance of 3 decimals
         pd.testing.assert_series_equal(
