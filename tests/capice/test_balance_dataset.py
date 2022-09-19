@@ -94,11 +94,11 @@ class TestBalancer(unittest.TestCase):
             lower_bound = __bins__[ind]
             upper_bound = __bins__[ind + 1]
             self.assertEqual(
-                balanced_dataset[(balanced_dataset['MAX_AF'] >= lower_bound) &
-                                 (balanced_dataset['MAX_AF'] < upper_bound) &
+                balanced_dataset[(balanced_dataset['gnomAD_AF'] >= lower_bound) &
+                                 (balanced_dataset['gnomAD_AF'] < upper_bound) &
                                  (balanced_dataset['binarized_label'] == 0)].shape[0],
-                balanced_dataset[(balanced_dataset['MAX_AF'] >= lower_bound) &
-                                 (balanced_dataset['MAX_AF'] < upper_bound) &
+                balanced_dataset[(balanced_dataset['gnomAD_AF'] >= lower_bound) &
+                                 (balanced_dataset['gnomAD_AF'] < upper_bound) &
                                  (balanced_dataset['binarized_label'] == 1)].shape[0]
             )
 
@@ -145,7 +145,7 @@ class TestBalancer(unittest.TestCase):
         dataset = self.dataset.copy(deep=True)
         self.assertRaises(KeyError,
                           validator.validate_columns_required,
-                          dataset.drop(columns=['MAX_AF']))
+                          dataset.drop(columns=['gnomAD_AF']))
         self.assertRaises(ValueError,
                           validator.validate_b_p_present,
                           dataset[dataset['binarized_label'] == 0])

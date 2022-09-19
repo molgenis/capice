@@ -16,6 +16,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
   * [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai)
 * BCF tools v1.14-1
 * Python >=3.8
+* [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz) with [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi) (for GRCh38: [data](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz) + [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi))
 
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
@@ -71,6 +72,7 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 --no_stats --offline --cache --dir_cache </path/to/cache/105> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> --fork 4 
 --dont_skip --allow_non_variant --use_given_ref --exclude_predicted --flag_pick_allele
 --plugin SpliceAI,snv=<path/to/raw_scores_snv.vcf.gz>,indel=</path/to/raw_scores_indel.vcf.gz> --dir_plugins <path to your VEP plugin directory>
+--custom </path/to/stripped/gnomad.vcf.gz>,gnomAD,vcf,exact,0,AF,HN
 ```
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
