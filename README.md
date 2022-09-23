@@ -164,7 +164,7 @@ A file will be put out containing the following element:
 
 - `xgb_classifier`: Custom [Pickled](https://docs.python.org/3/library/pickle.html) instance of
   a [XGBClassifier](https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier) instance that
-  has successfully trained on the input data, containing additional attributes CAPICE_version and impute_values.
+  has successfully trained on the input data, containing additional attributes CAPICE_version and model_features.
 
 _Note: To load in a pickled instance of a model, use the following commands:_
 
