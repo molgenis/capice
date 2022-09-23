@@ -62,6 +62,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         self.assertGreater(observed_output['score'].sum(), 0)
+        self.assertFalse(observed_output['score'].hasnans)
 
     def test_symbolic_alleles(self):
         print('Symbolic alleles')
@@ -70,6 +71,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         self.assertGreater(observed_output['score'].sum(), 0)
+        self.assertFalse(observed_output['score'].hasnans)
 
     def test_breakpoints(self):
         print('Breakpoints')
@@ -78,6 +80,7 @@ class TestEdgeCases(unittest.TestCase):
         self.main.run()
         observed_output = self.get_observed_results()
         self.assertGreater(observed_output['score'].sum(), 0)
+        self.assertFalse(observed_output['score'].hasnans)
 
 
 if __name__ == '__main__':

@@ -22,6 +22,7 @@ class TestPredictor(unittest.TestCase):
     def test_predict(self):
         observed = self.predictor.predict(self.dataset)
         self.assertGreater(observed['score'].sum(), 0)
+        self.assertFalse(observed['score'].hasnans)
 
 
 if __name__ == '__main__':
