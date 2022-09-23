@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 import unittest
@@ -29,7 +30,7 @@ class TestMainTrain(unittest.TestCase):
         train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
         impute_json = os.path.join(_project_root_directory,
                                    'resources',
-                                   'train_impute_values.json')
+                                   'train_features.json')
         self.main = CapiceTrain(input_path=train_file,
                                 json_path=impute_json,
                                 test_split=0.2,
@@ -137,6 +138,53 @@ class TestMainTrain(unittest.TestCase):
         pd.testing.assert_frame_equal(test_set[['feat1', 'feat2']], eval_set[0][0])
         pd.testing.assert_series_equal(test_set['binarized_label'], eval_set[0][1])
         self.assertEqual(2, len(eval_set[0]))
+
+    def test_processed_features(self):
+        with open(
+                os.path.join(
+                    _project_root_directory, 'tests', 'resources', 'features_test.json'
+                ), 'rt'
+        ) as fh:
+            features = json.load(fh)
+        dataset = pd.DataFrame(
+            {
+                'unused_feature_1': [1, 2, 3],
+                'feature_1': ['foo', 'bar', 'baz'],
+                'unused_feature_2': [3, 4, 5],
+                'feature_foobarbaz': ['bar', 'baz', 'foo'],
+                'feature_3_cat1': [10, 20, 30],
+                'feature_3_cat2': [10, 20, 30],
+                'feature_3_cat3': [10, 20, 30]
+            }
+        )
+        self.main._get_processed_features(dataset, features.keys())
+        self.assertSetEqual(
+            {'feature_1',
+             'feature_foobarbaz',
+             'feature_3_cat1',
+             'feature_3_cat2',
+             'feature_3_cat3'},
+            set(self.main.processed_features)
+        )
+
+    def test_full_processed_features(self):
+        loaded_dataset = pd.DataFrame(
+            {
+                'ref': ['C', 'GC'],
+                'alt': ['A', 'G'],
+                'PolyPhen': [0.1, 0.01],
+                'Sift': [0.1, 0.01],
+                'Other_feature': ['foo', 'bar']
+            }
+        )
+        processed_data = self.main.process(loaded_dataset)
+        with open(self.main.json_path, 'rt') as fh:
+            features = json.load(fh).keys()
+        self.main._get_processed_features(processed_data, features)
+        self.assertSetEqual(
+            {'ref', 'alt', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
+            set(self.main.processed_features)
+        )
 
 
 if __name__ == '__main__':
