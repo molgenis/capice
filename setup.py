@@ -29,11 +29,11 @@ setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'numpy==1.22.0',
-        'pandas==1.3.5',
-        'scipy==1.7.3',
-        'scikit-learn==1.0.2',
-        'xgboost==1.4.2'
+        'numpy==1.23.2',
+        'pandas==1.4.4',
+        'scipy==1.9.1',
+        'scikit-learn==1.1.2',
+        'xgboost==1.6.2'
     ],
     extras_require={
         'testing': [

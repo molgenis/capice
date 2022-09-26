@@ -179,6 +179,12 @@ class CapiceTrain(Main):
             random_state=self.model_random_state,
             use_label_encoder=False
         )
+        model_estimator.set_params(
+            **{
+                'eval_metric': ["auc"],
+                'early_stopping_rounds': self.esr
+            }
+        )
         randomised_search_cv = RandomizedSearchCV(estimator=model_estimator,
                                                   param_distributions=param_dist,
                                                   scoring='roc_auc', n_jobs=8,
@@ -191,8 +197,6 @@ class CapiceTrain(Main):
         self.log.info('Random search starting, please hold.')
         randomised_search_cv.fit(train_set[self.processed_features],
                                  train_set[TrainEnums.binarized_label.value],
-                                 early_stopping_rounds=self.esr,
-                                 eval_metric=["auc"],
                                  eval_set=eval_set,
                                  verbose=xgb_verbosity,
                                  sample_weight=train_set[TrainEnums.sample_weight.value])

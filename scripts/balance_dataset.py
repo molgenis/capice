@@ -209,21 +209,22 @@ class Split:
         all_benign._is_copy = None
         v_benign_samples = all_benign.sample(frac=0.1, random_state=__random_state__)
         # A bit cryptic to remove the random samples from the benign dataset, but it works
-        all_benign = all_benign.append(v_benign_samples)
+        all_benign = pd.concat([all_benign, v_benign_samples], axis=0, ignore_index=True)
         all_benign.drop_duplicates(keep=False, inplace=True)
-        return_dataset = return_dataset.append(all_benign, ignore_index=True)
-        validation_dataset = validation_dataset.append(v_benign_samples, ignore_index=True)
+        return_dataset = pd.concat([return_dataset, all_benign], axis=0, ignore_index=True)
+        validation_dataset = pd.concat([validation_dataset, v_benign_samples], axis=0,
+                                       ignore_index=True)
 
         # Pathogenic
         all_pathogenic = dataset[dataset['binarized_label'] == 1]
         all_pathogenic._is_copy = None
         v_patho_samples = all_pathogenic.sample(frac=0.1, random_state=__random_state__)
         # Again a cryptic way to remove the randomly samples pathogenic samples
-        all_pathogenic = all_pathogenic.append(v_patho_samples)
+        all_pathogenic = pd.concat([all_pathogenic, v_patho_samples], axis=0, ignore_index=True)
         all_pathogenic.drop_duplicates(keep=False, inplace=True)
-        return_dataset = return_dataset.append(all_pathogenic, ignore_index=True)
-        validation_dataset = validation_dataset.append(v_patho_samples, ignore_index=True)
-
+        return_dataset = pd.concat([return_dataset, all_pathogenic], axis=0, ignore_index=True)
+        validation_dataset = pd.concat([validation_dataset, v_patho_samples], axis=0,
+                                       ignore_index=True)
         return validation_dataset, return_dataset
 
 
@@ -247,7 +248,12 @@ class Balancer:
             processed_consequence = self._process_consequence(
                 pathogenic_dataset=selected_pathogenic, benign_dataset=selected_benign
             )
-            return_dataset = return_dataset.append(processed_consequence)
+            return_dataset = pd.concat(
+                [
+                    return_dataset,
+                    processed_consequence
+                ], axis=0, ignore_index=True
+            )
         return return_dataset
 
     def _process_consequence(self, pathogenic_dataset, benign_dataset):
@@ -267,10 +273,13 @@ class Balancer:
             lower_bound = bins[ind]
             upper_bound = bins[ind + 1]
             sample_number = pathogenic_histogram[ind]
-            processed_bins = processed_bins.append(
-                self._process_bins(
-                    pathogenic_dataset, benign_dataset, upper_bound, lower_bound, sample_number
-                )
+            processed_bins = pd.concat(
+                [
+                    processed_bins,
+                    self._process_bins(
+                        pathogenic_dataset, benign_dataset, upper_bound, lower_bound, sample_number
+                    )
+                ], axis=0, ignore_index=True
             )
         return processed_bins
 
@@ -295,7 +304,9 @@ class Balancer:
                 selected_benign.shape[0],
                 random_state=__random_state__
             )
-        return return_benign.append(return_pathogenic, ignore_index=True)
+        return pd.concat(
+            [return_benign, return_pathogenic], axis=0,  ignore_index=True
+        )
 
     @staticmethod
     def _get_variants_within_range(dataset, upper_bound, lower_bound):
