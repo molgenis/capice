@@ -19,6 +19,8 @@ CAPICE can be used as online service at http://molgenis.org/capice
 * Python >=3.8
 * [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz) with [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi) (for GRCh38: [data](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz) + [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi))
 
+Note: Certain plugins might not be needed if training/predicting without using all possible features offered by CAPICE.
+
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
 sections will guide you through the steps needed for the variant annotation and the execution of making predictions
@@ -78,6 +80,8 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 --custom "<path/to/gnomad.total.r2.1.1.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF,HN" \
 --dir_plugins <path to your VEP plugin directory>
 ```
+
+Note: Certain arguments might not be needed if training/predicting without using all possible features offered by CAPICE.
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
 `/scripts/convert_vep_vcf_to_tsv_capice.sh -i </path/to/vep_output.vcf.gz> -o </path/to/capice_input.tsv.gz>`
