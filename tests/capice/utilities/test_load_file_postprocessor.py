@@ -10,13 +10,13 @@ class LoadFilePostprocessor(unittest.TestCase):
         print('Setting up.')
         df = pd.DataFrame(
             {
-                '#CHROM': [1],
+                'CHROM': [1],
                 'POS': [123],
                 'REF': ['A'],
                 'ALT': ['G'],
                 'Gene': [123],
                 'SYMBOL_SOURCE': ['hgnc'],
-                '%Feature': ['NM1.123'],
+                'Feature': ['NM1.123'],
                 'SYMBOL': ['ACDC'],
                 'INTRON': [5],
                 'EXON': [11],
