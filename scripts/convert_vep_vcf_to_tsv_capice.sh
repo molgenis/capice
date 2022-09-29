@@ -54,8 +54,11 @@ digestCommandLine() {
 
   if [[ ${TRAIN} == true ]]
   then
-    id="\t%ID"
-    PRE_HEADER="$PRE_HEADER$id"
+    HEADER="CHROM\tPOS\tID\tREF\tALT\t"
+    FORMAT="%CHROM\t%POS\t%ID\t%REF\t%ALT\t%CSQ\n"
+  else
+    HEADER="CHROM\tPOS\tREF\tALT\t"
+    FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%CSQ\n"
   fi
 
   validateCommandLine
@@ -125,7 +128,7 @@ processFile() {
   local args=()
   args+=("+split-vep")
   args+=("-d")
-  args+=("-f" "%CHROM\t%POS\t%REF\t%ALT\t%CSQ\n")
+  args+=("-f" "${FORMAT}")
   args+=("-A" "tab")
   args+=("-o" "${output_tmp}")
   args+=("${input}")
@@ -136,7 +139,7 @@ processFile() {
 
   echo "BCFTools finished, building output file."
 
-  echo -e "CHROM\tPOS\tREF\tALT\t$(bcftools +split-vep -l ${input} | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  echo -e "${HEADER}$(bcftools +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 
