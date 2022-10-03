@@ -11,13 +11,28 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-* VEP v105
+* VEP v107  
   * Including plugin(s):
-  * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
-  * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
+    * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
+    * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
+  * Including data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
+    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz`
+    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi`
+    * `hg19.100way.phyloP100way.bw`
+    * `spliceai_scores.masked.indel.hg19.vcf.gz`
+    * `spliceai_scores.masked.indel.hg19.vcf.gz.tbi`
+    * `spliceai_scores.masked.snv.hg19.vcf.gz`
+    * `spliceai_scores.masked.snv.hg19.vcf.gz.tbi` 
+  * Including data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
+    * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
+    * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
+    * `hg38.phyloP100way.bw`
+    * `spliceai_scores.masked.indel.hg38.vcf.gz`
+    * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
+    * `spliceai_scores.masked.snv.hg38.vcf.gz`
+    * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
 * BCF tools v1.14-1
 * Python >=3.8
-* [Stripped gnomAD allele frequency counts](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz) with [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi) (for GRCh38: [data](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz) + [indexing file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi))
 
 Note: Certain plugins might not be needed if training/predicting without using all possible features offered by CAPICE.
 
@@ -73,13 +88,15 @@ command:
 vep --input_file <path to your input file> --format vcf --output_file <path to your output file> \
 --vcf --compress_output gzip --sift s --polyphen s --numbers --symbol \
 --shift_3prime 1 --allele_number --refseq --total_length --no_stats --offline --cache \
---dir_cache </path/to/cache/105> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> \
+--dir_cache </path/to/cache/107> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> \
 --fork <n_threads> --dont_skip --allow_non_variant --use_given_ref --exclude_predicted \
 --flag_pick_allele --plugin Grantham \
---plugin SpliceAI,snv=<path/to/raw_scores_snv.vcf.gz>,indel=</path/to/raw_scores_indel.vcf.gz> \
---custom "<path/to/gnomad.total.r2.1.1.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF,HN" \
+--plugin SpliceAI,snv=<path/to/spliceai_scores.masked.snv.vcf.gz>,indel=</path/to/spliceai_scores.masked.indel.vcf.gz> \
+--custom "<path/to/gnomad.total.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF,HN" \
+--custom "<path/to/phyloP100way.bw>,phyloP,bigwig,exact,0" \
 --dir_plugins <path to your VEP plugin directory>
 ```
+**IMPORTANT: Ensure the right files are used based on GRCH37 or GRCH38!!!**
 
 Note: Certain arguments might not be needed if training/predicting without using all possible features offered by CAPICE.
 
