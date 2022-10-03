@@ -36,7 +36,7 @@ setup(
         'xgboost==1.6.2'
     ],
     extras_require={
-        'testing': [
+        'test': [
             'pytest',
             'coverage'
         ]
