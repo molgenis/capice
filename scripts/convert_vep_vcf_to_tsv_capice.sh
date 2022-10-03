@@ -3,9 +3,6 @@
 # Stops script if any error occurs.
 set -e
 
-# Possibly variable variables
-PRE_HEADER="%CHROM\t%POS\t%REF\t%ALT\t%Consequence\t%SYMBOL\t%SYMBOL_SOURCE\t%Gene\t%Feature\t%Feature_type\t%cDNA_position\t%CDS_position\t%Protein_position\t%Amino_acids\t%STRAND\t%SIFT\t%PolyPhen\t%EXON\t%INTRON\t%Grantham\t%SpliceAI_pred_DP_AG\t%SpliceAI_pred_DP_AL\t%SpliceAI_pred_DP_DG\t%SpliceAI_pred_DP_DL\t%SpliceAI_pred_DS_AG\t%SpliceAI_pred_DS_AL\t%SpliceAI_pred_DS_DG\t%SpliceAI_pred_DS_DL\t%gnomAD_AF"
-
 # Defines error echo.
 errcho() { echo "$@" 1>&2; }
 
@@ -57,8 +54,11 @@ digestCommandLine() {
 
   if [[ ${TRAIN} == true ]]
   then
-    id="\t%ID"
-    PRE_HEADER="$PRE_HEADER$id"
+    HEADER="CHROM\tPOS\tID\tREF\tALT\t"
+    FORMAT="%CHROM\t%POS\t%ID\t%REF\t%ALT\t%CSQ\n"
+  else
+    HEADER="CHROM\tPOS\tREF\tALT\t"
+    FORMAT="%CHROM\t%POS\t%REF\t%ALT\t%CSQ\n"
   fi
 
   validateCommandLine
@@ -125,12 +125,11 @@ processFile() {
   local output="${output%.gz}" # Strips '.gz' to better work with code below.
   local output_tmp="${output}.tmp"
 
-  local format="${PRE_HEADER}\n"
-
   local args=()
   args+=("+split-vep")
   args+=("-d")
-  args+=("-f" "${format}")
+  args+=("-f" "${FORMAT}")
+  args+=("-A" "tab")
   args+=("-o" "${output_tmp}")
   args+=("${input}")
 
@@ -140,7 +139,7 @@ processFile() {
 
   echo "BCFTools finished, building output file."
 
-  echo -e "${PRE_HEADER}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  echo -e "${HEADER}$(bcftools +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 

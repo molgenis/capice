@@ -101,7 +101,7 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 Note: Certain arguments might not be needed if training/predicting without using all possible features offered by CAPICE.
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
-`/scripts/convert_vep_vcf_to_tsv_capice.sh -i </path/to/vep_output.vcf.gz> -o </path/to/capice_input.tsv.gz>`
+`./scripts/convert_vep_vcf_to_tsv_capice.sh -i </path/to/vep_output.vcf.gz> -o </path/to/capice_input.tsv.gz>`
 
 ### CAPICE
 CAPICE can be run by using the following command:
