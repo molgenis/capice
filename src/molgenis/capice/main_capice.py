@@ -5,7 +5,6 @@ from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
 from molgenis.capice.utilities.preprocessor import PreProcessor
-from molgenis.capice.utilities.capice_imputing import CapiceImputing
 from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 from molgenis.capice.utilities.load_file_postprocessor import LoadFilePostProcessor
 from molgenis.capice.validators.post_file_parse_validator import PostFileParseValidator
@@ -73,16 +72,6 @@ class Main(ABC):
         processor = ManualVEPProcessor()
         processed_data = processor.process(dataset=loaded_data)
         return processed_data
-
-    @staticmethod
-    def impute(loaded_data, impute_values):
-        """
-        Function to perform imputing over the loaded data.
-        self.model can be None, but impute_json has to be defined in that case.
-        """
-        capice_imputer = CapiceImputing(impute_values=impute_values)
-        capice_data = capice_imputer.impute(loaded_data)
-        return capice_data
 
     def preprocess(self, loaded_data, model_features=None):
         """

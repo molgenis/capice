@@ -59,13 +59,12 @@ class CapiceTrain(Main):
             json_dict = json.load(impute_values_file)
         self._validate_impute_complete(data, json_dict)
 
-        imputed_data = self.impute(loaded_data=data, impute_values=json_dict)
-        processed_data = self.preprocess(loaded_data=imputed_data)
+        processed_data = self.preprocess(loaded_data=data)
         self._get_processed_features(dataset=processed_data, impute_keys=json_dict.keys())
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "impute_values", json_dict)
+        setattr(model, "model_features", list(json_dict.keys()))
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
@@ -180,6 +179,12 @@ class CapiceTrain(Main):
             random_state=self.model_random_state,
             use_label_encoder=False
         )
+        model_estimator.set_params(
+            **{
+                'eval_metric': ["auc"],
+                'early_stopping_rounds': self.esr
+            }
+        )
         randomised_search_cv = RandomizedSearchCV(estimator=model_estimator,
                                                   param_distributions=param_dist,
                                                   scoring='roc_auc', n_jobs=8,
@@ -192,8 +197,6 @@ class CapiceTrain(Main):
         self.log.info('Random search starting, please hold.')
         randomised_search_cv.fit(train_set[self.processed_features],
                                  train_set[TrainEnums.binarized_label.value],
-                                 early_stopping_rounds=self.esr,
-                                 eval_metric=["auc"],
                                  eval_set=eval_set,
                                  verbose=xgb_verbosity,
                                  sample_weight=train_set[TrainEnums.sample_weight.value])

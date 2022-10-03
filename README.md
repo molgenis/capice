@@ -128,15 +128,15 @@ _For instance:_
 The following argument is specific to `predict`:
 
 - -m / --model **(required)**: The path to a custom pickled CAPICE model that includes
-  attributes `CAPICE_version` (`str`) and `impute_values` (`dict`). Models can be found as attachments on the [GitHub releases](https://github.com/molgenis/capice/releases) page.
+  attributes `CAPICE_version` (`str`) and `model_features` (`list`). Models can be found as attachments on the [GitHub releases](https://github.com/molgenis/capice/releases) page.
 
 The following arguments are specific to `train`:
 
-- -m / --impute **(required)**: The path to a JSON containing the impute values with the column name as key and the
-  impute value as value.
+- -m / --impute **(required)**: The path to a JSON containing the features desired for training. Each key is a training feature, each value is ignored and can be left `NULL`.
   **Please note that CAPICE is value type specific!**
 - -s / --split _(optional)_: Percentage of input data that should be used to measure performance during training.
   Argument should be given in float from 0.1 (10%) to 0.9 (90%), default = 0.2.
+- -t / --threads _(optional)_: The amount of processing cores the training protocol can use. Default = 1.
 
 You can also use `capice {module} --help` to show help on the command line.
 
@@ -172,7 +172,7 @@ A file will be put out containing the following element:
 
 - `xgb_classifier`: Custom [Pickled](https://docs.python.org/3/library/pickle.html) instance of
   a [XGBClassifier](https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier) instance that
-  has successfully trained on the input data, containing additional attributes CAPICE_version and impute_values.
+  has successfully trained on the input data, containing additional attributes CAPICE_version and model_features.
 
 _Note: To load in a pickled instance of a model, use the following commands:_
 

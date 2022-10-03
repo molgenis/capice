@@ -8,7 +8,7 @@ class Type(Template):
     def __init__(self):
         super(Type, self).__init__(
             name=Column.ref.value,
-            usable=False
+            usable=True
         )
 
     @property
