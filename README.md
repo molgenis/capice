@@ -11,11 +11,17 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-* VEP v107  
+The list below is a complete list. Depending on whether GRCh37 and/or GRCh38 is used and whether all
+mentioned features are used, some items in the list below can be skipped.
+
+* VEP v107
+  * Including VEP cache (which needs to be unarchived!):
+    * [homo_sapiens_refseq_vep_107_GRCh37](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh37.tar.gz)
+    * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh38.tar.gz)
   * Including plugin(s):
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
-  * Including data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
+  * Including additional data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
     * `gnomad.total.r2.1.1.sites.stripped.vcf.gz`
     * `gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi`
     * `hg19.100way.phyloP100way.bw`
@@ -23,7 +29,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
     * `spliceai_scores.masked.indel.hg19.vcf.gz.tbi`
     * `spliceai_scores.masked.snv.hg19.vcf.gz`
     * `spliceai_scores.masked.snv.hg19.vcf.gz.tbi` 
-  * Including data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
+  * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
     * `hg38.phyloP100way.bw`
@@ -33,8 +39,6 @@ CAPICE can be used as online service at http://molgenis.org/capice
     * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
 * BCF tools v1.14-1
 * Python >=3.8
-
-Note: Certain plugins might not be needed if training/predicting without using all possible features offered by CAPICE.
 
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
