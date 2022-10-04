@@ -69,7 +69,7 @@ _Developers_
 ```commandline
 git clone https://github.com/molgenis/capice.git
 cd capice
-pip install --editable '.[testing]'
+pip install --editable '.[test]'
 ```
 
 ### Windows
