@@ -28,15 +28,15 @@ class TestFilePostProcessor(unittest.TestCase):
         print('Load file preprocessor.')
         data = pd.DataFrame(
             {
-                "%CHROM": [1, 2, 3],
-                "%POS": [100, 200, 300],
-                "%REF": ['A', 'T', 'G'],
-                "%ALT": ['T', 'G', 'A'],
-                "%SYMBOL_SOURCE": ['foo', 'foo', 'bar'],
-                "%Feature": ['bar', 'bar', 'buz'],
-                "%SYMBOL": ['g1', 'g2', 'g3'],
-                "%INTRON": [1, 0, 0],
-                "%EXON": [0, 1, 1]
+                "CHROM": [1, 2, 3],
+                "POS": [100, 200, 300],
+                "REF": ['A', 'T', 'G'],
+                "ALT": ['T', 'G', 'A'],
+                "SYMBOL_SOURCE": ['foo', 'foo', 'bar'],
+                "Feature": ['bar', 'bar', 'buz'],
+                "SYMBOL": ['g1', 'g2', 'g3'],
+                "INTRON": [1, 0, 0],
+                "EXON": [0, 1, 1]
             }
         )
 

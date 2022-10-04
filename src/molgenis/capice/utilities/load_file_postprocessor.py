@@ -20,23 +20,10 @@ class LoadFilePostProcessor:
         dataset :   pandas.DataFrame
                     Processed dataset with corrected % sign and renamed columns.
         """
-        self.log.debug('Starting correcting % sign.')
-        self._correct_percentage_sign()
-        self.log.debug('% sign corrected, starting renaming of columns.')
+        self.log.info('LoadFilePostProcessor starting.')
         self._col_renamer()
         self.log.info('LoadFilePostProcessor successful.')
         return self.dataset
-
-    def _correct_percentage_sign(self):
-        new_columns = []
-        for column in self.dataset.columns:
-            if column.startswith('%'):
-                new_columns.append(column.split('%')[1])
-            elif column.startswith('#'):
-                new_columns.append(column.split('#')[1])
-            else:
-                new_columns.append(column)
-        self.dataset.columns = new_columns
 
     def _col_renamer(self):
         """
