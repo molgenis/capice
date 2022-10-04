@@ -11,7 +11,7 @@ branches:
 before_install:
 - pip install -U pip
 install:
-- pip install -e '.[testing]'
+- pip install -e '.[test]'
 script:
 - coverage run -m pytest --junitxml=results.xml
 - coverage xml
