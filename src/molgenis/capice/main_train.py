@@ -110,7 +110,7 @@ class CapiceTrain(Main):
                         column not in self.processed_features:
                     self.processed_features.append(column)
         self.log.info(
-            'The following features have been selected for training: ', ', '.join(
+            'The following features have been selected for training: %s', ', '.join(
                 self.processed_features
             )
         )
