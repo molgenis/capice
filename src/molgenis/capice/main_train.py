@@ -109,6 +109,11 @@ class CapiceTrain(Main):
                 if (column == feature or column.startswith(feature)) and \
                         column not in self.processed_features:
                     self.processed_features.append(column)
+        self.log.info(
+            'The following features have been selected for training: ', ', '.join(
+                self.processed_features
+            )
+        )
 
     def _set_verbosity_from_log_level(self):
         """
