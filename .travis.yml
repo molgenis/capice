@@ -6,7 +6,7 @@ python:
 cache: pip
 branches:
   only:
-  - master
+  - main
   - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 before_install:
 - pip install -U pip
