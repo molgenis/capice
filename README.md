@@ -314,6 +314,22 @@ There are certain restrictions regarding what model versions can be used with CA
 For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
 
+## Data sources
+### GnomAD
+The gnomAD files can be generated through the following scripts (which also download the gnomAD files):
+- GRCH37: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh37.sh
+- GRCH38: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh38.sh
+
+### PhyloP
+PhyloP resources can be downloaded from:
+- GRCh37: http://hgdownload.cse.ucsc.edu/goldenpath/hg19/phyloP100way/
+- GRCh38: http://hgdownload.cse.ucsc.edu/goldenpath/hg38/phyloP100way/
+
+### SpliceAI
+Files for the SpliceAI VEP plugin can be found [here](https://basespace.illumina.com/s/otSPW8hnhaZR) after creating an account (for free). 
+In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
+The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin description.
+The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version).
 
 ## Overview of code
 If you're lost in the code, a map can be
