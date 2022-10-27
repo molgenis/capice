@@ -80,11 +80,8 @@ __Installation on Windows systems is as of current not possible. Please refer to
 the [Windows subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10). 
 You may also use the Singularity image of CAPICE found [here](https://download.molgeniscloud.org/downloads/vip/images/).__
 
-### SpliceAI
-CAPICE requires additional VEP plugin [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai). Files for the SpliceAI VEP plugin can be found [here](https://basespace.illumina.com/s/otSPW8hnhaZR) after creating an account (for free). 
-In order to obtain the SNV and Indel files you must apply for the `Predicting splicing from primary sequence` project (should be free).
-The link to apply can be found within the VEP [SpliceAI](https://m.ensembl.org/info/docs/tools/vep/script/vep_plugins.html#spliceai) plugin description.
-The files can then be found within the `Predicting splicing from primary sequence` project -> ANALYSES -> genome_scores_v`X` -> FILES -> genome_scores_v`X` (where `X` is the latest version).
+### Singularity
+Singularity images of CAPICE are made available as part of the VIP pipeline. These can be found [here](https://download.molgeniscloud.org/downloads/vip/images/).
 
 ## Usage
 ### VEP
@@ -317,6 +314,27 @@ There are certain restrictions regarding what model versions can be used with CA
 For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
 
+## Data sources
+### GnomAD
+The gnomAD files can be generated through the following scripts (which also download the gnomAD files):
+- GRCH37: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh37.sh
+- GRCH38: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh38.sh
+
+### PhyloP
+PhyloP resources can be downloaded from:
+- GRCh37: http://hgdownload.cse.ucsc.edu/goldenpath/hg19/phyloP100way/
+- GRCh38: http://hgdownload.cse.ucsc.edu/goldenpath/hg38/phyloP100way/
+
+### SpliceAI
+Files for the SpliceAI VEP plugin can be found in the Illumina project "[Predicting splicing from primary sequence](https://basespace.illumina.com/s/5u6ThOblecrh)" (as mentioned [here](https://pypi.org/project/spliceai/)),
+which can be accessed after creating an account on Illumina. Once added, the relevant files can be accessed as follows:
+1. Go to the projects tab
+2. Select `Predicting splicing from primary sequence`
+3. Select the `analyses` subtab (might be selected by default)
+4. Click on `genome_scores_v<version_number>` (select most recent version)
+5. Select `files` subtab
+6. Click on the `genome_scores_v<version_number>` folder
+7. Select the files to download (see [Requirements](#requirements))
 
 ## Overview of code
 If you're lost in the code, a map can be
