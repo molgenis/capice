@@ -60,5 +60,9 @@
     "Type": null,
     "Length": null,
     "Grantham": null,
-    "phyloP": null
+    "phyloP": null,
+    "Intron_number": null,
+    "Intron_total": null,
+    "Exon_number": null,
+    "Exon_total": null
 }
