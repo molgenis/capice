@@ -91,8 +91,10 @@ class TestAnnotator(unittest.TestCase):
                 'Type': {0: 'SNV', 1: 'SNV'},
                 'Length': {0: 0, 1: 0},
                 'Exon_number': {0: 5, 1: np.nan},
+                'Exon_number_affected': {0: 1, 1: np.nan},
                 'Exon_total': {0: 5, 1: np.nan},
                 'Intron_number': {0: np.nan, 1: np.nan},
+                'Intron_number_affected': {0: np.nan, 1: np.nan},
                 'Intron_total': {0: np.nan, 1: np.nan},
             }
         )

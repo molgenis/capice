@@ -62,7 +62,9 @@
     "Grantham": null,
     "phyloP": null,
     "Intron_number": null,
+    "Intron_number_affected":  null,
     "Intron_total": null,
     "Exon_number": null,
+    "Exon_number_affected":  null,
     "Exon_total": null
 }

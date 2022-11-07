@@ -10,4 +10,4 @@ class Intron(TemplateExonIntron):
 
     @property
     def columns(self):
-        return ['Intron_number', 'Intron_total']
+        return ['Intron_number', 'Intron_number_affected', 'Intron_total']
