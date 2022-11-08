@@ -57,7 +57,7 @@ class TemplateExonIntron(Template):
             if (dataframe[self.get_number_affected_column] < 1).any():
                 raise ValueError(
                     f'Encountered reverse starting and ending location for feature '
-                    f'{self.name}_number. Please check the input data.'
+                    f'{self.name} Number. Please check the input data.'
                 )
             # Fill where intron/exon number is not NaN with 1 if SNV
             dataframe.loc[

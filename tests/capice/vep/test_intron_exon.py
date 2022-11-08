@@ -85,7 +85,7 @@ class TestIntronExon(unittest.TestCase):
             self.exon.process(incorrect_set)
         self.assertEqual(
             str(cm.exception),
-            'Encountered reverse starting and ending location for feature Exon_number. '
+            'Encountered reverse starting and ending location for feature Exon Number. '
             'Please check the input data.'
         )
 
