@@ -74,6 +74,21 @@ class TestIntronExon(unittest.TestCase):
         observed = self.exon.process(test_set)
         pd.testing.assert_frame_equal(observed.sort_index(axis=1), expected.sort_index(axis=1))
 
+    def test_raise_valueerror(self):
+        incorrect_set = pd.DataFrame(
+            {
+                'Exon': ['3-1/6', np.nan],
+                'Intron': [np.nan, '6-4/14']
+            }
+        )
+        with self.assertRaises(ValueError) as cm:
+            self.exon.process(incorrect_set)
+        self.assertEqual(
+            str(cm.exception),
+            'Encountered reverse starting and ending location for feature Exon_number. '
+            'Please check the input data.'
+        )
+
     def test_full_nan(self):
         test_set = pd.DataFrame(
             {

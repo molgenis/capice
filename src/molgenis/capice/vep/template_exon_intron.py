@@ -14,8 +14,16 @@ class TemplateExonIntron(Template):
 
     @property
     @abstractmethod
-    def columns(self):
-        return [None, None]
+    def columns(self) -> list[str]:
+        """
+        Function that defines the output columns as following:
+            ..._number, ..._number_affected and ..._total, where ... is either Intron or Exon
+            depending on the child.
+
+        Returns:
+            list[str]: list of 3 elements: ..._number, ..._number_affected, ..._total
+        """
+        pass
 
     @property
     def get_number_column(self):
@@ -44,9 +52,13 @@ class TemplateExonIntron(Template):
             for col in ['temp_column', self.get_number_column]:
                 dataframe[col] = dataframe[col].astype('Int64')
             # Performing math (+1 because all affected columns have to be included)
-            dataframe[self.get_number_affected_column] = abs(
-                dataframe[self.get_number_column] - dataframe['temp_column']
-            ) + 1
+            dataframe[self.get_number_affected_column] = \
+                dataframe['temp_column'] - dataframe[self.get_number_column] + 1
+            if (dataframe[self.get_number_affected_column] < 1).any():
+                raise ValueError(
+                    f'Encountered reverse starting and ending location for feature '
+                    f'{self.name}_number. Please check the input data.'
+                )
             # Fill where intron/exon number is not NaN with 1 if SNV
             dataframe.loc[
                 (
