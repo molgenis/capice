@@ -314,6 +314,22 @@ There are certain restrictions regarding what model versions can be used with CA
 For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
 
+---
+
+__Question:__  
+Can I use my old CAPICE model with a new major release?
+
+__Answer:__  
+That depends. As breaking changes have been implemented, a model might not behave as expected anymore.
+In case the major release is caused only by an XGBoost-update, it might be possible to salvage an old model.
+Do validate the converted model to asure it still functions/performs as expected!
+1. Checkout CAPICE version with which model was created.
+2. Run `pip install .`
+3. Run `./scripts/extract_model.py <model.pickle.dat> <model.json>`
+4. Checkout CAPICE version with which model needs to be used.
+5. Run `pip install .`
+6. Run `./scripts/pickle_json_model.py <model.json> <new_model.pickle.dat>`
+
 ## Data sources
 ### GnomAD
 The gnomAD files can be generated through the following scripts (which also download the gnomAD files):
