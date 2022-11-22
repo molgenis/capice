@@ -19,7 +19,7 @@ stages:
     if: tag IS present
 jobs:
   include:
-    - if: skip
+    - if: true
       python: '3.10'
       script:
         - coverage run -m pytest --junitxml=results.xml
