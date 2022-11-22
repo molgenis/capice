@@ -37,7 +37,7 @@ class TestInputValidator(unittest.TestCase):
         print('Input file extension error')
         fake_input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
         self.assertRaises(
-            FileNotFoundError,
+            IOError,
             self.input_validator.validate_input_path,
             fake_input_file,
             '.pickle.dat'
@@ -55,6 +55,27 @@ class TestInputValidator(unittest.TestCase):
         print('Input file predict correct')
         input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
         self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.gz'))
+
+    def test_input_predict_incorrect_extension_validation_str(self):
+        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
+        with self.assertRaises(IOError) as e:
+            self.input_validator.validate_input_path(input_file, extension='.tsv')
+        self.assertEqual('Given input file does not match required extension: .tsv',
+                         str(e.exception))
+
+    def test_input_predict_incorrect_extension_validation_tuple(self):
+        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
+        with self.assertRaises(IOError) as e:
+            self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.zip'))
+        self.assertEqual('Given input file does not match required extension: .tsv, .tsv.zip',
+                         str(e.exception))
+
+    def test_input_predict_non_existing(self):
+        input_file = os.path.join(_project_root_directory, 'resources',
+                                  'predict_input_nonexisting.tsv.gz')
+        with self.assertRaises(FileNotFoundError) as e:
+            self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.zip'))
+        self.assertEqual('Input file does not exist!', str(e.exception))
 
     def test_input_explain_correct(self):
         print('Input file explain correct')
