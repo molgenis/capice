@@ -41,6 +41,7 @@ jobs:
           username: molgenis
           password:
             secure: J+HDrhTJp0pkuPfH3kJ3VCycsthma25/mrfyBbiNH3tLz6B7f+j+hUubdFCfUgt9SiHyzJL4UnGfip3qFP/oTtXUsh42jXQQUF1XD85Q8y0AYU+xuvrKtjJRDWUVuz82fPF0VDEofMQZzP4KpBY3KQ6yw+kw2ms6au5HqDnY1yH278/ByZe2CJxe3MwFjxyiA438g3ZQixBEu+0fLcjW7xV/iHYIgCpy6WGCR9oyebO5TX3IBZqHZrz3uJ3GzT6iHizK2TGg3gN3dz0vPLZguqExhLmZ4HIR/v1Pvguj9dX2kklGpUg/Blwg18B/ZrUY+9Fmcxe2X0qU7Kcu752B/4TOGWMBX2qsNoqLi+g7QzUHYdk/2qyUof1/+ly6boho8gyZVqtPk9zm0krb3fSGd2MG0+4EWH6UZc4oaMqJ1ocantduNYiNkLkfAcqFXXoNvYp3sPwWYASrGn3OBW+gcP6EmNDJ1IkWVlkLhmAC15E6adG4PSc94K4jj2jax9uafZChMjws2+DDTo/MX9hWY7pYVtG51PhsVpeLc6qgT4nAaai9a61ducA+Q1dTIyYikoa0o3YuWSziZYlOASCzx6NT07adfgfMHCc63tKbkTxdDABLF43IXKzxhZ5Ff8KR8ZVbOQwx2CqE20GdxcGIZGf7MHSTuC4W7DT4uCCToa0=
+          distributions: "sdist bdist_wheel"
         - provider: releases
           token:
             secure: vPXI5z2Wf5W6SLdCN96NWfsGz9dIpkp3tMmclgQls+mAmAdPxTlAqJCbDb8CoLetXcCx7U4SonWMShJokyqZPYd4KtoPK5lGZJqO3MV+pBMXHa9bO8nqoM4yC0Q+AukMoWTCzblZD/gSXbqcg/PODjplmBs9Doy3s8c81qx5H2L+rPsZPtm6GtCThgytW/bIOocJB6GilPVJfJoizHK0SHVKkZiuH0uCa5USVbM/HsWLTdJ5qItqLeU5TshgOg7o/4NMY6NrzbYL829Vcp7vqTuxqE45RG4jKckRm36pPZVZx4dlKQlqXOuxYAfkDPAdJy9+SSWAsqaaPj+alyhLii+0YTLMOoELPDcVSuNYqonS/7WZJ7HBVuQTtiFT5MU0fIQSvqptnBXCiOLUH5mNgL3FaBwwGDuVzbXmuKN4eSBflB1IWsgHftMFdhJ1NG+eS49zo5TJ3qaZBYtY+6rqUJt056ZUQE+9lqQSJDtHb0uVepc2QR7OvNxkYXaBjIU1wYpieT7dCCbo9+wnrtFYof+Ux3yiC/dDbhl2xXhJcsSKpbv1wwHBFmOjVTgvGuwGGCxYU2TVn0GdMf/ec7HPDLOxNTnhKgkqZfct4Id0BvKU40tPnS7KDlCCOjE6o1qyE3vMnjeqFw5gqPbUqVhe0ZF+ZsqH8B7Ga4VFDmVjAmY=
