@@ -17,7 +17,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
 
     @property
     def _extension(self):
-        return '.tsv.gz'
+        return '.tsv', '.tsv.gz'
 
     @property
     def _required_output_extensions(self):
