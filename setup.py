@@ -44,5 +44,4 @@ setup(
             'capice = molgenis.capice.capice:main'
         ]
     }
-
 )
