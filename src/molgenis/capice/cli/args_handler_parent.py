@@ -18,7 +18,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _extension(self):
+    def _extension(self) -> tuple:
         """
         Method to define what extension(s) are required for an input file for
         each module parser.
