@@ -20,13 +20,13 @@ class TestArgsHandlerPredict(unittest.TestCase):
     @patch('sys.stderr', new_callable=StringIO)
     def test_validate_input_json_path(self, stderr):
         with self.assertRaises(SystemExit):
-            self.aht.validate_input_json('this/path/doesnt/exist.json')
+            self.aht.validate_features_file('this/path/doesnt/exist.json')
         self.assertIn('Input JSON does not exist!', stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
     def test_validate_input_json_json(self, stderr):
         with self.assertRaises(SystemExit):
-            self.aht.validate_input_json(os.path.join(_project_root_directory, 'setup.py'))
+            self.aht.validate_features_file(os.path.join(_project_root_directory, 'setup.py'))
         self.assertIn('Given input JSON is not a JSON file!', stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)

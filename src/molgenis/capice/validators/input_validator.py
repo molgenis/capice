@@ -15,9 +15,10 @@ class InputValidator:
         :param extension: string of what the input file should end with.
         """
         if not os.path.exists(input_path):
-            raise FileNotFoundError('Input file does not exist!')
+            raise FileNotFoundError(f'{input_path} does not exist!')
         if not (input_path.endswith(extension)):
-            raise FileNotFoundError('Given input file does not match required extension!')
+            raise FileNotFoundError(f'{input_path} does not match required extension: '
+                                    f'{", ".join(extension)}')
 
     @staticmethod
     def validate_output_path(output_path):

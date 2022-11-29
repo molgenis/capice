@@ -1,4 +1,4 @@
-import pickle
+import xgboost as xgb
 
 from molgenis.capice import __version__
 from molgenis.capice.main_predict import CapicePredict
@@ -21,6 +21,10 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         return '.tsv', '.tsv.gz'
 
     @property
+    def _model_extension(self) -> tuple[str]:
+        return '.json', '.ubj'
+
+    @property
     def _required_output_extensions(self):
         return '.tsv.gz'
 
@@ -35,7 +39,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to annotated variants file (.tsv or .tsv.gz) (required)'
+            help=f'path to annotated variants file ({", ".join(self._extension)}) (required)'
         )
         self.parser.add_argument(
             '-m',
@@ -43,16 +47,15 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to trained model (.dat) (required)'
+            help=f'path to trained model ({", ".join(self._model_extension)}) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help='path to directory or filename (or both) for export. '
-                 'If a filename is supplied, the filename has to have the .tsv.gz extension! '
-                 '(optional)'
+            help=f'path to directory or file ({self._required_output_extensions}) for exporting'
+                 f'prediction output (optional)'
         )
         self.parser.add_argument(
             '-f',
@@ -63,7 +66,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
 
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
                                      args):
-        model_path = self.validate_length_one(args.model, '-m/--model')
+        model_path = self._retrieve_argument_from_list(args.model, '-m/--model')
         model = self.validate_model(model_path)
         CapiceManager().output_filename = output_filename
         CapicePredict(input_path, model, output_path, output_given).run()
@@ -76,13 +79,12 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         :return: model, xgb.XGBClassifier class
         """
         try:
-            self.input_validator.validate_input_path(model_path, extension='.pickle.dat')
+            self.input_validator.validate_input_path(model_path, extension=self._model_extension)
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
-        with open(model_path, 'rb') as model_file:
-            model = pickle.load(model_file)
+        model = xgb.XGBClassifier()
+        model.load_model(model_path)
         model_validator = ModelValidator()
-        model_validator.validate_is_xgb_classifier(model)
         model_validator.validate_has_required_attributes(model)
         version_validator = VersionValidator()
         try:
