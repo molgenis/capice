@@ -136,13 +136,13 @@ For all modules `predict`, `train` and `explain`, the following arguments are av
 
 _For instance:_
 
-`-i input.tsv` becomes `input_capice.tsv.gz`
+`-i input.tsv` creates the output file `input_capice.tsv.gz`
 
-`-i input.tsv -o output.txt` becomes `output.txt.gz`
+`-i input.tsv -o output.tsv.gz` creates the output file `output.tsv.gz`
 
-`-i input.tsv -o path/to/output.tsv` becomes `path/to/output.tsv.gz`
+`-i input.tsv -o path/to/output.tsv.gz` creates the output file `path/to/output.tsv.gz`
 
-`-i input.tsv -o path/to/output` becomes `path/to/output/input_capice.tsv.gz`
+`-i input.tsv -o path/to/output_directory` creates the output file `path/to/output_directory/input_capice.tsv.gz`
 
 - -f / --force: Overwrite an output file if already present.
 
@@ -313,6 +313,7 @@ __Answer:__
 There are certain restrictions regarding what model versions can be used with CAPICE.
 For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
+
 
 ## Data sources
 ### GnomAD
