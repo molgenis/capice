@@ -1,4 +1,3 @@
-import _typeshed
 import os
 import warnings
 from pathlib import Path
@@ -9,7 +8,7 @@ class InputValidator:
     Validator for the CLI arguments
     """
     @staticmethod
-    def validate_input_path(input_path: _typeshed.StrOrBytesPath, extension: str | tuple[str]):
+    def validate_input_path(input_path: os.PathLike, extension: str | tuple[str]):
         """
         Function to validate if there is a file at the input location
         :param input_path: full path to input file
