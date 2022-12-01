@@ -65,13 +65,17 @@ class Main(ABC):
         return input_file
 
     @staticmethod
-    def process(loaded_data):
+    def process(loaded_data, process_json: dict | None = None,
+                return_features_origin: bool = False):
         """
         Function to process the VEP features to CAPICE features.
         """
         processor = ManualVEPProcessor()
-        processed_data = processor.process(dataset=loaded_data)
-        return processed_data
+        processed_data = processor.process(dataset=loaded_data, process_json=process_json)
+        if return_features_origin:
+            return processed_data, processor.get_feature_process_outputs()
+        else:
+            return processed_data
 
     def preprocess(self, loaded_data, model_features=None):
         """

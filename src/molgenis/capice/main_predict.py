@@ -33,7 +33,7 @@ class CapicePredict(Main):
         capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)
 
-    def process(self, loaded_data):
+    def process(self, loaded_data, process_json: dict | None = None):
         """
         Function to process the VEP file to a CAPICE file
         """

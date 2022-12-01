@@ -22,7 +22,7 @@ class CapiceTrain(Main):
 
         # Impute JSON.
         self.json_path = json_path
-        self.log.debug('Input impute JSON confirmed: %s', self.json_path)
+        self.log.debug('Input model features JSON confirmed: %s', self.json_path)
 
         # Train test size.
         self.train_test_size = test_split
@@ -54,9 +54,9 @@ class CapiceTrain(Main):
         order to create new CAPICE models.
         """
         data = self._load_file(additional_required_features=self.additional_required)
-        data = self.process(loaded_data=data)
         with open(self.json_path, 'rt') as impute_values_file:
             json_dict = json.load(impute_values_file)
+        data = self.process(loaded_data=data, process_json=json_dict)
         self._validate_impute_complete(data, json_dict)
 
         processed_data = self.preprocess(loaded_data=data)

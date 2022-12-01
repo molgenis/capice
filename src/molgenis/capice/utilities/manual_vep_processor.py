@@ -15,22 +15,37 @@ class ManualVEPProcessor:
 
     def __init__(self):
         self.log = Logger().logger
+        self.feature_processing_outputs = {}
 
-    def process(self, dataset: pd.DataFrame):
+    def process(self, dataset: pd.DataFrame, process_json: dict | None = None) -> pd.DataFrame:
         """
         Callable method for the ManualVEPProcessor to start processing.
         Loads all the VEP processors dynamically from /src/main/python/vep.
-        :param dataset: pandas.DataFrame: loaded pandas dataframe of the user
-        provided input TSV.
-        :return: pandas.DataFrame: dataframe with processed features
+
+        Args:
+            dataset: The input dataset over which the VEP features should be processed.
+            process_json: The input train_features json.
+
+        Returns:
+            pandas.DataFrame: The input dataset, processed on the consequences
+
         """
         self.log.info('Starting manual VEP feature processing.')
         vep_annotators = self._load_vep_processors()
+        if process_json is None:
+            processable_features = dataset.columns
+        else:
+            processable_features = process_json.keys()
         dropping_columns = []
         n_feats_processed = 0
         for processor in vep_annotators:
-            if processor.name in dataset.columns and processor.usable:
+            if (
+                    processor.name in dataset.columns and
+                    processor.name in processable_features and
+                    processor.usable
+            ):
                 self.log.debug('Processing: %s', processor.name)
+                self.feature_processing_outputs[processor.name] = processor.columns
                 dataset = processor.process(dataset)
                 if processor.drop and processor.name not in dropping_columns:
                     dropping_columns.append(processor.name)
@@ -42,6 +57,16 @@ class ManualVEPProcessor:
         self.log.info('Processing successful.')
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset
+
+    def get_feature_process_outputs(self) -> dict:
+        """
+        Getter for the dictionary containing the VEP feature (key) and
+        the features that are processed out of that VEP feature (value)
+
+        Returns:
+            dict: VEP feature (key) and the features that origin from it (value)
+        """
+        return self.feature_processing_outputs
 
     def _load_vep_processors(self):
         location = os.path.join(get_project_root_dir(), 'vep')
