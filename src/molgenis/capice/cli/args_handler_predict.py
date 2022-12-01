@@ -82,8 +82,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.input_validator.validate_input_path(model_path, extension=self._model_extension)
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
-        model = xgb.XGBClassifier()
-        model.load_model(model_path)
+        model = self._load_model(model_path)
         model_validator = ModelValidator()
         model_validator.validate_has_required_attributes(model)
         version_validator = VersionValidator()
@@ -93,3 +92,8 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         except ValueError as cm:
             self.parser.error(str(cm))
         return model
+
+    @staticmethod
+    def _load_model(model_path):
+        model = xgb.XGBClassifier()
+        return model.load_model(model_path)
