@@ -47,15 +47,6 @@ class TestInputValidator(unittest.TestCase):
             self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
                                                      extension=allowed_extensions)
 
-        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not exist!',
-                         e.exception.strerror)
-
-    def test_input_multiple_extensions_invalid(self):
-        allowed_extensions = ('.tsv', '.tsv.gz')
-        with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
-                                                     extension=allowed_extensions)
-
         self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not match required '
                          f'extension: .tsv, .tsv.gz',
                          str(e.exception))
@@ -69,12 +60,6 @@ class TestInputValidator(unittest.TestCase):
         self.assertEqual(f'{FakeResourceFile.PREDICT_INPUT_TSV_GZ.value} does not exist!',
                          str(e.exception))
 
-    def test_input_predict_incorrect_extension_validation_str(self):
-        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-        with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(input_file, extension='.tsv')
-        self.assertEqual('Given input file does not match required extension: .tsv',
-                         str(e.exception))
 
 if __name__ == '__main__':
     unittest.main()
