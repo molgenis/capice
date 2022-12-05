@@ -22,6 +22,9 @@ class ArgsHandlerPredict(ArgsHandlerParent):
     def _model_extension(self) -> tuple[str]:
         return '.json', '.ubj'
 
+    def _model_extension_str(self) -> str:
+        return self._join_extensions(self._model_extension)
+
     @property
     def _required_output_extensions(self):
         return '.tsv.gz',
@@ -37,7 +40,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to annotated variants file ({", ".join(self._extension)}) (required)'
+            help=f'path to annotated variants file ({self._extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-m',
@@ -45,14 +48,14 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to trained model ({", ".join(self._model_extension)}) (required)'
+            help=f'path to trained model ({self._model_extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help=f'path to directory or file ({self._required_output_extensions}) for exporting'
+            help=f'path to directory or file ({self._required_output_extensions_str()}) for exporting'
                  f'prediction output (optional)'
         )
         self.parser.add_argument(

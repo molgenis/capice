@@ -31,15 +31,15 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to trained model ({", ".join(self._extension)}) (required)'
+            help=f'path to trained model ({self._extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help=f'path to directory or file ({self._required_output_extensions}) for exporting'
-                 f'explain output (optional)'
+            help=f'path to directory or file ({self._required_output_extensions_str()}) for '
+                 f'exporting explain output (optional)'
         )
         self.parser.add_argument(
             '-f',

@@ -27,6 +27,12 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         """
         return ()
 
+    def _extension_str(self) -> str:
+        """
+        String representation of `_extension()`
+        """
+        return self._join_extensions(self._extension)
+
     @property
     @abstractmethod
     def _required_output_extensions(self) -> tuple[str]:
@@ -34,7 +40,13 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Property to define what the output file extensions are required for each
         module parser.
         """
-        return ""
+        return ()
+
+    def _required_output_extensions_str(self) -> str:
+        """
+        String representation of `_required_output_extensions()`
+        """
+        return self._join_extensions(self._required_output_extensions)
 
     @property
     @abstractmethod
@@ -153,3 +165,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         model = xgb.XGBClassifier()
         model.load_model(model_path)
         return model
+
+    @staticmethod
+    def _join_extensions(extensions: tuple[str]) -> str:
+        return ', '.join(extensions)
