@@ -287,6 +287,12 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       'prerelease version 1.0.0rc2 (should match for pre-releases)!',
                       stderr.getvalue())
 
+    def test_property_str_versions(self):
+        args_handler = ArgsHandlerPredict(ArgumentParser())
+        self.assertEqual('.tsv, .tsv.gz', args_handler._extension_str())
+        self.assertEqual('.json, .ubj', args_handler._model_extension_str())
+        self.assertEqual('.tsv, .tsv.gz', args_handler._required_output_extensions_str())
+
 
 if __name__ == '__main__':
     unittest.main()

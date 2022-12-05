@@ -1,5 +1,5 @@
-import argparse
 import unittest
+from argparse import ArgumentParser
 
 from io import StringIO
 from unittest.mock import patch
@@ -10,7 +10,7 @@ from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 class TestArgsHandlerPredict(unittest.TestCase):
 
     def setUp(self):
-        parser = argparse.ArgumentParser(
+        parser = ArgumentParser(
             description="CAPICE test"
         )
         self.aht = ArgsHandlerTrain(parser)
@@ -32,6 +32,12 @@ class TestArgsHandlerPredict(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.aht.validate_test_split(1)
         self.assertIn('Test split must be a float between 0 and 1', stderr.getvalue())
+
+    def test_property_str_versions(self):
+        args_handler = ArgsHandlerTrain(ArgumentParser())
+        self.assertEqual('.tsv, .tsv.gz', args_handler._extension_str())
+        self.assertEqual('.json', args_handler._features_extension_str())
+        self.assertEqual('.json, .ubj', args_handler._required_output_extensions_str())
 
 
 if __name__ == '__main__':
