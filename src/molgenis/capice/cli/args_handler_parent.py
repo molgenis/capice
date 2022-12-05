@@ -110,16 +110,18 @@ class ArgsHandlerParent(metaclass=ABCMeta):
                                           args)
 
     def _retrieve_argument_from_list(self,
-                           arg: list | None,
-                           arg_name: str,
-                           has_default: bool = False) -> str:
+                                     arg: list | None,
+                                     arg_name: str,
+                                     has_default: bool = False) -> None | str:
         try:
             return self._single_argument_retriever(arg, arg_name, has_default)
         except IOError as e:
             self.parser.error(e)
 
     @staticmethod
-    def _single_argument_retriever(arg: list | None, arg_name: str, has_default: bool) -> str:
+    def _single_argument_retriever(arg: list | None,
+                                   arg_name: str,
+                                   has_default: bool) -> None | str:
         # None is simply returned.
         if arg is None:
             return arg
