@@ -1,5 +1,3 @@
-import xgboost as xgb
-
 from molgenis.capice import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
@@ -92,8 +90,3 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         except ValueError as cm:
             self.parser.error(str(cm))
         return model
-
-    @staticmethod
-    def _load_model(model_path):
-        model = xgb.XGBClassifier()
-        return model.load_model(model_path)

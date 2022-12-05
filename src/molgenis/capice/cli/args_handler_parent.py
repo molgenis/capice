@@ -1,5 +1,8 @@
-from abc import ABCMeta, abstractmethod
+import os
+import xgboost as xgb
 
+from abc import ABCMeta, abstractmethod
+from xgboost import XGBClassifier
 from molgenis.capice import __version__
 from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.validators.input_validator import InputValidator
@@ -144,3 +147,8 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             )
         else:
             return output_filename
+
+    @staticmethod
+    def _load_model(model_path: os.PathLike) -> XGBClassifier:
+        model = xgb.XGBClassifier()
+        return model.load_model(model_path)

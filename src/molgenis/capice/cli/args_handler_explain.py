@@ -1,12 +1,7 @@
-import xgboost as xgb
-
-from molgenis.capice import __version__
 from molgenis.capice.main_explain import CapiceExplain
 from molgenis.capice.core.capice_manager import CapiceManager
-from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
 from molgenis.capice.validators.model_validator import ModelValidator
-from molgenis.capice.validators.version_validator import VersionValidator
 
 
 class ArgsHandlerExplain(ArgsHandlerParent):
@@ -36,16 +31,15 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help='path to trained model (.dat) (required)'
+            help=f'path to trained model ({", ".join(self._extension)}) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help='path to directory or filename (or both) for export. '
-                 'If a filename is supplied, the filename has to have the .tsv.gz extension! '
-                 '(optional)'
+            help=f'path to directory or file ({self._required_output_extensions}) for exporting'
+                 f'explain output (optional)'
         )
         self.parser.add_argument(
             '-f',
@@ -54,11 +48,9 @@ class ArgsHandlerExplain(ArgsHandlerParent):
             help='overwrites output if it already exists'
         )
 
-
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
                                      args):
-        model = xgb.XGBClassifier()
-        model.load_model(input_path)
+        model = self._load_model(input_path)
         validator = ModelValidator()
         validator.validate_has_required_attributes(model)
         CapiceManager().output_filename = output_filename
