@@ -16,7 +16,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
 
     @property
     def _extension(self):
-        return '.tsv.gz',
+        return '.tsv', '.tsv.gz'
 
     @property
     def _features_extension(self) -> tuple[str]:
