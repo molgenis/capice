@@ -5,12 +5,12 @@ from io import StringIO
 from argparse import ArgumentParser
 
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
-from tests.capice.test_templates import TestResource
+from tests.capice.test_templates import ResourceFile
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
 
 
 class TestArgsHandlerPredict(unittest.TestCase):
-    model_path = TestResource.XGB_BOOSTER_POC_UBJ.value
+    model_path = ResourceFile.XGB_BOOSTER_POC_UBJ.value
 
     def setUp(self):
         self.model = ArgsHandlerParent.load_model(self.model_path)

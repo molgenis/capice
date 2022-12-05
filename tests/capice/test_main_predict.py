@@ -5,7 +5,7 @@ import pandas as pd
 
 from molgenis.capice.main_predict import CapicePredict
 from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory, \
-    TestResource, load_model
+    ResourceFile, load_model
 
 
 class TestMainNonTrain(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestMainNonTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         manager.output_filename = os.path.join(cls.output_dir, 'test_output.txt')
 
-        cls.model = load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
 
     @classmethod
     def tearDownClass(cls):

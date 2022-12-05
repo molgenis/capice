@@ -49,7 +49,7 @@ def set_up_impute_preprocess():
     set_up_manager_and_out()
     main = set_up_predict()
     main.infile = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-    model = ArgsHandlerParent.load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
+    model = ArgsHandlerParent.load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
     main.model = model
     return main, model
 
@@ -58,7 +58,7 @@ def load_model(file_path):
     return ArgsHandlerParent.load_model(file_path)
 
 
-class TestResource(Enum):
+class ResourceFile(Enum):
     """
     Enum storing paths to test resource files for easy access.
     """
@@ -66,6 +66,6 @@ class TestResource(Enum):
     XGB_BOOSTER_POC_UBJ = os.path.join(_project_test_resources, 'xgb_booster_poc.ubj')
 
 
-class FakeTestResource(Enum):
+class FakeResourceFile(Enum):
     PREDICT_INPUT_TSV_GZ = os.path.join(_project_test_resources,
                                         'non_existing_predict_input.tsv.gz')

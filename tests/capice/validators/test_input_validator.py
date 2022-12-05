@@ -2,7 +2,7 @@ import os
 import unittest
 
 from molgenis.capice.validators.input_validator import InputValidator
-from tests.capice.test_templates import _project_root_directory, TestResource, FakeTestResource
+from tests.capice.test_templates import _project_root_directory, ResourceFile, FakeResourceFile
 
 
 class TestInputValidator(unittest.TestCase):
@@ -33,40 +33,40 @@ class TestInputValidator(unittest.TestCase):
 
     def test_input_single_extension(self):
         allowed_extensions = ('.tsv.gz',)
-        self.input_validator.validate_input_path(TestResource.PREDICT_INPUT_TSV_GZ.value,
+        self.input_validator.validate_input_path(ResourceFile.PREDICT_INPUT_TSV_GZ.value,
                                                  extension=allowed_extensions)
 
     def test_input_multiple_extensions(self):
         allowed_extensions = ('.tsv', '.tsv.gz')
-        self.input_validator.validate_input_path(TestResource.PREDICT_INPUT_TSV_GZ.value,
+        self.input_validator.validate_input_path(ResourceFile.PREDICT_INPUT_TSV_GZ.value,
                                                  extension=allowed_extensions)
 
     def test_input_multiple_extensions_invalid(self):
         allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(TestResource.XGB_BOOSTER_POC_UBJ.value,
+            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
                                                      extension=allowed_extensions)
 
-        self.assertEqual(f'{TestResource.XGB_BOOSTER_POC_UBJ.value} does not exist!',
+        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not exist!',
                          e.exception.strerror)
 
     def test_input_multiple_extensions_invalid(self):
         allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(TestResource.XGB_BOOSTER_POC_UBJ.value,
+            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
                                                      extension=allowed_extensions)
 
-        self.assertEqual(f'{TestResource.XGB_BOOSTER_POC_UBJ.value} does not match required '
+        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not match required '
                          f'extension: .tsv, .tsv.gz',
                          str(e.exception))
 
     def test_input_non_existing(self):
         allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(FileNotFoundError) as e:
-            self.input_validator.validate_input_path(FakeTestResource.PREDICT_INPUT_TSV_GZ.value,
+            self.input_validator.validate_input_path(FakeResourceFile.PREDICT_INPUT_TSV_GZ.value,
                                                      extension=allowed_extensions)
 
-        self.assertEqual(f'{FakeTestResource.PREDICT_INPUT_TSV_GZ.value} does not exist!',
+        self.assertEqual(f'{FakeResourceFile.PREDICT_INPUT_TSV_GZ.value} does not exist!',
                          str(e.exception))
 
 

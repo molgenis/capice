@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from tests.capice.test_templates import teardown, TestResource, load_model
+from tests.capice.test_templates import teardown, ResourceFile, load_model
 from molgenis.capice.validators.post_vep_processing_validator import PostVEPProcessingValidator
 
 
@@ -20,7 +20,7 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
             }
         )
         cls.validator = PostVEPProcessingValidator(
-            load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
+            load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         )
 
     @classmethod

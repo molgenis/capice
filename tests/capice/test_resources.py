@@ -1,7 +1,7 @@
 import unittest
 
 from src.molgenis.capice import __version__
-from tests.capice.test_templates import TestResource, load_model
+from tests.capice.test_templates import ResourceFile, load_model
 from molgenis.capice.validators.version_validator import VersionValidator
 
 
@@ -14,7 +14,7 @@ class TestResources(unittest.TestCase):
         """
         Test that the resources model is valid with the current CAPICE version.
         """
-        model = load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
+        model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         self.validator.validate_model_version(model.CAPICE_version)
         self.validator.validate_versions_compatible(__version__, model.CAPICE_version)
 
