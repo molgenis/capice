@@ -80,7 +80,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.input_validator.validate_input_path(model_path, extension=self._model_extension)
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
-        model = self._load_model(model_path)
+        model = self.load_model(model_path)
         model_validator = ModelValidator()
         model_validator.validate_has_required_attributes(model)
         version_validator = VersionValidator()

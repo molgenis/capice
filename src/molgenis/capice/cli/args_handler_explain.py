@@ -50,7 +50,7 @@ class ArgsHandlerExplain(ArgsHandlerParent):
 
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
                                      args):
-        model = self._load_model(input_path)
+        model = self.load_model(input_path)
         validator = ModelValidator()
         validator.validate_has_required_attributes(model)
         CapiceManager().output_filename = output_filename

@@ -1,11 +1,11 @@
 import os
-import pickle
 import unittest
 
 import pandas as pd
 
 from molgenis.capice.main_predict import CapicePredict
-from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory
+from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory, \
+    TestResource, load_model
 
 
 class TestMainNonTrain(unittest.TestCase):
@@ -14,15 +14,8 @@ class TestMainNonTrain(unittest.TestCase):
         print('Setting up.')
         manager, cls.output_dir = set_up_manager_and_out()
         manager.output_filename = os.path.join(cls.output_dir, 'test_output.txt')
-        with open(
-                os.path.join(
-                    _project_root_directory,
-                    'tests',
-                    'resources',
-                    'xgb_booster_poc.pickle.dat'
-                ), 'rb'
-        ) as model_file:
-            cls.model = pickle.load(model_file)
+
+        cls.model = load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
 
     @classmethod
     def tearDownClass(cls):

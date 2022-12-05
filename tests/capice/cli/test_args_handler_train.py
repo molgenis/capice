@@ -1,10 +1,8 @@
 import argparse
-import os
 import unittest
 
 from io import StringIO
 from unittest.mock import patch
-from tests.capice.test_templates import _project_root_directory
 
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 
@@ -16,18 +14,6 @@ class TestArgsHandlerPredict(unittest.TestCase):
             description="CAPICE test"
         )
         self.aht = ArgsHandlerTrain(parser)
-
-    @patch('sys.stderr', new_callable=StringIO)
-    def test_validate_input_json_path(self, stderr):
-        with self.assertRaises(SystemExit):
-            self.aht.validate_features_file('this/path/doesnt/exist.json')
-        self.assertIn('Input JSON does not exist!', stderr.getvalue())
-
-    @patch('sys.stderr', new_callable=StringIO)
-    def test_validate_input_json_json(self, stderr):
-        with self.assertRaises(SystemExit):
-            self.aht.validate_features_file(os.path.join(_project_root_directory, 'setup.py'))
-        self.assertIn('Given input JSON is not a JSON file!', stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
     def test_validate_n_threads(self, stderr):

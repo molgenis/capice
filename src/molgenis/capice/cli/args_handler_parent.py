@@ -149,6 +149,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             return output_filename
 
     @staticmethod
-    def _load_model(model_path: os.PathLike) -> XGBClassifier:
+    def load_model(model_path: os.PathLike) -> XGBClassifier:
         model = xgb.XGBClassifier()
-        return model.load_model(model_path)
+        model.load_model(model_path)
+        return model

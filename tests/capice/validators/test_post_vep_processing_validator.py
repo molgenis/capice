@@ -1,10 +1,8 @@
-import os
-import pickle
 import unittest
 
 import pandas as pd
 
-from tests.capice.test_templates import teardown, _project_root_directory
+from tests.capice.test_templates import teardown, TestResource, load_model
 from molgenis.capice.validators.post_vep_processing_validator import PostVEPProcessingValidator
 
 
@@ -21,15 +19,9 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
                 'feat1': ['foo', 'bar']
             }
         )
-        with open(
-                os.path.join(
-                    _project_root_directory,
-                    'tests',
-                    'resources',
-                    'xgb_booster_poc.pickle.dat'
-                ), 'rb'
-        ) as model_file:
-            cls.validator = PostVEPProcessingValidator(pickle.load(model_file))
+        cls.validator = PostVEPProcessingValidator(
+            load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
+        )
 
     @classmethod
     def tearDownClass(cls) -> None:

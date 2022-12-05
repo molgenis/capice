@@ -1,12 +1,10 @@
 import os
-import pickle
 import unittest
 
-import numpy as np
 import pandas as pd
 
 from tests.capice.test_templates import set_up_manager_and_out, teardown, set_up_predict, \
-    _project_root_directory
+    _project_root_directory, TestResource, load_model
 
 
 class TestEdgeCases(unittest.TestCase):
@@ -31,15 +29,7 @@ class TestEdgeCases(unittest.TestCase):
             'resources',
             'symbolic_alleles_vep.tsv.gz'
         )
-        with open(
-                os.path.join(
-                    _project_root_directory,
-                    'tests',
-                    'resources',
-                    'xgb_booster_poc.pickle.dat'
-                ), 'rb'
-        ) as model_file:
-            cls.model = pickle.load(model_file)
+        cls.model = load_model(TestResource.XGB_BOOSTER_POC_UBJ.value)
         cls.main = set_up_predict()
 
     @classmethod
