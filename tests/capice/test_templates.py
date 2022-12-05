@@ -49,7 +49,7 @@ def set_up_impute_preprocess():
     set_up_manager_and_out()
     main = set_up_predict()
     main.infile = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-    model = ArgsHandlerParent.load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+    model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
     main.model = model
     return main, model
 

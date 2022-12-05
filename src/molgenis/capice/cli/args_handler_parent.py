@@ -122,6 +122,29 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     def _single_argument_retriever(arg: list | None,
                                    arg_name: str,
                                    has_default: bool) -> None | str:
+        """
+        Retrieves the user-argument from a list. It requires the user to have only entered
+        the argument once (combined with `action='append'` for argument parsing), resulting in a
+        list of length:
+         - 0 (no arguments given & no default value)
+         - 1 (1 argument given or default_value is present)
+         - 2 (1 argument given and default value present)
+
+         If `has_default`==True, the first list item is assumed to be the default one (set through
+         `default=[<value>]`) and any extra items in the list being user-input.
+
+        Args:
+            arg: List of arguments (or None if no arguments where generated and no defaults were
+            present either)
+            arg_name: The name of the user-argument to which `arg` belongs
+            has_default: whether a default arg is present in the given arg list
+        Returns:
+            None (if args is None) or a single item from the given list.
+        Raises:
+            ValueError: If empty list is given (=programming error)
+            IOError: If list contains more items than expected (>2 if has_default, else >1).
+
+        """
         # None is simply returned.
         if arg is None:
             return arg
