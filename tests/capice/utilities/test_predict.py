@@ -27,7 +27,7 @@ class TestPredict(unittest.TestCase):
             self.main.preprocess(
                 self.main.process(
                     self.main._load_file()
-                ), model_features=self.model.get_booster().feature_names
+                ), input_features=self.model.get_booster().feature_names
             )
         )
 
@@ -41,7 +41,7 @@ class TestPredict(unittest.TestCase):
             self.main.preprocess(
                 self.main.process(
                     self.main._load_file()
-                ), model_features=self.model.get_booster().feature_names
+                ), input_features=self.model.get_booster().feature_names
             )
         )
         # Combined sum of the prediction score should be higher than 0

@@ -1,4 +1,5 @@
 import os
+import typing
 
 import pandas as pd
 
@@ -15,16 +16,18 @@ class ManualVEPProcessor:
 
     def __init__(self):
         self.log = Logger().logger
-        self.feature_processing_outputs = {}
+        self.feature_processing_inputs = []
+        self.feature_processing_outputs = []
 
-    def process(self, dataset: pd.DataFrame, process_json: dict | None = None) -> pd.DataFrame:
+    def process(self, dataset: pd.DataFrame, process_features: typing.Container) -> pd.DataFrame:
         """
         Callable method for the ManualVEPProcessor to start processing.
         Loads all the VEP processors dynamically from /src/main/python/vep.
 
         Args:
             dataset: The input dataset over which the VEP features should be processed.
-            process_json: The input train_features json.
+            process_features: A collection of all input features that should be used in either
+                              training or predicting over which VEP processing should happen.
 
         Returns:
             pandas.DataFrame: The input dataset, processed on the consequences
@@ -32,20 +35,17 @@ class ManualVEPProcessor:
         """
         self.log.info('Starting manual VEP feature processing.')
         vep_annotators = self._load_vep_processors()
-        if process_json is None:
-            processable_features = dataset.columns
-        else:
-            processable_features = process_json.keys()
         dropping_columns = []
         n_feats_processed = 0
         for processor in vep_annotators:
             if (
                     processor.name in dataset.columns and
-                    processor.name in processable_features and
+                    processor.name in process_features and
                     processor.usable
             ):
                 self.log.debug('Processing: %s', processor.name)
-                self.feature_processing_outputs[processor.name] = processor.columns
+                self.feature_processing_inputs.append(processor.name)
+                self.feature_processing_inputs.extend(processor.columns)
                 dataset = processor.process(dataset)
                 if processor.drop and processor.name not in dropping_columns:
                     dropping_columns.append(processor.name)
@@ -58,13 +58,23 @@ class ManualVEPProcessor:
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset
 
-    def get_feature_process_outputs(self) -> dict:
+    def get_feature_process_inputs(self) -> list:
         """
-        Getter for the dictionary containing the VEP feature (key) and
-        the features that are processed out of that VEP feature (value)
+        Getter for the list containing the input VEP features that have been processed by one
+        of the processors available in the ManualVEPProcessor.
 
         Returns:
-            dict: VEP feature (key) and the features that origin from it (value)
+            list: Input VEP processing features
+        """
+        return self.feature_processing_inputs
+
+    def get_feature_process_outputs(self) -> list:
+        """
+        Getter for the list containing the processed VEP features as output of the
+        ManualVEPProcessor.
+
+        Returns:
+            list: Output VEP processed features
         """
         return self.feature_processing_outputs
 

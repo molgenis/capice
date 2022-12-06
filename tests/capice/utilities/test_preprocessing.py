@@ -26,7 +26,7 @@ class TestPreprocessing(unittest.TestCase):
         self.main.preprocess(
             loaded_data=self.main.process(
                     self.main._load_file()
-                ), model_features=self.model.get_booster().feature_names
+                ), input_features=self.model.get_booster().feature_names
         )
 
     def test_component_preprocessing(self):
@@ -41,7 +41,7 @@ class TestPreprocessing(unittest.TestCase):
         processed_file = self.main.preprocess(
             self.main.process(
                 self.main._load_file()
-            ), model_features=self.model.get_booster().feature_names
+            ), input_features=self.model.get_booster().feature_names
         )
         model_features = self.model.get_booster().feature_names
         processed_columns = processed_file.columns

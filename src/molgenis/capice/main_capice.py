@@ -1,11 +1,14 @@
+import typing
 from abc import ABC, abstractmethod
+
+import pandas as pd
+
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
 from molgenis.capice.utilities.preprocessor import PreProcessor
-from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 from molgenis.capice.utilities.load_file_postprocessor import LoadFilePostProcessor
 from molgenis.capice.validators.post_file_parse_validator import PostFileParseValidator
 
@@ -65,26 +68,19 @@ class Main(ABC):
         return input_file
 
     @staticmethod
-    def process(loaded_data, process_json: dict | None = None,
-                return_features_origin: bool = False):
-        """
-        Function to process the VEP features to CAPICE features.
-        """
-        processor = ManualVEPProcessor()
-        processed_data = processor.process(dataset=loaded_data, process_json=process_json)
-        if return_features_origin:
-            return processed_data, processor.get_feature_process_outputs()
-        else:
-            return processed_data
+    @abstractmethod
+    def process(loaded_data, process_features: typing.Collection):
+        pass
 
-    def preprocess(self, loaded_data, model_features=None):
+    def preprocess(self, loaded_data, input_features: list, train: bool = False):
         """
         Function to perform the preprocessing of the loaded data to convert
         categorical columns.
         :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param model_features: list (default None), a list containing all
-        the features present within a model file. When set to None,
-        PreProcessor will activate the train protocol.
+        :param input_features: list, a list containing either all the features present within a
+        model file (in case train=False) or a list containing all the features that the user
+        supplied in the train_features.json (in case train=True).
+        :param train: bool, whenever the train protocol should be started or not.
 
         Note: please adjust self.exclude_features: to include all of the
         features that the preprocessor should NOT process.
@@ -93,7 +89,9 @@ class Main(ABC):
         """
         preprocessor = PreProcessor(
             exclude_features=self.exclude_features,
-            model_features=model_features)
+            input_features=input_features,
+            train=train
+        )
         capice_data = preprocessor.preprocess(loaded_data)
         return capice_data
 

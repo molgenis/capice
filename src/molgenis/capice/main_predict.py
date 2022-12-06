@@ -1,7 +1,12 @@
+import typing
+
+import pandas as pd
+
 from molgenis.capice.main_capice import Main
 from molgenis.capice.utilities.enums import Column
 from molgenis.capice.utilities.predictor import Predictor
 from molgenis.capice.utilities.class_suggestor import ClassSuggestor
+from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 from molgenis.capice.validators.post_vep_processing_validator import PostVEPProcessingValidator
 
 
@@ -26,18 +31,20 @@ class CapicePredict(Main):
                                                                     Column.id_source.value,
                                                                     Column.feature.value,
                                                                     Column.feature_type.value])
-        capice_data = self.process(loaded_data=capice_data)
+        capice_data = self.process(loaded_data=capice_data,
+                                   process_features=self.model.input_features)
         capice_data = self.preprocess(loaded_data=capice_data,
-                                      model_features=self.model.get_booster().feature_names)
+                                      input_features=self.model.get_booster().feature_names)
         capice_data = self.predict(loaded_data=capice_data)
         capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)
 
-    def process(self, loaded_data, process_json: dict | None = None):
+    def process(self, loaded_data, process_features: typing.Collection) -> pd.DataFrame:
         """
         Function to process the VEP file to a CAPICE file
         """
-        processed_data = super().process(loaded_data)
+        processor = ManualVEPProcessor()
+        processed_data = processor.process(loaded_data, process_features)
         validator = PostVEPProcessingValidator(self.model)
         validator.validate_features_present(processed_data)
         return processed_data

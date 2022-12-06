@@ -16,7 +16,7 @@ class TestPredictor(unittest.TestCase):
         cls.dataset = main.preprocess(
             main.process(
                 main._load_file()
-            ), model_features=model.get_booster().feature_names
+            ), input_features=model.get_booster().feature_names
         )
 
     def test_predict(self):

@@ -1,4 +1,5 @@
 import json
+import typing
 
 import pandas as pd
 import xgboost as xgb
@@ -9,6 +10,7 @@ from molgenis.capice.main_capice import Main
 from molgenis.capice import __version__
 from molgenis.capice.utilities.enums import TrainEnums
 from molgenis.capice.core.capice_exporter import CapiceExporter
+from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 
 
 class CapiceTrain(Main):
@@ -55,28 +57,34 @@ class CapiceTrain(Main):
         """
         data = self._load_file(additional_required_features=self.additional_required)
         with open(self.json_path, 'rt') as impute_values_file:
-            json_dict = json.load(impute_values_file)
-        data = self.process(loaded_data=data, process_json=json_dict)
-        self._validate_impute_complete(data, json_dict)
+            train_features = list(json.load(impute_values_file).keys())
+        data, vep_input, vep_output = self.process(
+            loaded_data=data,
+            process_features=train_features
+        )
+        self._validate_vep_processing_complete(data, train_features)
 
-        processed_data = self.preprocess(loaded_data=data)
-        self._get_processed_features(dataset=processed_data, impute_keys=json_dict.keys())
+        processed_data = self.preprocess(loaded_data=data, input_features=train_features,
+                                         train=True)
+        self._get_processed_features(dataset=processed_data, train_features=train_features)
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "model_features", list(json_dict.keys()))
+        setattr(model, "input_features", train_features)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
-    def _validate_impute_complete(self, dataset, json_dict):
-        """
+    @staticmethod
+    def process(loaded_data, process_features: typing.Collection) -> (pd.DataFrame, list, list):
+        processor = ManualVEPProcessor()
+        processed_data = processor.process(loaded_data, process_features)
+        process_inputs = processor.get_feature_process_inputs()
+        process_outputs = processor.get_feature_process_outputs()
+        return processed_data, process_inputs, process_outputs
 
-        :param pd.DataFrame dataset:
-        :param dict json_dict:
-        :return:
-        """
+    def _validate_vep_processing_complete(self, dataset, train_features):
         missing = []
-        for key in json_dict.keys():
+        for key in train_features:
             if key not in dataset.columns:
                 missing.append(key)
 
@@ -98,14 +106,14 @@ class CapiceTrain(Main):
                                        random_state=self.split_random_state)
         return train, test
 
-    def _get_processed_features(self, dataset: pd.DataFrame, impute_keys):
+    def _get_processed_features(self, dataset: pd.DataFrame, train_features):
         """
         Function to save the columns of a dataset that have been processed and
         thus are an output column of the CADD annotation.
         :param dataset: pandas.DataFrame
         """
         for column in dataset.columns:
-            for feature in impute_keys:
+            for feature in train_features:
                 if (column == feature or column.startswith(feature)) and \
                         column not in self.processed_features:
                     self.processed_features.append(column)

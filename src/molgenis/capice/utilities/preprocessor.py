@@ -13,31 +13,29 @@ class PreProcessor:
     categorical columns.
     """
 
-    def __init__(self, exclude_features: list, model_features: list = None):
+    def __init__(self, exclude_features: list, input_features: list, train: bool = False):
         """
         :param exclude_features: list,
             all the features that the preprocessor should not process.
         Features that are already excluded include:
             chr_pos_ref_alt, chr and pos.
-        :param model_features: list (default None), a list containing all
-        the features present within a model file.
+        :param input_features: list, a list containing either all the features present within a
+        model file (in case train=False) or a list containing all the features that the user
+        supplied in the train_features.json (in case train=True).
+        :param train: bool, whenever the train protocol should be started or not.
         """
         self.log = Logger().logger
         self.manager = CapiceManager()
         self.log.info('Preprocessor started.')
-        self.train = False
+        self.train = train
         self.exclude_features = [
             Column.chr_pos_ref_alt.value,
             Column.chr.value,
             Column.pos.value
         ]
         self.exclude_features += exclude_features
-        self.model_features = model_features
+        self.model_features = input_features
         self.objects = []
-
-    def _is_train(self):
-        if self.model_features is None:
-            self.train = True
 
     def preprocess(self, dataset: pd.DataFrame):
         """
@@ -45,7 +43,6 @@ class PreProcessor:
         :param dataset: unprocessed pandas DataFrame
         :return: processed pandas Dataframe
         """
-        self._is_train()
         dataset = self._create_preservation_col(dataset)
         self._get_categorical_columns(dataset)
         processed_dataset = self._process_objects(dataset)
@@ -75,7 +72,7 @@ class PreProcessor:
         :param dataset: pandas DataFrame
         """
         for feature in dataset.select_dtypes(include=["O"]).columns:
-            if feature not in self.exclude_features:
+            if feature not in self.exclude_features and feature in self.model_features:
                 self.objects.append(feature)
         self.log.debug('Converting the categorical columns: %s.', ', '.join(self.objects))
 
