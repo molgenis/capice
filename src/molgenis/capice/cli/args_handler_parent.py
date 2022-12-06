@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
 from molgenis.capice import __version__
-from molgenis.capice.utilities import validate_list_length_one
 from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.validators.version_validator import VersionValidator
@@ -18,7 +17,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _extension(self) -> tuple:
+    def _extension(self) -> tuple[str]:
         """
         Method to define what extension(s) are required for an input file for
         each module parser.
@@ -27,7 +26,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _required_output_extensions(self):
+    def _required_output_extensions(self) -> tuple[str]:
         """
         Property to define what the output file extensions are required for each
         module parser.
@@ -36,7 +35,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def _empty_output_extension(self):
+    def _empty_output_extension(self) -> str:
         """
         Property to define what extension an output file should get if no
         output file extension was given
@@ -69,14 +68,12 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             version_validator.validate_capice_version(__version__)
         except ValueError as cm:
             self.parser.error(str(cm))
-        input_path = self.validate_length_one(args.input, '-i/--input')
+        input_path = self._retrieve_argument_from_list(args.input, '-i/--input')
         try:
             self.input_validator.validate_input_path(input_path, extension=self._extension)
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
-        output_path = None
-        if args.output is not None:
-            output_path = self.validate_length_one(args.output, '-o/--output')
+        output_path = self._retrieve_argument_from_list(args.output, '-o/--output')
         try:
             processor = InputProcessor(
                 input_path=input_path,
@@ -97,11 +94,32 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         self._handle_module_specific_args(input_path, output_path, output_filename, output_given,
                                           args)
 
-    def validate_length_one(self, arg, arg_name):
+    def _retrieve_argument_from_list(self,
+                           arg: list | None,
+                           arg_name: str,
+                           has_default: bool = False) -> str:
         try:
-            return validate_list_length_one(arg)
-        except ValueError:
-            self.parser.error(f'Invalid number of {arg_name} arguments.')
+            return self._single_argument_retriever(arg, arg_name, has_default)
+        except IOError as e:
+            self.parser.error(e)
+
+    @staticmethod
+    def _single_argument_retriever(arg: list | None, arg_name: str, has_default: bool) -> str:
+        # None is simply returned.
+        if arg is None:
+            return arg
+
+        arg_len = len(arg)
+
+        # Empty list indicates programming bug.
+        if arg_len == 0:
+            raise ValueError('Empty list is given. Should be None or list with elements.')
+
+        # Retrieve value to be used for CLI argument.
+        if arg_len > 2 or (arg_len > 1 and not has_default):
+            raise IOError(f'Argument {arg_name} is only allowed once.')
+        else:
+            return arg[arg_len-1]
 
     @abstractmethod
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
