@@ -22,10 +22,9 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     @abstractmethod
     def _extension(self) -> tuple[str]:
         """
-        Method to define what extension(s) are required for an input file for
+        Property to define what extension(s) are allowed for an input file for
         each module parser.
         """
-        return ()
 
     def _extension_str(self) -> str:
         """
@@ -37,10 +36,9 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     @abstractmethod
     def _required_output_extensions(self) -> tuple[str]:
         """
-        Property to define what the output file extensions are required for each
+        Property to define what the output file extensions are allowed for each
         module parser.
         """
-        return ()
 
     def _required_output_extensions_str(self) -> str:
         """
@@ -53,9 +51,10 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     def _empty_output_extension(self) -> str:
         """
         Property to define what extension an output file should get if no
-        output file extension was given
+        output file extension was given.
+
+        Preferably, use: self._required_output_extensions[<value>]
         """
-        return ""
 
     @abstractmethod
     def create(self):
@@ -63,7 +62,6 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Method to define what parser options should be available for the module.
         Use self.parser.add_argument() to add an argument to the subparser.
         """
-        pass
 
     def handle(self):
         """
