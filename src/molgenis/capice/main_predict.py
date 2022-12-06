@@ -32,7 +32,7 @@ class CapicePredict(Main):
                                                                     Column.feature.value,
                                                                     Column.feature_type.value])
         capice_data = self.process(loaded_data=capice_data,
-                                   process_features=self.model.input_features)
+                                   process_features=self.model.vep_features)
         capice_data = self.preprocess(loaded_data=capice_data,
                                       input_features=self.model.get_booster().feature_names)
         capice_data = self.predict(loaded_data=capice_data)

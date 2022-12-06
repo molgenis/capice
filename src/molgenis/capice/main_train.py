@@ -58,19 +58,36 @@ class CapiceTrain(Main):
         data = self._load_file(additional_required_features=self.additional_required)
         with open(self.json_path, 'rt') as impute_values_file:
             train_features = list(json.load(impute_values_file).keys())
+
+        #  Grantham, oAA, Consequence in train_features
+
+        self._validate_features_present(data, train_features)
+
         data, vep_input, vep_output = self.process(
             loaded_data=data,
             process_features=train_features
         )
-        self._validate_vep_processing_complete(data, train_features)
 
-        processed_data = self.preprocess(loaded_data=data, input_features=train_features,
+        # vep_input: [oAA, Consequence]
+        # vep_output: [oAA, nAA, is_frameshift_variant, is_intron_variant, ...]
+
+        processable_features = self._reset_train_features(train_features, vep_input, vep_output)
+
+        # processable_features: [Grantham, oAA, nAA, is_frameshift_variant, is_intron_variant, ...]
+
+        processed_data = self.preprocess(loaded_data=data, input_features=processable_features,
                                          train=True)
+
+        # columns processed: [oAA_x, oAA_y, oAA_z, nAA..., Grantham, is_frameshift variant, ...]
+
         self._get_processed_features(dataset=processed_data, train_features=train_features)
+
+        # self.processed_features: [oAA, nAA, Grantham, is_frameshift_variant, ...]
+
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "input_features", train_features)
+        setattr(model, "vep_features", vep_input)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
@@ -82,16 +99,26 @@ class CapiceTrain(Main):
         process_outputs = processor.get_feature_process_outputs()
         return processed_data, process_inputs, process_outputs
 
-    def _validate_vep_processing_complete(self, dataset, train_features):
+    def _validate_features_present(self, dataset, train_features):
         missing = []
         for key in train_features:
             if key not in dataset.columns:
                 missing.append(key)
 
         if len(missing) > 0:
-            error_message = 'Impute file missing needed columns for input file: %s'
+            error_message = 'Train features file missing needed columns for input file: %s'
             self.log.critical(error_message, missing)
             raise ValueError(error_message % missing)
+
+    @staticmethod
+    def _reset_train_features(input_train_features: list, input_vep_features: list,
+                              output_vep_features: list):
+        return_list = []
+        for feature in input_train_features:
+            if feature not in input_vep_features:
+                return_list.append(feature)
+        return_list.extend(output_vep_features)
+        return return_list
 
     def split_data(self, dataset, test_size: float):
         """
