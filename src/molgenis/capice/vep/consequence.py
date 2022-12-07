@@ -61,14 +61,16 @@ class Consequence(Template):
                 ]
 
     def _process(self, dataframe: pd.DataFrame):
-        splitted_consequence = dataframe[self.name].str.split('&', expand=True)
-        raw_consequences = []
-        for consequence in self.columns:
-            current_consequence = consequence.split('is_')[1]
-            dataframe[consequence] = np.where(
-                np.isin(splitted_consequence, current_consequence).any(axis=1), 1, 0
-            )
-            raw_consequences.append(current_consequence)
+        if dataframe[self.name].str.contains('&', regex=False).any():
+            splitted_consequence = dataframe[self.name].str.split('&', expand=True)
+            raw_consequences = []
+            for consequence in self.columns:
+                current_consequence = consequence.split('is_')[1]
+                dataframe[consequence] = np.where(
+                    np.isin(splitted_consequence, current_consequence).any(axis=1), 1, 0
+                )
+                raw_consequences.append(current_consequence)
+
         self._validate_consequences(splitted_consequence, raw_consequences)
         return dataframe
 

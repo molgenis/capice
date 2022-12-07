@@ -73,6 +73,20 @@ class TestConsequence(unittest.TestCase):
         pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(
             axis=1), check_dtype=False)
 
+    def test_non_coding(self):
+        data = pd.DataFrame({
+            'variants': ['variant_1', 'variant_2', 'variant_3'],
+            'Consequence': [np.nan, np.nan, np.nan]
+        })
+        columns = data.columns
+        expected = pd.concat([data, self.expected_data], axis=1)
+        observed = Consequence().process(data)
+        self.assertFalse(observed[observed.columns.difference(columns)].isnull().values.any())
+        pd.testing.assert_frame_equal(
+            observed.sort_index(axis=1),
+            expected.sort_index(axis=1)
+        )
+
     def test_consequence_warning(self):
         """
         Tests that when a consequence is encountered that is not present within the processor
