@@ -1,6 +1,7 @@
 import json
 import typing
 
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 from scipy import stats
@@ -59,7 +60,9 @@ class CapiceTrain(Main):
         with open(self.json_path, 'rt') as impute_values_file:
             train_features = list(json.load(impute_values_file).keys())
 
-        #  Grantham, oAA, Consequence in train_features
+        #  train_features = [Grantham, oAA, Consequence]
+
+        self._validate_train_features_duplicates(train_features)
 
         self._validate_features_present(data, train_features)
 
@@ -68,19 +71,25 @@ class CapiceTrain(Main):
             process_features=train_features
         )
 
-        # vep_input: [oAA, Consequence]
+        # vep_input: [oAA, Consequence, ref]
         # vep_output: [oAA, nAA, is_frameshift_variant, is_intron_variant, ...]
 
-        processable_features = self._reset_train_features(train_features, vep_input, vep_output)
+        processable_features = self._reset_train_features(
+            train_features,
+            vep_input,
+            vep_output,
+            data.columns
+        )
 
-        # processable_features: [Grantham, oAA, nAA, is_frameshift_variant, is_intron_variant, ...]
+        # processable_features: [Grantham, ref, oAA, nAA, is_frameshift_variant, is_intron_variant,
+        # ...]
 
         processed_data = self.preprocess(loaded_data=data, input_features=processable_features,
                                          train=True)
 
         # columns processed: [oAA_x, oAA_y, oAA_z, nAA..., Grantham, is_frameshift variant, ...]
 
-        self._get_processed_features(dataset=processed_data, train_features=train_features)
+        self._get_processed_features(dataset=processed_data, train_features=processable_features)
 
         # self.processed_features: [oAA, nAA, Grantham, is_frameshift_variant, ...]
 
@@ -92,14 +101,15 @@ class CapiceTrain(Main):
         self.exporter.export_capice_model(model=model)
 
     @staticmethod
-    def process(loaded_data, process_features: typing.Collection) -> (pd.DataFrame, list, list):
+    def process(loaded_data, process_features: typing.Collection) -> (pd.DataFrame, list[str],
+                                                                      list[str]):
         processor = ManualVEPProcessor()
         processed_data = processor.process(loaded_data, process_features)
         process_inputs = processor.get_feature_process_inputs()
         process_outputs = processor.get_feature_process_outputs()
         return processed_data, process_inputs, process_outputs
 
-    def _validate_features_present(self, dataset, train_features):
+    def _validate_features_present(self, dataset, train_features) -> None:
         missing = []
         for key in train_features:
             if key not in dataset.columns:
@@ -110,13 +120,32 @@ class CapiceTrain(Main):
             self.log.critical(error_message, missing)
             raise ValueError(error_message % missing)
 
+    def _validate_train_features_duplicates(self, input_train_features: list):
+        values, counts = np.unique(input_train_features, return_counts=True)
+        if counts[counts > 1]:
+            error_message = 'Detected duplicate features in user supplied train features: %s'
+            duplicates = ', '.join(values[counts > 1])
+            self.log.critical(error_message, duplicates)
+            raise KeyError(error_message % duplicates)
+
     @staticmethod
-    def _reset_train_features(input_train_features: list, input_vep_features: list,
-                              output_vep_features: list):
+    def _reset_train_features(
+            input_train_features: list,
+            input_vep_features: list,
+            output_vep_features: list,
+            vep_processed_dataframe_columns: pd.DataFrame.columns
+    ) -> list[str]:
         return_list = []
-        for feature in input_train_features:
-            if feature not in input_vep_features:
+        # Adds the VEP input features to which the processor has property drop = False
+        for feature in input_vep_features:
+            if feature in vep_processed_dataframe_columns:
                 return_list.append(feature)
+        # Adds back the user input features, but avoiding adding duplicates and
+        # avoiding the features that had property drop = True
+        for feature in input_train_features:
+            if feature not in return_list and feature not in input_vep_features:
+                return_list.append(feature)
+        # Extending the features with the VEP processors output features
         return_list.extend(output_vep_features)
         return return_list
 

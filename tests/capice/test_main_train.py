@@ -42,6 +42,64 @@ class TestMainTrain(unittest.TestCase):
         self.main.cross_validate = 2
         self.main.n_iterations = 2
 
+    def test_validate_train_features_duplicates_fail(self):
+        test_features = ['foo', 'bar', 'baz', 'foo']
+        with self.assertRaises(KeyError) as e:
+            self.main._validate_train_features_duplicates(test_features)
+        # Double quotes since KeyError still adds single quotes to the error.exception
+        self.assertEqual(
+            "'Detected duplicate features in user supplied train features: foo'",
+            str(e.exception)
+        )
+
+    def test_validate_train_features_duplicates_pass(self):
+        test_features = ['foo', 'bar', 'baz']
+        self.main._validate_train_features_duplicates(test_features)
+
+    def test_component_reset_train_features(self):
+        user_input = ['ref', 'Amino_acids', 'foo']
+        vep_inputs = ['ref', 'Amino_acids']
+        vep_outputs = ['oAA', 'nAA']
+        dataset = pd.DataFrame(
+            columns=['ref', 'oAA', 'nAA', 'foo']
+        )
+        observed = self.main._reset_train_features(
+            user_input, vep_inputs, vep_outputs, dataset.columns)
+        # Set because order is not important
+        self.assertSetEqual(set(observed), {'ref', 'oAA', 'nAA', 'foo'})
+
+    def test_integration_reset_train_features(self):
+        with open(self.main.json_path, 'rt') as fh:
+            user_input = list(json.load(fh).keys())
+        self.main._validate_train_features_duplicates(user_input)
+        data = self.main._load_file(additional_required_features=self.main.additional_required)
+        self.main._validate_features_present(data, user_input)
+        data_processed, vep_input, vep_output = self.main.process(data, user_input)
+        observed = self.main._reset_train_features(user_input, vep_input, vep_output,
+                                                   data_processed.columns)
+        expected = [
+            'PolyPhenCat', 'PolyPhenVal', 'cDNApos', 'relcDNApos', 'SIFTcat', 'SIFTval',
+            'protPos', 'relProtPos', 'oAA', 'nAA', 'CDSpos', 'relCDSpos', 'ref', 'alt',
+            'is_regulatory_region_variant', 'is_regulatory_region_ablation',
+            'is_regulatory_region_amplification', 'is_missense_variant', 'is_intron_variant',
+            'is_upstream_gene_variant', 'is_downstream_gene_variant', 'is_synonymous_variant',
+            'is_TF_binding_site_variant', 'is_splice_donor_variant', 'is_coding_sequence_variant',
+            'is_splice_region_variant', 'is_stop_gained', 'is_splice_acceptor_variant',
+            'is_splice_donor_5th_base_variant', 'is_splice_donor_region_variant',
+            'is_splice_polypyrimidine_tract_variant', 'is_frameshift_variant', 
+            'is_3_prime_UTR_variant', 'is_inframe_insertion',
+            'is_inframe_deletion', 'is_5_prime_UTR_variant', 'is_start_lost',
+            'is_non_coding_transcript_exon_variant', 'is_non_coding_transcript_variant',
+            'is_TFBS_ablation', 'is_TFBS_amplification', 'is_protein_altering_variant',
+            'is_stop_lost', 'is_stop_retained_variant', 'is_transcript_ablation',
+            'is_intergenic_variant', 'is_start_retained_variant', 'is_transcript_amplification',
+            'is_incomplete_terminal_codon_variant', 'is_mature_miRNA_variant',
+            'is_NMD_transcript_variant', 'is_feature_elongation', 'is_feature_truncation',
+            'SpliceAI_pred_DP_AG', 'SpliceAI_pred_DP_AL', 'SpliceAI_pred_DP_DG',
+            'SpliceAI_pred_DP_DL', 'SpliceAI_pred_DS_AG', 'SpliceAI_pred_DS_AL',
+            'SpliceAI_pred_DS_DG', 'SpliceAI_pred_DS_DL', 'Type', 'Length', 'Grantham', 'phyloP']
+        self.assertSetEqual(set(observed), set(expected))
+
     def test_integration_training(self):
         """
         Integration test for the full training part of CAPICE.
