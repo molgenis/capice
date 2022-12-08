@@ -13,7 +13,7 @@ class TestPreprocessor(unittest.TestCase):
     @classmethod
     def setUp(cls):
         print('Setting up.')
-        cls.preprocessor = PreProcessor([])
+        cls.preprocessor = PreProcessor([], [])
 
     def test__create_preservation_col(self):
         input_data_frame = pd.DataFrame(
@@ -35,17 +35,16 @@ class TestPreprocessor(unittest.TestCase):
 
         pd.testing.assert_frame_equal(expected_output, actual_output)
 
-    def test__is_train(self):
+    def test_is_train(self):
         self.assertEqual(False, self.preprocessor.train)
-        self.preprocessor._is_train()
-        self.assertEqual(True, self.preprocessor.train)
 
     def test__get_categorical_columns(self):
+        preprocessor = PreProcessor([], ['ref', 'alt'])
         input_data_frame = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
              'alt': ['G', 'A', 'T']})
-        self.preprocessor._get_categorical_columns(input_data_frame)
-        self.assertEqual(['ref', 'alt'], self.preprocessor.objects)
+        preprocessor._get_categorical_columns(input_data_frame)
+        self.assertEqual(['ref', 'alt'], preprocessor.objects)
 
     def test__process_objects_train_false(self):
         self.preprocessor.objects = ['ref', 'alt', 'blaat']
