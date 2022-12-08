@@ -123,7 +123,7 @@ class CapiceTrain(Main):
 
     def _validate_train_features_duplicates(self, input_train_features: list):
         values, counts = np.unique(input_train_features, return_counts=True)
-        if counts[counts > 1]:
+        if counts[counts > 1].any():
             error_message = 'Detected duplicate features in user supplied train features: %s'
             duplicates = ', '.join(values[counts > 1])
             self.log.critical(error_message, duplicates)
