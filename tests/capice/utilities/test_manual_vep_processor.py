@@ -151,6 +151,32 @@ class TestAnnotator(unittest.TestCase):
         # Testing for expected dataframe columns, since it processes more.
         pd.testing.assert_frame_equal(expected_dataframe, out_dataframe[expected_dataframe.columns])
 
+    @staticmethod
+    def prepare_getter_tests():
+        data = pd.DataFrame(
+            {
+                'ref': ['A', 'C'],
+                'alt': ['T', 'G'],
+                'PolyPhen': [0.08, 0.98]
+            }
+        )
+        user_input = ['ref', 'PolyPhen']
+        annotator = ManualVEPProcessor()
+        annotator.process(data, user_input)
+        return annotator
+
+    def test_getter_vep_input(self):
+        annotator = self.prepare_getter_tests()
+        observed = annotator.get_feature_process_inputs()
+        expected = {'ref', 'PolyPhen'}
+        self.assertSetEqual(set(observed), expected)
+
+    def test_getter_vep_output(self):
+        annotator = self.prepare_getter_tests()
+        observed = annotator.get_feature_process_outputs()
+        expected = {'Length', 'Type', 'PolyPhenCat', 'PolyPhenVal'}
+        self.assertSetEqual(set(observed), expected)
+
 
 if __name__ == '__main__':
     unittest.main()

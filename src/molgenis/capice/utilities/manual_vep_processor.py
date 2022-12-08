@@ -45,7 +45,7 @@ class ManualVEPProcessor:
             ):
                 self.log.debug('Processing: %s', processor.name)
                 self.feature_processing_inputs.append(processor.name)
-                self.feature_processing_inputs.extend(processor.columns)
+                self.feature_processing_outputs.extend(processor.columns)
                 dataset = processor.process(dataset)
                 if processor.drop and processor.name not in dropping_columns:
                     dropping_columns.append(processor.name)
