@@ -1,5 +1,3 @@
-import xgboost as xgb
-
 from molgenis.capice import __version__
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
@@ -24,13 +22,16 @@ class ArgsHandlerPredict(ArgsHandlerParent):
     def _model_extension(self) -> tuple[str]:
         return '.json', '.ubj'
 
+    def _model_extension_str(self) -> str:
+        return self._join_extensions(self._model_extension)
+
     @property
     def _required_output_extensions(self):
-        return '.tsv.gz',
+        return '.tsv', '.tsv.gz'
 
     @property
     def _empty_output_extension(self):
-        return self._required_output_extensions[0]
+        return self._required_output_extensions[1]
 
     def create(self):
         self.parser.add_argument(
@@ -39,7 +40,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to annotated variants file ({", ".join(self._extension)}) (required)'
+            help=f'path to annotated variants file ({self._extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-m',
@@ -47,14 +48,14 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to trained model ({", ".join(self._model_extension)}) (required)'
+            help=f'path to trained model ({self._model_extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-o',
             '--output',
             action='append',
             type=str,
-            help=f'path to directory or file ({self._required_output_extensions}) for exporting'
+            help=f'path to directory or file ({self._required_output_extensions_str()}) for exporting'
                  f'prediction output (optional)'
         )
         self.parser.add_argument(
@@ -82,7 +83,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             self.input_validator.validate_input_path(model_path, extension=self._model_extension)
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
-        model = self._load_model(model_path)
+        model = self.load_model(model_path)
         model_validator = ModelValidator()
         model_validator.validate_has_required_attributes(model)
         version_validator = VersionValidator()
@@ -92,8 +93,3 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         except ValueError as cm:
             self.parser.error(str(cm))
         return model
-
-    @staticmethod
-    def _load_model(model_path):
-        model = xgb.XGBClassifier()
-        return model.load_model(model_path)

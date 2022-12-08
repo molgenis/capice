@@ -1,27 +1,22 @@
 import unittest
 from unittest.mock import patch
 
-import os
-import xgboost as xgb
 from io import StringIO
 from argparse import ArgumentParser
 
-from tests.capice.test_templates import _project_root_directory
+from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
+from tests.capice.test_templates import ResourceFile
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
 
 
 class TestArgsHandlerPredict(unittest.TestCase):
-    model_path = os.path.join(_project_root_directory,
-                              'tests',
-                              'resources',
-                              'xgb_booster_poc.ubj')
+    model_path = ResourceFile.XGB_BOOSTER_POC_UBJ.value
 
     def setUp(self):
-        self.model = xgb.XGBClassifier()
-        self.model.load_model(self.model_path)
+        self.model = ArgsHandlerParent.load_model(self.model_path)
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_semantic_invalid_version(self, load_model, stderr):
         """
@@ -42,7 +37,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_pep440_invalid_prerelease_name(self, load_model, stderr):
         """
@@ -62,7 +57,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_major_mismatch(self, load_model, stderr):
         """
@@ -79,7 +74,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         self.assertIn('CAPICE major version 1.0.0 does not match with the model 2.0.0!',
                       stderr.getvalue())
 
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_minor_mismatch(self, load_model):
         """
@@ -91,7 +86,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler = ArgsHandlerPredict(ArgumentParser())
         args_handler.validate_model(self.model_path)
 
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_patch_mismatch(self, load_model):
         """
@@ -104,7 +99,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler.validate_model(self.model_path)
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_mismatch(self, load_model, stderr):
         """
@@ -123,7 +118,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_with_minor_mismatch(self, load_model, stderr):
         """
@@ -146,7 +141,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_with_patch_mismatch(self, load_model, stderr):
         """
@@ -169,7 +164,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
     def test_model_semantic_prerelease_missing_in_capice(self, load_model, stderr):
         """
@@ -193,7 +188,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_missing_in_model(self, load_model, stderr):
         """
@@ -217,7 +212,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0rc1')
     def test_model_pep440_prerelease_missing_in_model(self, load_model, stderr):
         """
@@ -240,7 +235,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       'prerelease version 1.0.0 (should match for pre-releases)!',
                       stderr.getvalue())
 
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0rc1')
     def test_model_pep440_prerelease(self, load_model):
         """
@@ -252,7 +247,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler = ArgsHandlerPredict(ArgumentParser())
         args_handler.validate_model(self.model_path)
 
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_and_pep440_prerelease(self, load_model):
         """
@@ -269,7 +264,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler.validate_model(self.model_path)
 
     @patch('sys.stderr', new_callable=StringIO)
-    @patch.object(ArgsHandlerPredict, '_load_model')
+    @patch.object(ArgsHandlerPredict, 'load_model')
     @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
     def test_model_semantic_and_pep440_prerelease_mismatch(self, load_model, stderr):
         """
@@ -291,6 +286,12 @@ class TestArgsHandlerPredict(unittest.TestCase):
         self.assertIn('CAPICE prerelease version 1.0.0-rc1 does not match the model '
                       'prerelease version 1.0.0rc2 (should match for pre-releases)!',
                       stderr.getvalue())
+
+    def test_property_str_versions(self):
+        args_handler = ArgsHandlerPredict(ArgumentParser())
+        self.assertEqual('.tsv, .tsv.gz', args_handler._extension_str())
+        self.assertEqual('.json, .ubj', args_handler._model_extension_str())
+        self.assertEqual('.tsv, .tsv.gz', args_handler._required_output_extensions_str())
 
 
 if __name__ == '__main__':

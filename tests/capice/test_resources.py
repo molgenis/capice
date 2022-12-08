@@ -1,10 +1,7 @@
 import unittest
 
-import os
-import pickle
-
 from src.molgenis.capice import __version__
-from tests.capice.test_templates import _project_root_directory
+from tests.capice.test_templates import ResourceFile, load_model
 from molgenis.capice.validators.version_validator import VersionValidator
 
 
@@ -17,10 +14,7 @@ class TestResources(unittest.TestCase):
         """
         Test that the resources model is valid with the current CAPICE version.
         """
-        model_path = os.path.join(_project_root_directory, 'tests', 'resources',
-                                  'xgb_booster_poc.pickle.dat')
-        with open(model_path, 'rb') as model_file:
-            model = pickle.load(model_file)
+        model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         self.validator.validate_model_version(model.CAPICE_version)
         self.validator.validate_versions_compatible(__version__, model.CAPICE_version)
 

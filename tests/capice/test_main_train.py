@@ -1,12 +1,12 @@
 import json
 import os
-import pickle
 import unittest
 
 import pandas as pd
 
 from molgenis.capice.main_train import CapiceTrain
-from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory
+from tests.capice.test_templates import set_up_manager_and_out, teardown, _project_root_directory, \
+    load_model
 
 
 class TestMainTrain(unittest.TestCase):
@@ -108,8 +108,7 @@ class TestMainTrain(unittest.TestCase):
         print('Training (integration)')
         self.main.run()
         output_path = os.path.join(self.output_dir, self.output_filename)
-        with open(output_path, 'rb') as model_dat:
-            model = pickle.load(model_dat)
+        model = load_model(output_path)
         best_model = str(model.__class__).split("'")[1]
         self.assertEqual('xgboost.sklearn.XGBClassifier', best_model)
 
@@ -120,8 +119,7 @@ class TestMainTrain(unittest.TestCase):
         print('Test params')
         self.main.run()
         output_path = os.path.join(self.output_dir, self.output_filename)
-        with open(output_path, 'rb') as model_dat:
-            model = pickle.load(model_dat)
+        model = load_model(output_path)
         self.assertEqual(model.get_params()['early_stopping_rounds'], 1)
         self.assertEqual(model.get_params()['eval_metric'], ['auc'])
 

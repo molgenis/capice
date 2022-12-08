@@ -16,11 +16,14 @@ class ArgsHandlerTrain(ArgsHandlerParent):
 
     @property
     def _extension(self):
-        return '.tsv.gz',
+        return '.tsv', '.tsv.gz'
 
     @property
     def _features_extension(self) -> tuple[str]:
         return '.json',
+
+    def _features_extension_str(self) -> str:
+        return self._join_extensions(self._features_extension)
 
     @property
     def _required_output_extensions(self):
@@ -37,7 +40,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to annotated variants file ({self._extension}) (required)'
+            help=f'path to annotated variants file ({self._extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-e',
@@ -45,7 +48,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             action='append',
             type=str,
             required=True,
-            help=f'path to the features file ({self._features_extension}) (required)'
+            help=f'path to the features file ({self._features_extension_str()}) (required)'
         )
         self.parser.add_argument(
             '-s',
@@ -61,7 +64,7 @@ class ArgsHandlerTrain(ArgsHandlerParent):
             '--output',
             action='append',
             type=str,
-            help=f'path to directory or file ({", ".join(self._required_output_extensions)}) for '
+            help=f'path to directory or file ({self._required_output_extensions_str()}) for '
                  f'exporting model (optional)'
         )
         self.parser.add_argument(

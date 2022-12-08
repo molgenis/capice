@@ -8,7 +8,7 @@ class InputValidator:
     Validator for the CLI arguments
     """
     @staticmethod
-    def validate_input_path(input_path, extension: tuple):
+    def validate_input_path(input_path: os.PathLike, extension: tuple[str]):
         """
         Function to validate if there is a file at the input location
         :param input_path: full path to input file
@@ -17,8 +17,8 @@ class InputValidator:
         if not os.path.exists(input_path):
             raise FileNotFoundError(f'{input_path} does not exist!')
         if not (input_path.endswith(extension)):
-            raise FileNotFoundError(f'{input_path} does not match required extension: '
-                                    f'{", ".join(extension)}')
+            raise IOError(f'{input_path} does not match required extension: '
+                          f'{", ".join(extension)}')
 
     @staticmethod
     def validate_output_path(output_path):

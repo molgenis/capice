@@ -1,5 +1,8 @@
-from abc import ABCMeta, abstractmethod
+import os
+import xgboost as xgb
 
+from abc import ABCMeta, abstractmethod
+from xgboost import XGBClassifier
 from molgenis.capice import __version__
 from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.validators.input_validator import InputValidator
@@ -19,28 +22,39 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     @abstractmethod
     def _extension(self) -> tuple[str]:
         """
-        Method to define what extension(s) are required for an input file for
+        Property to define what extension(s) are allowed for an input file for
         each module parser.
         """
-        return ()
+
+    def _extension_str(self) -> str:
+        """
+        String representation of `_extension()`
+        """
+        return self._join_extensions(self._extension)
 
     @property
     @abstractmethod
     def _required_output_extensions(self) -> tuple[str]:
         """
-        Property to define what the output file extensions are required for each
+        Property to define what the output file extensions are allowed for each
         module parser.
         """
-        return ""
+
+    def _required_output_extensions_str(self) -> str:
+        """
+        String representation of `_required_output_extensions()`
+        """
+        return self._join_extensions(self._required_output_extensions)
 
     @property
     @abstractmethod
     def _empty_output_extension(self) -> str:
         """
         Property to define what extension an output file should get if no
-        output file extension was given
+        output file extension was given.
+
+        Preferably, use: self._required_output_extensions[<value>]
         """
-        return ""
 
     @abstractmethod
     def create(self):
@@ -48,7 +62,6 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Method to define what parser options should be available for the module.
         Use self.parser.add_argument() to add an argument to the subparser.
         """
-        pass
 
     def handle(self):
         """
@@ -95,16 +108,41 @@ class ArgsHandlerParent(metaclass=ABCMeta):
                                           args)
 
     def _retrieve_argument_from_list(self,
-                           arg: list | None,
-                           arg_name: str,
-                           has_default: bool = False) -> str:
+                                     arg: list | None,
+                                     arg_name: str,
+                                     has_default: bool = False) -> None | str:
         try:
             return self._single_argument_retriever(arg, arg_name, has_default)
         except IOError as e:
             self.parser.error(e)
 
     @staticmethod
-    def _single_argument_retriever(arg: list | None, arg_name: str, has_default: bool) -> str:
+    def _single_argument_retriever(arg: list | None,
+                                   arg_name: str,
+                                   has_default: bool) -> None | str:
+        """
+        Retrieves the user-argument from a list. It requires the user to have only entered
+        the argument once (combined with `action='append'` for argument parsing), resulting in a
+        list of length:
+         - 0 (no arguments given & no default value)
+         - 1 (1 argument given or default_value is present)
+         - 2 (1 argument given and default value present)
+
+         If `has_default`==True, the first list item is assumed to be the default one (set through
+         `default=[<value>]`) and any extra items in the list being user-input.
+
+        Args:
+            arg: List of arguments (or None if no arguments where generated and no defaults were
+            present either)
+            arg_name: The name of the user-argument to which `arg` belongs
+            has_default: whether a default arg is present in the given arg list
+        Returns:
+            None (if args is None) or a single item from the given list.
+        Raises:
+            ValueError: If empty list is given (=programming error)
+            IOError: If list contains more items than expected (>2 if has_default, else >1).
+
+        """
         # None is simply returned.
         if arg is None:
             return arg
@@ -144,3 +182,13 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             )
         else:
             return output_filename
+
+    @staticmethod
+    def load_model(model_path: os.PathLike) -> XGBClassifier:
+        model = xgb.XGBClassifier()
+        model.load_model(model_path)
+        return model
+
+    @staticmethod
+    def _join_extensions(extensions: tuple[str]) -> str:
+        return ', '.join(extensions)
