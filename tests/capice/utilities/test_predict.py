@@ -26,7 +26,7 @@ class TestPredict(unittest.TestCase):
         self.main.predict(
             self.main.preprocess(
                 self.main.process(
-                    self.main._load_file()
+                    self.main._load_file(), process_features=self.model.vep_features
                 ), input_features=self.model.get_booster().feature_names
             )
         )
@@ -40,7 +40,7 @@ class TestPredict(unittest.TestCase):
         prediction = self.main.predict(
             self.main.preprocess(
                 self.main.process(
-                    self.main._load_file()
+                    self.main._load_file(), process_features=self.model.vep_features
                 ), input_features=self.model.get_booster().feature_names
             )
         )

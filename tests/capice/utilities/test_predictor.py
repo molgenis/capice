@@ -15,7 +15,7 @@ class TestPredictor(unittest.TestCase):
         cls.predictor = Predictor(model)
         cls.dataset = main.preprocess(
             main.process(
-                main._load_file()
+                main._load_file(), process_features=model.vep_features
             ), input_features=model.get_booster().feature_names
         )
 

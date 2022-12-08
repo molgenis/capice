@@ -35,6 +35,8 @@ class TestAnnotator(unittest.TestCase):
             }
         )
         cls.annotator = ManualVEPProcessor()
+        cls.user_input_features = ['ref', 'PolyPhen', 'SIFT', 'Consequence', 'cDNA_position',
+                                   'CDS_position', 'Protein_position', 'Amino_acids']
 
     def setUp(self) -> None:
         print('Testing case:')
@@ -112,7 +114,7 @@ class TestAnnotator(unittest.TestCase):
                 expected_processed_columns
             ], axis=1
         )
-        outcome = self.annotator.process(self.dataset)
+        outcome = self.annotator.process(self.dataset, self.user_input_features)
         # if numpy.array dtype not given,
         # then the type will be determined as the minimum type required to hold the
         # objects in the sequence. this minimal type is system dependent.
@@ -147,7 +149,7 @@ class TestAnnotator(unittest.TestCase):
             }
         )
         annotator = ManualVEPProcessor()
-        out_dataframe = annotator.process(bugged_dataframe)
+        out_dataframe = annotator.process(bugged_dataframe, self.user_input_features)
         # Testing for expected dataframe columns, since it processes more.
         pd.testing.assert_frame_equal(expected_dataframe, out_dataframe[expected_dataframe.columns])
 
