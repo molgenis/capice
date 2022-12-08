@@ -8,7 +8,7 @@ class ModelValidator:
         Function to validate if the required attributes CAPICE_version,
         impute_values and predict_proba are present.
         """
-        required_attributes = ['CAPICE_version', 'vep_features', 'predict_proba']
+        required_attributes = ['CAPICE_version', 'vep_features', 'vep_outputs', 'predict_proba']
         for attribute in required_attributes:
             if attribute not in dir(model):
                 raise AttributeError(f'Unable to locate attribute {attribute} in model file!')

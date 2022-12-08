@@ -1,4 +1,6 @@
 import os
+import typing
+
 import pandas as pd
 import xgboost as xgb
 
@@ -13,6 +15,13 @@ class CapiceExplain(Main):
         self.model = model
         self.output = output_path
         self.log = Logger().logger
+
+    @staticmethod
+    def process(loaded_data, process_features: typing.Collection):
+        """
+        Since it is an abstract method, but not used.
+        """
+        pass
 
     def run(self):
         gain_importances = self._extract_features_importances_gain(self.model)

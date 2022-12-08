@@ -97,6 +97,7 @@ class CapiceTrain(Main):
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
         setattr(model, "vep_features", vep_input)
+        setattr(model, "vep_outputs", vep_output)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 

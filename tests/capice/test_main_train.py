@@ -245,10 +245,12 @@ class TestMainTrain(unittest.TestCase):
                 'Other_feature': ['foo', 'bar']
             }
         )
-        processed_data = self.main.process(loaded_dataset)
         with open(self.main.json_path, 'rt') as fh:
-            features = json.load(fh).keys()
-        self.main._get_processed_features(processed_data, features)
+            features = list(json.load(fh).keys())
+        processed_data, vep_input, vep_output = self.main.process(loaded_dataset, features)
+        resetted_features = self.main._reset_train_features(
+            features, vep_input, vep_output, processed_data.columns)
+        self.main._get_processed_features(processed_data, resetted_features)
         self.assertSetEqual(
             {'ref', 'alt', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
             set(self.main.processed_features)

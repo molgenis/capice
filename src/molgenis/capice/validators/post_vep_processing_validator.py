@@ -9,11 +9,11 @@ class PostVEPProcessingValidator:
 
     def validate_features_present(self, datafile):
         """
-        Validator to see if all features within the model impute values are
-        presently processed.
+        Validator to see if all features that should be present after the
+        ManualVEPProcessor are present.
         """
         column_utils = ColumnUtils()
-        column_utils.set_specified_columns(self.model.model_features)
+        column_utils.set_specified_columns(self.model.vep_outputs)
         features_not_present = column_utils.get_missing_diff_with(datafile.columns)
         if len(features_not_present) > 0:
             error_message = 'Detected required feature(s) %s not ' \
