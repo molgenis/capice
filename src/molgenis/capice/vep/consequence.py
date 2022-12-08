@@ -60,16 +60,19 @@ class Consequence(Template):
                 'is_splice_polypyrimidine_tract_variant'
                 ]
 
+    @staticmethod
+    def _fillna():
+        return 0
+
     def _process(self, dataframe: pd.DataFrame):
-        if dataframe[self.name].str.contains('&', regex=False).any():
-            splitted_consequence = dataframe[self.name].str.split('&', expand=True)
-            raw_consequences = []
-            for consequence in self.columns:
-                current_consequence = consequence.split('is_')[1]
-                dataframe[consequence] = np.where(
-                    np.isin(splitted_consequence, current_consequence).any(axis=1), 1, 0
-                )
-                raw_consequences.append(current_consequence)
+        splitted_consequence = dataframe[self.name].str.split('&', expand=True)
+        raw_consequences = []
+        for consequence in self.columns:
+            current_consequence = consequence.split('is_')[1]
+            dataframe[consequence] = np.where(
+                np.isin(splitted_consequence, current_consequence).any(axis=1), 1, 0
+            )
+            raw_consequences.append(current_consequence)
 
         self._validate_consequences(splitted_consequence, raw_consequences)
         return dataframe
