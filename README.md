@@ -315,6 +315,36 @@ For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
 
 
+---
+
+__Question:__  
+I created/am using a `.pickle.dat` model, but the newer versions of CAPICE switched to `.ubj`/`.json` instead for models.
+Can I somehow use my old `.pickle.dat` with newer versions of CAPICE.
+
+__Answer:__  
+First of all, it's important to note that with every major release, breaking changes might be implemented.
+However, it might be possible to upgrade a CAPICE 4.x.x model to a model usable by CAPICE 5.x.x (though no guarantees are
+given!).
+
+To convert a `.pickle.dat` model to `.ubj`/`.json`, one can do the following (using a local git clone of the repository):
+1. Git checkout the CAPICE version (tag) on which the model was trained.
+2. Create/load a virtual environment (venv) & pip install from the source code.
+3. Use the following python code:
+   ```python
+   import sys
+   import pickle
+
+   with open(sys.argv[1], 'rb') as model_file:
+       model = pickle.load(model_file)
+   model.save_model(sys.argv[2])
+   ```
+   - `sys.argv[1]`: the input `.pickle.dat` file
+   - `sys.argv[2]`: the output `.json` file
+4. Adjust `CAPICE_version` within the new model file (though ensure the filename states to original version clearly to reduce any confusion when using a model!).
+
+Do note that we recommend using a model trained on a specific major version instead, as other breaking changes might be present as well! 
+
+
 ## Data sources
 ### GnomAD
 The gnomAD files can be generated through the following scripts (which also download the gnomAD files):

@@ -25,7 +25,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
         See also: https://semver.org/#spec-item-9
         """
-        self.model.CAPICE_version = '1.0.0-'
+        setattr(self.model, 'CAPICE_version', '1.0.0-')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -45,7 +45,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
         See also: https://peps.python.org/pep-0440/#pre-releases
         """
-        self.model.CAPICE_version = '1.0.0pre1'
+        setattr(self.model, 'CAPICE_version', '1.0.0pre1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -63,7 +63,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         """
         Tests major version mismatch between CAPICE & model (should exit).
         """
-        self.model.CAPICE_version = '2.0.0'
+        setattr(self.model, 'CAPICE_version', '2.0.0')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -80,7 +80,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         """
         Tests minor version mismatch between CAPICE & model (should not exit).
         """
-        self.model.CAPICE_version = '1.2.0'
+        setattr(self.model, 'CAPICE_version', '1.2.0')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -92,7 +92,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         """
         Tests patch version mismatch between CAPICE & model (should not exit).
         """
-        self.model.CAPICE_version = '1.0.2'
+        setattr(self.model, 'CAPICE_version', '1.0.2')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -105,7 +105,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         """
         Tests pre-release mismatch if rest of version is identical (should exit).
         """
-        self.model.CAPICE_version = '1.0.0-rc2'
+        setattr(self.model, 'CAPICE_version', '1.0.0-rc2')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -128,7 +128,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         due to instability between pre-release versions, it should not be possible to use a
         pre-release from a different major/minor/patch version either.
         """
-        self.model.CAPICE_version = '1.2.0-rc1'
+        setattr(self.model, 'CAPICE_version', '1.2.0-rc1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -151,7 +151,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         due to instability between pre-release versions, it should not be possible to use a
         pre-release from a different major/minor/patch version either.
         """
-        self.model.CAPICE_version = '1.0.2-rc1'
+        setattr(self.model, 'CAPICE_version', '1.0.2-rc1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -175,7 +175,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         so that non-pre-release code/model is not used in combination with pre-release model/code
         due to instability of pre-releases.
         """
-        self.model.CAPICE_version = '1.0.0-rc1'
+        setattr(self.model, 'CAPICE_version', '1.0.0-rc1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -199,7 +199,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         so that non-pre-release code/model is not used in combination with pre-release model/code
         due to instability of pre-releases.
         """
-        self.model.CAPICE_version = '1.0.0'
+        setattr(self.model, 'CAPICE_version', '1.0.0')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -223,7 +223,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         so that non-pre-release code/model is not used in combination with pre-release model/code
         due to instability of pre-releases.
         """
-        self.model.CAPICE_version = '1.0.0'
+        setattr(self.model, 'CAPICE_version', '1.0.0')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -241,7 +241,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         """
         Tests identical pre-release version using PEP 440 (should not exit).
         """
-        self.model.CAPICE_version = '1.0.0rc1'
+        setattr(self.model, 'CAPICE_version', '1.0.0rc1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -257,7 +257,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         While the actual string differs, the portrayed version is identical and therefore should
         not fail.
         """
-        self.model.CAPICE_version = '1.0.0rc1'
+        setattr(self.model, 'CAPICE_version', '1.0.0rc1')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
@@ -275,7 +275,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         difference and therefore the error message is validated so that CAPICE is exited for the
         right reason.
         """
-        self.model.CAPICE_version = '1.0.0rc2'
+        setattr(self.model, 'CAPICE_version', '1.0.0rc2')
         load_model.return_value = self.model
 
         args_handler = ArgsHandlerPredict(ArgumentParser())
