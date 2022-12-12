@@ -1,6 +1,6 @@
 import unittest
 
-from src.molgenis.capice import __version__
+from molgenis.capice import __version__
 from tests.capice.test_templates import ResourceFile, load_model
 from molgenis.capice.validators.version_validator import VersionValidator
 

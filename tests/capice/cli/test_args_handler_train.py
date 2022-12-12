@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import patch
-
 from argparse import ArgumentParser
 from io import StringIO
 

@@ -1,4 +1,5 @@
 import unittest
+
 import pandas as pd
 
 from molgenis.capice.utilities.load_file_postprocessor import LoadFilePostProcessor

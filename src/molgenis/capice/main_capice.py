@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
@@ -99,4 +100,3 @@ class Main(ABC):
         """
         CapiceExporter(file_path=output, output_given=self.output_given).export_capice_prediction(
             datafile=dataset)
-
