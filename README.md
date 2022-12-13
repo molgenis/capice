@@ -340,7 +340,8 @@ To convert a `.pickle.dat` model to `.ubj`/`.json`, one can do the following (us
    ```
    - `sys.argv[1]`: the input `.pickle.dat` file
    - `sys.argv[2]`: the output `.json` file
-4. Adjust `CAPICE_version` within the new model file (though ensure the filename states to original version clearly to reduce any confusion when using a model!).
+4. Adjust `CAPICE_version` within the new model file to that of the new release (major version should match!). 
+   It is advisable however to ensure that the filename still contains the version it was trained on (f.e. `v4.0.0_grch37_v5.0.0-compatibility.json`) to ensure no confusion will exist on which version it was actually trained.
 
 Do note that we recommend using a model trained on a specific major version instead, as other breaking changes might be present as well! 
 
