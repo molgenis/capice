@@ -35,8 +35,11 @@ setup(
     ],
     extras_require={
         'test': [
-            'pytest',
-            'coverage'
+            'pytest',  # pytest
+            'coverage',  # coverage run -m pytest --junitxml=results.xml && coverage html
+            'mypy',  # mypy --ignore-missing-imports src/
+            'flake8',  # flake8 src/ tests/
+            'flake8-import-order'
         ]
     },
     entry_points={

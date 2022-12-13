@@ -1,5 +1,5 @@
 import os
-import pickle
+
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
@@ -63,7 +63,6 @@ class CapiceExporter:
         :param model: XGBClassifier instance
         """
         export_path = os.path.join(self.file_path, self.capice_filename)
-        with open(export_path, 'wb') as model_dump:
-            pickle.dump(model, model_dump)
+        model.save_model(export_path)
         if not self.output_given:
             print('Successfully exported CAPICE model to: ', export_path)

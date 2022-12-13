@@ -1,15 +1,4 @@
-import xgboost
-
-
 class ModelValidator:
-    @staticmethod
-    def validate_is_xgb_classifier(model):
-        """
-        Function to validate if loaded pickle is of xgb.XGBClassifier class.
-        """
-        if not isinstance(model, xgboost.XGBClassifier):
-            raise TypeError('Given pickle is not a XGBClassifier class!')
-
     @staticmethod
     def validate_has_required_attributes(model):
         """

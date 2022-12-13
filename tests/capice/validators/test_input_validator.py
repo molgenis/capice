@@ -2,7 +2,7 @@ import os
 import unittest
 
 from molgenis.capice.validators.input_validator import InputValidator
-from tests.capice.test_templates import _project_root_directory
+from tests.capice.test_templates import _project_root_directory, ResourceFile, FakeResourceFile
 
 
 class TestInputValidator(unittest.TestCase):
@@ -23,26 +23,6 @@ class TestInputValidator(unittest.TestCase):
     def setUp(self):
         print('Testing case:')
 
-    def test_input_error(self):
-        print('Input file error')
-        fake_input_file = os.path.join(_project_root_directory, 'fakefile.tsv')
-        self.assertRaises(
-            FileNotFoundError,
-            self.input_validator.validate_input_path,
-            fake_input_file,
-            'tsv'
-        )
-
-    def test_input_extension_error(self):
-        print('Input file extension error')
-        fake_input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-        self.assertRaises(
-            IOError,
-            self.input_validator.validate_input_path,
-            fake_input_file,
-            '.pickle.dat'
-        )
-
     def test_create_output_path(self):
         print('Creating output location')
         with self.assertWarns(Warning):
@@ -51,37 +31,34 @@ class TestInputValidator(unittest.TestCase):
             self.new_directory_name in os.listdir(_project_root_directory)
         )
 
-    def test_input_predict_correct(self):
-        print('Input file predict correct')
-        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-        self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.gz'))
+    def test_input_single_extension(self):
+        allowed_extensions = ('.tsv.gz',)
+        self.input_validator.validate_input_path(ResourceFile.PREDICT_INPUT_TSV_GZ.value,
+                                                 extension=allowed_extensions)
 
-    def test_input_predict_incorrect_extension_validation_str(self):
-        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
+    def test_input_multiple_extensions(self):
+        allowed_extensions = ('.tsv', '.tsv.gz')
+        self.input_validator.validate_input_path(ResourceFile.PREDICT_INPUT_TSV_GZ.value,
+                                                 extension=allowed_extensions)
+
+    def test_input_multiple_extensions_invalid(self):
+        allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(input_file, extension='.tsv')
-        self.assertEqual('Given input file does not match required extension: .tsv',
+            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
+                                                     extension=allowed_extensions)
+
+        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not match required '
+                         f'extension: .tsv, .tsv.gz',
                          str(e.exception))
 
-    def test_input_predict_incorrect_extension_validation_tuple(self):
-        input_file = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-        with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.zip'))
-        self.assertEqual('Given input file does not match required extension: .tsv, .tsv.zip',
-                         str(e.exception))
-
-    def test_input_predict_non_existing(self):
-        input_file = os.path.join(_project_root_directory, 'resources',
-                                  'predict_input_nonexisting.tsv.gz')
+    def test_input_non_existing(self):
+        allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(FileNotFoundError) as e:
-            self.input_validator.validate_input_path(input_file, extension=('.tsv', '.tsv.zip'))
-        self.assertEqual('Input file does not exist!', str(e.exception))
+            self.input_validator.validate_input_path(FakeResourceFile.PREDICT_INPUT_TSV_GZ.value,
+                                                     extension=allowed_extensions)
 
-    def test_input_explain_correct(self):
-        print('Input file explain correct')
-        input_file = os.path.join(_project_root_directory, 'tests', 'resources',
-                                  'xgb_booster_poc.pickle.dat')
-        self.input_validator.validate_input_path(input_file, extension='.pickle.dat')
+        self.assertEqual(f'{FakeResourceFile.PREDICT_INPUT_TSV_GZ.value} does not exist!',
+                         str(e.exception))
 
 
 if __name__ == '__main__':

@@ -1,11 +1,9 @@
 import unittest
-
 import os
-import pickle
 
 import pandas as pd
 
-from tests.capice.test_templates import _project_root_directory
+from tests.capice.test_templates import _project_root_directory, ResourceFile, load_model
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.main_explain import CapiceExplain
 
@@ -17,15 +15,7 @@ class TestCapiceExplain(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        with open(
-            os.path.join(
-                _project_root_directory,
-                'tests',
-                'resources',
-                'xgb_booster_poc.pickle.dat'
-            ), 'rb'
-        ) as model_file:
-            cls.model = pickle.load(model_file)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         if not os.path.isdir(cls.output_path):
             os.makedirs(cls.output_path)
         CapiceManager().output_filename = cls.output_filename

@@ -1,4 +1,5 @@
 import unittest
+
 import pandas as pd
 
 from tests.capice.test_templates import teardown, set_up_manager_and_out
