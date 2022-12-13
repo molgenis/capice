@@ -67,4 +67,3 @@ class CapicePredict(Main):
         suggestor = ClassSuggestor()
         capice_data = suggestor.apply_suggestion(predicted_data)
         return capice_data
-

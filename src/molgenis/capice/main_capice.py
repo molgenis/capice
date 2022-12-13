@@ -101,4 +101,3 @@ class Main(ABC):
         """
         CapiceExporter(file_path=output, output_given=self.output_given).export_capice_prediction(
             datafile=dataset)
-

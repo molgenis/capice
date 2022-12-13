@@ -1,6 +1,8 @@
+from abc import ABCMeta, abstractmethod
+
 import numpy as np
 import pandas as pd
-from abc import ABCMeta, abstractmethod
+
 from molgenis.capice.validators.property_type_validator import PropertyTypeValidator
 
 

@@ -55,8 +55,8 @@ class ArgsHandlerPredict(ArgsHandlerParent):
             '--output',
             action='append',
             type=str,
-            help=f'path to directory or file ({self._required_output_extensions_str()}) for exporting'
-                 f'prediction output (optional)'
+            help=f'path to directory or file ({self._required_output_extensions_str()}) '
+                 f'for exporting prediction output (optional)'
         )
         self.parser.add_argument(
             '-f',

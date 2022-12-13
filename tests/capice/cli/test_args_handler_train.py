@@ -1,8 +1,7 @@
 import unittest
-from argparse import ArgumentParser
-
-from io import StringIO
 from unittest.mock import patch
+from argparse import ArgumentParser
+from io import StringIO
 
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 

@@ -1,6 +1,3 @@
-import xgboost
-
-
 class ModelValidator:
     @staticmethod
     def validate_has_required_attributes(model):

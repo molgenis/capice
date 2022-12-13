@@ -1,9 +1,8 @@
 import unittest
-
 from re import match
 
 from molgenis.capice.utilities.enums import Versioning
-from src.molgenis.capice import __version__
+from molgenis.capice import __version__
 
 
 class TestVersion(unittest.TestCase):

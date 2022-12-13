@@ -113,4 +113,3 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         """
         if test_split <= 0 or test_split >= 1:
             self.parser.error('Test split must be a float between 0 and 1')
-

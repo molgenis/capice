@@ -1,6 +1,7 @@
+import unittest
+
 import pandas as pd
 import numpy as np
-import unittest
 
 from tests.capice.test_templates import set_up_manager_and_out, teardown
 from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor

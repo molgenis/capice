@@ -1,4 +1,4 @@
-import pandas  as pd
+import pandas as pd
 
 from molgenis.capice.vep.template_sift_polyphen import TemplateSiftPolyPhen
 

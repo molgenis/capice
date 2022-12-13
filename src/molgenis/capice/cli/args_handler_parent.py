@@ -1,8 +1,8 @@
 import os
+from abc import ABCMeta, abstractmethod
+
 import xgboost as xgb
 
-from abc import ABCMeta, abstractmethod
-from xgboost import XGBClassifier
 from molgenis.capice import __version__
 from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.validators.input_validator import InputValidator
@@ -25,6 +25,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Property to define what extension(s) are allowed for an input file for
         each module parser.
         """
+        pass
 
     def _extension_str(self) -> str:
         """
@@ -39,6 +40,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Property to define what the output file extensions are allowed for each
         module parser.
         """
+        pass
 
     def _required_output_extensions_str(self) -> str:
         """
@@ -55,6 +57,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
 
         Preferably, use: self._required_output_extensions[<value>]
         """
+        pass
 
     @abstractmethod
     def create(self):
@@ -62,6 +65,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         Method to define what parser options should be available for the module.
         Use self.parser.add_argument() to add an argument to the subparser.
         """
+        pass
 
     def handle(self):
         """
@@ -184,7 +188,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             return output_filename
 
     @staticmethod
-    def load_model(model_path: os.PathLike) -> XGBClassifier:
+    def load_model(model_path: os.PathLike) -> xgb.XGBClassifier:
         model = xgb.XGBClassifier()
         model.load_model(model_path)
         return model

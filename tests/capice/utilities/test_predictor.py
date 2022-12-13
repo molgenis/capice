@@ -1,8 +1,5 @@
 import unittest
 
-import numpy as np
-import pandas as pd
-
 from molgenis.capice.utilities.predictor import Predictor
 from tests.capice.test_templates import set_up_impute_preprocess
 
