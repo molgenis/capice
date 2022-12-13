@@ -86,7 +86,7 @@ class TestMainTrain(unittest.TestCase):
             'is_TF_binding_site_variant', 'is_splice_donor_variant', 'is_coding_sequence_variant',
             'is_splice_region_variant', 'is_stop_gained', 'is_splice_acceptor_variant',
             'is_splice_donor_5th_base_variant', 'is_splice_donor_region_variant',
-            'is_splice_polypyrimidine_tract_variant', 'is_frameshift_variant', 
+            'is_splice_polypyrimidine_tract_variant', 'is_frameshift_variant',
             'is_3_prime_UTR_variant', 'is_inframe_insertion',
             'is_inframe_deletion', 'is_5_prime_UTR_variant', 'is_start_lost',
             'is_non_coding_transcript_exon_variant', 'is_non_coding_transcript_variant',
