@@ -65,15 +65,14 @@ class CapiceTrain(Main):
 
         self._validate_features_present(data, train_features)
 
-        data, vep_input, vep_output = self.process(
+        data, vep_processed = self.process(
             loaded_data=data,
             process_features=train_features
         )
 
         processable_features = self._reset_processing_features(
             train_features,
-            vep_input,
-            vep_output,
+            vep_processed,
             data.columns
         )
 
@@ -88,8 +87,7 @@ class CapiceTrain(Main):
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "vep_features", vep_input)
-        setattr(model, "vep_outputs", vep_output)
+        setattr(model, "vep_features", list(vep_processed.keys()))
         setattr(model, "processable_features", processed_features)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
@@ -99,9 +97,8 @@ class CapiceTrain(Main):
                                                                       list[str]):
         processor = ManualVEPProcessor()
         processed_data = processor.process(loaded_data, process_features)
-        process_inputs = processor.get_feature_process_inputs()
-        process_outputs = processor.get_feature_process_outputs()
-        return processed_data, process_inputs, process_outputs
+        processed = processor.get_feature_processes()
+        return processed_data, processed
 
     def _validate_features_present(self, dataset, train_features) -> None:
         missing = []
@@ -125,22 +122,24 @@ class CapiceTrain(Main):
     @staticmethod
     def _reset_processing_features(
             input_train_features: list,
-            input_vep_features: list,
-            output_vep_features: list,
+            vep_processed: dict,
             vep_processed_dataframe_columns: pd.DataFrame.columns
     ) -> list[str]:
         return_list = []
         # Adds the VEP input features to which the processor has property drop = False
-        for feature in input_vep_features:
+        for feature in vep_processed.keys():
             if feature in vep_processed_dataframe_columns:
                 return_list.append(feature)
         # Adds back the user input features, but avoiding adding duplicates and
         # avoiding the features that had property drop = True
         for feature in input_train_features:
-            if feature not in return_list and feature not in input_vep_features:
+            if feature not in return_list and feature not in vep_processed.keys():
                 return_list.append(feature)
         # Extending the features with the VEP processors output features
-        return_list.extend(output_vep_features)
+        for features in vep_processed.values():
+            for feature in features:
+                if feature not in return_list:
+                    return_list.append(feature)
         return return_list
 
     def _set_train_features(self, processable_features: list, processed_features: dict) -> \

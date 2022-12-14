@@ -58,15 +58,17 @@ class TestMainTrain(unittest.TestCase):
 
     def test_component_reset_train_features(self):
         user_input = ['REF', 'Amino_acids', 'foo']
-        vep_inputs = ['REF', 'Amino_acids']
-        vep_outputs = ['oAA', 'nAA']
+        vep_processed = {
+            'REF': ['Type', 'Length'],
+            'Amino_acids': ['oAA', 'nAA']
+        }
         dataset = pd.DataFrame(
             columns=['REF', 'oAA', 'nAA', 'foo']
         )
         observed = self.main._reset_processing_features(
-            user_input, vep_inputs, vep_outputs, dataset.columns)
+            user_input, vep_processed, dataset.columns)
         # Set because order is not important
-        self.assertSetEqual(set(observed), {'REF', 'oAA', 'nAA', 'foo'})
+        self.assertSetEqual(set(observed), {'REF', 'oAA', 'nAA', 'foo', 'Type', 'Length'})
 
     def test_integration_reset_train_features(self):
         with open(self.main.json_path, 'rt') as fh:
@@ -74,8 +76,8 @@ class TestMainTrain(unittest.TestCase):
         self.main._validate_train_features_duplicates(user_input)
         data = self.main._load_file(additional_required_features=self.main.additional_required)
         self.main._validate_features_present(data, user_input)
-        data_processed, vep_input, vep_output = self.main.process(data, user_input)
-        observed = self.main._reset_processing_features(user_input, vep_input, vep_output,
+        data_processed, vep_processed = self.main.process(data, user_input)
+        observed = self.main._reset_processing_features(user_input, vep_processed,
                                                    data_processed.columns)
         expected = [
             'PolyPhenCat', 'PolyPhenVal', 'cDNApos', 'relcDNApos', 'SIFTcat', 'SIFTval',
@@ -218,9 +220,9 @@ class TestMainTrain(unittest.TestCase):
             }
         )
         features = ['REF', 'ALT', 'PolyPhen', 'SIFT']
-        processed_data, vep_input, vep_output = self.main.process(loaded_dataset, features)
+        processed_data, vep_processed = self.main.process(loaded_dataset, features)
         resetted_features = self.main._reset_processing_features(
-            features, vep_input, vep_output, processed_data.columns)
+            features, vep_processed, processed_data.columns)
         self.assertSetEqual(
             {'REF', 'ALT', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat', 'SIFTval', 'SIFTcat'},
             set(resetted_features)
@@ -239,17 +241,17 @@ class TestMainTrain(unittest.TestCase):
             }
         )
         user_input = ['REF', 'ALT', 'Type', 'Length', 'feature_1']
-        processed_data, vep_input, vep_output = self.main.process(test_case, user_input)
-        self.assertSetEqual(
-            set(vep_input),
-            {'REF'}
+        processed_data, vep_processed = self.main.process(test_case, user_input)
+        self.assertIn(
+            'REF',
+            vep_processed
         )
         self.assertSetEqual(
-            set(vep_output),
+            set(vep_processed['REF']),
             {'Type', 'Length'}
         )
         processable_features = self.main._reset_processing_features(
-            user_input, vep_input, vep_output, processed_data.columns
+            user_input, vep_processed, processed_data.columns
         )
         self.assertSetEqual(
             set(processable_features),

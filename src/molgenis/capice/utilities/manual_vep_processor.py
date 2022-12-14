@@ -16,8 +16,7 @@ class ManualVEPProcessor:
 
     def __init__(self):
         self.log = Logger().logger
-        self.feature_processing_inputs = []
-        self.feature_processing_outputs = []
+        self.feature_processing_tracker = {}
 
     def process(self, dataset: pd.DataFrame, process_features: typing.Container) -> pd.DataFrame:
         """
@@ -44,8 +43,7 @@ class ManualVEPProcessor:
                     processor.usable
             ):
                 self.log.debug('Processing: %s', processor.name)
-                self.feature_processing_inputs.append(processor.name)
-                self.feature_processing_outputs.extend(processor.columns)
+                self._add_feature_tracking(processor.name, processor.columns)
                 dataset = processor.process(dataset)
                 if processor.drop and processor.name not in dropping_columns:
                     dropping_columns.append(processor.name)
@@ -58,25 +56,21 @@ class ManualVEPProcessor:
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset
 
-    def get_feature_process_inputs(self) -> list:
+    def _add_feature_tracking(self, processor_name: str, processor_features: list):
+        if processor_name not in self.feature_processing_tracker.keys():
+            self.feature_processing_tracker[processor_name] = processor_features
+        else:
+            self.feature_processing_tracker[processor_name].extend(processor_features)
+
+    def get_feature_processes(self) -> dict:
         """
-        Getter for the list containing the input VEP features that have been processed by one
-        of the processors available in the ManualVEPProcessor.
+        Getter for the dictionary containing all the processed features and their output features.
 
         Returns:
-            list: Input VEP processing features
+            dict:
+                Input VEP processing features (key) and their output features (values)
         """
-        return self.feature_processing_inputs
-
-    def get_feature_process_outputs(self) -> list:
-        """
-        Getter for the list containing the processed VEP features as output of the
-        ManualVEPProcessor.
-
-        Returns:
-            list: Output VEP processed features
-        """
-        return self.feature_processing_outputs
+        return self.feature_processing_tracker
 
     def _load_vep_processors(self):
         location = os.path.join(get_project_root_dir(), 'vep')
