@@ -13,7 +13,29 @@ class TestPreprocessor(unittest.TestCase):
     @classmethod
     def setUp(cls):
         print('Setting up.')
-        cls.preprocessor = CategoricalProcessor([], [])
+        cls.preprocessor = CategoricalProcessor()
+
+    def test_creation_other(self):
+        test_case = pd.DataFrame(
+            {
+                'chr': [1, 2, 3, 4, 5, 6],
+                'pos': [1, 2, 3, 4, 5, 6],
+                'REF': [1, 2, 3, 4, 5, 6],
+                'ALT': [1, 2, 3, 4, 5, 6],
+                'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz', 'last']
+            }
+        )
+        observed_df, observed_dict = self.preprocessor.process(test_case, processable_features=[
+            'foo'])
+        self.assertIn(
+            'foo',
+            observed_dict.keys()
+        )
+        self.assertIn(
+            'other',
+            observed_dict['foo']
+        )
+        self.assertIn('foo_other', observed_df.columns)
 
     def test__create_preservation_col(self):
         input_data_frame = pd.DataFrame(

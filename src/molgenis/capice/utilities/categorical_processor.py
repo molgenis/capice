@@ -115,15 +115,13 @@ class CategoricalProcessor:
         :param return_num: integer
         :return: pandas Series
         """
-        value_counts = column.value_counts().index[:return_num].values
-        printable_value_counts = []
-        for value in value_counts:
-            if not isinstance(value, str):
-                value = str(value)
-            printable_value_counts.append(value)
+        counts = column.value_counts().index
+        value_counts = list(counts[:return_num])
+        if len(counts) > return_num:
+            value_counts.append('other')
         message = 'For feature: %s saved the following values: %s'
-        self.log.info(message, column.name, ', '.join(printable_value_counts))
-        return list(value_counts)
+        self.log.info(message, column.name, ', '.join(value_counts))
+        return value_counts
 
     def _get_dummies(self, dataset: pd.DataFrame, processing_features: dict) -> pd.DataFrame:
         """
