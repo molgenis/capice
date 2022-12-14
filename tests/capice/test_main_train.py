@@ -63,7 +63,7 @@ class TestMainTrain(unittest.TestCase):
         dataset = pd.DataFrame(
             columns=['REF', 'oAA', 'nAA', 'foo']
         )
-        observed = self.main._reset_train_features(
+        observed = self.main._reset_processing_features(
             user_input, vep_inputs, vep_outputs, dataset.columns)
         # Set because order is not important
         self.assertSetEqual(set(observed), {'REF', 'oAA', 'nAA', 'foo'})
@@ -75,7 +75,7 @@ class TestMainTrain(unittest.TestCase):
         data = self.main._load_file(additional_required_features=self.main.additional_required)
         self.main._validate_features_present(data, user_input)
         data_processed, vep_input, vep_output = self.main.process(data, user_input)
-        observed = self.main._reset_train_features(user_input, vep_input, vep_output,
+        observed = self.main._reset_processing_features(user_input, vep_input, vep_output,
                                                    data_processed.columns)
         expected = [
             'PolyPhenCat', 'PolyPhenVal', 'cDNApos', 'relcDNApos', 'SIFTcat', 'SIFTval',
@@ -172,7 +172,7 @@ class TestMainTrain(unittest.TestCase):
             "test"
         """
         processed_features = ['feat1', 'feat2']
-        self.main.processed_features = processed_features
+        self.main.train_features = processed_features
         test_set = pd.DataFrame(data={
             'binarized_label': [0, 1, 0],
             'feat1': [1, 0, 0],
@@ -194,7 +194,7 @@ class TestMainTrain(unittest.TestCase):
             (length should be 2, as "test" shouldn't be included)
         """
         processed_features = ['feat1', 'feat2']
-        self.main.processed_features = processed_features
+        self.main.train_features = processed_features
         test_set = pd.DataFrame(data={
             'binarized_label': [0, 1, 0],
             'feat1': [1, 0, 0],
@@ -207,53 +207,23 @@ class TestMainTrain(unittest.TestCase):
         pd.testing.assert_series_equal(test_set['binarized_label'], eval_set[0][1])
         self.assertEqual(2, len(eval_set[0]))
 
-    def test_processed_features(self):
-        with open(
-                os.path.join(
-                    _project_root_directory, 'tests', 'resources', 'features_test.json'
-                ), 'rt'
-        ) as fh:
-            features = json.load(fh)
-        dataset = pd.DataFrame(
-            {
-                'unused_feature_1': [1, 2, 3],
-                'feature_1': ['foo', 'bar', 'baz'],
-                'unused_feature_2': [3, 4, 5],
-                'feature_foobarbaz': ['bar', 'baz', 'foo'],
-                'feature_3_cat1': [10, 20, 30],
-                'feature_3_cat2': [10, 20, 30],
-                'feature_3_cat3': [10, 20, 30]
-            }
-        )
-        self.main._get_processed_features(dataset, features.keys())
-        self.assertSetEqual(
-            {'feature_1',
-             'feature_foobarbaz',
-             'feature_3_cat1',
-             'feature_3_cat2',
-             'feature_3_cat3'},
-            set(self.main.processed_features)
-        )
-
     def test_full_processed_features(self):
         loaded_dataset = pd.DataFrame(
             {
                 'REF': ['C', 'GC'],
                 'ALT': ['A', 'G'],
                 'PolyPhen': [0.1, 0.01],
-                'Sift': [0.1, 0.01],
+                'SIFT': [0.1, 0.01],
                 'Other_feature': ['foo', 'bar']
             }
         )
-        with open(self.main.json_path, 'rt') as fh:
-            features = list(json.load(fh).keys())
+        features = ['REF', 'ALT', 'PolyPhen', 'SIFT']
         processed_data, vep_input, vep_output = self.main.process(loaded_dataset, features)
-        resetted_features = self.main._reset_train_features(
+        resetted_features = self.main._reset_processing_features(
             features, vep_input, vep_output, processed_data.columns)
-        self.main._get_processed_features(processed_data, resetted_features)
         self.assertSetEqual(
-            {'REF', 'ALT', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
-            set(self.main.processed_features)
+            {'REF', 'ALT', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat', 'SIFTval', 'SIFTcat'},
+            set(resetted_features)
         )
 
     def test_component_feature_selection(self):
