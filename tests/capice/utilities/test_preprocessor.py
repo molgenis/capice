@@ -37,6 +37,28 @@ class TestPreprocessor(unittest.TestCase):
         )
         self.assertIn('foo_other', observed_df.columns)
 
+    def test_creation_other_notin(self):
+        test_case = pd.DataFrame(
+            {
+                'chr': [1, 2, 3, 4, 5],
+                'pos': [1, 2, 3, 4, 5],
+                'REF': [1, 2, 3, 4, 5],
+                'ALT': [1, 2, 3, 4, 5],
+                'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz']
+            }
+        )
+        observed_df, observed_dict = self.preprocessor.process(test_case, processable_features=[
+            'foo'])
+        self.assertIn(
+            'foo',
+            observed_dict.keys()
+        )
+        self.assertNotIn(
+            'other',
+            observed_dict['foo']
+        )
+        self.assertNotIn('foo_other', observed_df.columns)
+
     def test__create_preservation_col(self):
         input_data_frame = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
