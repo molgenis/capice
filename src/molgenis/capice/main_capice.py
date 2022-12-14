@@ -6,7 +6,7 @@ from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
-from molgenis.capice.utilities.preprocessor import PreProcessor
+from molgenis.capice.utilities.categorical_processor import CategoricalProcessor
 from molgenis.capice.utilities.load_file_postprocessor import LoadFilePostProcessor
 from molgenis.capice.validators.post_file_parse_validator import PostFileParseValidator
 
@@ -70,28 +70,16 @@ class Main(ABC):
     def process(loaded_data, process_features: typing.Collection):
         pass
 
-    def preprocess(self, loaded_data, input_features: list, train: bool = False):
-        """
-        Function to perform the preprocessing of the loaded data to convert
-        categorical columns.
-        :param loaded_data: Pandas dataframe of the imputed CAPICE data
-        :param input_features: list, a list containing either all the features present within a
-        model file (in case train=False) or a list containing all the features that the user
-        supplied in the train_features.json (in case train=True).
-        :param train: bool, whenever the train protocol should be started or not.
-
-        Note: please adjust self.exclude_features: to include all of the
-        features that the preprocessor should NOT process.
-        Features chr_pos_ref_alt, chr and pos are hardcoded and
-        thus do not have to be included.
-        """
-        preprocessor = PreProcessor(
-            exclude_features=self.exclude_features,
-            input_features=input_features,
-            train=train
+    @staticmethod
+    def categorical_process(loaded_data, processing_features: dict | None, train_features: list |
+                                                                                        None):
+        processor = CategoricalProcessor()
+        capice_data, processed_features = processor.process(
+            loaded_data,
+            processable_features=train_features,
+            predetermined_features=processing_features
         )
-        capice_data = preprocessor.preprocess(loaded_data)
-        return capice_data
+        return capice_data, processed_features
 
     def _export(self, dataset, output):
         """

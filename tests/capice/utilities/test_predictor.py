@@ -10,7 +10,7 @@ class TestPredictor(unittest.TestCase):
         print('Setting up.')
         main, model = set_up_impute_preprocess()
         cls.predictor = Predictor(model)
-        cls.dataset = main.preprocess(
+        cls.dataset = main.process(
             main.process(
                 main._load_file(), process_features=model.vep_features
             ), input_features=model.get_booster().feature_names

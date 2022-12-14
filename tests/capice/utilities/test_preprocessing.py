@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from tests.capice.test_templates import set_up_impute_preprocess, teardown
-from molgenis.capice.utilities.preprocessor import PreProcessor
+from molgenis.capice.utilities.categorical_processor import CategoricalProcessor
 
 
 class TestPreprocessing(unittest.TestCase):
@@ -27,7 +27,7 @@ class TestPreprocessing(unittest.TestCase):
         the file header information.
         """
         print('Preprocessing (unit) (file)')
-        self.main.preprocess(
+        self.main.process(
             loaded_data=self.main.process(
                     self.main._load_file(), process_features=self.model.vep_features
                 ), input_features=self.model.get_booster().feature_names
@@ -42,7 +42,7 @@ class TestPreprocessing(unittest.TestCase):
         considered categorical.
         """
         print('Preprocessing (component)')
-        processed_file = self.main.preprocess(
+        processed_file = self.main.process(
             self.main.process(
                 self.main._load_file(), process_features=self.model.vep_features
             ), input_features=self.model.get_booster().feature_names
@@ -76,10 +76,10 @@ class TestPreprocessing(unittest.TestCase):
             }
         )
         user_input_features = ['foo', 'bar', 'baz', 'feature_1']
-        processor = PreProcessor(
+        processor = CategoricalProcessor(
             exclude_features=['feature_excluded'], input_features=user_input_features, train=True
         )
-        observed = processor.preprocess(data)
+        observed = processor.process(data)
         expected = pd.DataFrame(
             {
                 'foo_a': [1, 0, 0, 0, 0, 0],

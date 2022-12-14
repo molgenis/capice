@@ -13,7 +13,7 @@ from molgenis.capice.validators.post_vep_processing_validator import PostVEPProc
 class CapicePredict(Main):
     """
     Predict class of CAPICE to call the different modules to impute,
-    preprocess and eventually predict a score over a CAPICE annotated file.
+    process and eventually predict a score over a CAPICE annotated file.
     """
 
     def __init__(self, input_path, model, output_path, output_given):
@@ -31,10 +31,15 @@ class CapicePredict(Main):
                                                                     Column.id_source.value,
                                                                     Column.feature.value,
                                                                     Column.feature_type.value])
-        capice_data = self.process(loaded_data=capice_data,
-                                   process_features=self.model.vep_features)
-        capice_data = self.preprocess(loaded_data=capice_data,
-                                      input_features=self.model.get_booster().feature_names)
+        capice_data = self.process(
+            loaded_data=capice_data,
+            process_features=self.model.vep_features
+        )
+        capice_data = self.categorical_process(
+            loaded_data=capice_data,
+            processing_features=self.model.processable_features,
+            train_features=None
+        )[0]
         capice_data = self.predict(loaded_data=capice_data)
         capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)

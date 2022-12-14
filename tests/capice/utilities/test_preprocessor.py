@@ -2,7 +2,7 @@ import unittest
 
 import pandas as pd
 
-from molgenis.capice.utilities.preprocessor import PreProcessor
+from molgenis.capice.utilities.categorical_processor import CategoricalProcessor
 
 
 def get_uint8_array(values_list):
@@ -13,7 +13,7 @@ class TestPreprocessor(unittest.TestCase):
     @classmethod
     def setUp(cls):
         print('Setting up.')
-        cls.preprocessor = PreProcessor([], [])
+        cls.preprocessor = CategoricalProcessor([], [])
 
     def test__create_preservation_col(self):
         input_data_frame = pd.DataFrame(
@@ -39,7 +39,7 @@ class TestPreprocessor(unittest.TestCase):
         self.assertEqual(False, self.preprocessor.train)
 
     def test__get_categorical_columns(self):
-        preprocessor = PreProcessor([], ['ref', 'alt'])
+        preprocessor = CategoricalProcessor([], ['ref', 'alt'])
         input_data_frame = pd.DataFrame(
             {'chr': [1, 2, 4], 'pos': [123, 456, 789], 'ref': ['A', 'T', 'C'],
              'alt': ['G', 'A', 'T']})

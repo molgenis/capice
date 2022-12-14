@@ -57,16 +57,16 @@ class TestMainTrain(unittest.TestCase):
         self.main._validate_train_features_duplicates(test_features)
 
     def test_component_reset_train_features(self):
-        user_input = ['ref', 'Amino_acids', 'foo']
-        vep_inputs = ['ref', 'Amino_acids']
+        user_input = ['REF', 'Amino_acids', 'foo']
+        vep_inputs = ['REF', 'Amino_acids']
         vep_outputs = ['oAA', 'nAA']
         dataset = pd.DataFrame(
-            columns=['ref', 'oAA', 'nAA', 'foo']
+            columns=['REF', 'oAA', 'nAA', 'foo']
         )
         observed = self.main._reset_train_features(
             user_input, vep_inputs, vep_outputs, dataset.columns)
         # Set because order is not important
-        self.assertSetEqual(set(observed), {'ref', 'oAA', 'nAA', 'foo'})
+        self.assertSetEqual(set(observed), {'REF', 'oAA', 'nAA', 'foo'})
 
     def test_integration_reset_train_features(self):
         with open(self.main.json_path, 'rt') as fh:
@@ -79,7 +79,7 @@ class TestMainTrain(unittest.TestCase):
                                                    data_processed.columns)
         expected = [
             'PolyPhenCat', 'PolyPhenVal', 'cDNApos', 'relcDNApos', 'SIFTcat', 'SIFTval',
-            'protPos', 'relProtPos', 'oAA', 'nAA', 'CDSpos', 'relCDSpos', 'ref', 'alt',
+            'protPos', 'relProtPos', 'oAA', 'nAA', 'CDSpos', 'relCDSpos', 'REF', 'ALT',
             'is_regulatory_region_variant', 'is_regulatory_region_ablation',
             'is_regulatory_region_amplification', 'is_missense_variant', 'is_intron_variant',
             'is_upstream_gene_variant', 'is_downstream_gene_variant', 'is_synonymous_variant',
@@ -238,8 +238,8 @@ class TestMainTrain(unittest.TestCase):
     def test_full_processed_features(self):
         loaded_dataset = pd.DataFrame(
             {
-                'ref': ['C', 'GC'],
-                'alt': ['A', 'G'],
+                'REF': ['C', 'GC'],
+                'ALT': ['A', 'G'],
                 'PolyPhen': [0.1, 0.01],
                 'Sift': [0.1, 0.01],
                 'Other_feature': ['foo', 'bar']
@@ -252,8 +252,92 @@ class TestMainTrain(unittest.TestCase):
             features, vep_input, vep_output, processed_data.columns)
         self.main._get_processed_features(processed_data, resetted_features)
         self.assertSetEqual(
-            {'ref', 'alt', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
+            {'REF', 'ALT', 'Length', 'Type', 'PolyPhenVal', 'PolyPhenCat'},
             set(self.main.processed_features)
+        )
+
+    def test_component_feature_selection(self):
+        test_case = pd.DataFrame(
+            {
+                'chr': [1, 2, 3],
+                'pos': [1, 2, 3],
+                'REF': ['A', 'AT', 'ATCG'],
+                'ALT': ['C', 'G', 'ATGCAB'],
+                'REFSEQ_MATCH': ['foo', 'bar', 'baz'],  # Included because of REF, can cause issues
+                'ALTERNATIVE_FEATURE': ['foo', 'bar', 'baz'],
+                'feature_1': ['foo_bar', 'bar', 'baz']
+            }
+        )
+        user_input = ['REF', 'ALT', 'Type', 'Length', 'feature_1']
+        processed_data, vep_input, vep_output = self.main.process(test_case, user_input)
+        self.assertSetEqual(
+            set(vep_input),
+            {'REF'}
+        )
+        self.assertSetEqual(
+            set(vep_output),
+            {'Type', 'Length'}
+        )
+        processable_features = self.main._reset_processing_features(
+            user_input, vep_input, vep_output, processed_data.columns
+        )
+        self.assertSetEqual(
+            set(processable_features),
+            {'REF', 'ALT', 'Type', 'Length', 'feature_1'}
+        )
+        fully_processed_data, processed_features = self.main.categorical_process(
+            processed_data, train_features=processable_features, processing_features=None
+        )
+        # Test to see if REF is successfully processed
+        self.assertIn(
+            'REF_A',
+            fully_processed_data.columns
+        )
+        # Test to see if REFSEQ is successfully skipped
+        self.assertNotIn(
+            'REFSEQ_MATCH_foo',
+            fully_processed_data.columns
+        )
+        # Another test to see if feature_1 is successfully processed
+        self.assertIn(
+            'feature_1_foo_bar',
+            fully_processed_data.columns
+        )
+        # Test to see if category A is successfully saved for REF
+        self.assertIn(
+            'A',
+            processed_features['REF']
+        )
+
+        self.main._set_train_features(
+            processable_features, processed_features
+        )
+
+        # Test to see if REF_A is successfully inserted into the final training features
+        self.assertIn(
+            'REF_A',
+            self.main.train_features
+        )
+
+        # Test to see if REFSEQ_MATCH_foo is successfully skipped
+        self.assertNotIn(
+            'REFSEQ_MATCH_foo',
+            self.main.train_features
+        )
+        # Test to see if multiple underscores also get successfully inserted
+        self.assertIn(
+            'feature_1_foo_bar',
+            self.main.train_features
+        )
+        self.assertSetEqual(
+            set(self.main.train_features),
+            {
+                'REF_A', 'REF_AT', 'REF_ATCG',
+                'ALT_C', 'ALT_G', 'ALT_ATGCAB',
+                'Type_DELINS', 'Type_SNV',
+                'Length',
+                'feature_1_foo_bar', 'feature_1_bar', 'feature_1_baz'
+            }
         )
 
 

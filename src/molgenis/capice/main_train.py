@@ -48,7 +48,7 @@ class CapiceTrain(Main):
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
-        self.processed_features = []
+        self.train_features = []
         self.loglevel = self.manager.loglevel
         self.exporter = CapiceExporter(file_path=self.output, output_given=self.output_given)
 
@@ -61,8 +61,6 @@ class CapiceTrain(Main):
         with open(self.json_path, 'rt') as impute_values_file:
             train_features = list(json.load(impute_values_file).keys())
 
-        #  train_features = [Grantham, oAA, Consequence]
-
         self._validate_train_features_duplicates(train_features)
 
         self._validate_features_present(data, train_features)
@@ -72,33 +70,27 @@ class CapiceTrain(Main):
             process_features=train_features
         )
 
-        # vep_input: [oAA, Consequence, ref]
-        # vep_output: [oAA, nAA, is_frameshift_variant, is_intron_variant, ...]
-
-        processable_features = self._reset_train_features(
+        processable_features = self._reset_processing_features(
             train_features,
             vep_input,
             vep_output,
             data.columns
         )
 
-        # processable_features: [Grantham, ref, oAA, nAA, is_frameshift_variant, is_intron_variant,
-        # ...]
+        processed_data, processed_features = self.categorical_process(
+            loaded_data=data,
+            train_features=processable_features,
+            processing_features=None
+        )
 
-        processed_data = self.preprocess(loaded_data=data, input_features=processable_features,
-                                         train=True)
-
-        # columns processed: [oAA_x, oAA_y, oAA_z, nAA..., Grantham, is_frameshift variant, ...]
-
-        self._get_processed_features(dataset=processed_data, train_features=processable_features)
-
-        # self.processed_features: [oAA, nAA, Grantham, is_frameshift_variant, ...]
+        self._set_train_features(processable_features, processed_features)
 
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
         setattr(model, "vep_features", vep_input)
         setattr(model, "vep_outputs", vep_output)
+        setattr(model, "processable_features", processed_features)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
@@ -131,7 +123,7 @@ class CapiceTrain(Main):
             raise KeyError(error_message % duplicates)
 
     @staticmethod
-    def _reset_train_features(
+    def _reset_processing_features(
             input_train_features: list,
             input_vep_features: list,
             output_vep_features: list,
@@ -151,6 +143,21 @@ class CapiceTrain(Main):
         return_list.extend(output_vep_features)
         return return_list
 
+    def _set_train_features(self, processable_features: list, processed_features: dict) -> \
+            None:
+        train_features = []
+        for feature in processable_features:
+            if feature not in processed_features.keys():
+                train_features.append(feature)
+        for feature_name, features in processed_features.items():
+            for feature in features:
+                train_features.append(f'{feature_name}_{feature}')
+        self.log.info(
+            'The following features have been selected for training: %s',
+            ', '.join(train_features)
+        )
+        self.train_features = train_features
+
     def split_data(self, dataset, test_size: float):
         """
         Function to split any given dataset into 2 datasets using the test_size
@@ -163,23 +170,6 @@ class CapiceTrain(Main):
                                        test_size=test_size,
                                        random_state=self.split_random_state)
         return train, test
-
-    def _get_processed_features(self, dataset: pd.DataFrame, train_features):
-        """
-        Function to save the columns of a dataset that have been processed and
-        thus are an output column of the CADD annotation.
-        :param dataset: pandas.DataFrame
-        """
-        for column in dataset.columns:
-            for feature in train_features:
-                if (column == feature or column.startswith(feature)) and \
-                        column not in self.processed_features:
-                    self.processed_features.append(column)
-        self.log.info(
-            'The following features have been selected for training: %s', ', '.join(
-                self.processed_features
-            )
-        )
 
     def _set_verbosity_from_log_level(self):
         """
@@ -206,7 +196,7 @@ class CapiceTrain(Main):
         :return: a list with tuple with pandas Dataframe, pandas Series and possibly "test"
         eval_set
         """
-        eval_data = [test_set[self.processed_features],
+        eval_data = [test_set[self.train_features],
                      test_set[TrainEnums.binarized_label.value]]
         if int(xgb_version.split('.')[0]) < 1:
             eval_data.append('test')
@@ -265,7 +255,7 @@ class CapiceTrain(Main):
         eval_set = self._create_eval_set(xgb.__version__, test_set)
 
         self.log.info('Random search starting, please hold.')
-        randomised_search_cv.fit(train_set[self.processed_features],
+        randomised_search_cv.fit(train_set[self.train_features],
                                  train_set[TrainEnums.binarized_label.value],
                                  eval_set=eval_set,
                                  verbose=xgb_verbosity,

@@ -33,8 +33,8 @@ class LoadFilePostProcessor:
         self.dataset.rename(
             columns={'CHROM': Column.chr.value,
                      'POS': Column.pos.value,
-                     'REF': Column.ref.value,
-                     'ALT': Column.alt.value,
+                     # 'REF': Column.ref.value,
+                     # 'ALT': Column.alt.value,
                      'Gene': Column.gene_id.value,
                      'SYMBOL_SOURCE': Column.id_source.value,
                      'Feature': Column.feature.value,
