@@ -87,7 +87,7 @@ class CapiceTrain(Main):
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "vep_features", list(vep_processed.keys()))
+        setattr(model, "vep_features", vep_processed)
         setattr(model, "processable_features", processed_features)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)

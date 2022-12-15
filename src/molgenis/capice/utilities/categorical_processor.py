@@ -1,8 +1,11 @@
+import typing
+
 import numpy as np
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.core.capice_manager import CapiceManager
+from molgenis.capice.utilities.column_utils import ColumnUtils
 from molgenis.capice.utilities.enums import Column, UniqueSeparator
 
 
@@ -58,6 +61,8 @@ class CategoricalProcessor:
             processing_features = predetermined_features
 
         processed_dataset = self._get_dummies(dataset, processing_features)
+
+        self._ensure_columns_present(processed_dataset, processing_features)
 
         self.log.info('Successfully processed categorical data.')
         return processed_dataset, processing_features
@@ -118,7 +123,7 @@ class CategoricalProcessor:
         counts = column.value_counts().index
         value_counts = list(counts[:return_num])
         if len(counts) > return_num:
-            value_counts.append('other')
+            value_counts.append(Column.other.value)
         message = 'For feature: %s saved the following values: %s'
         self.log.info(message, column.name, ', '.join(value_counts))
         return value_counts
@@ -148,5 +153,18 @@ class CategoricalProcessor:
         dataset[feature_name] = np.where(
             dataset[feature_name].isin(feature_values),
             dataset[feature_name],
-            'other'
+            Column.other.value
         )
+
+    def _ensure_columns_present(self, dataset: pd.DataFrame, categorical_out_columns: dict) -> None:
+        merged_columns = []
+        for main_feature, derivative_features in categorical_out_columns.items():
+            for feature in derivative_features:
+                merged_columns.append(f'{main_feature}_{feature}')
+        column_utils = ColumnUtils()
+        column_utils.set_specified_columns(merged_columns)
+        missing = column_utils.get_missing_diff_with(dataset.columns)
+        for feature in missing:
+            message = 'Detected column %s not present in columns. Adding full column on NaN'
+            self.log.debug(message, feature)
+            dataset[feature] = np.nan

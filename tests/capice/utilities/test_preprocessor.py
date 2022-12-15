@@ -2,6 +2,7 @@ import unittest
 
 import pandas as pd
 
+from molgenis.capice.utilities.enums import Column
 from molgenis.capice.utilities.categorical_processor import CategoricalProcessor
 
 
@@ -14,16 +15,25 @@ class TestPreprocessor(unittest.TestCase):
     def setUp(cls):
         print('Setting up.')
         cls.preprocessor = CategoricalProcessor()
+        cls.chr_pos_ref_alt_testcase = pd.DataFrame(
+            {
+                'chr': [1, 2, 3, 4, 5],
+                'pos': [1, 2, 3, 4, 5],
+                'REF': [1, 2, 3, 4, 5],
+                'ALT': [1, 2, 3, 4, 5]
+            }
+        )
 
     def test_creation_other(self):
-        test_case = pd.DataFrame(
-            {
-                'chr': [1, 2, 3, 4, 5, 6],
-                'pos': [1, 2, 3, 4, 5, 6],
-                'REF': [1, 2, 3, 4, 5, 6],
-                'ALT': [1, 2, 3, 4, 5, 6],
-                'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz', 'last']
-            }
+        test_case = pd.concat(
+            [
+                self.chr_pos_ref_alt_testcase,
+                pd.DataFrame(
+                    {
+                        'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz', 'last']
+                    }
+                )
+            ], axis=1
         )
         observed_df, observed_dict = self.preprocessor.process(test_case, processable_features=[
             'foo'])
@@ -32,20 +42,21 @@ class TestPreprocessor(unittest.TestCase):
             observed_dict.keys()
         )
         self.assertIn(
-            'other',
+            Column.other.value,
             observed_dict['foo']
         )
-        self.assertIn('foo_other', observed_df.columns)
+        self.assertIn('foo_other_CAPICE_value', observed_df.columns)
 
     def test_creation_other_notin(self):
-        test_case = pd.DataFrame(
-            {
-                'chr': [1, 2, 3, 4, 5],
-                'pos': [1, 2, 3, 4, 5],
-                'REF': [1, 2, 3, 4, 5],
-                'ALT': [1, 2, 3, 4, 5],
-                'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz']
-            }
+        test_case = pd.concat(
+            [
+                self.chr_pos_ref_alt_testcase,
+                pd.DataFrame(
+                    {
+                        'foo': ['bar', 'baz', 'barz', 'foobar', 'foobaz']
+                    }
+                )
+            ], axis=1
         )
         observed_df, observed_dict = self.preprocessor.process(test_case, processable_features=[
             'foo'])
@@ -58,6 +69,29 @@ class TestPreprocessor(unittest.TestCase):
             observed_dict['foo']
         )
         self.assertNotIn('foo_other', observed_df.columns)
+
+    def test_other_in_top_5(self):
+        # Tests that, if "other" occurs in the top 5 categories, only this "other" feature gets
+        # sampled and no other sample get sampled into the "other" category.
+        test_case = pd.concat(
+            [
+                self.chr_pos_ref_alt_testcase,
+                pd.DataFrame(
+                    {
+                        'foo': ['other', 'other', 'foo', 'bar', 'baz', 'foobar', 'foobaz']
+                    }
+                )
+            ], axis=1
+        )
+        observed_df, observed_dict = self.preprocessor.process(test_case, processable_features=[
+            'foo'])
+        test_series = observed_df['foo_other']
+        self.assertFalse(test_series[test_series > 0].size > 2,
+                         msg=f'Actual size: {test_series[test_series > 0].size}')
+        self.assertIn(
+            'foo_other_CAPICE_value',
+            observed_df.columns
+        )
 
     def test__create_preservation_col(self):
         input_data_frame = pd.DataFrame(

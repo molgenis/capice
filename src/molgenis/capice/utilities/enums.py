@@ -17,6 +17,7 @@ class Column(Enum):
     feature_type = 'feature_type'
     score = 'score'
     suggested_class = 'suggested_class'
+    other = 'other_CAPICE_value'
 
 
 class OutputClasses(Enum):
