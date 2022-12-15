@@ -13,7 +13,7 @@ class TestMainNonTrain(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, cls.output_dir = set_up_manager_and_out()
-        manager.output_filename = os.path.join(cls.output_dir, 'test_output.txt')
+        manager.output_filename = os.path.join(cls.output_dir, 'test_output.tsv')
 
         cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
 
@@ -31,7 +31,7 @@ class TestMainNonTrain(unittest.TestCase):
         predict = CapicePredict(input_path=infile, model=self.model, output_path=self.output_dir,
                                 output_given=True)
         predict.run()
-        prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'), sep='\t')
+        prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.tsv'), sep='\t')
         self.assertEqual(prediction_output.shape, (4, 11))
 
 
