@@ -1,4 +1,4 @@
-import typing
+from typing import Tuple
 
 import numpy as np
 import pandas as pd
@@ -23,8 +23,8 @@ class CategoricalProcessor:
             self,
             dataset: pd.DataFrame,
             processable_features: list | None = None,
-            predetermined_features: dict[str] | None = None
-    ) -> (pd.DataFrame, dict):
+            predetermined_features: dict[str, list] | None = None
+    ) -> Tuple[pd.DataFrame, dict[str, list]]:
         """
         Callable method of CategoricalProcessor to start processing the categorical columns
         of dataset according to either processable_features (in case of train) or
@@ -70,7 +70,7 @@ class CategoricalProcessor:
     def _validate_one_feature_list_present(
             self,
             processable_features: list | None,
-            predetermined_features: dict[list] | None
+            predetermined_features: dict[str, list] | None
     ) -> None:
         if processable_features is None and predetermined_features is None:
             error_message = 'Both processable_features and predetermined_features are not supplied!'

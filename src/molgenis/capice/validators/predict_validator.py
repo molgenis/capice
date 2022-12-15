@@ -3,6 +3,7 @@ import xgboost
 
 from molgenis.capice.core.logger import Logger
 
+
 class PredictValidator:
     def __init__(self):
         self.log = Logger().logger

@@ -77,8 +77,9 @@ class TestMainTrain(unittest.TestCase):
         data = self.main._load_file(additional_required_features=self.main.additional_required)
         self.main._validate_features_present(data, user_input)
         data_processed, vep_processed = self.main.process(data, user_input)
-        observed = self.main._reset_processing_features(user_input, vep_processed,
-                                                   data_processed.columns)
+        observed = self.main._reset_processing_features(
+            user_input, vep_processed, data_processed.columns
+        )
         expected = [
             'PolyPhenCat', 'PolyPhenVal', 'cDNApos', 'relcDNApos', 'SIFTcat', 'SIFTval',
             'protPos', 'relProtPos', 'oAA', 'nAA', 'CDSpos', 'relCDSpos', 'REF', 'ALT',

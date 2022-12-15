@@ -1,5 +1,8 @@
+from typing import Any
+
+
 class PropertyTypeValidator:
-    def validate_property(self, value: any, expected_type: any, include_none: bool = False):
+    def validate_property(self, value: Any, expected_type: Any, include_none: bool = False):
         """
         Logger method to raise a TypeError when a Property is not set correctly.
 

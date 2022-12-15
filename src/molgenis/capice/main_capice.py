@@ -45,7 +45,7 @@ class Main(ABC):
     def run(self):
         pass
 
-    def _load_file(self, additional_required_features: list = None):
+    def _load_file(self, additional_required_features: list | None = None):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame

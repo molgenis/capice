@@ -93,8 +93,9 @@ class CapiceTrain(Main):
         self.exporter.export_capice_model(model=model)
 
     @staticmethod
-    def process(loaded_data, process_features: typing.Collection) -> (pd.DataFrame, list[str],
-                                                                      list[str]):
+    def process(loaded_data, process_features: typing.Collection) -> tuple[
+        pd.DataFrame, dict[str, list]
+    ]:
         processor = ManualVEPProcessor()
         processed_data = processor.process(loaded_data, process_features)
         processed = processor.get_feature_processes()
