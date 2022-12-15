@@ -14,8 +14,8 @@ class TestPostFileParseValidator(unittest.TestCase):
             {
                 'chr': [1, 2],
                 'pos': [100, 200],
-                'ref': ['A', 'A'],
-                'alt': ['T', 'T'],
+                'REF': ['A', 'A'],
+                'ALT': ['T', 'T'],
                 'feat1': ['foo', 'bar']
             }
         )
@@ -62,7 +62,7 @@ class TestPostFileParseValidator(unittest.TestCase):
         self.assertRaises(
             KeyError,
             self.validator.validate_minimally_required_columns,
-            self.dataset.drop(columns='ref'),
+            self.dataset.drop(columns='REF'),
             additional_required_features='feat1'
         )
 

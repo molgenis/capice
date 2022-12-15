@@ -71,8 +71,9 @@ class Main(ABC):
         pass
 
     @staticmethod
-    def categorical_process(loaded_data, processing_features: dict | None, train_features: list |
-                                                                                        None):
+    def categorical_process(loaded_data,
+                            processing_features: dict | None = None,
+                            train_features: list | None = None):
         processor = CategoricalProcessor()
         capice_data, processed_features = processor.process(
             loaded_data,

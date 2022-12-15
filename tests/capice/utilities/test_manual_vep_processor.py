@@ -17,8 +17,8 @@ class TestAnnotator(unittest.TestCase):
             {
                 'chr': {0: '1', 1: '1'},
                 'pos': {0: 1, 1: 10042538},
-                'ref': {0: 'C', 1: 'C'},
-                'alt': {0: 'T', 1: 'T'},
+                'REF': {0: 'C', 1: 'C'},
+                'ALT': {0: 'T', 1: 'T'},
                 'Consequence': {0: 'missense_variant', 1: 'downstream_gene_variant'},
                 'gene_name': {0: 'NMNAT1', 1: 'NMNAT1'},
                 'SourceID': {0: 'HGNC', 1: 'HGNC'},
@@ -36,7 +36,7 @@ class TestAnnotator(unittest.TestCase):
             }
         )
         cls.annotator = ManualVEPProcessor()
-        cls.user_input_features = ['ref', 'PolyPhen', 'SIFT', 'Consequence', 'cDNA_position',
+        cls.user_input_features = ['REF', 'PolyPhen', 'SIFT', 'Consequence', 'cDNA_position',
                                    'CDS_position', 'Protein_position', 'Amino_acids']
 
     def setUp(self) -> None:
@@ -101,8 +101,8 @@ class TestAnnotator(unittest.TestCase):
                     [
                         'chr',
                         'pos',
-                        'ref',
-                        'alt',
+                        'REF',
+                        'ALT',
                         'gene_name',
                         'SourceID',
                         'HGNC_ID',
@@ -130,8 +130,8 @@ class TestAnnotator(unittest.TestCase):
             {
                 'chr': ['1', '2'],
                 'pos': [100, 200],
-                'ref': ['A', 'GCC'],
-                'alt': ['C', 'C'],
+                'REF': ['A', 'GCC'],
+                'ALT': ['C', 'C'],
                 'SIFT': [np.nan, np.nan],
                 'PolyPhen': [np.nan, np.nan]
             }
@@ -141,8 +141,8 @@ class TestAnnotator(unittest.TestCase):
             {
                 'chr': ['1', '2'],
                 'pos': [100, 200],
-                'ref': ['A', 'GCC'],
-                'alt': ['C', 'C'],
+                'REF': ['A', 'GCC'],
+                'ALT': ['C', 'C'],
                 'SIFTcat': [np.nan, np.nan],
                 'SIFTval': [np.nan, np.nan],
                 'PolyPhenCat': [np.nan, np.nan],
@@ -158,27 +158,35 @@ class TestAnnotator(unittest.TestCase):
     def prepare_getter_tests():
         data = pd.DataFrame(
             {
-                'ref': ['A', 'C'],
-                'alt': ['T', 'G'],
+                'REF': ['A', 'C'],
+                'ALT': ['T', 'G'],
                 'PolyPhen': [0.08, 0.98]
             }
         )
-        user_input = ['ref', 'PolyPhen']
+        user_input = ['REF', 'PolyPhen']
         annotator = ManualVEPProcessor()
         annotator.process(data, user_input)
         return annotator
 
     def test_getter_vep_input(self):
-        annotator = self.prepare_getter_tests()
-        observed = annotator.get_feature_process_inputs()
-        expected = {'ref', 'PolyPhen'}
-        self.assertSetEqual(set(observed), expected)
-
-    def test_getter_vep_output(self):
-        annotator = self.prepare_getter_tests()
-        observed = annotator.get_feature_process_outputs()
-        expected = {'Length', 'Type', 'PolyPhenCat', 'PolyPhenVal'}
-        self.assertSetEqual(set(observed), expected)
+        data = pd.DataFrame(
+            {
+                'REF': ['A', 'C'],
+                'ALT': ['T', 'G'],
+                'PolyPhen': [0.08, 0.98]
+            }
+        )
+        user_input = ['REF', 'PolyPhen']
+        annotator = ManualVEPProcessor()
+        annotator.process(data, user_input)
+        observed = annotator.get_feature_processes()
+        expected_keys = ['REF', 'PolyPhen']
+        expected_values = ['Type', 'Length', 'PolyPhenCat', 'PolyPhenVal']
+        for input_feature in observed.keys():
+            self.assertIn(input_feature, expected_keys)
+        for output_features in observed.values():
+            for feature in output_features:
+                self.assertIn(feature, expected_values)
 
 
 if __name__ == '__main__':

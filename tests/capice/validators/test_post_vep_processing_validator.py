@@ -14,14 +14,13 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
             {
                 'chr': [1, 2],
                 'pos': [100, 200],
-                'ref': ['A', 'A'],
-                'alt': ['T', 'T'],
+                'REF': ['A', 'A'],
+                'ALT': ['T', 'T'],
                 'feat1': ['foo', 'bar']
             }
         )
-        cls.validator = PostVEPProcessingValidator(
-            load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
-        )
+        cls.validator = PostVEPProcessingValidator()
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -33,7 +32,8 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
         self.assertRaises(
             KeyError,
             self.validator.validate_features_present,
-            self.dataset
+            self.dataset,
+            self.model.vep_features.values()
         )
 
 

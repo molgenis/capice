@@ -45,8 +45,8 @@ class TestFilePostProcessor(unittest.TestCase):
             {
                 "chr": [1, 2, 3],
                 "pos": [100, 200, 300],
-                "ref": ['A', 'T', 'G'],
-                "alt": ['T', 'G', 'A'],
+                "REF": ['A', 'T', 'G'],
+                "ALT": ['T', 'G', 'A'],
                 "id_source": ['foo', 'foo', 'bar'],
                 "feature": ['bar', 'bar', 'buz'],
                 "gene_name": ['g1', 'g2', 'g3'],
