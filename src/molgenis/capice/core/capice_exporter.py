@@ -40,7 +40,7 @@ class CapiceExporter:
         export_path = os.path.join(self.file_path, self.capice_filename)
         datafile = self._post_process_split_cols(datafile)
         datafile = self._post_process_set_correct_dtypes(datafile)
-        datafile[self.export_cols].to_csv(export_path, sep='\t', compression='gzip', index=False)
+        datafile[self.export_cols].to_csv(export_path, sep='\t', index=False)
         if not self.output_given:
             print('Successfully exported CAPICE datafile to: %s', export_path)
 

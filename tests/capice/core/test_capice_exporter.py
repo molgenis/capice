@@ -73,7 +73,7 @@ class TestCapiceExporter(unittest.TestCase):
         self.exporter.capice_filename = filename
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
         self.assertTrue(os.path.isfile(filename_path))
-        exported_data = pd.read_csv(filename_path, compression='gzip', sep='\t')
+        exported_data = pd.read_csv(filename_path, sep='\t')
         exported_data[Column.chr.value] = exported_data[Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(exported_data, self.expected_prediction_output_dataframe)
 
@@ -90,7 +90,7 @@ class TestCapiceExporter(unittest.TestCase):
             present_file_conn.write('This file is already present')
         self.exporter.capice_filename = present_file
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
-        forced_file = pd.read_csv(present_file_path, compression='gzip', sep='\t')
+        forced_file = pd.read_csv(present_file_path, sep='\t')
         forced_file[Column.chr.value] = forced_file[Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(forced_file, self.expected_prediction_output_dataframe)
 
