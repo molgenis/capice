@@ -31,9 +31,7 @@ class TestMainNonTrain(unittest.TestCase):
         predict = CapicePredict(input_path=infile, model=self.model, output_path=self.output_dir,
                                 output_given=True)
         predict.run()
-        prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'),
-                                        compression='gzip',
-                                        sep='\t')
+        prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.txt'), sep='\t')
         self.assertEqual(prediction_output.shape, (4, 11))
 
 
