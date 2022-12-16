@@ -1,11 +1,14 @@
-import typing
+import os
 from abc import ABC, abstractmethod
+
+import pandas as pd
 
 from molgenis.capice.core.logger import Logger
 from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
+from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 from molgenis.capice.utilities.categorical_processor import CategoricalProcessor
 from molgenis.capice.utilities.load_file_postprocessor import LoadFilePostProcessor
 from molgenis.capice.validators.post_file_parse_validator import PostFileParseValidator
@@ -66,13 +69,45 @@ class Main(ABC):
         return input_file
 
     @staticmethod
-    @abstractmethod
-    def process(loaded_data, process_features: typing.Collection):
-        pass
+    def process(loaded_data: pd.DataFrame, process_features: list[str]) -> tuple[
+        pd.DataFrame, dict[str, list[str]]
+    ]:
+        # Returns might look funky, but Google pydoc does not support multiple return statements.
+        """
+        Function to call the ManualVEPProcessor over loaded_data using the supplied
+        process_features list.
+
+        Args:
+            loaded_data:
+                The pandas dataframe over which the VEP features should be processed.
+
+            process_features:
+                List containing either all input features, possibly containing VEP features (in
+                the case of train) or already all input features that can be VEP processed (in
+                case of predict).
+
+        Returns:
+            tuple:
+                Tuple [0] containing: The output dataframe containing all VEP processed features
+                according to process_features. Depending on the property "drop" will drop the
+                feature present in process_features from the columns of the output dataframe.
+                Tuple [1] containing: The output dictionary containing the VEP feature (key)
+                and the derivative features that originate from said VEP feature (value).
+                The property "drop" is of no influence here.
+        """
+        processor = ManualVEPProcessor()
+        processed_data = processor.process(loaded_data, process_features)
+        processed_features = processor.get_feature_processes()
+        # No validation, since that is specific to predict.
+        # Also predict doesn't technically need processed_features, but within predict the first
+        # argument in the tuple can just be indexed.
+        # Still returning both is relevant, in case we want to validate the processed_features in
+        # the future for predict.
+        return processed_data, processed_features
 
     @staticmethod
-    def categorical_process(loaded_data,
-                            processing_features: dict | None = None,
+    def categorical_process(loaded_data: pd.DataFrame,
+                            processing_features: dict[str, list[str]] | None = None,
                             train_features: list | None = None):
         processor = CategoricalProcessor()
         capice_data, processed_features = processor.process(
@@ -82,7 +117,7 @@ class Main(ABC):
         )
         return capice_data, processed_features
 
-    def _export(self, dataset, output):
+    def _export(self, dataset: pd.DataFrame, output: os.PathLike):
         """
         Function to prepare the data to be exported
         """

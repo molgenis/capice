@@ -12,8 +12,8 @@ class TestPredictor(unittest.TestCase):
         cls.predictor = Predictor(model)
         cls.dataset = main.categorical_process(
             main.process(
-                main._load_file()
-            ), processing_features=model.processable_features
+                main._load_file(), process_features=model.vep_features.keys()
+            )[0], processing_features=model.processable_features
         )[0]
 
     def test_predict(self):

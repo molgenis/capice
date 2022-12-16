@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import numpy as np
 import pandas as pd
 
@@ -24,7 +22,7 @@ class CategoricalProcessor:
             dataset: pd.DataFrame,
             processable_features: list | None = None,
             predetermined_features: dict[str, list] | None = None
-    ) -> Tuple[pd.DataFrame, dict[str, list]]:
+    ) -> tuple[pd.DataFrame, dict[str, list]]:
         """
         Callable method of CategoricalProcessor to start processing the categorical columns
         of dataset according to either processable_features (in case of train) or

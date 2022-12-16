@@ -1,15 +1,15 @@
-from typing import Iterable
-
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
+from molgenis.capice.utilities import check_if_in_list
 
 
 class PostVEPProcessingValidator:
     def __init__(self):
         self.log = Logger().logger
 
-    def validate_features_present(self, datafile: pd.DataFrame, vep_features: Iterable) -> None:
+    def validate_features_present(self, datafile: pd.DataFrame, vep_features: list[list[str]]) -> \
+            None:
         """
         Validator to see if all features that should be present after the
         ManualVEPProcessor are present.
@@ -23,11 +23,7 @@ class PostVEPProcessingValidator:
             KeyError:
                 Raises KeyError when output VEP feature is not present within datafile.
         """
-        features_not_present = []
-        for features in vep_features:
-            for feature in features:
-                if feature not in datafile.columns:
-                    features_not_present.append(feature)
+        features_not_present = check_if_in_list(vep_features, datafile.columns)
         if len(features_not_present) > 0:
             error_message = 'Detected required feature(s) %s not ' \
                             'present within VEP processed input file!'

@@ -1,11 +1,8 @@
-import pandas as pd
-
 from molgenis.capice.main_capice import Main
 from molgenis.capice.utilities.enums import Column
 from molgenis.capice.utilities.predictor import Predictor
 from molgenis.capice.utilities.class_suggestor import ClassSuggestor
 from molgenis.capice.validators.predict_validator import PredictValidator
-from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 from molgenis.capice.validators.post_vep_processing_validator import PostVEPProcessingValidator
 
 
@@ -31,7 +28,11 @@ class CapicePredict(Main):
                                                                     Column.feature.value,
                                                                     Column.feature_type.value])
         capice_data = self.process(
-            loaded_data=capice_data
+            loaded_data=capice_data,
+            process_features=list(self.model.vep_features.keys())
+        )[0]
+        PostVEPProcessingValidator().validate_features_present(
+            capice_data, self.model.vep_features.values()
         )
         capice_data = self.categorical_process(
             loaded_data=capice_data,
@@ -41,16 +42,6 @@ class CapicePredict(Main):
         capice_data = self.predict(loaded_data=capice_data)
         capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)
-
-    def process(self, loaded_data) -> pd.DataFrame:
-        """
-        Function to process the VEP file to a CAPICE file
-        """
-        processor = ManualVEPProcessor()
-        processed_data = processor.process(loaded_data, self.model.vep_features.keys())
-        validator = PostVEPProcessingValidator()
-        validator.validate_features_present(processed_data, self.model.vep_features.values())
-        return processed_data
 
     def predict(self, loaded_data):
         """

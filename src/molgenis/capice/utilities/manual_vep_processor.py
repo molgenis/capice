@@ -1,5 +1,4 @@
 import os
-import typing
 
 import pandas as pd
 
@@ -18,7 +17,7 @@ class ManualVEPProcessor:
         self.log = Logger().logger
         self.feature_processing_tracker = {}
 
-    def process(self, dataset: pd.DataFrame, process_features: typing.Container) -> pd.DataFrame:
+    def process(self, dataset: pd.DataFrame, process_features: list[str]) -> pd.DataFrame:
         """
         Callable method for the ManualVEPProcessor to start processing.
         Loads all the VEP processors dynamically from /src/main/python/vep.
@@ -56,13 +55,13 @@ class ManualVEPProcessor:
         self.log.debug('Processed %d features.', n_feats_processed)
         return dataset
 
-    def _add_feature_tracking(self, processor_name: str, processor_features: list):
+    def _add_feature_tracking(self, processor_name: str, processor_features: list[str]):
         if processor_name not in self.feature_processing_tracker.keys():
             self.feature_processing_tracker[processor_name] = processor_features
         else:
             self.feature_processing_tracker[processor_name].extend(processor_features)
 
-    def get_feature_processes(self) -> dict:
+    def get_feature_processes(self) -> dict[str, list[str]]:
         """
         Getter for the dictionary containing all the processed features and their output features.
 

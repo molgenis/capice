@@ -1,5 +1,5 @@
 import pandas as pd
-import xgboost
+import xgboost as xgb
 
 from molgenis.capice.core.logger import Logger
 
@@ -8,7 +8,7 @@ class PredictValidator:
     def __init__(self):
         self.log = Logger().logger
 
-    def validate_data_predict_ready(self, dataset: pd.DataFrame, model: xgboost.XGBClassifier) ->\
+    def validate_data_predict_ready(self, dataset: pd.DataFrame, model: xgb.XGBClassifier) ->\
             None:
         """
         Validates if dataset is predict ready according to the feature names in model

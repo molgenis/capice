@@ -34,8 +34,8 @@ class TestCategoricalProcessor(unittest.TestCase):
         print('Preprocessing (unit) (file)')
         self.main.categorical_process(
             loaded_data=self.main.process(
-                self.main._load_file()
-            ), processing_features=self.model.processable_features
+                self.main._load_file(), process_features=self.model.vep_features.keys()
+            )[0], processing_features=self.model.processable_features
         )
 
     def test_component_preprocessing(self):
@@ -49,8 +49,8 @@ class TestCategoricalProcessor(unittest.TestCase):
         print('Preprocessing (component)')
         processed_file = self.main.categorical_process(
             loaded_data=self.main.process(
-                self.main._load_file()
-            ), processing_features=self.model.processable_features
+                self.main._load_file(), process_features=self.model.vep_features.keys()
+            )[0], processing_features=self.model.processable_features
         )[0]
         model_features = self.model.get_booster().feature_names
         processed_columns = processed_file.columns

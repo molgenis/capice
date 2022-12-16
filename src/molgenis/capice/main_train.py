@@ -1,5 +1,4 @@
 import json
-import typing
 
 import numpy as np
 import pandas as pd
@@ -9,9 +8,9 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 from molgenis.capice.main_capice import Main
 from molgenis.capice import __version__
+from molgenis.capice.utilities import check_if_in_list
 from molgenis.capice.utilities.enums import TrainEnums
 from molgenis.capice.core.capice_exporter import CapiceExporter
-from molgenis.capice.utilities.manual_vep_processor import ManualVEPProcessor
 
 
 class CapiceTrain(Main):
@@ -92,15 +91,6 @@ class CapiceTrain(Main):
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
-    @staticmethod
-    def process(loaded_data, process_features: typing.Collection) -> tuple[
-        pd.DataFrame, dict[str, list]
-    ]:
-        processor = ManualVEPProcessor()
-        processed_data = processor.process(loaded_data, process_features)
-        processed = processor.get_feature_processes()
-        return processed_data, processed
-
     def _validate_features_present(self, dataset, train_features) -> None:
         missing = []
         for key in train_features:
@@ -126,21 +116,21 @@ class CapiceTrain(Main):
             vep_processed: dict,
             vep_processed_dataframe_columns: pd.DataFrame.columns
     ) -> list[str]:
-        return_list = []
+        feature_list = []
         # Adds the VEP input features to which the processor has property drop = False
         for feature in vep_processed.keys():
             if feature in vep_processed_dataframe_columns:
-                return_list.append(feature)
+                feature_list.append(feature)
         # Adds back the user input features, but avoiding adding duplicates and
         # avoiding the features that had property drop = True
         for feature in input_train_features:
-            if feature not in return_list and feature not in vep_processed.keys():
-                return_list.append(feature)
+            if feature not in feature_list and feature not in vep_processed.keys():
+                feature_list.append(feature)
         # Extending the features with the VEP processors output features
-        for features in vep_processed.values():
-            for feature in features:
-                if feature not in return_list:
-                    return_list.append(feature)
+        # Has to be new list otherwise features from feature_list go missing
+        return_list = check_if_in_list(vep_processed.values(), feature_list)
+        # Merging back with feature_list
+        return_list.extend(feature_list)
         return return_list
 
     def _set_train_features(self, processable_features: list, processed_features: dict) -> \
