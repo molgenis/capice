@@ -21,7 +21,7 @@ class DynamicLoader:
         self.path = path
         self._check_dir_exists()
         self.required_attributes = required_attributes
-        self.modules = {}
+        self.modules: dict[str, object] = {}
 
     def load_manual_annotators(self):
         """
@@ -82,14 +82,15 @@ class DynamicLoader:
                 modules.append(module)
         return modules
 
-    def _import(self, usable_modules: list):
+    def _import(self, usable_modules: list[str]) -> dict[str, object]:
         """
         Function  to dynamically load in the modules using the
         import_module library.
         :param usable_modules: list of absolute paths to potential modules
         :return: list of usable modules
         """
-        return_modules = {}
+        # For some reason, mypy wants this line to be Typed instead of the method.
+        return_modules: dict[str, object] = {}
         for module in usable_modules:
             name = os.path.basename(module).split('.py')[0]
             spec = util.spec_from_file_location(name=name, location=module)

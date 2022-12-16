@@ -16,7 +16,7 @@ class InputValidator:
         """
         if not os.path.exists(input_path):
             raise FileNotFoundError(f'{input_path} does not exist!')
-        if not (input_path.endswith(extension)):
+        if not str(input_path).endswith(extension):
             raise IOError(f'{input_path} does not match required extension: '
                           f'{", ".join(extension)}')
 

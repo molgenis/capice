@@ -20,7 +20,7 @@ class CategoricalProcessor:
     def process(
             self,
             dataset: pd.DataFrame,
-            processable_features: list | None = None,
+            processable_features: list[str] | None = None,
             predetermined_features: dict[str, list] | None = None
     ) -> tuple[pd.DataFrame, dict[str, list]]:
         """
@@ -54,7 +54,12 @@ class CategoricalProcessor:
         self._validate_one_feature_list_present(processable_features, predetermined_features)
         self._create_preservation_col(dataset)
         if predetermined_features is None:
-            processing_features = self._get_categorical_columns(dataset, processable_features)
+            # Type ignore, else mypy takes issue with Typing since processable_features can be
+            # None, so it is considered Optional[list[str]] instead of list[str].
+            processing_features = self._get_categorical_columns(
+                dataset,
+                processable_features  # type: ignore
+            )
         else:
             processing_features = predetermined_features
 
@@ -88,7 +93,8 @@ class CategoricalProcessor:
             [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
         ].astype(str).agg(UniqueSeparator.unique_separator.value.join, axis=1)
 
-    def _get_categorical_columns(self, dataset: pd.DataFrame, processable_features: list) -> dict:
+    def _get_categorical_columns(self, dataset: pd.DataFrame,
+                                 processable_features: list[str]) -> dict[str, list]:
         """
         Method for when the predetermined_features is None, usually in case of train,
         to determine the top 5 features that should be used for pandas.get_dummies().

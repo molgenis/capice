@@ -23,7 +23,7 @@ class PredictValidator:
                 Raised when a required predict feature is missing from dataset.
         """
         missing = []
-        for feature in model.get_booster().feature_names:
+        for feature in model.get_booster().feature_names:  # type: ignore
             if feature not in dataset.columns:
                 missing.append(feature)
         if len(missing) > 0:

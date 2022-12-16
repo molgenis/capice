@@ -26,6 +26,10 @@ class TestCategoricalProcessor(unittest.TestCase):
     def tearDownClass(cls) -> None:
         teardown()
 
+    @staticmethod
+    def creat_other_column(value: str) -> str:
+        return '_'.join([value, Column.other.value])
+
     def test_unit_preprocessing_file(self):
         """
         Unit test for the preprocessor to see if the preprocessor works just
@@ -88,15 +92,15 @@ class TestCategoricalProcessor(unittest.TestCase):
                 'foo_a': [1, 0, 0, 0, 0, 0],
                 'foo_b': [0, 1, 0, 0, 0, 0],
                 'foo_c': [0, 0, 1, 0, 0, 0],
-                'foo_other_CAPICE_value': [0, 0, 0, 1, 1, 1],
+                self.creat_other_column('foo'): [0, 0, 0, 1, 1, 1],
                 'bar_a': [1, 0, 0, 0, 0, 0],
-                'bar_other_CAPICE_value': [0, 1, 1, 1, 1, 1],
+                self.creat_other_column('bar'): [0, 1, 1, 1, 1, 1],
                 'baz_a': [1, 0, 0, 0, 0, 0],
                 'baz_b': [0, 1, 0, 0, 0, 0],
                 'baz_c': [0, 0, 1, 0, 0, 0],
                 'baz_d': [0, 0, 0, 1, 0, 0],
                 'baz_e': [0, 0, 0, 0, 1, 0],
-                'baz_other_CAPICE_value': [0, 0, 0, 0, 0, 1],
+                self.creat_other_column('baz'): [0, 0, 0, 0, 0, 1],
                 'REF': ['A', 'T', 'A', 'T', 'A', 'T'],
                 'ALT': ['G', 'C', 'G', 'C', 'G', 'C'],
                 'feature_1': [1, 2, 3, 4, np.nan, np.nan],
@@ -144,7 +148,7 @@ class TestCategoricalProcessor(unittest.TestCase):
             Column.other.value,
             observed_dict['foo']
         )
-        self.assertIn('foo_other_CAPICE_value', observed_df.columns)
+        self.assertIn(self.creat_other_column('foo'), observed_df.columns)
 
     def test_creation_other_notin(self):
         test_case = pd.concat(
@@ -167,7 +171,7 @@ class TestCategoricalProcessor(unittest.TestCase):
             Column.other.value,
             observed_dict['foo']
         )
-        self.assertNotIn('foo_other_CAPICE_value', observed_df.columns)
+        self.assertNotIn(self.creat_other_column('foo'), observed_df.columns)
 
     def test_other_in_top_5(self):
         # Tests that, if "other" occurs in the top 5 categories, only this "other" feature gets
@@ -188,7 +192,7 @@ class TestCategoricalProcessor(unittest.TestCase):
         self.assertFalse(test_series[test_series > 0].size > 2,
                          msg=f'Actual size: {test_series[test_series > 0].size}')
         self.assertIn(
-            'foo_other_CAPICE_value',
+            self.creat_other_column('foo'),
             observed_df.columns
         )
 
