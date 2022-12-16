@@ -164,10 +164,10 @@ class TestCategoricalProcessor(unittest.TestCase):
             observed_dict.keys()
         )
         self.assertNotIn(
-            'other',
+            Column.other.value,
             observed_dict['foo']
         )
-        self.assertNotIn('foo_other', observed_df.columns)
+        self.assertNotIn('foo_other_CAPICE_value', observed_df.columns)
 
     def test_other_in_top_5(self):
         # Tests that, if "other" occurs in the top 5 categories, only this "other" feature gets
