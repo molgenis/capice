@@ -13,12 +13,12 @@ class TestType(unittest.TestCase):
 
     def test_process(self):
         dataframe = pd.DataFrame({
-            'ref': ['ATAG', 'A', 'C', 'AC'],
-            'alt': ['A', 'ATG', 'A', 'GT']})
+            'REF': ['ATAG', 'A', 'C', 'AC'],
+            'ALT': ['A', 'ATG', 'A', 'GT']})
         observed = self.length.process(dataframe)
         expected = pd.DataFrame({
-            'ref': ['ATAG', 'A', 'C', 'AC'],
-            'alt': ['A', 'ATG', 'A', 'GT'],
+            'REF': ['ATAG', 'A', 'C', 'AC'],
+            'ALT': ['A', 'ATG', 'A', 'GT'],
             'Length': [3, 2, 0, 0]})
         pd.testing.assert_frame_equal(expected, observed)
 

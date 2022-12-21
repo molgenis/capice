@@ -73,6 +73,25 @@ class TestConsequence(unittest.TestCase):
         pd.testing.assert_frame_equal(observerd.sort_index(axis=1), expected.sort_index(
             axis=1), check_dtype=False)
 
+    def test_non_coding(self):
+        data = pd.DataFrame({
+            'variants': ['variant_1', 'variant_2', 'variant_3'],
+            'Consequence': [np.nan, np.nan, np.nan]
+        })
+        columns = data.columns
+        expected_altered = self.expected_data.copy(deep=True)
+        # Easier to locate the ones in self.expected_data than to hardcode a new one
+        expected_altered.loc[1, 'is_start_lost'] = 0
+        expected_altered.loc[0, 'is_stop_lost'] = 0
+        expected_altered.loc[0, 'is_transcript_ablation'] = 0
+        expected = pd.concat([data, expected_altered], axis=1)
+        observed = Consequence().process(data)
+        self.assertFalse(observed[observed.columns.difference(columns)].isnull().values.any())
+        pd.testing.assert_frame_equal(
+            observed.sort_index(axis=1),
+            expected.sort_index(axis=1)
+        )
+
     def test_consequence_warning(self):
         """
         Tests that when a consequence is encountered that is not present within the processor

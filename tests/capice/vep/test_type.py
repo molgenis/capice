@@ -12,12 +12,12 @@ class TestType(unittest.TestCase):
         cls.type = type.Type()
 
     def test_process(self):
-        input_data_frame = pd.DataFrame({'ref': ['C', 'CA', 'CA', 'C', 'CA', 'CA'],
-                                         'alt': ['G', 'GCC', 'GG', 'CG', 'G', 'C']})
+        input_data_frame = pd.DataFrame({'REF': ['C', 'CA', 'CA', 'C', 'CA', 'CA'],
+                                         'ALT': ['G', 'GCC', 'GG', 'CG', 'G', 'C']})
         actual_output = self.type.process(input_data_frame)
         expected_output = pd.DataFrame({
-            'ref': ['C', 'CA', 'CA', 'C', 'CA', 'CA'],
-            'alt': ['G', 'GCC', 'GG', 'CG', 'G', 'C'],
+            'REF': ['C', 'CA', 'CA', 'C', 'CA', 'CA'],
+            'ALT': ['G', 'GCC', 'GG', 'CG', 'G', 'C'],
             'Type': ['SNV', 'DELINS', 'DELINS', 'INS', 'DELINS', 'DEL']})
         pd.testing.assert_frame_equal(actual_output, expected_output)
 

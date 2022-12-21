@@ -119,6 +119,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
             return self._single_argument_retriever(arg, arg_name, has_default)
         except IOError as e:
             self.parser.error(e)
+            return None
 
     @staticmethod
     def _single_argument_retriever(arg: list | None,

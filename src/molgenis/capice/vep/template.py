@@ -39,9 +39,13 @@ class Template(metaclass=ABCMeta):
     def drop(self):
         return True
 
+    @staticmethod
+    def _fillna():
+        return np.nan
+
     def process(self, dataframe: pd.DataFrame):
         if dataframe[self.name].isnull().all():
-            dataframe[self.columns] = np.nan
+            dataframe[self.columns] = self._fillna()
             return dataframe
         else:
             return self._process(dataframe)

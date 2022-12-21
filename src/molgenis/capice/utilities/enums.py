@@ -8,8 +8,8 @@ class Column(Enum):
     chr_pos_ref_alt = 'chr_pos_ref_alt'
     chr = 'chr'
     pos = 'pos'
-    ref = 'ref'
-    alt = 'alt'
+    ref = 'REF'
+    alt = 'ALT'
     gene_name = 'gene_name'
     gene_id = 'gene_id'
     id_source = 'id_source'
@@ -17,6 +17,7 @@ class Column(Enum):
     feature_type = 'feature_type'
     score = 'score'
     suggested_class = 'suggested_class'
+    other = 'other_CAPICE_value'
 
 
 class OutputClasses(Enum):

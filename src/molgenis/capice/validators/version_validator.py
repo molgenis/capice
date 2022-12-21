@@ -79,16 +79,18 @@ class VersionValidator:
         ValueError
             Raised when the model and framework versions are not compatible.
         """
+        # All mypy ignores here are because attributes are not found.
         capice = match(self.regex, capice_version)
         model = match(self.regex, model_version)
-        if capice.group('major') != model.group('major'):
+        if capice.group('major') != model.group('major'):  # type: ignore
             raise ValueError(
-                f'CAPICE major version {capice.string} does not match with the model '
-                f'{model.string}!'
+                f'CAPICE major version {capice.string} '  # type: ignore
+                f'does not match with the model '
+                f'{model.string}!'  # type: ignore
             )
 
-        if capice.group('prerelease') or model.group('prerelease'):
-            self._validate_prerelease(capice, model)
+        if capice.group('prerelease') or model.group('prerelease'):  # type: ignore
+            self._validate_prerelease(capice, model)  # type: ignore
 
     @staticmethod
     def _validate_prerelease(capice_version: re.Match,

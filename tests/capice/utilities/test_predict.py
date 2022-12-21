@@ -24,11 +24,11 @@ class TestPredict(unittest.TestCase):
         """
         print('Prediction (unit)')
         self.main.predict(
-            self.main.preprocess(
+            self.main.categorical_process(
                 self.main.process(
-                    self.main._load_file()
-                ), model_features=self.model.get_booster().feature_names
-            )
+                    self.main._load_file(), process_features=self.model.vep_features.keys()
+                )[0], processing_features=self.model.processable_features
+            )[0]
         )
 
     def test_component_prediction(self):
@@ -38,11 +38,11 @@ class TestPredict(unittest.TestCase):
         """
         print('Prediction (component)')
         prediction = self.main.predict(
-            self.main.preprocess(
+            self.main.categorical_process(
                 self.main.process(
-                    self.main._load_file()
-                ), model_features=self.model.get_booster().feature_names
-            )
+                    self.main._load_file(), process_features=self.model.vep_features.keys()
+                )[0], processing_features=self.model.processable_features
+            )[0]
         )
         # Combined sum of the prediction score should be higher than 0
         self.assertGreater(prediction[Column.score.value].sum(), 0)

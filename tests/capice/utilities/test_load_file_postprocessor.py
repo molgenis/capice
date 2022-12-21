@@ -32,8 +32,8 @@ class LoadFilePostprocessor(unittest.TestCase):
             {
                 'chr': [1],
                 'pos': [123],
-                'ref': ['A'],
-                'alt': ['G'],
+                'REF': ['A'],
+                'ALT': ['G'],
                 'gene_id': [123],
                 'id_source': ['hgnc'],
                 'feature': ['NM1.123'],

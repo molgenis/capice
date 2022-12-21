@@ -20,7 +20,8 @@ class ArgsHandlerPredict(ArgsHandlerParent):
 
     @property
     def _model_extension(self) -> tuple[str]:
-        return '.json', '.ubj'
+        # Ignore because the amount of values of tuple does not matter.
+        return '.json', '.ubj'  # type: ignore
 
     def _model_extension_str(self) -> str:
         return self._join_extensions(self._model_extension)

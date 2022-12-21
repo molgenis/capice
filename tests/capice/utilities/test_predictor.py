@@ -10,11 +10,11 @@ class TestPredictor(unittest.TestCase):
         print('Setting up.')
         main, model = set_up_impute_preprocess()
         cls.predictor = Predictor(model)
-        cls.dataset = main.preprocess(
+        cls.dataset = main.categorical_process(
             main.process(
-                main._load_file()
-            ), model_features=model.get_booster().feature_names
-        )
+                main._load_file(), process_features=model.vep_features.keys()
+            )[0], processing_features=model.processable_features
+        )[0]
 
     def test_predict(self):
         observed = self.predictor.predict(self.dataset)

@@ -19,6 +19,14 @@ class TestType(unittest.TestCase):
                                  'nAA': ['G', 'C', 'C']})
         pd.testing.assert_frame_equal(expected, observed)
 
+    def test_process_no_alt(self):
+        dataframe = pd.DataFrame({'Amino_acids': ['A', 'R', 'G']})
+        observed = self.aa.process(dataframe)
+        expected = pd.DataFrame({'Amino_acids': ['A', 'R', 'G'],
+                                 'oAA': ['A', 'R', 'G'],
+                                 'nAA': ['A', 'R', 'G']})
+        pd.testing.assert_frame_equal(expected, observed)
+
 
 if __name__ == '__main__':
     unittest.main()
