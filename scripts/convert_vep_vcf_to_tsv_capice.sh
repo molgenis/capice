@@ -20,7 +20,8 @@ Example:
 bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz -o capice_in.tsv.gz
 
 Requirements:
-Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
+- Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
+- BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
 
 Notes:
 In case you have specific binds in order for your image to work, adjust this script at the commented out bind flag.

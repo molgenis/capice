@@ -10,7 +10,7 @@ assignees: ''
 ### Describe the bug
 A clear and concise description of what the bug is.
 
-### System information (command line)
+### System information
  - OS: [e.g. iOS]
  - Version: [e.g. 3.0.0]
  - Python version: [e.g. Python3.9.1]
