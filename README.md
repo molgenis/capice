@@ -40,7 +40,7 @@ mentioned features are used, some items in the list below can be skipped.
     * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
     * `spliceai_scores.masked.snv.hg38.vcf.gz`
     * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
-* Apptainer 1.1.4
+* Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)).
   * Singularity could also work, but requires manual adjusting of [the conversion script](./scripts/convert_vep_vcf_to_tsv_capice.sh).
 * Python >=3.10
 
