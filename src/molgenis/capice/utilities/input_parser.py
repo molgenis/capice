@@ -1,6 +1,7 @@
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
+from molgenis.capice.utilities.enums import InputColumn
 
 
 class InputParser:
@@ -19,19 +20,23 @@ class InputParser:
         """
         self.sep = sep
 
-    def parse(self, input_file_path: str):
+    def parse(self, input_file_path: str, additional_dtypes: dict[str, str] = {}):
         """
         Class to start the parsing of additional information from the input
         file.
 
-        :param input_file_path: str, direction to the input file
+        Args:
+            input_file_path: direction to the input file
+            additional_dtypes: Additional dtype information not present in the InputColumn dict to
+            be used while loading the file.
         """
         if self.sep == '\t':
             used_sep = 'Tab'
         else:
             used_sep = self.sep
         self.log.info('Reading VEP file from: %s using separator: %s', input_file_path, used_sep)
-        input_file = pd.read_csv(input_file_path, sep=self.sep, na_values='.', low_memory=False)
+        input_file = pd.read_csv(input_file_path, sep=self.sep, na_values='.', low_memory=False,
+                                 dtype=InputColumn.get_input_name_dtype_dict() | additional_dtypes)
         message = 'Input file at %s loaded with %s samples.'
         self.log.info(message, input_file_path, input_file.shape[0])
         return input_file

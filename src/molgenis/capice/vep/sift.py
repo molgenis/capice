@@ -14,6 +14,10 @@ class SIFT(TemplateSiftPolyPhen):
     def columns(self):
         return ['SIFTcat', 'SIFTval']
 
+    @property
+    def dtypes(self):
+        return ['category', 'float64']
+
     def apply_label(self, dataframe: pd.DataFrame):
         """
         Under the 0.05 should be deleterious, everything else should be tolerated (if not nan)

@@ -14,6 +14,10 @@ class PolyPhen(TemplateSiftPolyPhen):
     def columns(self):
         return ['PolyPhenCat', 'PolyPhenVal']
 
+    @property
+    def dtypes(self):
+        return ['category', 'float64']
+
     def apply_label(self, dataframe: pd.DataFrame):
         """
         Under the 0.445 should be benign, between 0.445 and 0.908 should be possibly damaging,

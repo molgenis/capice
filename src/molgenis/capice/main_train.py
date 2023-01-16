@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from molgenis.capice.main_capice import Main
 from molgenis.capice import __version__
 from molgenis.capice.utilities import check_if_in_list
-from molgenis.capice.utilities.enums import TrainEnums
+from molgenis.capice.utilities.enums import TrainEnums, InputColumn
 from molgenis.capice.core.capice_exporter import CapiceExporter
 
 
@@ -22,7 +22,7 @@ class CapiceTrain(Main):
     def __init__(self, input_path, json_path, test_split, output_path, output_given, threads):
         super().__init__(input_path, output_path, output_given)
 
-        # Impute JSON.
+        # Features JSON.
         self.json_path = json_path
         self.log.debug('Input model features JSON confirmed: %s', self.json_path)
 
@@ -33,9 +33,8 @@ class CapiceTrain(Main):
             self.train_test_size)
 
         # Required features when file is loaded
-        self.additional_required = [TrainEnums.binarized_label.value,
-                                    TrainEnums.sample_weight.value]
-        self.exclude_features += self.additional_required
+        self.additional_required = [InputColumn.binarized_label.col_name,
+                                    InputColumn.sample_weight.col_name]
 
         # Variables that can be edited in testing to speed up the train testing
         self.esr = 15
@@ -56,7 +55,36 @@ class CapiceTrain(Main):
         Main function. Will make a variety of calls to the required modules in
         order to create new CAPICE models.
         """
-        data = self._load_file(additional_required_features=self.additional_required)
+
+        # TODO: Remove before PR.
+        pd.set_option('display.max_columns', 500)
+        pd.set_option('display.max_rows', 500)
+
+        # TODO: Should be loaded dynamically from features json file.
+        feature_dtypes = {
+            'PolyPhen': 'float64',
+            'SIFT': 'float64',
+            'cDNA_position': 'object',
+            'CDS_position': 'object',
+            'Protein_position': 'object',
+            'Amino_acids': 'object',
+            'REF': 'string',
+            'ALT': 'string',
+            'Consequence': 'object',
+            'SpliceAI_pred_DP_AG': 'float64',
+            'SpliceAI_pred_DP_AL': 'float64',
+            'SpliceAI_pred_DP_DG': 'float64',
+            'SpliceAI_pred_DP_DL': 'float64',
+            'SpliceAI_pred_DS_AG': 'float64',
+            'SpliceAI_pred_DS_AL': 'float64',
+            'SpliceAI_pred_DS_DG': 'float64',
+            'SpliceAI_pred_DS_DL': 'float64',
+            'Grantham': 'float64',
+            'phyloP': 'float64'
+        }
+
+        data = self._load_file(additional_required_features=self.additional_required,
+                               additional_dtypes=feature_dtypes)
         with open(self.json_path, 'rt') as impute_values_file:
             train_features = list(json.load(impute_values_file).keys())
 

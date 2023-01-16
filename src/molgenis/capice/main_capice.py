@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
+from molgenis.capice.utilities.enums import InputColumn
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
@@ -48,13 +48,15 @@ class Main(ABC):
     def run(self):
         pass
 
-    def _load_file(self, additional_required_features: list | None = None):
+    def _load_file(self, additional_required_features: list | None = None,
+                   additional_dtypes: dict[str, str] = {}):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
         """
         input_parser = InputParser()
-        input_file = input_parser.parse(input_file_path=self.infile)
+        input_file = input_parser.parse(input_file_path=self.infile,
+                                        additional_dtypes=additional_dtypes)
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()
         validator = PostFileParseValidator()

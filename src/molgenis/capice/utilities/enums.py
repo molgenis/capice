@@ -1,6 +1,55 @@
 from enum import Enum
 
 
+class InputColumn(Enum):
+    """
+    Columns within panda data frames.
+    `col_name` is the column name as should be used within CAPICE after processing input & the
+    column name in the output file.
+    `col_input_name` is the expected name as given by the input file.
+
+    If `col_name` and `col_input_name` are equal, the name does not get altered.
+
+    The `dtype` contains the type as which it needs to be loaded within pandas. If a manual
+    processor needs to adjust the column still, use `object`. Otherwise, state the correct type
+    (string/int64/etc.)
+    """
+    # General
+    chr = ('chr', 'CHROM', 'string')
+    pos = ('pos', 'POS', 'int64')
+    ref = ('REF', 'REF', 'string')
+    alt = ('ALT', 'ALT', 'string')
+    gene_name = ('gene_name', 'SYMBOL', 'string')
+    gene_id = ('gene_id', 'Gene', 'int64')
+    id_source = ('id_source', 'SYMBOL_SOURCE', 'string')
+    feature = ('feature', 'Feature', 'string')
+    feature_type = ('feature_type', 'Feature_type', 'string')
+    intron = ('Intron', 'INTRON', 'object')  # Combination of 2x int64 divided by a "/"
+    exon = ('Exon', 'EXON', 'object')  # Combination of 2x int64 divided by a "/"
+
+    # Train-only
+    binarized_label = ('binarized_label', 'binarized_label', 'float64')
+    sample_weight = ('sample_weight', 'sample_weight', 'float64')
+
+    def __init__(self, col_name, col_input_name, dtype):
+        self.col_name = col_name
+        self.col_input_name = col_input_name
+        self.dtype = dtype
+
+    @staticmethod
+    def get_input_name_dtype_dict():
+        input_name_dtype = {}
+        for col in InputColumn:
+            input_name_dtype[col.col_input_name] = col.dtype
+        return input_name_dtype
+
+
+class PredictOutputColumn(Enum):
+    score = 'score'
+    suggested_class = 'suggested_class'
+    other = 'other_CAPICE_value'
+
+
 class Column(Enum):
     """
     Enums to use that are specific to the column names after.

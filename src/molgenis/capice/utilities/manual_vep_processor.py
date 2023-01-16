@@ -20,7 +20,7 @@ class ManualVEPProcessor:
     def process(self, dataset: pd.DataFrame, process_features: list[str]) -> pd.DataFrame:
         """
         Callable method for the ManualVEPProcessor to start processing.
-        Loads all the VEP processors dynamically from /src/main/python/vep.
+        Loads all the VEP processors dynamically from /src/molgenis/capice/vep.
 
         Args:
             dataset: The input dataset over which the VEP features should be processed.

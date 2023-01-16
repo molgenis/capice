@@ -15,6 +15,10 @@ class Type(Template):
     def columns(self):
         return ['Type']
 
+    @property
+    def dtypes(self):
+        return ['category']
+
     @staticmethod
     def _ensure_column_value_is_one(column):
         return column.str.len() == 1
