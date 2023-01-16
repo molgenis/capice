@@ -36,14 +36,6 @@ class Main(ABC):
         self.log.debug('Output directory -o / --output confirmed: %s', self.output)
         self.output_given = output_given
 
-        # Preprocessor global exclusion features
-        # Overwrite in specific module if features are incorrect
-        self.exclude_features = [Column.gene_name.value,
-                                 Column.gene_id.value,
-                                 Column.id_source.value,
-                                 Column.feature.value,
-                                 Column.feature_type.value]
-
     @abstractmethod
     def run(self):
         pass
