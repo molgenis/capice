@@ -40,15 +40,22 @@ class Main(ABC):
     def run(self):
         pass
 
-    def _load_file(self, additional_required_features: list | None = None,
-                   additional_dtypes: dict[str, str] = {}):
+    def _load_file(self, additional_minimum_required: set[InputColumn] | None = None,
+                   additional_features: dict[str, str] = {}):
         """
         Function to load the input TSV file into main
         :return: pandas DataFrame
         """
+        # TODO: cleaner version (separate class for features + collection class?)
+        columns_to_load = {}
+        for i in additional_minimum_required:
+            columns_to_load[i.col_name] = i.dtype
+        columns_to_load.update(additional_features)
+        #
+
         input_parser = InputParser()
         input_file = input_parser.parse(input_file_path=self.infile,
-                                        additional_dtypes=additional_dtypes)
+                                        additional_columns=columns_to_load)
         post_load_processor = LoadFilePostProcessor(dataset=input_file)
         input_file = post_load_processor.process()
         validator = PostFileParseValidator()
@@ -58,7 +65,7 @@ class Main(ABC):
         validator.validate_n_columns(input_file)
         validator.validate_minimally_required_columns(
             input_file,
-            additional_required_features=additional_required_features
+            additional_required_features={x.col_name for x in additional_minimum_required}
         )
         return input_file
 

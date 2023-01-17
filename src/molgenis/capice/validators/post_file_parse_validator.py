@@ -1,11 +1,23 @@
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
+from molgenis.capice.utilities.enums import Column, InputColumn
 from molgenis.capice.utilities.column_utils import ColumnUtils
 
 
 class PostFileParseValidator:
+    MINIMUM_REQUIRED_COLUMNS = {
+        InputColumn.chr,
+        InputColumn.pos,
+        InputColumn.ref,
+        InputColumn.alt,
+        InputColumn.gene_name,
+        InputColumn.gene_id,
+        InputColumn.id_source,
+        InputColumn.feature,
+        InputColumn.feature_type
+    }
+
     def __init__(self):
         self.log = Logger().logger
 
@@ -39,12 +51,9 @@ class PostFileParseValidator:
         required columns.
         """
         column_utils = ColumnUtils()
-        column_utils.set_specified_columns([
-            Column.chr.value,
-            Column.pos.value,
-            Column.ref.value,
-            Column.alt.value,
-        ])
+        column_utils.set_specified_columns(
+            {x.col_name for x in PostFileParseValidator.MINIMUM_REQUIRED_COLUMNS}
+        )
         if additional_required_features is not None:
             column_utils.add_to_specified_columns(additional_required_features)
         columns_not_present = column_utils.get_missing_diff_with(dataset.columns)

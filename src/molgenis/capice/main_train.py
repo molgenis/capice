@@ -33,8 +33,8 @@ class CapiceTrain(Main):
             self.train_test_size)
 
         # Required features when file is loaded
-        self.additional_required = [InputColumn.binarized_label.col_name,
-                                    InputColumn.sample_weight.col_name]
+        self.additional_required = {InputColumn.binarized_label,
+                                    InputColumn.sample_weight}
 
         # Variables that can be edited in testing to speed up the train testing
         self.esr = 15
@@ -83,8 +83,8 @@ class CapiceTrain(Main):
             'phyloP': 'float64'
         }
 
-        data = self._load_file(additional_required_features=self.additional_required,
-                               additional_dtypes=feature_dtypes)
+        data = self._load_file(additional_minimum_required=self.additional_required,
+                               additional_features=feature_dtypes)
         with open(self.json_path, 'rt') as impute_values_file:
             train_features = list(json.load(impute_values_file).keys())
 

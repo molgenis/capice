@@ -24,8 +24,6 @@ class InputColumn(Enum):
     id_source = ('id_source', 'SYMBOL_SOURCE', 'string')
     feature = ('feature', 'Feature', 'string')
     feature_type = ('feature_type', 'Feature_type', 'string')
-    intron = ('Intron', 'INTRON', 'object')  # Combination of 2x int64 divided by a "/"
-    exon = ('Exon', 'EXON', 'object')  # Combination of 2x int64 divided by a "/"
 
     # Train-only
     binarized_label = ('binarized_label', 'binarized_label', 'float64')
