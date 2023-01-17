@@ -60,6 +60,10 @@ class Consequence(Template):
                 'is_splice_polypyrimidine_tract_variant'
                 ]
 
+    @property
+    def dtypes(self) -> list[str]:
+        ['boolean']*39
+
     @staticmethod
     def _fillna():
         return 0

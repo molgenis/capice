@@ -11,3 +11,7 @@ class CDNAPosition(TemplatePosition):
     @property
     def columns(self):
         return ['cDNApos', 'relcDNApos']
+
+    @property
+    def dtypes(self) -> list[str]:
+        return ['int64', 'int64']

@@ -11,3 +11,7 @@ class ProteinPosition(TemplatePosition):
     @property
     def columns(self):
         return ['protPos', 'relProtPos']
+
+    @property
+    def dtypes(self) -> list[str]:
+        return ['int64', 'int64']

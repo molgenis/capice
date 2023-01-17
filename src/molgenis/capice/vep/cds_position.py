@@ -11,3 +11,7 @@ class CDSPosition(TemplatePosition):
     @property
     def columns(self):
         return ['CDSpos', 'relCDSpos']
+
+    @property
+    def dtypes(self) -> list[str]:
+        return ['int64', 'int64']

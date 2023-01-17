@@ -33,12 +33,12 @@ class Template(metaclass=ABCMeta):
         return []
 
     @property
-    def dtypes(self) -> list[str] | None:
+    @abstractmethod
+    def dtypes(self) -> list[str]:
         """
         Returns: Explicitly defined dtypes for each item of the generated columns.
-        If None, pandas default behavior should be assumed.
         """
-        return None
+        return []
 
     @property
     def usable(self):

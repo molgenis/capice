@@ -15,6 +15,10 @@ class AminoAcids(Template):
         return ['oAA', 'nAA']
 
     @property
+    def dtypes(self):
+        return ['category', 'category']
+
+    @property
     def oaa(self):
         return self.columns[0]
 

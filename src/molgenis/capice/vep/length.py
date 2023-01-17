@@ -15,6 +15,10 @@ class Length(Template):
     def columns(self):
         return ['Length']
 
+    @property
+    def dtypes(self) -> list[str]:
+        return ['int64']
+
     def _process(self, dataframe: pd.DataFrame):
         dataframe = dataframe.join(
             pd.DataFrame(
