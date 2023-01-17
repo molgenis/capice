@@ -62,7 +62,7 @@ class Consequence(Template):
 
     @property
     def dtypes(self) -> list[str]:
-        ['boolean']*39
+        return ['boolean']*39
 
     @staticmethod
     def _fillna():

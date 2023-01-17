@@ -64,9 +64,8 @@ class Template(metaclass=ABCMeta):
             dataframe = self._process(dataframe)
 
         # Sets type.
-        if self.dtypes is not None:
-            for i, column in enumerate(self.columns):
-                dataframe[column] = dataframe[column].astype(self.dtypes[i])
+        for i, column in enumerate(self.columns):
+            dataframe[column] = dataframe[column].astype(self.dtypes[i])
 
         return dataframe
 

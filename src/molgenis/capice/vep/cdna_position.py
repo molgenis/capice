@@ -14,4 +14,4 @@ class CDNAPosition(TemplatePosition):
 
     @property
     def dtypes(self) -> list[str]:
-        return ['int64', 'int64']
+        return ['UInt64', 'UInt64']
