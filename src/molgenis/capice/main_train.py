@@ -46,7 +46,6 @@ class CapiceTrain(Main):
         self.random_state = 45
         self.split_random_state = 4
         self.model_random_state = 0
-        self.train_features = []
         self.loglevel = self.manager.loglevel
         self.exporter = CapiceExporter(file_path=self.output, output_given=self.output_given)
 
@@ -61,7 +60,9 @@ class CapiceTrain(Main):
         pd.set_option('display.max_rows', 500)
 
         # TODO: Should be loaded dynamically from features json file.
-        feature_dtypes = {
+        # with open(self.json_path, 'rt') as impute_values_file:
+        #     train_features = list(json.load(impute_values_file).keys())
+        input_train_features = {
             'PolyPhen': 'float64',
             'SIFT': 'float64',
             'cDNA_position': 'object',
@@ -84,38 +85,29 @@ class CapiceTrain(Main):
         }
 
         data = self._load_file(additional_minimum_required=self.additional_required,
-                               additional_features=feature_dtypes)
-        with open(self.json_path, 'rt') as impute_values_file:
-            train_features = list(json.load(impute_values_file).keys())
+                               additional_features=input_train_features)
 
-        self._validate_train_features_duplicates(train_features)
+        self._validate_train_features_duplicates(input_train_features.keys())
 
-        self._validate_features_present(data, train_features)
+        self._validate_features_present(data, input_train_features.keys())
 
         data, vep_processed = self.process(
             loaded_data=data,
-            process_features=train_features
+            process_features=input_train_features.keys()
         )
 
-        processable_features = self._reset_processing_features(
-            train_features,
+        processed_train_features = self._determine_train_features(
+            input_train_features,
             vep_processed,
             data.columns
         )
 
-        processed_data, processed_features = self.categorical_process(
-            loaded_data=data,
-            train_features=processable_features,
-            processing_features=None
-        )
-
-        self._set_train_features(processable_features, processed_features)
-
-        processed_train, processed_test = self.split_data(dataset=processed_data,
+        processed_train, processed_test = self.split_data(dataset=data,
                                                           test_size=self.train_test_size)
-        model = self.train(test_set=processed_test, train_set=processed_train)
+        model = self.train(test_set=processed_test, train_set=processed_train,
+                           train_features=processed_train_features)
         setattr(model, "vep_features", vep_processed)
-        setattr(model, "processable_features", processed_features)
+        setattr(model, "input_features", input_train_features)
         setattr(model, 'CAPICE_version', __version__)
         self.exporter.export_capice_model(model=model)
 
@@ -139,8 +131,8 @@ class CapiceTrain(Main):
             raise KeyError(error_message % duplicates)
 
     @staticmethod
-    def _reset_processing_features(
-            input_train_features: list,
+    def _determine_train_features(
+            input_train_features: dict,
             vep_processed: dict,
             vep_processed_dataframe_columns: pd.DataFrame.columns
     ) -> list[str]:
@@ -161,15 +153,7 @@ class CapiceTrain(Main):
         return_list.extend(feature_list)
         return return_list
 
-    def _set_train_features(self, processable_features: list, processed_features: dict) -> \
-            None:
-        train_features = []
-        for feature in processable_features:
-            if feature not in processed_features.keys():
-                train_features.append(feature)
-        for feature_name, features in processed_features.items():
-            for feature in features:
-                train_features.append(f'{feature_name}_{feature}')
+    def _set_train_features(self, train_features: list) -> None:
         self.log.info(
             'The following features have been selected for training: %s',
             ', '.join(train_features)
@@ -204,7 +188,8 @@ class CapiceTrain(Main):
             xgb_verbosity = True
         return verbosity, xgb_verbosity
 
-    def _create_eval_set(self, xgb_version, test_set):
+    @staticmethod
+    def _create_eval_set(xgb_version, test_set, train_features):
         """
         Creates the eval_set for xgb version, test set and processed features (0.x.x will be test).
         :param xgb_version: string
@@ -214,21 +199,22 @@ class CapiceTrain(Main):
         :return: a list with tuple with pandas Dataframe, pandas Series and possibly "test"
         eval_set
         """
-        eval_data = [test_set[self.train_features],
+        eval_data = [test_set[train_features],
                      test_set[TrainEnums.binarized_label.value]]
         if int(xgb_version.split('.')[0]) < 1:
             eval_data.append('test')
         return [tuple(eval_data)]
 
-    def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
+    def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame, train_features: list[str]):
         """
         The training part of main_train.py after all has been processed.
         This is the same as Li et al. originally used to create CAPICE,
         but might be altered due to deprecation of certain libraries.
-        :param test_set: pandas.DataFrame,
-            the testing dataset for determine performance during training
-        :param train_set: pandas.DataFrame,
-            the training dataset on which the model will be created on
+
+        Args:
+            test_set: The testing dataset for determine performance during training.
+            train_set: The training dataset on which the model will be created on.
+            train_features: The features to use for training.
         """
         param_dist = {
             'max_depth': stats.randint(1, 20),
@@ -272,10 +258,10 @@ class CapiceTrain(Main):
                                                   n_iter=self.n_iterations,
                                                   verbose=verbosity)
 
-        eval_set = self._create_eval_set(xgb.__version__, test_set)
+        eval_set = self._create_eval_set(xgb.__version__, test_set, train_features)
 
         self.log.info('Random search starting, please hold.')
-        randomised_search_cv.fit(train_set[self.train_features],
+        randomised_search_cv.fit(train_set[train_features],
                                  train_set[TrainEnums.binarized_label.value],
                                  eval_set=eval_set,
                                  verbose=xgb_verbosity,

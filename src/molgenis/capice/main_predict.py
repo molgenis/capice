@@ -22,11 +22,7 @@ class CapicePredict(Main):
         """
         Function to make CAPICE run in a prediction matter.
         """
-        capice_data = self._load_file(additional_required_features=[Column.gene_name.value,
-                                                                    Column.gene_id.value,
-                                                                    Column.id_source.value,
-                                                                    Column.feature.value,
-                                                                    Column.feature_type.value])
+        capice_data = self._load_file(additional_features=self.model.input_features)
         capice_data = self.process(
             loaded_data=capice_data,
             process_features=list(self.model.vep_features.keys())
@@ -34,11 +30,6 @@ class CapicePredict(Main):
         PostVEPProcessingValidator().validate_features_present(
             capice_data, self.model.vep_features.values()
         )
-        capice_data = self.categorical_process(
-            loaded_data=capice_data,
-            processing_features=self.model.processable_features,
-            train_features=None
-        )[0]
         capice_data = self.predict(loaded_data=capice_data)
         capice_data = self.apply_suggested_class(predicted_data=capice_data)
         self._export(dataset=capice_data, output=self.output)

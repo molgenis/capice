@@ -38,19 +38,10 @@ class CapiceExporter:
         :param datafile: prediction pandas DataFrame
         """
         export_path = os.path.join(self.file_path, self.capice_filename)
-        datafile = self._post_process_split_cols(datafile)
         datafile = self._post_process_set_correct_dtypes(datafile)
         datafile[self.export_cols].to_csv(export_path, sep='\t', index=False)
         if not self.output_given:
             print('Successfully exported CAPICE datafile to: %s', export_path)
-
-    @staticmethod
-    def _post_process_split_cols(datafile: pd.DataFrame):
-        datafile[
-            [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
-        ] = datafile[Column.chr_pos_ref_alt.value].str.split(
-            UniqueSeparator.unique_separator.value, expand=True)
-        return datafile
 
     @staticmethod
     def _post_process_set_correct_dtypes(datafile: pd.DataFrame):

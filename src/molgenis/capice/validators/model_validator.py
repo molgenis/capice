@@ -6,7 +6,7 @@ class ModelValidator:
         impute_values and predict_proba are present.
         """
         required_attributes = ['CAPICE_version', 'vep_features',
-                               'processable_features', 'predict_proba']
+                               'input_features', 'predict_proba']
         for attribute in required_attributes:
             if attribute not in dir(model):
                 raise AttributeError(f'Unable to locate attribute {attribute} in model file!')

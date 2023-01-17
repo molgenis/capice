@@ -40,7 +40,7 @@ class Main(ABC):
     def run(self):
         pass
 
-    def _load_file(self, additional_minimum_required: set[InputColumn] | None = None,
+    def _load_file(self, additional_minimum_required: set[InputColumn] = [],
                    additional_features: dict[str, str] = {}):
         """
         Function to load the input TSV file into main
