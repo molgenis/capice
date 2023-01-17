@@ -17,7 +17,7 @@ class Length(Template):
 
     @property
     def dtypes(self) -> list[str]:
-        return ['UInt64']
+        return ['Int64']
 
     def _process(self, dataframe: pd.DataFrame):
         dataframe = dataframe.join(

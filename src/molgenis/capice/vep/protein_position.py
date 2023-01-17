@@ -14,4 +14,4 @@ class ProteinPosition(TemplatePosition):
 
     @property
     def dtypes(self) -> list[str]:
-        return ['UInt64', 'UInt64']
+        return ['Int64', 'Int64']
