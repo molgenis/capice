@@ -50,7 +50,7 @@ sections will guide you through the steps needed for the variant annotation and 
 using the CAPICE model.
 
 ### UNIX like systems
-__Note: performance of CAPICE has been tested on Python 3.8, 3.9 and 3.10. Performance on other Python versions is not
+__Note: performance of CAPICE has been tested on Python 3.10. Performance on other Python versions is not
 guaranteed.__
 
 1. Download and installation
