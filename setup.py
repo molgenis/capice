@@ -25,7 +25,7 @@ setup(
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python :: 3.10'
     ],
-    python_requires='>=3.8',
+    python_requires='>=3.10',
     install_requires=[
         'numpy==1.23.2',
         'pandas==1.4.4',

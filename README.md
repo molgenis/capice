@@ -41,7 +41,7 @@ mentioned features are used, some items in the list below can be skipped.
     * `spliceai_scores.masked.snv.hg38.vcf.gz`
     * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
 * BCF tools v1.14-1
-* Python >=3.8
+* Python >=3.10
 
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
@@ -49,7 +49,7 @@ sections will guide you through the steps needed for the variant annotation and 
 using the CAPICE model.
 
 ### UNIX like systems
-__Note: performance of CAPICE has been tested on Python 3.8, 3.9 and 3.10. Performance on other Python versions is not
+__Note: performance of CAPICE has been tested on Python 3.10. Performance on other Python versions is not
 guaranteed.__
 
 1. Download and installation
