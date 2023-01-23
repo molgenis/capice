@@ -40,8 +40,9 @@ mentioned features are used, some items in the list below can be skipped.
     * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
     * `spliceai_scores.masked.snv.hg38.vcf.gz`
     * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
-* BCF tools v1.14-1
-* Python >=3.8
+* Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)).
+  * Singularity could also work, but requires manual adjusting of [the conversion script](./scripts/convert_vep_vcf_to_tsv_capice.sh).
+* Python >=3.10
 
 ## Install
 The CAPICE software is also provided in this repository for running CAPICE in your own environment. The following
@@ -49,7 +50,7 @@ sections will guide you through the steps needed for the variant annotation and 
 using the CAPICE model.
 
 ### UNIX like systems
-__Note: performance of CAPICE has been tested on Python 3.8, 3.9 and 3.10. Performance on other Python versions is not
+__Note: performance of CAPICE has been tested on Python 3.10. Performance on other Python versions is not
 guaranteed.__
 
 1. Download and installation
@@ -72,8 +73,10 @@ _Developers_
 ```commandline
 git clone https://github.com/molgenis/capice.git
 cd capice
-pip install --editable '.[test]'
+pip install -e '.[test]'
 ```
+
+Additionally, the [BCFTools Singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif) has to be obtained.
 
 ### Windows
 __Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (macOS or Linux) or use
@@ -128,7 +131,7 @@ For all modules `predict`, `train` and `explain`, the following arguments are av
   input [VEP annotated](https://www.ensembl.org/info/docs/tools/vep/index.html) dataset using the tab separator (can be
   both gzipped or not). Example input data can be found in the [resources](./resources) directory (based on genome build 37 with VEP105).
   The non-raw input files can be used directly with CAPICE.
-  VEP outputs can be converted using `convert_vep_to_tsv_capice.sh` in the [scripts](./scripts) directory (requires BCFTools).
+  VEP outputs can be converted using `convert_vep_to_tsv_capice.sh` in the [scripts](./scripts) directory (requires apptainer).
 - -o / --output _(optional)_: The path to the directory, output filename or output directory and filename where the
   output is placed (will be made if it does not exists). If only a filename is supplied, or no output is supplied, the
   file will be placed within the directory of which CAPICE was called from. __The file will always be gzipped with a .gz
@@ -148,13 +151,14 @@ _For instance:_
 
 The following argument is specific to `predict`:
 
-- -m / --model **(required)**: The path to a custom pickled CAPICE model that includes
-  attributes `CAPICE_version` (`str`) and `model_features` (`list`). Models can be found as attachments on the [GitHub releases](https://github.com/molgenis/capice/releases) page.
+- -m / --model **(required)**: The path to the (universal binary) json model that includes
+  attributes `CAPICE_version` (`str`), `vep_features` (`list[str]`), `processable_features` (`list[str]`) and `predict_proba` (`XGBoost.XGBClassifier`). 
+  Models can be found as attachments on the [GitHub releases](https://github.com/molgenis/capice/releases) page.
 
 The following arguments are specific to `train`:
 
-- -m / --impute **(required)**: The path to a JSON containing the features desired for training. Each key is a training feature, each value is ignored and can be left `NULL`.
-  **Please note that CAPICE is value type specific!**
+- -e / --features **(required)**: The path to a JSON containing the features desired for training as supplied in the input file. Each key is a training feature, each value is ignored and can be left `null`.
+  **Please note that the features are case-sensitive!**
 - -s / --split _(optional)_: Percentage of input data that should be used to measure performance during training.
   Argument should be given in float from 0.1 (10%) to 0.9 (90%), default = 0.2.
 - -t / --threads _(optional)_: The amount of processing cores the training protocol can use. Default = 1.
@@ -180,8 +184,8 @@ Currently VUS only. Work in progress.
 
 ### Usage for making new CAPICE like models
 Outside of Predictions, this repository also provides users the availability to create new CAPICE like models according
-to their specific use case. Since the input file features are not validated apart from 6 features (`%CHROM`, `%POS`
-, `%REF`, `%ALT`, `%sample_weight`, `%binarized_label` (case sensitive, `%` or `#` optional)), user can provide their
+to their specific use case. Since the input file features are not validated apart from 6 features (`CHROM`, `POS`
+, `REF`, `ALT`, `sample_weight`, `binarized_label` (case sensitive)), user can provide their
 own features. Please note that performance is validated on natively supported features. **Performance is not guaranteed
 for custom features.**
 Sample weight can be 1 for all samples if no sample weight should be applied. Binarized label should be either 0 or 1,
@@ -191,20 +195,20 @@ more than 2 classes.
 #### Outputs for training a new model:
 A file will be put out containing the following element:
 
-- `xgb_classifier`: Custom [Pickled](https://docs.python.org/3/library/pickle.html) instance of
+- `xgb_classifier`: [Universal Binary Json](https://ubjson.org/) or JSON file of
   a [XGBClassifier](https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBClassifier) instance that
-  has successfully trained on the input data, containing additional attributes CAPICE_version and model_features.
+  has successfully trained on the input data, containing additional attributes CAPICE_version, vep_features and processable_features.
 
-_Note: To load in a pickled instance of a model, use the following commands:_
+_Note: To load in the (universal binary) json model, use the following commands:_
 
-```
-import pickle
-with open(path/to/model_file.pickle.dat, 'rb') as model_file:
-    model = pickle.load(model_file)
+```python
+import xgboost as xgb
+model = xgb.XGBClassifier()
+model.load_model('/path/to/model.ubj')
 ```
 
 ### Usage for the explain module
-__Is only supported for CAPICE models that have been created using CAPICE v3.0.0 or greater!__
+__Is only supported for CAPICE models that have been created using CAPICE v5.0.0 or greater!__
 
 The explain module takes a model and exports the feature importances of said model. 
 Each of the importance type is described [here](https://xgboost.readthedocs.io/en/stable/python/python_api.html#xgboost.Booster.get_score).
@@ -267,17 +271,6 @@ running.
 ---
 
 __Question:__  
-I'm trying to run the CAPICE explain module, but I'm getting the following error:
-  `_pickle.UnpicklingError: invalid load key, '\x0a'.`
-
-__Answer:__  
-This error is caused because the model you try to explain is created using a (much) older XGBoost version 
-that is currently supported. You will have to manually extract the model features from that model using the correct 
-XGBoost version. For the original publication model XGBoost version 0.90 should work.
-
----
-
-__Question:__  
 I'm getting the following error: `ModuleNotFoundError: No module named 'sklearn'`. What is going wrong?
 
 __Answer:__  
@@ -303,7 +296,6 @@ __Answer:__
 We are investigating options to include the standalone SpliceAI since this requires a lot less resources for the precomputed scores that the VEP plugin uses.
 You could try to use it, but proceed at your own risk.
 
-
 ---
 
 __Question:__  
@@ -313,7 +305,6 @@ __Answer:__
 There are certain restrictions regarding what model versions can be used with CAPICE.
 For regular releases, the major version must be identical.
 For pre-release versions (with `rc<number>` in the version), the entire version number (major, minor, patch & pre-release) must be identical.
-
 
 ---
 
@@ -369,5 +360,5 @@ which can be accessed after creating an account on Illumina. Once added, the rel
 7. Select the files to download (see [Requirements](#requirements))
 
 ## Overview of code
-If you're lost in the code, a map can be
+If you're lost in the code, an outdated map can be
 found [here](https://drive.google.com/file/d/1R_yM6pZ_m2DPazBqx2KdaG9sP5ZXC2K2/view?usp=sharing).
