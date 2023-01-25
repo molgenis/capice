@@ -20,8 +20,8 @@ class CapiceExporter:
         self.export_cols = [
             Column.chr.value,
             Column.pos.value,
-            Column.ref.value,
-            Column.alt.value,
+            Column.ref.value.lower(),
+            Column.alt.value.lower(),
             Column.gene_name.value,
             Column.gene_id.value,
             Column.id_source.value,
@@ -47,7 +47,7 @@ class CapiceExporter:
     @staticmethod
     def _post_process_split_cols(datafile: pd.DataFrame):
         datafile[
-            [Column.chr.value, Column.pos.value, Column.ref.value, Column.alt.value]
+            [Column.chr.value, Column.pos.value, Column.ref.value.lower(), Column.alt.value.lower()]
         ] = datafile[Column.chr_pos_ref_alt.value].str.split(
             UniqueSeparator.unique_separator.value, expand=True)
         return datafile
