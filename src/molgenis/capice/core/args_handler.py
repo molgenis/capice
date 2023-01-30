@@ -21,7 +21,7 @@ class ArgsHandler:
         self.version = __version__
         self.parser = argparse.ArgumentParser(
             description=f"CAPICE, a machine-learning-based method for prioritizing pathogenic"
-                        f" variants https://doi.org/10.1186/s13073-020-00775-w ."
+                        f" variants (https://doi.org/10.1186/s13073-020-00775-w). "
                         f"Converting a VEP output VCF can be done using the conversion tool "
                         f"supplied here: {link} (requires Apptainer)."
         )
