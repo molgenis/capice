@@ -336,7 +336,6 @@ To convert a `.pickle.dat` model to `.ubj`/`.json`, one can do the following (us
 
 Do note that we recommend using a model trained on a specific major version instead, as other breaking changes might be present as well! 
 
-
 ## Data sources
 ### GnomAD
 The gnomAD files can be generated through the following scripts (which also download the gnomAD files):
