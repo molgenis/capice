@@ -33,6 +33,13 @@ class TestMainNonTrain(unittest.TestCase):
         predict.run()
         prediction_output = pd.read_csv(os.path.join(self.output_dir, 'test_output.tsv'), sep='\t')
         self.assertEqual(prediction_output.shape, (4, 11))
+        self.assertListEqual(
+            list(prediction_output.columns),
+            [
+                'chr', 'pos', 'ref', 'alt', 'gene_name', 'gene_id', 'id_source', 'feature', 'feature_type', 'score',
+                'suggested_class'
+            ]
+        )
 
 
 if __name__ == '__main__':
