@@ -1,4 +1,0 @@
-[flake8]
-import-order-style = pep8
-max_line_length = 100
-application-import-names = molgenis,tests

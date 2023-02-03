@@ -1,0 +1,47 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CAPICE"
+description = "Consequence Agnostic Pathogenicity Interpretation of Clinical Exoma variations. State of the art machine learning to predict SNVs and InDels pathogenicity."
+version = "5.0.0"
+authors = [
+    { name = "Molgenis", email = "molgenis-support@umcg.nl" }
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy==1.23.2",
+    "pandas==1.4.4",
+    "scipy==1.9.1",
+    "scikit-learn==1.1.2",
+    "xgboost==1.7.3"
+]
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Programming Language :: Python :: 3.10"
+]
+
+[project.scripts]
+capice = "molgenis.capice.capice:main"
+
+[tool.setuptools.dynamic]
+readme = {file = "README.md"}
+
+[project.optional-dependencies]
+test = ["pytest", "coverage", "mypy", "flake8", "flake8-import-order", "flake8-pyproject"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+
+[tool.flake8]
+import-order-style = "pep8"
+max-line-length=100
+application-import-names = ["molgenis","tests"]

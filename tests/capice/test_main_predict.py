@@ -36,8 +36,8 @@ class TestMainNonTrain(unittest.TestCase):
         self.assertListEqual(
             list(prediction_output.columns),
             [
-                'chr', 'pos', 'ref', 'alt', 'gene_name', 'gene_id', 'id_source', 'feature', 'feature_type', 'score',
-                'suggested_class'
+                'chr', 'pos', 'ref', 'alt', 'gene_name', 'gene_id', 'id_source', 'feature',
+                'feature_type', 'score', 'suggested_class'
             ]
         )
 

@@ -1,9 +1,9 @@
 import os
+from importlib import metadata
 from abc import ABCMeta, abstractmethod
 
 import xgboost as xgb
 
-from molgenis.capice import __version__
 from molgenis.capice.utilities.input_processor import InputProcessor
 from molgenis.capice.validators.input_validator import InputValidator
 from molgenis.capice.validators.version_validator import VersionValidator
@@ -82,7 +82,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         """
         version_validator = VersionValidator()
         try:
-            version_validator.validate_capice_version(__version__)
+            version_validator.validate_capice_version(metadata.version("capice"))
         except ValueError as cm:
             self.parser.error(str(cm))
         input_path = self._retrieve_argument_from_list(args.input, '-i/--input')

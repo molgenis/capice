@@ -1,4 +1,5 @@
 import json
+from importlib import metadata
 
 import numpy as np
 import pandas as pd
@@ -7,7 +8,6 @@ from scipy import stats
 from sklearn.model_selection import train_test_split, RandomizedSearchCV
 
 from molgenis.capice.main_capice import Main
-from molgenis.capice import __version__
 from molgenis.capice.utilities import check_if_in_list
 from molgenis.capice.utilities.enums import TrainEnums
 from molgenis.capice.core.capice_exporter import CapiceExporter
@@ -88,7 +88,7 @@ class CapiceTrain(Main):
         model = self.train(test_set=processed_test, train_set=processed_train)
         setattr(model, "vep_features", vep_processed)
         setattr(model, "processable_features", processed_features)
-        setattr(model, 'CAPICE_version', __version__)
+        setattr(model, 'CAPICE_version', metadata.version("capice"))
         self.exporter.export_capice_model(model=model)
 
     def _validate_features_present(self, dataset, train_features) -> None:
