@@ -18,6 +18,7 @@ class TestType(unittest.TestCase):
         expected = pd.DataFrame({'cDNA_position': ['305/702', '60/550', '?-/123', '-?/456'],
                                  'cDNApos': [305.00000, 60.00000, np.nan, np.nan],
                                  'relcDNApos': [702.00000, 550.0000, 123.00000, 456.00000]})
+        expected = expected.astype({'cDNApos': 'Int64', 'relcDNApos': 'Int64'})
         pd.testing.assert_frame_equal(expected, observed)
 
     def test_corner_case(self):
@@ -30,6 +31,7 @@ class TestType(unittest.TestCase):
         expected = pd.DataFrame({'cDNA_position': ['483-486', '162-163'],
                                  'cDNApos': [483.00000, 162.00000],
                                  'relcDNApos': [np.nan, np.nan]})
+        expected = expected.astype({'cDNApos': 'Int64', 'relcDNApos': 'Int64'})
         pd.testing.assert_frame_equal(expected, observed)
 
     def test_process_nan(self):
@@ -38,6 +40,7 @@ class TestType(unittest.TestCase):
         expected = pd.DataFrame({'cDNA_position': [np.nan, np.nan],
                                  'cDNApos': [np.nan, np.nan],
                                  'relcDNApos': [np.nan, np.nan]})
+        expected = expected.astype({'cDNApos': 'Int64', 'relcDNApos': 'Int64'})
         pd.testing.assert_frame_equal(expected, observed)
 
 

@@ -19,6 +19,8 @@ class TestType(unittest.TestCase):
             'REF': ['C', 'CA', 'CA', 'C', 'CA', 'CA'],
             'ALT': ['G', 'GCC', 'GG', 'CG', 'G', 'C'],
             'Type': ['SNV', 'DELINS', 'DELINS', 'INS', 'DELINS', 'DEL']})
+        expected_output = expected_output.astype({'Type': 'category'})
+
         pd.testing.assert_frame_equal(actual_output, expected_output)
 
 

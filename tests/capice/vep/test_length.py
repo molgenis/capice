@@ -20,6 +20,7 @@ class TestType(unittest.TestCase):
             'REF': ['ATAG', 'A', 'C', 'AC'],
             'ALT': ['A', 'ATG', 'A', 'GT'],
             'Length': [3, 2, 0, 0]})
+        expected = expected.astype({'Length': 'Int64'})
         pd.testing.assert_frame_equal(expected, observed)
 
 

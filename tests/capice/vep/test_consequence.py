@@ -55,8 +55,8 @@ class TestConsequence(unittest.TestCase):
                         'is_splice_donor_region_variant': {0: 0, 1: 0, 2: 0},
                         'is_splice_polypyrimidine_tract_variant': {0: 0, 1: 0, 2: 0}
                     }
-
                 )
+        self.expected_data = self.expected_data.astype('boolean')
 
     def test_consequence(self):
         data_copy = self.data.copy(deep=True)

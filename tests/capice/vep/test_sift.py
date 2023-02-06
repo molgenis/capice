@@ -24,6 +24,7 @@ class TestSift(unittest.TestCase):
                 )
             ], axis=1
         )
+        expected = expected.astype({'SIFTval': 'float64', 'SIFTcat': 'category'})
         observed = SIFT().process(dataset)
         pd.testing.assert_frame_equal(observed.sort_index(axis=1), expected.sort_index(axis=1))
 
@@ -45,6 +46,7 @@ class TestSift(unittest.TestCase):
                 )
             ], axis=1
         )
+        expected = expected.astype({'SIFTval': 'float64', 'SIFTcat': 'category'})
         observed = SIFT().process(dataset)
         pd.testing.assert_frame_equal(observed.sort_index(axis=1), expected.sort_index(axis=1))
 

@@ -29,6 +29,7 @@ class TestType(unittest.TestCase):
                 )
             ], axis=1
         )
+        expected = expected.astype({'PolyPhenCat': 'category', 'PolyPhenVal': 'float64'})
         observed = self.poly_phen.process(dataframe)
         pd.testing.assert_frame_equal(expected.sort_index(axis=1), observed.sort_index(axis=1))
 

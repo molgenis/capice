@@ -17,6 +17,7 @@ class TestType(unittest.TestCase):
         expected = pd.DataFrame({'Amino_acids': ['A/G', 'R/C', 'G/C'],
                                  'oAA': ['A', 'R', 'G'],
                                  'nAA': ['G', 'C', 'C']})
+        expected = expected.astype({'oAA': 'category', 'nAA': 'category'})
         pd.testing.assert_frame_equal(expected, observed)
 
     def test_process_no_alt(self):
@@ -25,6 +26,7 @@ class TestType(unittest.TestCase):
         expected = pd.DataFrame({'Amino_acids': ['A', 'R', 'G'],
                                  'oAA': ['A', 'R', 'G'],
                                  'nAA': ['A', 'R', 'G']})
+        expected = expected.astype({'oAA': 'category', 'nAA': 'category'})
         pd.testing.assert_frame_equal(expected, observed)
 
 
