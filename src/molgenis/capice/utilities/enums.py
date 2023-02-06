@@ -17,10 +17,10 @@ class InputColumn(Enum):
     # General
     chr = ('chr', 'CHROM', 'string')
     pos = ('pos', 'POS', 'int64')
-    ref = ('REF', 'REF', 'string')
-    alt = ('ALT', 'ALT', 'string')
+    ref = ('REF', 'REF', 'category')
+    alt = ('ALT', 'ALT', 'category')
     gene_name = ('gene_name', 'SYMBOL', 'string')
-    gene_id = ('gene_id', 'Gene', 'int64')
+    gene_id = ('gene_id', 'Gene', 'Int64')
     id_source = ('id_source', 'SYMBOL_SOURCE', 'string')
     feature = ('feature', 'Feature', 'string')
     feature_type = ('feature_type', 'Feature_type', 'string')

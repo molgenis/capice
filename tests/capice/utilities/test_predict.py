@@ -27,7 +27,7 @@ class TestPredict(unittest.TestCase):
             self.main.categorical_process(
                 self.main.process(
                     self.main._load_file(), process_features=self.model.vep_features.keys()
-                )[0], processing_features=self.model.processable_features
+                )[0], processing_features=self.model.input_features
             )[0]
         )
 
@@ -41,7 +41,7 @@ class TestPredict(unittest.TestCase):
             self.main.categorical_process(
                 self.main.process(
                     self.main._load_file(), process_features=self.model.vep_features.keys()
-                )[0], processing_features=self.model.processable_features
+                )[0], processing_features=self.model.input_features
             )[0]
         )
         # Combined sum of the prediction score should be higher than 0

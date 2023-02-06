@@ -95,6 +95,50 @@ class TestAnnotator(unittest.TestCase):
                 'Length': {0: 0, 1: 0}
             }
         )
+        expected_processed_columns = expected_processed_columns.astype({
+            'SIFTcat': 'category',
+            'SIFTval': 'float64',
+            'CDSpos': 'Int64',
+            'relCDSpos': 'Int64',
+            'PolyPhenCat': 'category',
+            'PolyPhenVal': 'float64',
+            'oAA': 'category',
+            'nAA': 'category',
+            'cDNApos': 'Int64',
+            'relcDNApos': 'Int64',
+            'protPos': 'Int64',
+            'relProtPos': 'Int64',
+            'is_regulatory_region_variant': 'boolean',
+            'is_regulatory_region_ablation': 'boolean',
+            'is_regulatory_region_amplification': 'boolean',
+            'is_missense_variant': 'boolean',
+            'is_upstream_gene_variant': 'boolean',
+            'is_downstream_gene_variant': 'boolean',
+            'is_TF_binding_site_variant': 'boolean',
+            'is_coding_sequence_variant': 'boolean',
+            'is_splice_region_variant': 'boolean',
+            'is_splice_acceptor_variant': 'boolean',
+            'is_3_prime_UTR_variant': 'boolean',
+            'is_inframe_deletion': 'boolean',
+            'is_start_lost': 'boolean',
+            'is_non_coding_transcript_exon_variant': 'boolean',
+            'is_non_coding_transcript_variant': 'boolean',
+            'is_TFBS_amplification': 'boolean',
+            'is_stop_lost': 'boolean',
+            'is_transcript_ablation': 'boolean',
+            'is_start_retained_variant': 'boolean',
+            'is_transcript_amplification': 'boolean',
+            'is_incomplete_terminal_codon_variant': 'boolean',
+            'is_mature_miRNA_variant': 'boolean',
+            'is_NMD_transcript_variant': 'boolean',
+            'is_feature_elongation': 'boolean',
+            'is_feature_truncation': 'boolean',
+            'is_splice_donor_5th_base_variant': 'boolean',
+            'is_splice_donor_region_variant': 'boolean',
+            'is_splice_polypyrimidine_tract_variant': 'boolean',
+            'Type': 'category',
+            'Length': 'Int64'
+        })
         expected_outcome = pd.concat(
             [
                 self.dataset[
@@ -136,6 +180,14 @@ class TestAnnotator(unittest.TestCase):
                 'PolyPhen': [np.nan, np.nan]
             }
         )
+        bugged_dataframe = bugged_dataframe.astype({
+            'chr': 'string',
+            'pos': 'int64',
+            'REF': 'string',
+            'ALT': 'string',
+            'SIFT': 'float64',
+            'PolyPhen': 'float64',
+        })
 
         expected_dataframe = pd.DataFrame(
             {
@@ -149,6 +201,16 @@ class TestAnnotator(unittest.TestCase):
                 'PolyPhenVal': [np.nan, np.nan]
             }
         )
+        expected_dataframe = expected_dataframe.astype({
+            'chr': 'string',
+            'pos': 'int64',
+            'REF': 'string',
+            'ALT': 'string',
+            'SIFTcat': 'category',
+            'SIFTval': 'float64',
+            'PolyPhenCat': 'category',
+            'PolyPhenVal': 'float64'
+        })
         annotator = ManualVEPProcessor()
         out_dataframe = annotator.process(bugged_dataframe, self.user_input_features)
         # Testing for expected dataframe columns, since it processes more.

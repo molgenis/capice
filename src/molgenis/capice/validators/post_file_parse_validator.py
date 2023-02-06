@@ -23,10 +23,10 @@ class PostFileParseValidator:
 
     def validate_n_columns(self, dataset):
         """
-        Validator to make sure that at least 4 columns are loaded
-        (chr, pos, ref, alt). Does NOT check for the names of these columns!
+        Validator to make sure that the number of loaded columns is at least equal to
+        MINIMUM_REQUIRED_COLUMNS. Does NOT check for the names of these columns!
         """
-        if isinstance(dataset, pd.Series) or dataset.shape[1] < 4:
+        if isinstance(dataset, pd.Series) or dataset.shape[1] < len(self.MINIMUM_REQUIRED_COLUMNS):
             error_message = 'Loaded dataset does NOT have enough features! ' \
                             'Is there a header present that does not start ' \
                             'with ##?'

@@ -102,6 +102,11 @@ class CapiceTrain(Main):
             data.columns
         )
 
+        self.log.info(
+            'The following features have been selected for training: %s',
+            ', '.join(processed_train_features)
+        )
+
         processed_train, processed_test = self.split_data(dataset=data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train,
@@ -152,13 +157,6 @@ class CapiceTrain(Main):
         # Merging back with feature_list
         return_list.extend(feature_list)
         return return_list
-
-    def _set_train_features(self, train_features: list) -> None:
-        self.log.info(
-            'The following features have been selected for training: %s',
-            ', '.join(train_features)
-        )
-        self.train_features = train_features
 
     def split_data(self, dataset, test_size: float):
         """
