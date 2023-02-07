@@ -227,6 +227,8 @@ class CapiceTrain(Main):
 
         self.log.debug('Preparing the estimator model.')
 
+        tree_method = 'approx'
+        print(f'tree method: {tree_method}')
         model_estimator = xgb.XGBClassifier(
             verbosity=verbosity,
             objective='binary:logistic',
@@ -240,7 +242,7 @@ class CapiceTrain(Main):
             scale_pos_weight=1,
             base_score=0.5,
             random_state=self.model_random_state,
-            tree_method='approx',
+            tree_method=tree_method,
             enable_categorical=True
         )
         model_estimator.set_params(
