@@ -10,17 +10,11 @@ assignees: ''
 ### Describe the bug
 A clear and concise description of what the bug is.
 
-### System information (command line)
+### System information
  - OS: [e.g. iOS]
- - Version [e.g. 3.0.0]
- - Python version [e.g. Python3.9.1]
- - Shell [e.g. ZSH]
-
-### System information (web service)
- - OS: [e.g. iOS]
- - Version [e.g. 3.0.0]
- - Molgenis database version [e.g. 7.4.1-GAVIN2-1.0.0-SNAPSHOT]
- - Browser [e.g. chrome, safari]
+ - Version: [e.g. 3.0.0]
+ - Python version: [e.g. Python3.9.1]
+ - Shell: [e.g. ZSH]
  
 ### How to Reproduce
 Steps to reproduce the behavior:

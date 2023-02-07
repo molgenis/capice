@@ -9,17 +9,22 @@ errcho() { echo "$@" 1>&2; }
 # Usage.
 readonly USAGE="VEP VCF output to CAPICE TSV converter
 Usage:
-convert_vep_to_tsv_capice.sh -i <arg> -o <arg>
--i    required: The VEP output VCF
--o    required: The directory and output filename for the CAPICE .tsv.gz
--f    optional: enable force
--t    optional: enable train. Adds the ID column to the output
+convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f]
+-p    required: The path to the BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
+-i    required: The VEP output VCF.
+-o    required: The directory and output filename for the CAPICE .tsv.gz.
+-f    optional: enable force.
+-t    optional: enable train. Adds the ID column to the output.
 
 Example:
-bash convert_vep_vcf_to_tsv_capice.sh -i vep_out.vcf -o capice_in.tsv.gz
+bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz -o capice_in.tsv.gz
 
 Requirements:
-BCFTools
+- Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
+- BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
+
+Notes:
+In case you have specific binds in order for your image to work, adjust this script at the commented out bind flag.
 "
 
 # Global variables
@@ -33,9 +38,10 @@ main() {
 }
 
 digestCommandLine() {
-  while getopts i:o:hft flag
+  while getopts p:i:o:hft flag
   do
     case "${flag}" in
+      p) bcftools_path=${OPTARG};;
       i) input=${OPTARG};;
       o) output=${OPTARG};;
       h)
@@ -67,7 +73,20 @@ digestCommandLine() {
 validateCommandLine() {
   local valid_command_line=true
 
-  # Validate if variable is set & not empty.
+  # Validate if BCFTools image is set & not empty
+  if [ -z "${bcftools_path}" ]
+  then
+    valid_command_line=false
+    errcho "BCFTools image not set/empty"
+  else
+    if [ ! -f "${bcftools_path}" ]
+    then
+      valid_command_line=false
+      errcho "BCFTools image does not exist"
+    fi
+  fi
+
+  # Validate if input is set & not empty.
   if [ -z "${input}" ]
   then
     valid_command_line=false
@@ -126,6 +145,10 @@ processFile() {
   local output_tmp="${output}.tmp"
 
   local args=()
+  args+=("exec")
+  # args+=("--bind" "add your binds here")
+  args+=("${bcftools_path}")
+  args+=("bcftools")
   args+=("+split-vep")
   args+=("-d")
   args+=("-f" "${FORMAT}")
@@ -135,11 +158,11 @@ processFile() {
 
   echo "Starting BCFTools."
 
-  bcftools "${args[@]}"
+  apptainer "${args[@]}"
 
   echo "BCFTools finished, building output file."
 
-  echo -e "${HEADER}$(bcftools +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  echo -e "${HEADER}$(apptainer "exec" "${bcftools_path}" "bcftools" +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 

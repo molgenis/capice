@@ -100,7 +100,9 @@ class TestMainTrain(unittest.TestCase):
             'is_NMD_transcript_variant', 'is_feature_elongation', 'is_feature_truncation',
             'SpliceAI_pred_DP_AG', 'SpliceAI_pred_DP_AL', 'SpliceAI_pred_DP_DG',
             'SpliceAI_pred_DP_DL', 'SpliceAI_pred_DS_AG', 'SpliceAI_pred_DS_AL',
-            'SpliceAI_pred_DS_DG', 'SpliceAI_pred_DS_DL', 'Type', 'Length', 'Grantham', 'phyloP']
+            'SpliceAI_pred_DS_DG', 'SpliceAI_pred_DS_DL', 'Type', 'Length', 'Grantham', 'phyloP',
+            'gnomAD_HN'
+        ]
         self.assertSetEqual(set(observed), set(expected))
 
     def test_integration_training(self):

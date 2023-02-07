@@ -20,8 +20,8 @@ class CapiceExporter:
         self.export_cols = [
             Column.chr.value,
             Column.pos.value,
-            Column.ref.value,
-            Column.alt.value,
+            Column.ref.value.lower(),
+            Column.alt.value.lower(),
             Column.gene_name.value,
             Column.gene_id.value,
             Column.id_source.value,
@@ -42,6 +42,14 @@ class CapiceExporter:
         datafile[self.export_cols].to_csv(export_path, sep='\t', index=False)
         if not self.output_given:
             print('Successfully exported CAPICE datafile to: %s', export_path)
+
+    @staticmethod
+    def _post_process_split_cols(datafile: pd.DataFrame):
+        datafile[
+            [Column.chr.value, Column.pos.value, Column.ref.value.lower(), Column.alt.value.lower()]
+        ] = datafile[Column.chr_pos_ref_alt.value].str.split(
+            UniqueSeparator.unique_separator.value, expand=True)
+        return datafile
 
     @staticmethod
     def _post_process_set_correct_dtypes(datafile: pd.DataFrame):

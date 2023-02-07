@@ -34,17 +34,17 @@ class TestCapiceExporter(unittest.TestCase):
         )
         cls.expected_prediction_output_dataframe = pd.DataFrame(
             {
-                Column.chr.value: ['1', '2'],
-                Column.pos.value: [100, 200],
-                Column.ref.value: ['A', 'T'],
-                Column.alt.value: ['C', 'G'],
-                Column.gene_name.value: ['foo', 'bar'],
-                Column.gene_id.value: [1000, 2000],
-                Column.id_source.value: ['foo', 'bar'],
-                Column.feature.value: ['TRANS_01', 'TRANS_02'],
-                Column.feature_type.value: ['Transcript', 'RegulatoryFeature'],
-                Column.score.value: [0.01, 0.998],
-                Column.suggested_class.value: ['VUS', 'VUS']
+                'chr': ['1', '2'],
+                'pos': [100, 200],
+                'ref': ['A', 'T'],
+                'alt': ['C', 'G'],
+                'gene_name': ['foo', 'bar'],
+                'gene_id': [1000, 2000],
+                'id_source': ['foo', 'bar'],
+                'feature': ['TRANS_01', 'TRANS_02'],
+                'feature_type': ['Transcript', 'RegulatoryFeature'],
+                'score': [0.01, 0.998],
+                'suggested_class': ['VUS', 'VUS']
             }
         )
         cls.export_dataset = pd.DataFrame(
