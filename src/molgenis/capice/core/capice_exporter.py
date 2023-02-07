@@ -39,6 +39,7 @@ class CapiceExporter:
         """
         export_path = os.path.join(self.file_path, self.capice_filename)
         datafile = self._post_process_set_correct_dtypes(datafile)
+        datafile.rename(columns={'REF': 'ref', 'ALT': 'alt'}, inplace=True)
         datafile[self.export_cols].to_csv(export_path, sep='\t', index=False)
         if not self.output_given:
             print('Successfully exported CAPICE datafile to: %s', export_path)
