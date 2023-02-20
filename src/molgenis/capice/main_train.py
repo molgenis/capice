@@ -81,7 +81,8 @@ class CapiceTrain(Main):
             'SpliceAI_pred_DS_DG': 'float64',
             'SpliceAI_pred_DS_DL': 'float64',
             'Grantham': 'float64',
-            'phyloP': 'float64'
+            'phyloP': 'float64',
+            'gnomAD_HN': 'Int64'
         }
 
         data = self._load_file(additional_minimum_required=self.additional_required,
