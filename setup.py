@@ -31,7 +31,7 @@ setup(
         'pandas==1.5.3',
         'scipy==1.10.0',
         'scikit-learn==1.2.1',
-        'xgboost==1.7.3'
+        'xgboost==1.7.4'
     ],
     extras_require={
         'test': [
