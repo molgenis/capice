@@ -80,7 +80,7 @@ class CapiceTrain(Main):
             'SpliceAI_pred_DS_AL': 'float64',
             'SpliceAI_pred_DS_DG': 'float64',
             'SpliceAI_pred_DS_DL': 'float64',
-            'Grantham': 'float64',
+            'Grantham': 'Int64',
             'phyloP': 'float64',
             'gnomAD_HN': 'Int64'
         }
