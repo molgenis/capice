@@ -1,3 +1,4 @@
+import os
 import functools
 import warnings
 from pathlib import Path
@@ -52,3 +53,20 @@ def check_if_in_list(list_of_lists: list[list[object]], to_check_list: Iterable)
             if item not in to_check_list:
                 return_list.append(item)
     return return_list
+
+
+def check_file_exist(file_path: os.PathLike[str], force: bool):
+    """
+    Method to check if a file exists and (if force is set to False) raises FileExistsError.
+    If force is set to True, will not raise FileExistsError. Will also not raise FileExistsError
+    if file not exists.
+
+    Args:
+        file_path:
+            Full absolute output path, including the output filename and extension.
+        force:
+            Command Line Argument of the "force" argument.
+
+    """
+    if os.path.exists(file_path) and not force:
+        raise FileExistsError("Output file already exists!")

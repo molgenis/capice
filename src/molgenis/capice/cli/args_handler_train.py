@@ -96,7 +96,15 @@ class ArgsHandlerTrain(ArgsHandlerParent):
         self.validate_n_threads(n_threads)
 
         CapiceManager().output_filename = output_filename
-        CapiceTrain(input_path, features, test_split, output_path, output_given, n_threads).run()
+        CapiceTrain(
+            input_path,
+            features,
+            test_split,
+            output_path,
+            output_given,
+            self.force,
+            n_threads
+        ).run()
 
     def validate_n_threads(self, n_threads):
         """

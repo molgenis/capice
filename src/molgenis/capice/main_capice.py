@@ -20,7 +20,7 @@ class Main(ABC):
     function.
     """
 
-    def __init__(self, input_path, output_path, output_given):
+    def __init__(self, input_path, output_path, output_given, force):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
@@ -35,6 +35,9 @@ class Main(ABC):
         self.output = output_path
         self.log.debug('Output directory -o / --output confirmed: %s', self.output)
         self.output_given = output_given
+
+        self.force = force
+        self.log.debug('Force output if exists: %s', self.force)
 
         # Preprocessor global exclusion features
         # Overwrite in specific module if features are incorrect
@@ -121,5 +124,8 @@ class Main(ABC):
         """
         Function to prepare the data to be exported
         """
-        CapiceExporter(file_path=output, output_given=self.output_given).export_capice_prediction(
-            datafile=dataset)
+        CapiceExporter(
+            file_path=output,
+            output_given=self.output_given,
+            force=self.force
+        ).export_capice_prediction(datafile=dataset)

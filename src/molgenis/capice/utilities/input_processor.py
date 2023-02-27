@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from molgenis.capice.utilities import check_file_exist
+
 
 class InputProcessor:
     def __init__(self, input_path, output_path, force, default_extension):
@@ -63,9 +65,7 @@ class InputProcessor:
 
     def _check_force(self):
         full_output_path = os.path.join(self.output_directory, self.output_filename)
-        if not self.force and os.path.isfile(full_output_path):
-            raise FileExistsError(
-                f'Output file {full_output_path} already exists! Use -f / --force to overwrite.')
+        check_file_exist(full_output_path, self.force)
 
     def _set_output_path(self, directory, filename):
         self.output_directory = directory

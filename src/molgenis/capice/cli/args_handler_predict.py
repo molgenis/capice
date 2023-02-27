@@ -71,7 +71,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         model_path = self._retrieve_argument_from_list(args.model, '-m/--model')
         model = self.validate_model(model_path)
         CapiceManager().output_filename = output_filename
-        CapicePredict(input_path, model, output_path, output_given).run()
+        CapicePredict(input_path, model, output_path, output_given, self.force).run()
 
     def validate_model(self, model_path):
         """

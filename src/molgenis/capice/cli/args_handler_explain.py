@@ -54,4 +54,4 @@ class ArgsHandlerExplain(ArgsHandlerParent):
         validator = ModelValidator()
         validator.validate_has_required_attributes(model)
         CapiceManager().output_filename = output_filename
-        CapiceExplain(model, output_path, output_given).run()
+        CapiceExplain(model, output_path, output_given, self.force).run()
