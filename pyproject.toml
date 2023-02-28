@@ -8,7 +8,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "capice"
 description = "Consequence Agnostic Pathogenicity Interpretation of Clinical Exoma variations. State of the art machine learning to predict SNVs and InDels pathogenicity."
-version = "5.0.0"
+version = "5.1.0"
 authors = [
     "Molgenis <molgenis-support@umcg.nl>"
 ]
@@ -23,16 +23,13 @@ scripts = { capice = { callable = "molgenis.capice.capice:main" } }
 packages = [
     { include = "molgenis", from = 'src' }
 ]
-include = [
-    "molgenis/capice/resource/resource_file.vcf"
-]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-numpy = "1.23.2"
-pandas = "1.4.4"
-scipy = "1.9.1"
-scikit-learn = "1.1.2"
+numpy = "1.24.1"
+pandas = "1.5.3"
+scipy = "1.10.0"
+scikit-learn = "1.2.1"
 xgboost = "1.7.3"
 
 [tool.poetry.extras]

@@ -1,6 +1,6 @@
 import unittest
-from importlib import metadata
 
+from molgenis.capice import __version__
 from tests.capice.test_templates import ResourceFile, load_model
 from molgenis.capice.validators.version_validator import VersionValidator
 
@@ -17,7 +17,7 @@ class TestResources(unittest.TestCase):
         model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         self.validator.validate_model_version(model.CAPICE_version)
         self.validator.validate_versions_compatible(
-            metadata.version("capice"),
+            __version__,
             model.CAPICE_version
         )
 

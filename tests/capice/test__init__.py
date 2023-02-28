@@ -1,7 +1,7 @@
 import unittest
 from re import match
-from importlib import metadata
 
+from molgenis.capice import __version__
 from molgenis.capice.utilities.enums import Versioning
 
 
@@ -10,7 +10,7 @@ class TestVersion(unittest.TestCase):
         """
         Test that assures CAPICE is not given an invalid version number.
         """
-        if match(Versioning.VALIDATION_REGEX.value, metadata.version("capice")) is None:
+        if match(Versioning.VALIDATION_REGEX.value, __version__) is None:
             raise ValueError('CAPICE has invalid version format')
 
 

@@ -1,5 +1,3 @@
-from importlib import metadata
-
 from molgenis.capice.main_predict import CapicePredict
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
@@ -92,7 +90,7 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         try:
             version_validator.validate_model_version(model.CAPICE_version)
             version_validator.validate_versions_compatible(
-                metadata.version("capice"), model.CAPICE_version
+                self.version, model.CAPICE_version
             )
         except ValueError as cm:
             self.parser.error(str(cm))

@@ -1,7 +1,7 @@
 import logging
 import argparse
-from importlib import metadata
 
+from molgenis.capice import __version__
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.cli.args_handler_train import ArgsHandlerTrain
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
@@ -18,7 +18,7 @@ class ArgsHandler:
     def __init__(self):
         link = "https://github.com/molgenis/capice/blob/main/scripts/" \
                "convert_vep_vcf_to_tsv_capice.sh"
-        self.version = metadata.version("capice")
+        self.version = __version__
         self.parser = argparse.ArgumentParser(
             description=f"CAPICE, a machine-learning-based method for prioritizing pathogenic"
                         f" variants (https://doi.org/10.1186/s13073-020-00775-w). "
