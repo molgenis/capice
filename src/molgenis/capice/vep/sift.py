@@ -7,7 +7,7 @@ class SIFT(TemplateSiftPolyPhen):
     def __init__(self):
         super(SIFT, self).__init__(
             name='SIFT',
-            usable=True
+            usable=False
         )
 
     @property

@@ -7,7 +7,7 @@ class PolyPhen(TemplateSiftPolyPhen):
     def __init__(self):
         super(PolyPhen, self).__init__(
             name='PolyPhen',
-            usable=True
+            usable=False
         )
 
     @property
