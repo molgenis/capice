@@ -45,7 +45,7 @@ class CapiceTrain(Main):
         self.esr = 15
         self.n_jobs = threads
         self.cross_validate = 5
-        self.n_iterations = 20
+        self.n_iterations = 40
 
         # (Other) global variables
         self.random_state = 45
@@ -227,6 +227,8 @@ class CapiceTrain(Main):
             # (random double from an exponential with scale 0.06)
             'n_estimators': stats.randint(100, 600),
             # (random integer from 10 to 600)
+            'grow_policy': ['depthwise', 'lossguide']
+            # 'max_leaves': stats.randint(<min>, <max>)
         }
 
         verbosity, xgb_verbosity = self._set_verbosity_from_log_level()
@@ -249,6 +251,7 @@ class CapiceTrain(Main):
             base_score=0.5,
             random_state=self.model_random_state,
             tree_method=tree_method,
+            max_bin=2048,
             enable_categorical=True
         )
         model_estimator.set_params(
