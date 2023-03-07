@@ -76,7 +76,7 @@ class CapiceTrain(Main):
             'Amino_acids': 'object',
             'REF': 'category',
             'ALT': 'category',
-            'Consequence': 'object',
+            'Consequence': 'category',
             'SpliceAI_pred_DP_AG': 'float64',
             'SpliceAI_pred_DP_AL': 'float64',
             'SpliceAI_pred_DP_DG': 'float64',

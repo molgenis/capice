@@ -9,7 +9,7 @@ class Consequence(Template):
     def __init__(self):
         super(Consequence, self).__init__(
             name='Consequence',
-            usable=True
+            usable=False
         )
         self.log = Logger().logger
 
