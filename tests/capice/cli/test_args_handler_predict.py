@@ -16,7 +16,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_semantic_invalid_version(self, load_model, stderr):
         """
         Tests invalid semantic version that contains a '-' without pre-release text behind it
@@ -37,7 +37,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_pep440_invalid_prerelease_name(self, load_model, stderr):
         """
         Tests invalid PEP version as pre-release format is very strict (a/b/rc<int> only).
@@ -57,7 +57,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_major_mismatch(self, load_model, stderr):
         """
         Tests major version mismatch between CAPICE & model (should exit).
@@ -74,7 +74,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_minor_mismatch(self, load_model):
         """
         Tests minor version mismatch between CAPICE & model (should not exit).
@@ -86,7 +86,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler.validate_model(self.model_path)
 
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_patch_mismatch(self, load_model):
         """
         Tests patch version mismatch between CAPICE & model (should not exit).
@@ -99,7 +99,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_mismatch(self, load_model, stderr):
         """
         Tests pre-release mismatch if rest of version is identical (should exit).
@@ -118,7 +118,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_with_minor_mismatch(self, load_model, stderr):
         """
         Tests that for identical pre-release text but differing minor version, CAPICE exits.
@@ -141,7 +141,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_with_patch_mismatch(self, load_model, stderr):
         """
         Tests that for identical pre-release text but differing patch version, CAPICE exits.
@@ -164,7 +164,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0')
     def test_model_semantic_prerelease_missing_in_capice(self, load_model, stderr):
         """
         Tests if pre-release model (using semantic version formatting) in combination with final
@@ -188,7 +188,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_prerelease_missing_in_model(self, load_model, stderr):
         """
         Tests if pre-release CAPICE (using semantic version formatting) in combination with final
@@ -212,7 +212,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0rc1')
     def test_model_pep440_prerelease_missing_in_model(self, load_model, stderr):
         """
         Tests if pre-release CAPICE (using PEP 440 version formatting) in combination with final
@@ -235,7 +235,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
                       stderr.getvalue())
 
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0rc1')
     def test_model_pep440_prerelease(self, load_model):
         """
         Tests identical pre-release version using PEP 440 (should not exit).
@@ -247,7 +247,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
         args_handler.validate_model(self.model_path)
 
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_and_pep440_prerelease(self, load_model):
         """
         Tests identical pre-release version where formatting differs but portrays same version
@@ -264,7 +264,7 @@ class TestArgsHandlerPredict(unittest.TestCase):
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')
-    @patch('molgenis.capice.cli.args_handler_predict.__version__', '1.0.0-rc1')
+    @patch('molgenis.capice.cli.args_handler_parent.__version__', '1.0.0-rc1')
     def test_model_semantic_and_pep440_prerelease_mismatch(self, load_model, stderr):
         """
         Tests mismatch in pre-release version when using differing formatting (CAPICE=semantic,

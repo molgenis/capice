@@ -17,6 +17,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     def __init__(self, parser):
         self.parser = parser
         self.input_validator = InputValidator()
+        self.version = __version__
 
     @property
     @abstractmethod
@@ -82,7 +83,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         """
         version_validator = VersionValidator()
         try:
-            version_validator.validate_capice_version(__version__)
+            version_validator.validate_capice_version(self.version)
         except ValueError as cm:
             self.parser.error(str(cm))
         input_path = self._retrieve_argument_from_list(args.input, '-i/--input')

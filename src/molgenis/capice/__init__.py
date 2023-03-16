@@ -1,1 +1,3 @@
-__version__ = '5.1.0'
+from importlib import metadata
+
+__version__ = metadata.version('capice')

@@ -16,7 +16,10 @@ class TestResources(unittest.TestCase):
         """
         model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
         self.validator.validate_model_version(model.CAPICE_version)
-        self.validator.validate_versions_compatible(__version__, model.CAPICE_version)
+        self.validator.validate_versions_compatible(
+            __version__,
+            model.CAPICE_version
+        )
 
 
 if __name__ == '__main__':
