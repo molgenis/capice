@@ -1,18 +1,24 @@
+import os
 import unittest
 from unittest.mock import patch
 from io import StringIO
 from argparse import ArgumentParser
 
 from molgenis.capice.cli.args_handler_parent import ArgsHandlerParent
-from tests.capice.test_templates import ResourceFile
+from tests.capice.test_templates import ResourceFile, _project_test_resources
 from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
 
 
 class TestArgsHandlerPredict(unittest.TestCase):
     model_path = ResourceFile.XGB_BOOSTER_POC_UBJ.value
+    temp_output_path = os.path.join(_project_test_resources, 'output.tsv.gz')
 
     def setUp(self):
         self.model = ArgsHandlerParent.load_model(self.model_path)
+
+    def tearDown(self) -> None:
+        if os.path.isfile(self.temp_output_path):
+            os.remove(self.temp_output_path)
 
     @patch('sys.stderr', new_callable=StringIO)
     @patch.object(ArgsHandlerPredict, 'load_model')

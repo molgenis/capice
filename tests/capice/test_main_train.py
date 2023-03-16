@@ -14,7 +14,7 @@ class TestMainTrain(unittest.TestCase):
     def setUpClass(cls):
         print('Setting up.')
         manager, cls.output_dir = set_up_manager_and_out()
-        cls.output_filename = 'train_example_capice.pickle.dat'
+        cls.output_filename = 'train_example_capice.ubj'
         manager.output_filename = cls.output_filename
 
     @classmethod
@@ -24,6 +24,9 @@ class TestMainTrain(unittest.TestCase):
 
     def tearDown(self):
         print('Resetting arguments.')
+        output_file = os.path.join(self.output_dir, self.output_filename)
+        if os.path.exists(output_file):
+            os.remove(output_file)
 
     def setUp(self):
         print('Performing test:')
@@ -31,12 +34,15 @@ class TestMainTrain(unittest.TestCase):
         impute_json = os.path.join(_project_root_directory,
                                    'resources',
                                    'train_features.json')
-        self.main = CapiceTrain(input_path=train_file,
-                                json_path=impute_json,
-                                test_split=0.2,
-                                output_path=self.output_dir,
-                                threads=2,
-                                output_given=True)
+        self.main = CapiceTrain(
+            input_path=train_file,
+            json_path=impute_json,
+            test_split=0.2,
+            output_path=self.output_dir,
+            threads=2,
+            output_given=True,
+            force=False
+        )
         self.main.esr = 1
         self.main.n_jobs = 2
         self.main.cross_validate = 2

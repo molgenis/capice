@@ -28,7 +28,12 @@ class TestCapiceExplain(unittest.TestCase):
             os.rmdir(cls.output_path)
 
     def test_capice_explain(self):
-        explainer = CapiceExplain(model=self.model, output_path=self.output_path, output_given=True)
+        explainer = CapiceExplain(
+            model=self.model,
+            output_path=self.output_path,
+            output_given=True,
+            force=False
+        )
         explainer.run()
         feature_importances = self.model.get_booster().get_score(importance_type='gain')
         observed = pd.read_csv(self.full_output_path, sep='\t')
@@ -47,8 +52,6 @@ class TestCapiceExplain(unittest.TestCase):
             importance_type='cover'))
         expected['total_cover'] = expected['feature'].map(self.model.get_booster().get_score(
             importance_type='total_cover'))
-        print(expected)
-        print(observed)
         pd.testing.assert_frame_equal(observed, expected)
 
 

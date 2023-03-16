@@ -12,8 +12,13 @@ class CapicePredict(Main):
     process and eventually predict a score over a CAPICE annotated file.
     """
 
-    def __init__(self, input_path, model, output_path, output_given):
-        super().__init__(input_path, output_path, output_given)
+    def __init__(self, input_path, model, output_path, output_given, force):
+        super().__init__(
+            input_path,
+            output_path,
+            output_given,
+            force
+        )
 
         # Model.
         self.model = model

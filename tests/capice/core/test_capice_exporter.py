@@ -13,8 +13,6 @@ class TestCapiceExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up.')
-        manager, cls.output_path = set_up_manager_and_out()
-        cls.exporter = CapiceExporter(file_path=cls.output_path, output_given=True)
         cls.prediction_output_dataframe = pd.DataFrame(
             {
                 Column.chr_pos_ref_alt.value: [
@@ -65,6 +63,8 @@ class TestCapiceExporter(unittest.TestCase):
 
     def setUp(self):
         print('Testing case:')
+        manager, self.output_path = set_up_manager_and_out()
+        self.exporter = CapiceExporter(file_path=self.output_path, output_given=True, force=False)
 
     def test_prediction_output(self):
         print('Prediction output')
@@ -77,7 +77,7 @@ class TestCapiceExporter(unittest.TestCase):
         exported_data[Column.chr.value] = exported_data[Column.chr.value].astype(str)
         pd.testing.assert_frame_equal(exported_data, self.expected_prediction_output_dataframe)
 
-    def test_exporter_force(self):
+    def test_exporter_force_pass(self):
         """
         Since force is dealt with at the very start of CAPICE and raises an
         error if the output file is already present unless the force flag is
@@ -89,6 +89,7 @@ class TestCapiceExporter(unittest.TestCase):
         with open(present_file_path, 'wt') as present_file_conn:
             present_file_conn.write('This file is already present')
         self.exporter.capice_filename = present_file
+        self.exporter.force = True
         self.exporter.export_capice_prediction(datafile=self.prediction_output_dataframe)
         forced_file = pd.read_csv(present_file_path, sep='\t')
         forced_file[Column.chr.value] = forced_file[Column.chr.value].astype(str)
