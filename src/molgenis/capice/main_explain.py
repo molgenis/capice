@@ -90,6 +90,6 @@ class CapiceExplain(Main):
     def _export(self, dataset, output):
         output_path = os.path.join(output, CapiceManager().output_filename)
         check_file_exist(output_path, self.force)
-        dataset.to_csv(output_path, compression='gzip', index=False, sep='\t')
+        dataset.to_csv(output_path, index=False, sep='\t')
         if not self.output_given:
             print(f'Successfully exported explain to: {output_path}')

@@ -1,4 +1,5 @@
 import json
+import os
 
 import numpy as np
 import pandas as pd
@@ -18,6 +19,10 @@ class CapiceTrain(Main):
     Train class of CAPICE to create new CAPICE like models for new or specific
     use cases.
     """
+    # Xgboost uses OpenMP for multithreading. However, using n_jobs/nthread in XGBClassifier
+    # doesn't respect the set value. Current approach is to disable multithreading for OpenMP and
+    # parallelize through RandomizedSearchCV's n_jobs parameter.
+    os.environ["OMP_THREAD_LIMIT"] = "1"
 
     def __init__(
             self,
@@ -236,7 +241,7 @@ class CapiceTrain(Main):
         model_estimator = xgb.XGBClassifier(
             verbosity=verbosity,
             objective='binary:logistic',
-            booster='gbtree', n_jobs=self.n_jobs,
+            booster='gbtree',
             min_child_weight=1,
             max_delta_step=0,
             subsample=1, colsample_bytree=1,
@@ -255,7 +260,7 @@ class CapiceTrain(Main):
         )
         randomised_search_cv = RandomizedSearchCV(estimator=model_estimator,
                                                   param_distributions=param_dist,
-                                                  scoring='roc_auc', n_jobs=8,
+                                                  scoring='roc_auc', n_jobs=self.n_jobs,
                                                   cv=self.cross_validate,
                                                   n_iter=self.n_iterations,
                                                   verbose=verbosity)
