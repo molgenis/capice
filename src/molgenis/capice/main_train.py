@@ -24,8 +24,22 @@ class CapiceTrain(Main):
     # parallelize through RandomizedSearchCV's n_jobs parameter.
     os.environ["OMP_THREAD_LIMIT"] = "1"
 
-    def __init__(self, input_path, json_path, test_split, output_path, output_given, threads):
-        super().__init__(input_path, output_path, output_given)
+    def __init__(
+            self,
+            input_path,
+            json_path,
+            test_split,
+            output_path,
+            output_given,
+            force,
+            threads
+    ):
+        super().__init__(
+            input_path,
+            output_path,
+            output_given,
+            force
+        )
 
         # Impute JSON.
         self.json_path = json_path
@@ -53,7 +67,11 @@ class CapiceTrain(Main):
         self.model_random_state = 0
         self.train_features = []
         self.loglevel = self.manager.loglevel
-        self.exporter = CapiceExporter(file_path=self.output, output_given=self.output_given)
+        self.exporter = CapiceExporter(
+            file_path=self.output,
+            output_given=self.output_given,
+            force=self.force
+        )
 
     def run(self):
         """

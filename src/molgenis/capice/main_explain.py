@@ -5,12 +5,18 @@ import xgboost as xgb
 
 from molgenis.capice.main_capice import Main
 from molgenis.capice.core.logger import Logger
+from molgenis.capice.utilities import check_file_exist
 from molgenis.capice.core.capice_manager import CapiceManager
 
 
 class CapiceExplain(Main):
-    def __init__(self, model, output_path, output_given):
-        super().__init__(input_path=None, output_path=output_path, output_given=output_given)
+    def __init__(self, model, output_path, output_given, force):
+        super().__init__(
+            input_path=None,
+            output_path=output_path,
+            output_given=output_given,
+            force=force
+        )
         self.model = model
         self.output = output_path
         self.log = Logger().logger
@@ -83,6 +89,7 @@ class CapiceExplain(Main):
 
     def _export(self, dataset, output):
         output_path = os.path.join(output, CapiceManager().output_filename)
+        check_file_exist(output_path, self.force)
         dataset.to_csv(output_path, index=False, sep='\t')
         if not self.output_given:
             print(f'Successfully exported explain to: {output_path}')

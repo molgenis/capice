@@ -17,6 +17,7 @@ class ArgsHandlerParent(metaclass=ABCMeta):
     def __init__(self, parser):
         self.parser = parser
         self.input_validator = InputValidator()
+        self.force = False
 
     @property
     @abstractmethod
@@ -91,11 +92,12 @@ class ArgsHandlerParent(metaclass=ABCMeta):
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
         output_path = self._retrieve_argument_from_list(args.output, '-o/--output')
+        self.force = args.force
         try:
             processor = InputProcessor(
                 input_path=input_path,
                 output_path=output_path,
-                force=args.force,
+                force=self.force,
                 default_extension=self._empty_output_extension
             )
         except FileExistsError as cm:

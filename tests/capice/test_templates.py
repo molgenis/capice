@@ -9,7 +9,7 @@ from molgenis.capice.main_predict import CapicePredict
 
 _project_root_directory = Path(__file__).absolute().parent.parent.parent
 _project_resources = os.path.join(_project_root_directory, 'resources')
-_project_test_resources = os.path.join(_project_root_directory, 'tests/resources')
+_project_test_resources = os.path.join(_project_root_directory, 'tests', 'resources')
 
 
 def set_up_manager_and_out():
@@ -42,7 +42,13 @@ def teardown():
 
 
 def set_up_predict():
-    return CapicePredict(input_path=None, model=None, output_path=None, output_given=False)
+    return CapicePredict(
+        input_path=None,
+        model=None,
+        output_path=None,
+        output_given=False,
+        force=False
+    )
 
 
 def set_up_impute_preprocess():
