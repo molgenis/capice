@@ -16,6 +16,11 @@ class TestPostFileParseValidator(unittest.TestCase):
                 'pos': [100, 200],
                 'REF': ['A', 'A'],
                 'ALT': ['T', 'T'],
+                'gene_name': ['UBA1', 'TFE3'],
+                'gene_id': [7317, 7030],
+                'id_source': ['EntrezGene', 'EntrezGene'],
+                'feature': ['NM_003334.4', 'NM_006521.6'],
+                'feature_type': ['Transcript', 'Transcript'],
                 'feat1': ['foo', 'bar']
             }
         )
