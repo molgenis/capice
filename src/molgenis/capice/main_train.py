@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from molgenis.capice.main_capice import Main
 from molgenis.capice import __version__
 from molgenis.capice.utilities import check_if_in_list
-from molgenis.capice.utilities.enums import TrainEnums
+from molgenis.capice.utilities.enums import InputColumn
 from molgenis.capice.core.capice_exporter import CapiceExporter
 
 
@@ -52,8 +52,8 @@ class CapiceTrain(Main):
             self.train_test_size)
 
         # Required features when file is loaded
-        self.additional_required = [TrainEnums.binarized_label.value,
-                                    TrainEnums.sample_weight.value]
+        self.additional_required = [InputColumn.binarized_label.col_name,
+                                    InputColumn.sample_weight.col_name]
 
         # Variables that can be edited in testing to speed up the train testing
         self.esr = 15
@@ -209,7 +209,7 @@ class CapiceTrain(Main):
         eval_set
         """
         eval_data = [test_set[self.train_features],
-                     test_set[TrainEnums.binarized_label.value]]
+                     test_set[InputColumn.binarized_label.col_name]]
         if int(xgb_version.split('.')[0]) < 1:
             eval_data.append('test')
         return [tuple(eval_data)]
@@ -269,10 +269,10 @@ class CapiceTrain(Main):
 
         self.log.info('Random search starting, please hold.')
         randomised_search_cv.fit(train_set[self.train_features],
-                                 train_set[TrainEnums.binarized_label.value],
+                                 train_set[InputColumn.binarized_label.col_name],
                                  eval_set=eval_set,
                                  verbose=xgb_verbosity,
-                                 sample_weight=train_set[TrainEnums.sample_weight.value])
+                                 sample_weight=train_set[InputColumn.sample_weight.col_name])
         self.log.info(
             'Training successful, '
             'average CV AUC of best performing model: %.4f',
