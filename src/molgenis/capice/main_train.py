@@ -224,6 +224,7 @@ class CapiceTrain(Main):
             verbosity=verbosity,
             objective='binary:logistic',
             booster='gbtree',
+            tree_method='exact',
             min_child_weight=1,
             max_delta_step=0,
             subsample=1, colsample_bytree=1,
@@ -232,7 +233,7 @@ class CapiceTrain(Main):
             reg_alpha=0, reg_lambda=1,
             scale_pos_weight=1,
             base_score=0.5,
-            random_state=self.model_random_state
+            random_state=self.model_random_state,
         )
         model_estimator.set_params(
             **{
