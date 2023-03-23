@@ -40,7 +40,6 @@ class CapiceTrain(Main):
         # Required features when file is loaded
         self.additional_required = [TrainEnums.binarized_label.value,
                                     TrainEnums.sample_weight.value]
-        self.exclude_features += self.additional_required
 
         # Variables that can be edited in testing to speed up the train testing
         self.esr = 15
