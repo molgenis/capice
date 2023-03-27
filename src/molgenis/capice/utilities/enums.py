@@ -4,8 +4,7 @@ from enum import Enum
 class InputColumn(Enum):
     """
     Columns within panda data frames.
-    `col_name` is the column name as should be used within CAPICE after processing input & the
-    column name in the output file.
+    `col_name` is the column name as should be used within CAPICE after processing input.
     `col_input_name` is the expected name as given by the input file.
 
     If `col_name` and `col_input_name` are equal, the name does not get altered.
