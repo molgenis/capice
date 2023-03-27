@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter

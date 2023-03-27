@@ -1,5 +1,4 @@
 from molgenis.capice.main_capice import Main
-from molgenis.capice.utilities.enums import Column
 from molgenis.capice.utilities.predictor import Predictor
 from molgenis.capice.utilities.class_suggestor import ClassSuggestor
 from molgenis.capice.validators.predict_validator import PredictValidator
