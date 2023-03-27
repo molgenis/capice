@@ -17,7 +17,7 @@ class InputColumn(Enum):
     alt = ('ALT', 'ALT')
     gene_name = ('gene_name', 'SYMBOL')
     gene_id = ('gene_id', 'Gene')
-    gene_name_source = ('gene_name_source', 'SYMBOL_SOURCE')
+    gene_name_source = ('id_source', 'SYMBOL_SOURCE')  # TODO: Use correct column name instead.
     feature = ('feature', 'Feature')
     feature_type = ('feature_type', 'Feature_type')
     max_af = ('max_AF', 'MAX_AF')

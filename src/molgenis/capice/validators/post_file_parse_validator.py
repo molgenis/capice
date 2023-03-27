@@ -13,7 +13,7 @@ class PostFileParseValidator:
         InputColumn.alt,
         InputColumn.gene_name,
         InputColumn.gene_id,
-        InputColumn.id_source,
+        InputColumn.gene_name_source,
         InputColumn.feature,
         InputColumn.feature_type
     }
