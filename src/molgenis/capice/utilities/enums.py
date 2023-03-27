@@ -33,12 +33,6 @@ class InputColumn(Enum):
         self.col_input_name = col_input_name
 
 
-class PredictOutputColumn(Enum):
-    score = 'score'
-    suggested_class = 'suggested_class'
-    other = 'other_CAPICE_value'
-
-
 class Column(Enum):
     """
     Enums to use that are specific to the column names after.
