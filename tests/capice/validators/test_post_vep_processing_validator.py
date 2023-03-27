@@ -20,7 +20,7 @@ class TestPostVEPProcessingValidator(unittest.TestCase):
             }
         )
         cls.validator = PostVEPProcessingValidator()
-        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_JSON.value)
 
     @classmethod
     def tearDownClass(cls) -> None:

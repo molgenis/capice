@@ -15,7 +15,7 @@ class TestCapiceExplain(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_JSON.value)
         if not os.path.isdir(cls.output_path):
             os.makedirs(cls.output_path)
         CapiceManager().output_filename = cls.output_filename

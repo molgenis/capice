@@ -55,7 +55,7 @@ def set_up_impute_preprocess():
     set_up_manager_and_out()
     main = set_up_predict()
     main.infile = os.path.join(_project_root_directory, 'resources', 'predict_input.tsv.gz')
-    model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+    model = load_model(ResourceFile.XGB_BOOSTER_POC_JSON.value)
     main.model = model
     return main, model
 
@@ -69,7 +69,7 @@ class ResourceFile(Enum):
     Enum storing paths to test resource files for easy access.
     """
     PREDICT_INPUT_TSV_GZ = os.path.join(_project_resources, 'predict_input.tsv.gz')
-    XGB_BOOSTER_POC_UBJ = os.path.join(_project_test_resources, 'xgb_booster_poc.ubj')
+    XGB_BOOSTER_POC_JSON = os.path.join(_project_test_resources, 'xgb_booster_poc.json')
 
 
 class FakeResourceFile(Enum):

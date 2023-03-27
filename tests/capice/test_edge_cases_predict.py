@@ -29,7 +29,7 @@ class TestEdgeCases(unittest.TestCase):
             'resources',
             'symbolic_alleles_vep.tsv.gz'
         )
-        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_JSON.value)
         cls.main = set_up_predict()
 
     @classmethod
