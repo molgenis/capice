@@ -1,6 +1,5 @@
 [build-system]
 requires = [
-    "wheel",
     "poetry-core"
 ]
 build-backend = "poetry.core.masonry.api"
@@ -23,6 +22,7 @@ scripts = { capice = { callable = "molgenis.capice.capice:main" } }
 packages = [
     { include = "molgenis", from = 'src' }
 ]
+include = ["molgenis/capice/bogus.file"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -40,7 +40,7 @@ flake8-pyproject = { version = "^1.2" ,  optional = true }
 
 [tool.poetry.extras]
 test = ["pytest"]
-ci = ["mypy", "flake8", "flake8-import-order", "flake8-pyproject"]
+ci = ["coverage", "mypy", "flake8", "flake8-import-order", "flake8-pyproject", "wheel"]
 
 [tool.mypy]
 python_version = "3.10"
