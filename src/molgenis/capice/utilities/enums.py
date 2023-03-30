@@ -16,7 +16,7 @@ class InputColumn(Enum):
     alt = ('ALT', 'ALT')
     gene_name = ('gene_name', 'SYMBOL')
     gene_id = ('gene_id', 'Gene')
-    gene_name_source = ('id_source', 'SYMBOL_SOURCE')  # TODO: Use correct column name instead.
+    gene_name_source = ('id_source', 'SYMBOL_SOURCE')  # see GitHub issue 169
     feature = ('feature', 'Feature')
     feature_type = ('feature_type', 'Feature_type')
     intron = ('Intron', 'INTRON')  # Combination of 2x int64 divided by a "/"
