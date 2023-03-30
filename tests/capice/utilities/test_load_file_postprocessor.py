@@ -21,7 +21,6 @@ class LoadFilePostprocessor(unittest.TestCase):
                 'SYMBOL': ['ACDC'],
                 'INTRON': [5],
                 'EXON': [11],
-                'MAX_AF': [6]
             }
         )
         cls.processor = LoadFilePostProcessor(df)
@@ -39,8 +38,7 @@ class LoadFilePostprocessor(unittest.TestCase):
                 'feature': ['NM1.123'],
                 'gene_name': ['ACDC'],
                 'Intron': [5],
-                'Exon': [11],
-                'max_AF': [6]
+                'Exon': [11]
             }
         )
         pd.testing.assert_frame_equal(expected, observed)

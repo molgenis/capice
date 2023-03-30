@@ -19,7 +19,6 @@ class InputColumn(Enum):
     gene_name_source = ('id_source', 'SYMBOL_SOURCE')  # TODO: Use correct column name instead.
     feature = ('feature', 'Feature')
     feature_type = ('feature_type', 'Feature_type')
-    max_af = ('max_AF', 'MAX_AF')
     intron = ('Intron', 'INTRON')  # Combination of 2x int64 divided by a "/"
     exon = ('Exon', 'EXON')  # Combination of 2x int64 divided by a "/"
 
