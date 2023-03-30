@@ -1,5 +1,4 @@
 from molgenis.capice.main_capice import Main
-from molgenis.capice.utilities.enums import Column
 from molgenis.capice.utilities.predictor import Predictor
 from molgenis.capice.utilities.class_suggestor import ClassSuggestor
 from molgenis.capice.validators.predict_validator import PredictValidator
@@ -27,11 +26,7 @@ class CapicePredict(Main):
         """
         Function to make CAPICE run in a prediction matter.
         """
-        capice_data = self._load_file(additional_required_features=[Column.gene_name.value,
-                                                                    Column.gene_id.value,
-                                                                    Column.id_source.value,
-                                                                    Column.feature.value,
-                                                                    Column.feature_type.value])
+        capice_data = self._load_file()
         capice_data = self.process(
             loaded_data=capice_data,
             process_features=list(self.model.vep_features.keys())

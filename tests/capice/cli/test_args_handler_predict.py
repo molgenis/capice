@@ -10,7 +10,7 @@ from molgenis.capice.cli.args_handler_predict import ArgsHandlerPredict
 
 
 class TestArgsHandlerPredict(unittest.TestCase):
-    model_path = ResourceFile.XGB_BOOSTER_POC_UBJ.value
+    model_path = ResourceFile.XGB_BOOSTER_POC_JSON.value
     temp_output_path = os.path.join(_project_test_resources, 'output.tsv.gz')
 
     def setUp(self):

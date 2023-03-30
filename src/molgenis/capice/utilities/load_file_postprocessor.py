@@ -1,7 +1,7 @@
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
+from molgenis.capice.utilities.enums import InputColumn
 
 
 class LoadFilePostProcessor:
@@ -30,15 +30,9 @@ class LoadFilePostProcessor:
         Function to rename "Gene, Feature, SYMBOL, INTRON and EXON" to
         "GeneID, FeatureID, GeneName, Intron and Exon".
         """
-        self.dataset.rename(
-            columns={'CHROM': Column.chr.value,
-                     'POS': Column.pos.value,
-                     'Gene': Column.gene_id.value,
-                     'SYMBOL_SOURCE': Column.id_source.value,
-                     'Feature': Column.feature.value,
-                     'Feature_type': Column.feature_type.value,
-                     'SYMBOL': Column.gene_name.value,
-                     'INTRON': 'Intron',
-                     'EXON': 'Exon',
-                     'MAX_AF': 'max_AF'},
-            inplace=True)
+        to_rename = {}
+        for column in InputColumn:
+            if column.col_input_name in self.dataset.columns:
+                to_rename[column.col_input_name] = column.col_name
+        self.log.debug(f'Converting the following column names: {to_rename}')
+        self.dataset.rename(columns=to_rename, inplace=True)

@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
 from molgenis.capice.core.capice_manager import CapiceManager
 from molgenis.capice.utilities.input_parser import InputParser
 from molgenis.capice.core.capice_exporter import CapiceExporter
@@ -38,14 +37,6 @@ class Main(ABC):
 
         self.force = force
         self.log.debug('Force output if exists: %s', self.force)
-
-        # Preprocessor global exclusion features
-        # Overwrite in specific module if features are incorrect
-        self.exclude_features = [Column.gene_name.value,
-                                 Column.gene_id.value,
-                                 Column.id_source.value,
-                                 Column.feature.value,
-                                 Column.feature_type.value]
 
     @abstractmethod
     def run(self):

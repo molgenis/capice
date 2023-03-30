@@ -1,20 +1,32 @@
 import pandas as pd
 
 from molgenis.capice.core.logger import Logger
-from molgenis.capice.utilities.enums import Column
+from molgenis.capice.utilities.enums import InputColumn
 from molgenis.capice.utilities.column_utils import ColumnUtils
 
 
 class PostFileParseValidator:
+    MINIMUM_REQUIRED_COLUMNS = {
+        InputColumn.chr,
+        InputColumn.pos,
+        InputColumn.ref,
+        InputColumn.alt,
+        InputColumn.gene_name,
+        InputColumn.gene_id,
+        InputColumn.gene_name_source,
+        InputColumn.feature,
+        InputColumn.feature_type
+    }
+
     def __init__(self):
         self.log = Logger().logger
 
     def validate_n_columns(self, dataset):
         """
-        Validator to make sure that at least 4 columns are loaded
-        (chr, pos, ref, alt). Does NOT check for the names of these columns!
+        Validator to make sure that the number of loaded columns is at least equal to
+        MINIMUM_REQUIRED_COLUMNS. Does NOT check for the names of these columns!
         """
-        if isinstance(dataset, pd.Series) or dataset.shape[1] < 4:
+        if isinstance(dataset, pd.Series) or dataset.shape[1] < len(self.MINIMUM_REQUIRED_COLUMNS):
             error_message = 'Loaded dataset does NOT have enough features! ' \
                             'Is there a header present that does not start ' \
                             'with ##?'
@@ -39,12 +51,9 @@ class PostFileParseValidator:
         required columns.
         """
         column_utils = ColumnUtils()
-        column_utils.set_specified_columns([
-            Column.chr.value,
-            Column.pos.value,
-            Column.ref.value,
-            Column.alt.value,
-        ])
+        column_utils.set_specified_columns(
+            {x.col_name for x in PostFileParseValidator.MINIMUM_REQUIRED_COLUMNS}
+        )
         if additional_required_features is not None:
             column_utils.add_to_specified_columns(additional_required_features)
         columns_not_present = column_utils.get_missing_diff_with(dataset.columns)
@@ -59,11 +68,11 @@ class PostFileParseValidator:
         """
         Function to check if all values of the columns Chr and Pos are present.
         """
-        if dataset[Column.chr.value].isnull().values.any():
+        if dataset[InputColumn.chr.col_name].isnull().values.any():
             error_message = 'Detected gap in Chromosome column! Please supply a valid dataset.'
             self.log.critical(error_message)
             raise ValueError(error_message)
-        if dataset[Column.pos.value].isnull().values.any():
+        if dataset[InputColumn.pos.col_name].isnull().values.any():
             error_message = 'Detected gap in Position column! Please supply a valid dataset.'
             self.log.critical(error_message)
             raise ValueError(error_message)

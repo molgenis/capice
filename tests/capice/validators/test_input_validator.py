@@ -44,10 +44,10 @@ class TestInputValidator(unittest.TestCase):
     def test_input_multiple_extensions_invalid(self):
         allowed_extensions = ('.tsv', '.tsv.gz')
         with self.assertRaises(IOError) as e:
-            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_UBJ.value,
+            self.input_validator.validate_input_path(ResourceFile.XGB_BOOSTER_POC_JSON.value,
                                                      extension=allowed_extensions)
 
-        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_UBJ.value} does not match required '
+        self.assertEqual(f'{ResourceFile.XGB_BOOSTER_POC_JSON.value} does not match required '
                          f'extension: .tsv, .tsv.gz',
                          str(e.exception))
 

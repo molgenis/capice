@@ -15,7 +15,7 @@ class TestMainNonTrain(unittest.TestCase):
         manager, cls.output_dir = set_up_manager_and_out()
         manager.output_filename = os.path.join(cls.output_dir, 'test_output.tsv')
 
-        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_UBJ.value)
+        cls.model = load_model(ResourceFile.XGB_BOOSTER_POC_JSON.value)
 
     @classmethod
     def tearDownClass(cls):
