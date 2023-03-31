@@ -148,8 +148,7 @@ validateCommandLine() {
 }
 
 processFile() {
-  local output="${output%.gz}" # Strips '.gz' to better work with code below.
-  local output_tmp="${output}.tmp"
+  local output="${output%.gz}"
 
   local args=()
   args+=("exec")
@@ -160,35 +159,33 @@ processFile() {
   args+=("${bcftools_path}")
   args+=("bcftools")
   args+=("+split-vep")
-  args+=("-d")
-  args+=("-f" "${FORMAT}")
-  args+=("-A" "tab")
-  args+=("-o" "${output_tmp}")
-  args+=("${input}")
 
-  echo "Starting BCFTools."
+  # Header
 
-  apptainer "${args[@]}"
+  echo "Obtaining header"
 
-  echo "BCFTools finished, building output file."
-
-  local header_args=()
-  header_args+=("exec")
-  if [[ ! "${bind}" == false ]]
-  then
-    header_args+=("--bind" "${bind}")
-  fi
-  header_args+=("${bcftools_path}")
-  header_args+=("bcftools")
-  header_args+=("+split-vep")
+  header_args=("${args[@]}")
   header_args+=("-l" "${input}")
-  header_args+=("|" "cut" "-f" "2")
-  header_args+=("|" "tr" "\n" "\t")
-  header_args+=("|" "sed" "s/\t$//")
 
-  echo -e "${HEADER}$(apptainer "${header_args[@]}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  present_features=$(apptainer "${header_args[@]}" | cut -f 2 | tr "\n" "\t" | sed "s/\t$//")
 
-  echo "Output file ready, gzipping."
+  echo -e "${HEADER}$present_features" > ${output}
+
+  # VEP VCF file content
+
+  echo "Obtaining VCF content"
+
+  file_args=("${args[@]}")
+  file_args+=("-d")
+  file_args+=("-f" "${FORMAT}")
+  file_args+=("-A" "tab")
+  file_args+=("${input}")
+
+  apptainer "${file_args[@]}" >> ${output}
+
+  echo "BCFTools finished."
+
+  echo "Gzipping output file."
 
   gzip "${output}"
 
