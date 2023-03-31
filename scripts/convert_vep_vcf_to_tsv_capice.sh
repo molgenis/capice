@@ -172,7 +172,21 @@ processFile() {
 
   echo "BCFTools finished, building output file."
 
-  echo -e "${HEADER}$(apptainer "exec" "${bcftools_path}" "bcftools" +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  local header_args=()
+  header_args+=("exec")
+  if [[ ! "${bind}" == false ]]
+  then
+    header_args+=("--bind" "${bind}")
+  fi
+  header_args+=("${bcftools_path}")
+  header_args+=("bcftools")
+  header_args+=("+split-vep")
+  header_args+=("-l" "${input}")
+  header_args+=("|" "cut" "-f" "2")
+  header_args+=("|" "tr" "\n" "\t")
+  header_args+=("|" "sed" "s/\t$//")
+
+  echo -e "${HEADER}$(apptainer "${header_args[@]}" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
 
   echo "Output file ready, gzipping."
 
