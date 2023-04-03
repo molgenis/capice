@@ -9,13 +9,14 @@ errcho() { echo "$@" 1>&2; }
 # Usage.
 readonly USAGE="VEP VCF output to CAPICE TSV converter
 Usage:
-convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-b <arg>] [-t] [-f]
+convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f]
 -p    required: The path to the BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
 -i    required: The VEP output VCF.
 -o    required: The directory and output filename for the CAPICE .tsv.gz.
--b    optional: The apptainer/singularity additional --bind path(s).
 -f    optional: enable force.
 -t    optional: enable train. Adds the ID column to the output.
+
+Please note that this script uses APPTAINER, any additional binds should be set either system wide or by adding 'APPTAINER_BIND=/bind1,/bind2' before calling this script.
 
 Example:
 bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz -o capice_in.tsv.gz
@@ -23,9 +24,6 @@ bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz
 Requirements:
 - Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
 - BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
-
-Notes:
-In case you have specific binds in order for your image to work, adjust this script at the commented out bind flag.
 "
 
 # Global variables
@@ -39,13 +37,12 @@ main() {
 }
 
 digestCommandLine() {
-  while getopts p:i:o:b:hft flag
+  while getopts p:i:o:hft flag
   do
     case "${flag}" in
       p) bcftools_path=${OPTARG};;
       i) input=${OPTARG};;
       o) output=${OPTARG};;
-      b) bind=${OPTARG};;
       h)
         echo "${USAGE}"
         exit;;
@@ -86,11 +83,6 @@ validateCommandLine() {
       valid_command_line=false
       errcho "BCFTools image does not exist"
     fi
-  fi
-
-  if [ -z "${bind}" ]
-  then
-    bind=false
   fi
 
   # Validate if input is set & not empty.
@@ -152,10 +144,6 @@ processFile() {
 
   local args=()
   args+=("exec")
-  if [[ ! "${bind}" == false ]]
-  then
-    args+=("--bind" "${bind}")
-  fi
   args+=("${bcftools_path}")
   args+=("bcftools")
   args+=("+split-vep")

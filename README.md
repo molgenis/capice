@@ -109,6 +109,7 @@ Note: Certain arguments might not be needed if training/predicting without using
 
 Then you have to convert the VEP output to TSV using our own BCFTools script: 
 `./scripts/convert_vep_vcf_to_tsv_capice.sh -i </path/to/vep_output.vcf.gz> -o </path/to/capice_input.tsv.gz>`
+**Important!:** this script uses APPTAINER, any additional binds should be set either system-wide or by adding `APPTAINER_BIND=/bind1,/bind2` before calling this script.
 
 ### CAPICE
 CAPICE can be run by using the following command:
