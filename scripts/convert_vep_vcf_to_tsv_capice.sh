@@ -9,7 +9,7 @@ errcho() { echo "$@" 1>&2; }
 # Usage.
 readonly USAGE="VEP VCF output to CAPICE TSV converter
 Usage:
-convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f] [-b <arg>]
+convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f]
 -p    required: The path to the BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
 -i    required: The VEP output VCF.
 -o    required: The directory and output filename for the CAPICE .tsv.gz.
