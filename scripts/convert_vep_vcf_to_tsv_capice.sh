@@ -15,7 +15,10 @@ convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f] [-b <arg>]
 -o    required: The directory and output filename for the CAPICE .tsv.gz.
 -f    optional: enable force.
 -t    optional: enable train. Adds the ID column to the output.
--b    optional: additional apptainer path binds.
+
+Please note that this script expects apptainer binds to be set correctly by the system administrator.
+Additional apptainer binds can be set by setting the environment variable APPTAINER_BIND.
+If using SLURM, please export this environment variable to the sbatch instance too.
 
 Example:
 bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz -o capice_in.tsv.gz
@@ -36,13 +39,12 @@ main() {
 }
 
 digestCommandLine() {
-  while getopts p:i:o:b:hft flag
+  while getopts p:i:o:hft flag
   do
     case "${flag}" in
       p) bcftools_path=${OPTARG};;
       i) input=${OPTARG};;
       o) output=${OPTARG};;
-      b) apptainer_bind=${OPTARG};;
       h)
         echo "${USAGE}"
         exit;;
@@ -83,12 +85,6 @@ validateCommandLine() {
       valid_command_line=false
       errcho "BCFTools image does not exist"
     fi
-  fi
-
-  # Setting bind to false if not supplied
-  if [ -z "${apptainer_bind}" ]
-  then
-    apptainer_bind=false
   fi
 
   # Validate if input is set & not empty.
@@ -150,10 +146,6 @@ processFile() {
 
   local args=()
   args+=("exec")
-  if [[ ! "${apptainer_bind}" == false ]]
-  then
-    args+=("--bind" "${apptainer_bind}")
-  fi
   args+=("${bcftools_path}")
   args+=("bcftools")
   args+=("+split-vep")
