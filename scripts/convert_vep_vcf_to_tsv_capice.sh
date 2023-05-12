@@ -16,15 +16,16 @@ convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f]
 -f    optional: enable force.
 -t    optional: enable train. Adds the ID column to the output.
 
+Please note that this script expects apptainer binds to be set correctly by the system administrator.
+Additional apptainer binds can be set by setting the environment variable APPTAINER_BIND.
+If using SLURM, please export this environment variable to the sbatch instance too.
+
 Example:
 bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz -o capice_in.tsv.gz
 
 Requirements:
 - Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
 - BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
-
-Notes:
-In case you have specific binds in order for your image to work, adjust this script at the commented out bind flag.
 "
 
 # Global variables
@@ -141,30 +142,40 @@ validateCommandLine() {
 }
 
 processFile() {
-  local output="${output%.gz}" # Strips '.gz' to better work with code below.
-  local output_tmp="${output}.tmp"
+  local output="${output%.gz}"
 
   local args=()
   args+=("exec")
-  # args+=("--bind" "add your binds here")
   args+=("${bcftools_path}")
   args+=("bcftools")
   args+=("+split-vep")
-  args+=("-d")
-  args+=("-f" "${FORMAT}")
-  args+=("-A" "tab")
-  args+=("-o" "${output_tmp}")
-  args+=("${input}")
 
-  echo "Starting BCFTools."
+  # Header
 
-  apptainer "${args[@]}"
+  echo "Obtaining header"
 
-  echo "BCFTools finished, building output file."
+  header_args=("${args[@]}")
+  header_args+=("-l" "${input}")
 
-  echo -e "${HEADER}$(apptainer "exec" "${bcftools_path}" "bcftools" +split-vep -l "${input}" | cut -f 2 | tr '\n' '\t' | sed 's/\t$//')" | cat - "${output_tmp}" > "${output}" && rm "${output_tmp}"
+  present_features=$(apptainer "${header_args[@]}" | cut -f 2 | tr "\n" "\t" | sed "s/\t$//")
 
-  echo "Output file ready, gzipping."
+  echo -e "${HEADER}$present_features" > ${output}
+
+  # VEP VCF file content
+
+  echo "Obtaining VCF content"
+
+  file_args=("${args[@]}")
+  file_args+=("-d")
+  file_args+=("-f" "${FORMAT}")
+  file_args+=("-A" "tab")
+  file_args+=("${input}")
+
+  apptainer "${file_args[@]}" >> ${output}
+
+  echo "BCFTools finished."
+
+  echo "Gzipping output file."
 
   gzip "${output}"
 
