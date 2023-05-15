@@ -225,11 +225,11 @@ class CapiceTrain(Main):
             the training dataset on which the model will be created on
         """
         param_dist = {
-            'max_depth': stats.randint(1, 20),
+            'max_depth': [12, 12],
             # (random integer from 1 to 20)
-            'learning_rate': stats.expon(scale=0.06),
+            'learning_rate': [0.06673761062396315, 0.06673761062396315],
             # (random double from an exponential with scale 0.06)
-            'n_estimators': stats.randint(100, 600),
+            'n_estimators': [456, 456],
             # (random integer from 10 to 600)
         }
 
