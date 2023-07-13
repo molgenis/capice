@@ -25,8 +25,8 @@ mentioned features are used, some items in the list below can be skipped.
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
   * Including additional data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
-    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz`
-    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi`
+    * `gnomad.total.r2.1.1.sites.stripped.patch1.vcf.gz`
+    * `gnomad.total.r2.1.1.sites.stripped.patch1.vcf.gz.csi`
     * `hg19.100way.phyloP100way.bw`
     * `spliceai_scores.masked.indel.hg19.vcf.gz`
     * `spliceai_scores.masked.indel.hg19.vcf.gz.tbi`
