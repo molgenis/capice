@@ -22,8 +22,9 @@ mentioned features are used, some items in the list below can be skipped.
     * [homo_sapiens_refseq_vep_107_GRCh37](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh37.tar.gz)
     * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh38.tar.gz)
   * Including plugin(s):
-    * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
-    * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
+    * [Grantham](https://github.com/molgenis/vip/blob/main/resources/vep/plugins/Grantham.pm)
+    * [SpliceAI](https://github.com/molgenis/vip/blob/main/resources/vep/plugins/SpliceAI.pm)
+    * [AlphScore](https://github.com/molgenis/vip/blob/main/resources/vep/plugins/AlphScore.pm)
   * Including additional data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
     * `gnomad.total.r2.1.1.sites.stripped.vcf.gz`
     * `gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi`
@@ -32,6 +33,8 @@ mentioned features are used, some items in the list below can be skipped.
     * `spliceai_scores.masked.indel.hg19.vcf.gz.tbi`
     * `spliceai_scores.masked.snv.hg19.vcf.gz`
     * `spliceai_scores.masked.snv.hg19.vcf.gz.tbi` 
+    * `AlphScore_final_20230825_stripped_GRCh37.tsv.gz`
+    * `AlphScore_final_20230825_stripped_GRCh37.tsv.gz.tbi`
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
@@ -40,6 +43,8 @@ mentioned features are used, some items in the list below can be skipped.
     * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
     * `spliceai_scores.masked.snv.hg38.vcf.gz`
     * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
+    * `AlphScore_final_20230825_stripped_GRCh38.tsv.gz`
+    * `AlphScore_final_20230825_stripped_GRCh38.tsv.gz.tbi`
 * Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)).
   * Singularity could also work, but requires manual adjusting of [the conversion script](./scripts/convert_vep_vcf_to_tsv_capice.sh).
 * Python >=3.10

@@ -107,7 +107,7 @@ class TestMainTrain(unittest.TestCase):
             'SpliceAI_pred_DP_AG', 'SpliceAI_pred_DP_AL', 'SpliceAI_pred_DP_DG',
             'SpliceAI_pred_DP_DL', 'SpliceAI_pred_DS_AG', 'SpliceAI_pred_DS_AL',
             'SpliceAI_pred_DS_DG', 'SpliceAI_pred_DS_DL', 'Type', 'Length', 'Grantham', 'phyloP',
-            'gnomAD_HN'
+            'gnomAD_HN', 'ALPHSCORE'
         ]
         self.assertSetEqual(set(observed), set(expected))
 
