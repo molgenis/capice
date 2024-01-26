@@ -99,11 +99,10 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 --fork <n_threads> --dont_skip --allow_non_variant --use_given_ref --exclude_predicted \
 --flag_pick_allele --plugin Grantham \
 --plugin SpliceAI,snv=<path/to/spliceai_scores.masked.snv.vcf.gz>,indel=</path/to/spliceai_scores.masked.indel.vcf.gz> \
---custom "<path/to/gnomad.total.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF,HN" \
---custom "<path/to/phyloP100way.bw>,phyloP,bigwig,exact,0" \
+--custom "<path/to/gnomad.total.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF" \
+--custom "<path/to/hg38.phyloP100way.bed.gz,phyloP,bed,exact,0" \
 --dir_plugins <path to your VEP plugin directory>
 ```
-**IMPORTANT: Ensure the right files are used based on GRCH37 or GRCH38!!!**
 
 Note: Certain arguments might not be needed if training/predicting without using all possible features offered by CAPICE.
 
