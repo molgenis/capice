@@ -30,7 +30,7 @@ class TestMainTrain(unittest.TestCase):
 
     def setUp(self):
         print('Performing test:')
-        train_file = os.path.join(_project_root_directory, 'resources', 'train_input.tsv.gz')
+        train_file = os.path.join(_project_root_directory, 'resources', 'train_test.tsv.gz')
         impute_json = os.path.join(_project_root_directory,
                                    'resources',
                                    'train_features.json')
