@@ -14,24 +14,12 @@ below.
 CAPICE can be used as online service at http://molgenis.org/capice
 
 ## Requirements
-The list below is a complete list. Depending on whether GRCh37 and/or GRCh38 is used and whether all
-mentioned features are used, some items in the list below can be skipped.
-
 * VEP v107
   * Including VEP cache (which needs to be unarchived!):
-    * [homo_sapiens_refseq_vep_107_GRCh37](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh37.tar.gz)
     * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh38.tar.gz)
   * Including plugin(s):
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
-  * Including additional data (GRCh37) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh37/):
-    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz`
-    * `gnomad.total.r2.1.1.sites.stripped.vcf.gz.csi`
-    * `hg19.100way.phyloP100way.bw`
-    * `spliceai_scores.masked.indel.hg19.vcf.gz`
-    * `spliceai_scores.masked.indel.hg19.vcf.gz.tbi`
-    * `spliceai_scores.masked.snv.hg19.vcf.gz`
-    * `spliceai_scores.masked.snv.hg19.vcf.gz.tbi` 
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
@@ -95,7 +83,7 @@ command:
 vep --input_file <path to your input file> --format vcf --output_file <path to your output file> \
 --vcf --compress_output gzip --sift s --polyphen s --numbers --symbol \
 --shift_3prime 1 --allele_number --refseq --total_length --no_stats --offline --cache \
---dir_cache </path/to/cache/107> --species "homo_sapiens" --assembly <GRCh37 or GRCh38> \
+--dir_cache </path/to/cache/107> --species "homo_sapiens" --assembly <GRCh38> \
 --fork <n_threads> --dont_skip --allow_non_variant --use_given_ref --exclude_predicted \
 --flag_pick_allele --plugin Grantham \
 --plugin SpliceAI,snv=<path/to/spliceai_scores.masked.snv.vcf.gz>,indel=</path/to/spliceai_scores.masked.indel.vcf.gz> \
@@ -332,19 +320,17 @@ To convert a `.pickle.dat` model to `.ubj`/`.json`, one can do the following (us
    - `sys.argv[1]`: the input `.pickle.dat` file
    - `sys.argv[2]`: the output `.json` file
 4. Adjust `CAPICE_version` within the new model file to that of the new release (major version should match!). 
-   It is advisable however to ensure that the filename still contains the version it was trained on (f.e. `v4.0.0_grch37_v5.0.0-compatibility.json`) to ensure no confusion will exist on which version it was actually trained.
+   It is advisable however to ensure that the filename still contains the version it was trained on (e.g. `v4.0.0_grch38_v5.0.0-compatibility.json`) to ensure no confusion will exist on which version it was actually trained.
 
 Do note that we recommend using a model trained on a specific major version instead, as other breaking changes might be present as well! 
 
 ## Data sources
 ### GnomAD
 The gnomAD files can be generated through the following scripts (which also download the gnomAD files):
-- GRCH37: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh37.sh
 - GRCH38: https://github.com/molgenis/vip/blob/main/utils/create_gnomad_GRCh38.sh
 
 ### PhyloP
 PhyloP resources can be downloaded from:
-- GRCh37: http://hgdownload.cse.ucsc.edu/goldenpath/hg19/phyloP100way/
 - GRCh38: http://hgdownload.cse.ucsc.edu/goldenpath/hg38/phyloP100way/
 
 ### SpliceAI
