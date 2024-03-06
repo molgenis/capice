@@ -17,5 +17,6 @@
     "SpliceAI_pred_DS_DG": null,
     "SpliceAI_pred_DS_DL": null,
     "Grantham": null,
-    "phyloP": null
+    "phyloP": null,
+    "am_pathogenicity":null
 }
