@@ -20,6 +20,7 @@ CAPICE can be used as online service at http://molgenis.org/capice
   * Including plugin(s):
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
+    * [AlphaMissense](https://github.com/Ensembl/VEP_plugins/blob/release/111/AlphaMissense.pm)
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
     * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
