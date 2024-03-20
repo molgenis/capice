@@ -11,7 +11,7 @@ The software can be used as web service, as pre-computed scores or by installing
 below.
 
 ## Use online web service
-CAPICE can be used as online service at http://molgenis.org/capice
+CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud.org
 
 ## Requirements
 * VEP v107
