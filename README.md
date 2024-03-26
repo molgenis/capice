@@ -16,7 +16,7 @@ CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud
 ## Requirements
 * VEP v111
   * Including VEP cache (which needs to be unarchived!):
-    * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh38.tar.gz)
+    * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-111/variation/indexed_vep_cache/homo_sapiens_refseq_vep_111_GRCh38.tar.gz)
   * Including plugin(s):
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
