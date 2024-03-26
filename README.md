@@ -14,15 +14,14 @@ below.
 CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud.org
 
 ## Requirements
-* VEP v107
+* VEP v111
   * Including VEP cache (which needs to be unarchived!):
     * [homo_sapiens_refseq_vep_107_GRCh38](http://ftp.ensembl.org/pub/release-107/variation/indexed_vep_cache/homo_sapiens_refseq_vep_107_GRCh38.tar.gz)
   * Including plugin(s):
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
-    * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz`
-    * `gnomad.genomes.v3.1.2.sites.stripped.vcf.gz.csi`
+    * [Gnomad v4](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz) including [index file]((https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz.tbi)).
     * `hg38.phyloP100way.bw`
     * `spliceai_scores.masked.indel.hg38.vcf.gz`
     * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
