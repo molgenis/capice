@@ -21,7 +21,7 @@ CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud
     * [Grantham](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/Grantham.pm)
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
-    * [Gnomad v4](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz) including [index file]((https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz.tbi)).
+    * [Gnomad v4](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz) including [index file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz.tbi).
     * `hg38.phyloP100way.bw`
     * `spliceai_scores.masked.indel.hg38.vcf.gz`
     * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
