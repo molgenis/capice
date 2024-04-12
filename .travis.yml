@@ -4,7 +4,10 @@ language: java
 python:
 - '3.10'
 jdk: openjdk17
-cache: pip
+cache:
+  directories:
+    - '$HOME/.cache/pip'
+    - '$HOME/.sonar/cache'
 branches:
   only:
   - main
