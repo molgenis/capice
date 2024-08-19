@@ -14,7 +14,7 @@ setup(
     url='https://capice.molgeniscloud.org/',
     license='LGPL-3.0',
     author='Shuang Li, Robert Sietsma and Molgenis',
-    author_email='molgenis-support@umcg.nl',
+    author_email='support@molgenis.org',
     description='Consequence Agnostic Pathogenicity Interpretation of '
                 'Clinical Exoma variations. State of the art machine learning '
                 'to predict SNVs and InDels pathogenicity.',
