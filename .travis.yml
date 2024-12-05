@@ -3,7 +3,7 @@ dist: jammy
 language: java
 python:
 - '3.10'
-jdk: openjdk17
+jdk: openjdk21
 cache:
   directories:
     - '$HOME/.cache/pip'
