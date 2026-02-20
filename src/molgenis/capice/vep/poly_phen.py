@@ -19,9 +19,11 @@ class PolyPhen(TemplateSiftPolyPhen):
         Under the 0.445 should be benign, between 0.445 and 0.908 should be possibly damaging,
         everything else should be probably damaging (if not nan).
         """
-        dataframe.loc[dataframe[dataframe[self.name].notnull()].index, self.columns[0]] = 'benign'
+        col = self.columns[0]
+        dataframe[col] = dataframe[col].astype("string")
+        dataframe.loc[dataframe[self.name].notnull(), col] = "benign"
         dataframe.loc[
-            dataframe[dataframe[self.name] > 0.445].index, self.columns[0]] = 'possibly_damaging'
+            dataframe[dataframe[self.name] > 0.445].index, col] = 'possibly_damaging'
         dataframe.loc[
-            dataframe[dataframe[self.name] > 0.908].index, self.columns[0]] = 'probably_damaging'
+            dataframe[dataframe[self.name] > 0.908].index, col] = 'probably_damaging'
         return dataframe

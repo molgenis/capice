@@ -18,8 +18,10 @@ class SIFT(TemplateSiftPolyPhen):
         """
         Under the 0.05 should be deleterious, everything else should be tolerated (if not nan)
         """
+        col = self.columns[0]
+        dataframe[col] = dataframe[col].astype("string")
         dataframe.loc[
-            dataframe[dataframe[self.name].notnull()].index, self.columns[0]] = 'tolerated'
+            dataframe[dataframe[self.name].notnull()].index, col] = 'tolerated'
         dataframe.loc[
-            dataframe[dataframe[self.name] <= 0.05].index, self.columns[0]] = 'deleterious'
+            dataframe[dataframe[self.name] <= 0.05].index, col] = 'deleterious'
         return dataframe
