@@ -108,10 +108,12 @@ class CapiceTrain(Main):
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
         model = self.train(test_set=processed_test, train_set=processed_train)
-        setattr(model, "vep_features", vep_processed)
-        setattr(model, "processable_features", processed_features)
-        setattr(model, 'CAPICE_version', __version__)
-        self.exporter.export_capice_model(model=model)
+        booster = model.get_booster()
+        booster.set_attr(
+            vep_features=json.dumps(vep_processed),
+            processable_features=json.dumps(processed_features),
+            CAPICE_version=str(__version__))
+        self.exporter.export_capice_model(model=booster)
 
     def _validate_features_present(self, dataset, train_features) -> None:
         missing = []

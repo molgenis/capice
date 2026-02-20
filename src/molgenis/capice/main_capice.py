@@ -19,7 +19,7 @@ class Main(ABC):
     function.
     """
 
-    def __init__(self, input_path, output_path, output_given, force):
+    def __init__(self, input_path, output_path, output_given, force, attr):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
@@ -37,6 +37,8 @@ class Main(ABC):
 
         self.force = force
         self.log.debug('Force output if exists: %s', self.force)
+
+        self.attr = attr
 
     @abstractmethod
     def run(self):

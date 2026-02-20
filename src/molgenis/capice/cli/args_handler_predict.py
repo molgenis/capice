@@ -69,9 +69,9 @@ class ArgsHandlerPredict(ArgsHandlerParent):
     def _handle_module_specific_args(self, input_path, output_path, output_filename, output_given,
                                      args):
         model_path = self._retrieve_argument_from_list(args.model, '-m/--model')
-        model = self.validate_model(model_path)
+        model, model_attr = self.validate_model(model_path)
         CapiceManager().output_filename = output_filename
-        CapicePredict(input_path, model, output_path, output_given, self.force).run()
+        CapicePredict(input_path, model, output_path, output_given, self.force, model_attr).run()
 
     def validate_model(self, model_path):
         """
@@ -85,12 +85,13 @@ class ArgsHandlerPredict(ArgsHandlerParent):
         except FileNotFoundError as cm:
             self.parser.error(str(cm))
         model = self.load_model(model_path)
+        booster = model.get_booster()
         model_validator = ModelValidator()
-        model_validator.validate_has_required_attributes(model)
+        attr_dict = model_validator.validate_has_required_attributes(booster)
         version_validator = VersionValidator()
         try:
-            version_validator.validate_model_version(model.CAPICE_version)
-            version_validator.validate_versions_compatible(__version__, model.CAPICE_version)
+            version_validator.validate_model_version(attr_dict["CAPICE_version"])
+            version_validator.validate_versions_compatible(__version__, attr_dict["CAPICE_version"])
         except ValueError as cm:
             self.parser.error(str(cm))
-        return model
+        return model, attr_dict
