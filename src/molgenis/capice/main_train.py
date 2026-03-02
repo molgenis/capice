@@ -32,7 +32,7 @@ class CapiceTrain(Main):
             output_path,
             output_given,
             force,
-            threads
+            threads,
     ):
         super().__init__(
             input_path,
@@ -107,6 +107,9 @@ class CapiceTrain(Main):
 
         processed_train, processed_test = self.split_data(dataset=processed_data,
                                                           test_size=self.train_test_size)
+
+        processed_train = self._set_train_sample_weights(processed_train)
+
         model = self.train(test_set=processed_test, train_set=processed_train)
         booster = model.get_booster()
         booster.set_attr(
@@ -215,6 +218,51 @@ class CapiceTrain(Main):
         if int(xgb_version.split('.')[0]) < 1:
             eval_data.append('test')
         return [tuple(eval_data)]
+
+    @staticmethod
+    def calculate_sample_weights(train_set, balance_labels):
+        """Now with a subset of the different columns, maybe this needs to be adjustable?"""
+        group = train_set[balance_labels].astype(str).agg('-'.join, axis=1)
+        # Count group frequencies
+        group_counts = group.value_counts()
+        total = len(train_set)
+        num_groups = group_counts.size
+        # Assign weights inversely proportional to group frequency
+        train_set[InputColumn.sample_weight.col_name] = train_set[InputColumn.sample_weight.col_name] * group.map(lambda g: total / (num_groups * group_counts[g]))
+        return train_set
+
+    def _set_train_sample_weights(self, train_set):
+        """
+        Combines weights of clinvar review status and label abundance (review_status * consequence/pathogenicity abundance)
+        """
+        #create sample weights based on consequences and label
+        coding_labels = ["transcript_ablation", "frameshift_variant", "stop_lost", "start_lost",
+                    "transcript_amplification","missense_variant", "protein_altering_variant",
+                    "incomplete_terminal_codon_variant", "start_retained_variant", "stop_retained_variant",
+                    "synonymous_variant", "coding_sequence_variant", "stop_gained", 
+                    "splice_acceptor_variant", "splice_donor_variant","splice_donor_5th_base_variant", "splice_polypyrimidine_tract_variant"]
+
+        non_coding_labels = ["feature_elongation", "feature_truncation",
+                        "inframe_insertion", "inframe_deletion", "splice_region_variant",
+                        "splice_donor_region_variant", "mature_miRNA_variant",
+                        "5_prime_utr_variant", "3_prime_utr_variant", "non_coding_transcript_exon_variant", "intron_variant",
+                        "NMD_transcript_variant", "non_coding_transcript_variant", "upstream_gene_variant", "downstream_gene_variant",
+                        "TFBS_ablation", "TFBS_amplification", "TF_binding_site_variant", "regulatory_region_ablation", "regulatory_region_amplification",
+                        "regulatory_region_variant", "intergenic_variant"
+                        ] 
+        coding_labels = [f'is_{label}' for label in coding_labels]
+        non_coding_labels = [f'is_{label}' for label in non_coding_labels]
+
+        train_set["is_coding"] = (train_set[coding_labels].sum(axis=1) >= 1).astype(int)
+        train_set["is_non_coding"] = (train_set[non_coding_labels].sum(axis=1) >= 1).astype(int)
+
+        # Normalize for coding/non-coding, note: close to splice site < 5nt is used in the coding (WES) category. 
+        balance_labels = ["is_coding", "is_non_coding"] 
+        balance_labels.append(InputColumn.binarized_label.col_name) # add classification as a label to balance on.
+        train_set = self.calculate_sample_weights(train_set, balance_labels) # adds ["sample_weight"]
+
+        return train_set
+
 
     def train(self, test_set: pd.DataFrame, train_set: pd.DataFrame):
         """

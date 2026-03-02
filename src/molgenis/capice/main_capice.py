@@ -19,7 +19,7 @@ class Main(ABC):
     function.
     """
 
-    def __init__(self, input_path, output_path, output_given, force, attr):
+    def __init__(self, input_path, output_path, output_given, force, attr={}):
         # Assumes CapiceManager has been initialized & filled.
         self.manager = CapiceManager()
         self.log = Logger().logger
