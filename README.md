@@ -22,11 +22,11 @@ CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud
     * [SpliceAI](https://github.com/molgenis/vip/blob/master/resources/vep/plugins/SpliceAI.pm)
   * Including additional data (GRCh38) [available here](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/):
     * [Gnomad v4](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz) including [index file](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/gnomad.total.v4.0.sites.stripped.tsv.gz.tbi).
-    * `hg38.phyloP100way.bw`
-    * `spliceai_scores.masked.indel.hg38.vcf.gz`
-    * `spliceai_scores.masked.indel.hg38.vcf.gz.tbi`
-    * `spliceai_scores.masked.snv.hg38.vcf.gz`
-    * `spliceai_scores.masked.snv.hg38.vcf.gz.tbi` 
+    * [phyloP](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/hg38.phyloP100way.bed.gz)
+    * [spliceai_scores.masked.indel.hg38.vcf.gz](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.indel.hg38.vcf.gz)
+    * [spliceai_scores.masked.indel.hg38.vcf.gz.tbi](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.indel.hg38.vcf.gz.tbi)
+    * [spliceai_scores.masked.snv.hg38.vcf.gz](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.snv.hg38.vcf.gz)
+    * [spliceai_scores.masked.snv.hg38.vcf.gz.tbi](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.snv.hg38.vcf.gz.tbi)
 * Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)).
   * Singularity could also work, but requires manual adjusting of [the conversion script](./scripts/convert_vep_vcf_to_tsv_capice.sh).
 * Python >=3.10
