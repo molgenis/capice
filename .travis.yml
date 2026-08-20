@@ -16,8 +16,7 @@ before_install:
 install:
 - pip install -e '.[test]'
 script:
-- coverage run -m pytest --junitxml=results.xml
-- coverage xml
+- coverage run -m pytest && coverage report --fail-under=80
 deploy:
   - provider: pypi
     username: __token__
