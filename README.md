@@ -1,5 +1,4 @@
 [![Build Status](https://app.travis-ci.com/molgenis/capice.svg?branch=main)](https://app.travis-ci.com/molgenis/capice)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=molgenis_capice&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=molgenis_capice)
 
 # CAPICE : a computational method for Consequence-Agnostic Pathogenicity Interpretation of Clinical Exome variations
 CAPICE is a computational method for predicting the pathogenicity of SNVs and InDels. It is a gradient boosting tree
