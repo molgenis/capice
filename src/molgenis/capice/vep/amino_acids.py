@@ -25,7 +25,7 @@ class AminoAcids(Template):
     def _process(self, dataframe: pd.DataFrame):
         if dataframe[self.name].str.contains('/', regex=False).any():
             dataframe[self.columns] = dataframe[self.name].str.split('/', expand=True)
-            dataframe[self.naa].fillna(dataframe[self.oaa], inplace=True)
+            dataframe.fillna({'naa':dataframe[self.oaa]}, inplace=True)
         else:
             dataframe[self.oaa] = dataframe[self.name]
             dataframe[self.naa] = dataframe[self.oaa]
