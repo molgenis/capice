@@ -26,7 +26,7 @@ CAPICE can be used as online service as part of VIP at https://vip.molgeniscloud
     * [spliceai_scores.masked.indel.hg38.vcf.gz.tbi](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.indel.hg38.vcf.gz.tbi)
     * [spliceai_scores.masked.snv.hg38.vcf.gz](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.snv.hg38.vcf.gz)
     * [spliceai_scores.masked.snv.hg38.vcf.gz.tbi](https://download.molgeniscloud.org/downloads/vip/resources/GRCh38/spliceai_scores.masked.snv.hg38.vcf.gz.tbi)
-* Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)).
+* Apptainer == 1.1.* (For: [BCFTools singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.17.sif)).
   * Singularity could also work, but requires manual adjusting of [the conversion script](./scripts/convert_vep_vcf_to_tsv_capice.sh).
 * Python >=3.10
 
@@ -62,7 +62,7 @@ cd capice
 pip install -e '.[test]'
 ```
 
-Additionally, the [BCFTools Singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif) has to be obtained.
+Additionally, the [BCFTools Singularity image](https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.17.sif) has to be obtained.
 
 ### Windows
 __Installation on Windows systems is as of current not possible. Please refer to UNIX like systems (macOS or Linux) or use
