@@ -10,7 +10,7 @@ errcho() { echo "$@" 1>&2; }
 readonly USAGE="VEP VCF output to CAPICE TSV converter
 Usage:
 convert_vep_to_tsv_capice.sh -p <arg> -i <arg> -o <arg> [-t] [-f]
--p    required: The path to the BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
+-p    required: The path to the BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.17.sif)
 -i    required: The VEP output VCF.
 -o    required: The directory and output filename for the CAPICE .tsv.gz.
 -f    optional: enable force.
@@ -25,7 +25,7 @@ bash convert_vep_vcf_to_tsv_capice.sh -p /path/to/bcftools.sif -i vep_out.vcf.gz
 
 Requirements:
 - Apptainer (although Singularity should work too, please change the script and adjust apptainer to singularity)
-- BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.14.sif)
+- BCFTools image. (available at: https://download.molgeniscloud.org/downloads/vip/images/bcftools-1.17.sif)
 "
 
 # Global variables
