@@ -11,12 +11,13 @@ class CapicePredict(Main):
     process and eventually predict a score over a CAPICE annotated file.
     """
 
-    def __init__(self, input_path, model, output_path, output_given, force):
+    def __init__(self, input_path, model, output_path, output_given, force, attr):
         super().__init__(
             input_path,
             output_path,
             output_given,
-            force
+            force,
+            attr
         )
 
         # Model.
@@ -29,14 +30,14 @@ class CapicePredict(Main):
         capice_data = self._load_file()
         capice_data = self.process(
             loaded_data=capice_data,
-            process_features=list(self.model.vep_features.keys())
+            process_features=list(self.attr["vep_features"].keys())
         )[0]
         PostVEPProcessingValidator().validate_features_present(
-            capice_data, self.model.vep_features.values()
+            capice_data, self.attr["vep_features"].values()
         )
         capice_data = self.categorical_process(
             loaded_data=capice_data,
-            processing_features=self.model.processable_features,
+            processing_features=self.attr["processable_features"],
             train_features=None
         )[0]
         capice_data = self.predict(loaded_data=capice_data)

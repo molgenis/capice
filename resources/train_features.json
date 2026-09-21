@@ -17,5 +17,14 @@
     "SpliceAI_pred_DS_DG": null,
     "SpliceAI_pred_DS_DL": null,
     "Grantham": null,
-    "phyloP": null
+    "phyloP": null,
+    "ProteinLengthChange": null,
+    "five_prime_UTR_variant_consequence": null,
+    "LOEUF_gene_value": null,
+    "NMD": null,
+    "am_pathogenicity": null,
+    "ReMM": null,
+    "ncER": null,
+    "FATHMM_MKL_NC": null,
+    "MOTIF_SCORE_CHANGE": null
 }

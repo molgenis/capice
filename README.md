@@ -87,6 +87,15 @@ vep --input_file <path to your input file> --format vcf --output_file <path to y
 --plugin SpliceAI,snv=<path/to/spliceai_scores.masked.snv.vcf.gz>,indel=</path/to/spliceai_scores.masked.indel.vcf.gz> \
 --custom "<path/to/gnomad.total.sites.stripped.vcf.gz>,gnomAD,vcf,exact,0,AF" \
 --custom "<path/to/hg38.phyloP100way.bed.gz,phyloP,bed,exact,0" \
+--plugin NMD \
+--plugin pLI_LOEUF \
+--plugin Downstream \
+--plugin UTRannotator,file=/path/to/uORF_starts_ends_GRCh38_PUBLIC.txt \
+--plugin gnomAD,/FULL_PATH_TO_GNOMAD_FILE \
+--plugin AlphaMissense,file=/FULL_PATH_TO_AM_file \
+--plugin ncER,/FULL_PATH_TO_ncER_file \
+--plugin FATHMM_MKL_NC,/FULL_PATH_TO_FATHMM-MKL-NC_file \
+--plugin ReMM,/FULL_PATH_TO_ReMM_file \
 --dir_plugins <path to your VEP plugin directory>
 ```
 
